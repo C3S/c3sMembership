@@ -62,7 +62,8 @@ def main(global_config, **settings):
     config.add_route('verify_email_password', '/verify/{email}/{code}')
     config.add_route('success_pdf', '/C3S_SCE_AFM_{namepart}.pdf')
     # routes & views for staff
-    config.add_route('dashboard', '/dashboard/{number}')
+    config.add_route('dashboard_only', '/dashboard')
+    config.add_route('dashboard', '/dashboard/{number}/{orderby}/{order}')
     config.add_route('detail', '/detail/{memberid}')
     config.add_route('switch_sig', '/switch_sig/{memberid}')
     config.add_route('mail_sig_confirmation', '/mail_sig_conf/{memberid}')

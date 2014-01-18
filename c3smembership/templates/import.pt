@@ -12,9 +12,9 @@
     <h1>C3S Membership Application: Import</h1>
   </tal:block>
   <tal:block metal:fill-slot="bottom">
-    <h3><span class="deform">${message}</h3>
+    <h3><span class="deform">${message}</span></h3>
     <p>
-      <a href="${request.route_url('dashboard', number=0)}">go back to dashboard</a>
+      <a href="${request.route_url('dashboard')}">go back to dashboard</a>
     </p>
     <p>
       &nbsp;

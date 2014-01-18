@@ -10,3 +10,5 @@ python-eggs/
 *.wsgi
 cover/
 nosetests.xml
+*.idea
+pyramid.pid

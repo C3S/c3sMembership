@@ -178,11 +178,17 @@ def success_check_email(request):
     and returns a note to go check mail.
     """
     #check if user has used the form (good) or 'guessed' this URL (bad)
+
     if ('appstruct' in request.session):
         # we do have valid info from the form in the session (good)
         appstruct = request.session['appstruct']
         from pyramid_mailer.message import Message
-        mailer = get_mailer(request)
+        try:
+            mailer = get_mailer(request)
+        except:
+            return HTTPFound(location=request.route_url('join'))
+            # ToDo: handle excpetion
+
         # XXX TODO: check for locale, choose language for body text
         #import pdb; pdb.set_trace()
         # build the emails body

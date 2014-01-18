@@ -15,7 +15,7 @@ from c3smembership.models import (
 DEBUG = False
 
 
-class C3sMembershipModelTests(unittest.TestCase):
+class C3sMembershipModelTestBase(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
@@ -29,29 +29,7 @@ class C3sMembershipModelTests(unittest.TestCase):
         self.session = DBSession
         DBSession.configure(bind=engine)  # XXX does influence self.session!?!
         Base.metadata.create_all(engine)
-        with transaction.manager:
-            member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
-                date_of_birth=date.today(),
-                email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
-                date_of_submission=date.today(),
-                membership_type=u'normal',
-                member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
-            )
-            DBSession.add(member1)
-            DBSession.flush()
+
 
     def tearDown(self):
         self.session.close()
@@ -128,6 +106,35 @@ class C3sMembershipModelTests(unittest.TestCase):
             date_of_submission,
             membership_type, member_of_colsoc, name_of_colsoc,
         )
+
+
+class C3sMembershipModelTests(C3sMembershipModelTestBase):
+
+    def setUp(self):
+        super(C3sMembershipModelTests, self).setUp()
+        with transaction.manager:
+            member1 = C3sMember(  # german
+                firstname=u'SomeFirstnäme',
+                lastname=u'SomeLastnäme',
+                email=u'some@shri.de',
+                address1=u"addr one",
+                address2=u"addr two",
+                postcode=u"12345",
+                city=u"Footown Mäh",
+                country=u"Foocountry",
+                locale=u"DE",
+                date_of_birth=date.today(),
+                email_is_confirmed=False,
+                email_confirm_code=u'ABCDEFGFOO',
+                password=u'arandompassword',
+                date_of_submission=date.today(),
+                membership_type=u'normal',
+                member_of_colsoc=True,
+                name_of_colsoc=u"GEMA",
+                num_shares=u'23',
+            )
+            DBSession.add(member1)
+            DBSession.flush()
 
     def test_constructor(self):
         instance = self._makeOne()
@@ -244,8 +251,52 @@ class C3sMembershipModelTests(unittest.TestCase):
         self.session.add(instance2)
         myMembershipSigneeClass = self._getTargetClass()
 
-        result1 = myMembershipSigneeClass.member_listing(
-            myMembershipSigneeClass.id.desc())
+        result1 = myMembershipSigneeClass.member_listing("id")
         self.failUnless(result1[0].firstname == u"SomeFirstnäme")
         self.failUnless(result1[1].firstname == u"SomeFirstnäme")
         self.failUnless(result1[2].firstname == u"SomeFirstname")
+
+
+class TestMemberListing(C3sMembershipModelTestBase):
+    def setUp(self):
+        super(TestMemberListing, self).setUp()
+        instance = self._makeOne(lastname=u"ABC", firstname=u'xyz', email_confirm_code=u'0987654321')
+        self.session.add(instance)
+        instance = self._makeAnotherOne(lastname=u"DEF", firstname=u'abc', email_confirm_code=u'19876543210')
+        self.session.add(instance)
+        instance = self._makeAnotherOne(lastname=u"GHI", firstname=u'def', email_confirm_code=u'098765432101')
+        self.session.add(instance)
+        self.session.flush()
+        self.class_under_test = self._getTargetClass()
+
+    def test_orderByLastname_sortedByLastname(self):
+        print "now test " * 45
+        result = self.class_under_test.member_listing(order_by='lastname')
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result[0])
+        self.assertEqual("ABC", result[0].lastname)
+        self.assertEqual("GHI", result[-1].lastname)
+
+    def test_orderByLastnameOrderAsc_sortedByLastname(self):
+        result = self.class_under_test.member_listing(order_by='lastname', order="asc")
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result[0])
+        self.assertEqual("ABC", result[0].lastname)
+        self.assertEqual("GHI", result[-1].lastname)
+
+    def test_orderByLastnameOrderDesc_sortedByLastname(self):
+        result = self.class_under_test.member_listing(order_by='lastname', order="desc")
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result[0])
+        self.assertEqual("GHI", result[0].lastname)
+        self.assertEqual("ABC", result[-1].lastname)
+
+    def test_orderByInvalidName_raisesException(self):
+        self.assertRaises(self.class_under_test.member_listing, order_by='unknown', order="desc")
+        self.assertRaises(self.class_under_test.member_listing, order_by=None, order="desc")
+        self.assertRaises(self.class_under_test.member_listing, order_by="", order="desc")
+
+    def test_orderInvalid_raisesException(self):
+        self.assertRaises(self.class_under_test.member_listing, order_by='lastname', order="unknown")
+        self.assertRaises(self.class_under_test.member_listing, order_by='lastname', order="")
+        self.assertRaises(self.class_under_test.member_listing, order_by='lastname', order=None)

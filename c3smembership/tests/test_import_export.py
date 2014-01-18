@@ -129,6 +129,9 @@ class ImportExportTests(unittest.TestCase):
         #print(res2.body)
         # being logged in ...
         res3 = res2.follow()
+        res3 = res3.follow()
+        print '-#-' * 10
+        print res3.body
         self.failUnless(
             'Dashboard' in res3.body)
         # now try authenticated
@@ -140,7 +143,7 @@ class ImportExportTests(unittest.TestCase):
         how_many = C3sMember.get_number()
         self.assertTrue(how_many is 3)
         crowd = C3sMember.member_listing(
-            C3sMember.id.desc(), how_many=C3sMember.get_number())
+            "id", how_many=C3sMember.get_number(), order="asc")
         #import pdb; pdb.set_trace()
         self.assertTrue(u'SomeFirstnäme' in crowd[0].firstname)
         self.assertTrue('Alice' in crowd[1].firstname)
@@ -242,9 +245,12 @@ class ImportExportTests(unittest.TestCase):
         form['password'] = 'berries'
         res2 = form.submit('submit', status=302)
         #
+        print('-'*30)
         #print(res2.body)
         # being logged in ...
         res3 = res2.follow()
+        res3 = res3.follow()
+
         self.failUnless(
             'Dashboard' in res3.body)
         # now try authenticated
@@ -279,7 +285,7 @@ class ImportExportTests(unittest.TestCase):
         how_many = C3sMember.get_number()
         self.assertTrue(how_many is 1)
         crowd = C3sMember.member_listing(
-            C3sMember.id.desc(), how_many=C3sMember.get_number())
+            "id", how_many=C3sMember.get_number(), order="desc")
 
         self.assertTrue(u'SomeFirstnäme' in crowd[0].firstname)
         self.assertTrue(r1[0] in crowd[0].firstname)
@@ -348,16 +354,19 @@ class ImportExportTests(unittest.TestCase):
         res2 = form.submit('submit', status=302)
         # being logged in ...
         res3 = res2.follow()
+        res3 = res3.follow()
         self.failUnless(
             'Dashboard' in res3.body)
         # delete existing entry
         self.assertTrue('Number of data sets: 1' in res3.body)
         del1 = self.testapp.get('/delete/1', status=302)
         res = del1.follow()
+        res = res.follow()
         self.assertTrue('Number of data sets: 0' in res.body)
         # import CSV
         res2 = self.testapp.get('/import_all', status=302)
         res3 = res2.follow()
+        res3 = res3.follow()
         self.assertTrue('Number of data sets: 2' in res3.body)
         _export = self.testapp.get('/export_all', status=200)
         # compare import and export
@@ -391,7 +400,7 @@ class ImportExportTests(unittest.TestCase):
         _ic = re.sub(r"\r", "", _ic)
         _ec = re.sub(r"\n", "", _export_cleaned)
         _ec = re.sub(r"\r", "", _ec)
-        #print("len(_ic): %s, _ic: %s" % (len(_ic), _ic))
-        #print("len(_ec): %s, _ec: %s" % (len(_ec), _ec))
+        print("len(_ic): %s, _ic: %s" % (len(_ic), _ic))
+        print("len(_ec): %s, _ec: %s" % (len(_ec), _ec))
         self.assertTrue(_ec in _ic)
         self.assertTrue(_ic in _ec)

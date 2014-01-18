@@ -32,12 +32,13 @@ from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 from pyramid.url import route_url
 from translationstring import TranslationStringFactory
-
 from datetime import datetime
 from sqlalchemy.exc import (
     IntegrityError,
     ResourceClosedError,
 )
+import math
+
 deform_templates = resource_filename('deform', 'templates')
 c3smembership_templates = resource_filename('c3smembership', 'templates')
 
@@ -83,8 +84,7 @@ def accountants_login(request):
 
     if logged_in is not None:  # if user is already authenticated
         return HTTPFound(  # redirect her to the dashboard
-            request.route_url('dashboard',
-                              number=0,))
+            request.route_url('dashboard_only'))
 
     class AccountantLogin(colander.MappingSchema):
         """
@@ -145,8 +145,7 @@ def accountants_login(request):
             log.info("logging in %s" % login)
             return HTTPFound(  # redirect to accountants dashboard
                 location=route_url(  # after successful login
-                    'dashboard',
-                    number=0,
+                    'dashboard_only',
                     request=request),
                 headers=headers)
         else:
@@ -355,8 +354,7 @@ def import_db(request):
 
     print("done with all import steps, successful or not!")
     return HTTPFound(
-        request.route_url('dashboard',
-                          number=0,))
+        request.route_url('dashboard_only'))
                 # _codes.append(row[13])
                 # print("the codes: %s" % str(_codes))
 
@@ -376,7 +374,7 @@ def export_db(request):
     export the database to a CSV file
     """
     datasets = C3sMember.member_listing(
-        C3sMember.id.desc(), how_many=C3sMember.get_number())
+        "id", how_many=C3sMember.get_number(), order='asc')
     header = ['firstname', 'lastname', 'email',
               'password', 'last_password_change',
               'address1', 'address2', 'postcode', 'city', 'country',
@@ -422,21 +420,18 @@ def accountants_desk(request):
     has their signature arrived? how about the payment?
     """
     _number_of_datasets = C3sMember.get_number()
-    #print("request.matchdict['number']: %s" % request.matchdict['number'])
-    try:  # check if
-        # a page number was supplied with the URL
+    try:  # check if page number, orderby and order were supplied with the URL
         _page_to_show = int(request.matchdict['number'])
-        #print("page to show: %s" % _page_to_show)
+        _order_by = request.matchdict['orderby']
+        _order = request.matchdict['order']
     except:
+        print("Using default values")
         _page_to_show = 0
-    # is it a number? yes, cast above
-    #if not isinstance(_page_to_show, type(1)):
-    #    _page_to_show = 0
-    #print("_page_to_show: %s" % _page_to_show)
+        _order_by = 'id'
+        _order = 'asc'
 
     # check for input from "find dataset by confirm code" form
     if 'code_to_show' in request.POST:
-        #print("found code_to_show in POST")
         try:
             _code = request.POST['code_to_show']
             log.info(
@@ -450,17 +445,12 @@ def accountants_desk(request):
                     memberid=_entry.id)
             )
         except:
-            # choose default
-            #print("barf!")
             pass
 
-    # how many to display on one page?
     """
     num_display determines how many items are to be shown on one page
     """
-    #print request.POST
     if 'num_to_show' in request.POST:
-        #print("found it in POST")
         try:
             _num = int(request.POST['num_to_show'])
             if isinstance(_num, type(1)):
@@ -475,26 +465,18 @@ def accountants_desk(request):
         #print("setting default")
         num_display = request.registry.settings[
             'c3smembership.dashboard_number']
-    #print("num_display: %s " % num_display)
 
     """
     base_offset helps us to minimize impact on the database
     when querying for results.
     we can choose just those results we need for the page to show
     """
-    #try:
     base_offset = int(_page_to_show) * int(num_display)
-    #print("base offset: %s" % base_offset)
-    #except:
-    #    base_offset = 0
-    #    if 'base_offset' in request.session:
-    #        base_offset = request.session['base_offset']
-    #    else:
-    #        base_offset = request.registry.settings['c3smembership.offset']
 
     # get data sets from DB
+
     _members = C3sMember.member_listing(
-        C3sMember.id.desc(), how_many=num_display, offset=base_offset)
+        _order_by, how_many=num_display, offset=base_offset, order=_order)
 
     # calculate next-previous-navi
     next_page = (int(_page_to_show) + 1)
@@ -502,17 +484,33 @@ def accountants_desk(request):
         previous_page = int(_page_to_show) - 1
     else:
         previous_page = int(_page_to_show)
-
+    _last_page = int(math.ceil(_number_of_datasets / int(num_display)))
+    if next_page > _last_page:
+        next_page = _last_page
     # store info about current page in cookie
     request.response.set_cookie('on_page', value=str(_page_to_show))
-    #print("num_display: %s" % num_display)
     request.response.set_cookie('num_display', value=str(num_display))
+    request.response.set_cookie('order', value=str(_order))
+    request.response.set_cookie('orderby', value=str(_order_by))
+
+
+
+    _message = None
+    if 'message' in request.GET:
+        _message = request.GET['message']
 
     return {'_number_of_datasets': _number_of_datasets,
             'members': _members,
             'num_display': num_display,
             'next': next_page,
             'previous': previous_page,
+            'current': _page_to_show,
+            'orderby': _order_by,
+            'order': _order,
+            'message': _message,
+            'last_page': _last_page,
+            'is_last_page': _page_to_show == _last_page,
+            'is_first_page': _page_to_show == 0,
             }
 
 
@@ -528,6 +526,8 @@ def switch_sig(request):
 
     # store the dashboard page the admin came from
     dashboard_page = request.cookies['on_page']
+    order = request.cookies['order']
+    order_by = request.cookies['orderby']
 
     _member = C3sMember.get_by_id(memberid)
     if _member.signature_received is True:
@@ -547,7 +547,7 @@ def switch_sig(request):
 
     return HTTPFound(
         request.route_url('dashboard',
-                          number=dashboard_page,))
+                          number=dashboard_page, order=order, orderby=order_by))
 
 
 @view_config(permission='manage',
@@ -557,7 +557,6 @@ def delete_entry(request):
     This view lets accountants delete entries (doublettes)
     """
     memberid = request.matchdict['memberid']
-    dashboard_page = request.cookies['on_page']
     _member = C3sMember.get_by_id(memberid)
 
     C3sMember.delete_by_id(_member.id)
@@ -567,10 +566,8 @@ def delete_entry(request):
             request.user.login,
         )
     )
-
     return HTTPFound(
-        request.route_url('dashboard',
-                          number=dashboard_page,))
+        request.route_url('dashboard_only',  _query={'message': 'Member with id {0} was deleted.'.format(memberid)}))
 
 
 @view_config(permission='manage',
@@ -582,6 +579,8 @@ def switch_pay(request):
     """
     memberid = request.matchdict['memberid']
     dashboard_page = request.cookies['on_page']
+    order = request.cookies['order']
+    order_by = request.cookies['orderby']
     _member = C3sMember.get_by_id(memberid)
 
     if _member.payment_received is True:  # change to NOT SET
@@ -600,7 +599,7 @@ def switch_pay(request):
     )
     return HTTPFound(
         request.route_url('dashboard',
-                          number=dashboard_page,))
+                          number=dashboard_page, order=order, orderby=order_by))
 
 
 @view_config(renderer='templates/detail.pt',
@@ -611,9 +610,9 @@ def member_detail(request):
     This view lets accountants view member details
     has their signature arrived? how about the payment?
     """
-    #logged_in = authenticated_userid(request)
+    logged_in = authenticated_userid(request)
     #log.info("detail view.................................................")
-    #print("---- authenticated_userid: " + str(logged_in))
+    print("---- authenticated_userid: " + str(logged_in))
 
     # this following stanza is overridden by the views permission settings
     #if logged_in is None:  # not authenticated???
@@ -631,8 +630,7 @@ def member_detail(request):
     #print(_member)
     if _member is None:  # that memberid did not produce good results
         return HTTPFound(  # back to base
-            request.route_url('dashboard',
-                              number=0,))
+            request.route_url('dashboard_only'))
 
     class ChangeDetails(colander.MappingSchema):
         """
@@ -741,8 +739,7 @@ def regenerate_pdf(request):
 
     if _member is None:  # that memberid did not produce good results
         return HTTPFound(  # back to base
-            request.route_url('dashboard',
-                              number=0,))
+            request.route_url('dashboard_only'))
     _appstruct = {
         'firstname': _member.firstname,
         'lastname': _member.lastname,
@@ -787,7 +784,9 @@ def mail_signature_confirmation(request):
     _member.signature_confirmed = True
     _member.signature_confirmed_date = datetime.now()
     return HTTPFound(request.route_url('dashboard',
-                                       number=request.cookies['on_page'])
+                                       number=request.cookies['on_page'],
+                                       order=request.cookies['order'],
+                                       orderby=request.cookies['orderby'])
                      )
 
 
@@ -813,5 +812,28 @@ def mail_payment_confirmation(request):
     _member.payment_confirmed = True
     _member.payment_confirmed_date = datetime.now()
     return HTTPFound(request.route_url('dashboard',
-                                       number=request.cookies['on_page'])
+                                       number=request.cookies['on_page'],
+                                       order=request.cookies['order'],
+                                       orderby=request.cookies['orderby'],
+                                       )
                      )
+
+
+@view_config(permission='manage', route_name='dashboard_only')
+def dashboard_only(request):
+    if 'on_page' in request.cookies:
+        try:
+            _number = int(request.cookies['on_page'])
+        except ValueError:
+            _number = 0
+    else:
+        _number = 0
+    if 'orderby' in request.cookies:
+        _order_by = request.cookies['orderby']
+    else:
+        _order_by = 'id'
+    if 'order' in request.cookies:
+        _order = request.cookies['order']
+    else:
+        _order = 'asc'
+    return HTTPFound(request.route_url('dashboard', number=_number, orderby=_order_by, order=_order, _query=request.GET))

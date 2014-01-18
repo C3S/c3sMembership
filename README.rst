@@ -19,6 +19,7 @@ setup
 -----
 
 see ci.sh
+install pdftk (sudo apt-get install pdftk)
 
 
 run (in development mode)

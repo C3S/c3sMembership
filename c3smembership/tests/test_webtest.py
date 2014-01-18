@@ -47,29 +47,9 @@ class AccountantsFunctionalTests(unittest.TestCase):
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
-        with transaction.manager:
-            member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
-                date_of_birth=date.today(),
-                email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
-                date_of_submission=date.today(),
-                membership_type=u'normal',
-                member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
-            )
-            DBSession.add(member1)
-            DBSession.flush()
+
+        self._insert_members()
+
         with transaction.manager:
                 # a group for accountants/staff
             accountants_group = Group(name=u"staff")
@@ -106,6 +86,73 @@ class AccountantsFunctionalTests(unittest.TestCase):
         os.remove('test_webtest_accountants.db')
         testing.tearDown()
 
+    def _insert_members(self):
+        with transaction.manager:
+            member1 = C3sMember(  # german
+                firstname=u'SomeFirstnäme',
+                lastname=u'SomeLastnäme',
+                email=u'some@shri.de',
+                address1=u"addr one",
+                address2=u"addr two",
+                postcode=u"12345",
+                city=u"Footown Mäh",
+                country=u"Foocountry",
+                locale=u"DE",
+                date_of_birth=date.today(),
+                email_is_confirmed=False,
+                email_confirm_code=u'ABCDEFGFOO',
+                password=u'arandompassword',
+                date_of_submission=date.today(),
+                membership_type=u'normal',
+                member_of_colsoc=True,
+                name_of_colsoc=u"GEMA",
+                num_shares=u'23',
+            )
+            member2 = C3sMember(  # german
+                firstname=u'AAASomeFirstnäme',
+                lastname=u'XXXSomeLastnäme',
+                email=u'some@shri.de',
+                address1=u"addr one",
+                address2=u"addr two",
+                postcode=u"12345",
+                city=u"Footown Mäh",
+                country=u"Foocountry",
+                locale=u"DE",
+                date_of_birth=date.today(),
+                email_is_confirmed=False,
+                email_confirm_code=u'ABCDEFGBAR',
+                password=u'arandompassword',
+                date_of_submission=date.today(),
+                membership_type=u'normal',
+                member_of_colsoc=True,
+                name_of_colsoc=u"GEMA",
+                num_shares=u'23',
+            )
+            member3 = C3sMember(  # german
+                firstname=u'BBBSomeFirstnäme',
+                lastname=u'AAASomeLastnäme',
+                email=u'some@shri.de',
+                address1=u"addr one",
+                address2=u"addr two",
+                postcode=u"12345",
+                city=u"Footown Mäh",
+                country=u"Foocountry",
+                locale=u"DE",
+                date_of_birth=date.today(),
+                email_is_confirmed=False,
+                email_confirm_code=u'ABCDEFGBAZ',
+                password=u'arandompassword',
+                date_of_submission=date.today(),
+                membership_type=u'normal',
+                member_of_colsoc=True,
+                name_of_colsoc=u"GEMA",
+                num_shares=u'23',
+            )
+            DBSession.add(member1)
+            DBSession.add(member2)
+            DBSession.add(member3)
+            DBSession.flush()
+
     def test_login_and_dashboard(self):
         """
         load the login form, dashboard, member detail
@@ -135,6 +182,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res4 = res3.follow()
+        res4 = res4.follow()
         #print(res4.body)
         self.failUnless(
             'Dashboard' in res4.body)
@@ -143,37 +191,36 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res5 = self.testapp.get('/login', status=302)
         # so yes: that was a redirect
         res6 = res5.follow()
+        res6 = res6.follow()
         #print(res4.body)
         self.failUnless(
             'Dashboard' in res6.body)
         # choose number of applications shown
         res6a = self.testapp.get(
-            '/dashboard/0',
-            status=200,
+            '/dashboard',
+            status=302,
             extra_environ={
                 'num_display': '30',
             }
         )
-        #print('res6a:')
-        #print res6a
+        res6a = res6a.follow()
+
         self.failUnless('<h1>Dashboard</h1>' in res6a.body)
         res6a = self.testapp.get(
-            '/dashboard/1', status=200,
+            '/dashboard/1/id/asc', status=200,
         )
-        #print('res6a:')
-        #print res6a
+
         self.failUnless('<h1>Dashboard</h1>' in res6a.body)
         # try an invalid page number
         res6b = self.testapp.get(
-            '/dashboard/foo',
+            '/dashboard/foo/bar/baz',
             status=200,
         )
-        #print('res6b:')
-        #print res6b.body
+
         self.failUnless(
             '<p>Number of data sets:' in res6b.body)
-        #
-        # change the number oof items to show
+
+        # change the number of items to show
         form = res6b.forms[1]
         form['num_to_show'] = "42"  # post a number: OK
         resX = form.submit('submit', status=200)
@@ -188,6 +235,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # now look at some members details with nonexistant id
         res7 = self.testapp.get('/detail/5000', status=302)
         res7a = res7.follow()
+        res7a = res7a.follow()
         self.failUnless('Dashboard' in res7a.body)
 
         # now look at some members details
@@ -242,27 +290,133 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         ####################################################################
         # delete an entry
-        resDel1 = self.testapp.get('/dashboard/0', status=200)
+        resDel1 = self.testapp.get('/dashboard/0/id/asc', status=200)
+
 #        self.failUnless(
 #            '      <p>Number of data sets: 1</p>' in resDel1.body.splitlines())
         resDel2 = self.testapp.get('/delete/1', status=302)
         resDel3 = resDel2.follow()
-#        self.failUnless(
-#            '      <p>Number of data sets: 0</p>' in resDel3.body.splitlines())
+        resDel3 = resDel3.follow()
+        self.failUnless('was deleted' in resDel3.body)
 
         # finally log out ##################################################
         res9 = self.testapp.get('/logout', status=302)  # redirects to login
         res10 = res9.follow()
         self.failUnless('login' in res10.body)
-        # def test_detail_wrong_id(self):
 
-    def test_dashboard_search_code(self):
-        """
-        load the dashboard and search for confirmation code
-        """
-        #
-        # login
-        #
+    def test_dashboard_orderByIdAsc_dashboardOrdered(self):
+        res = self._login()
+        res2 = self.testapp.get('/dashboard/0/id/asc')
+        pq = self._get_pyquery(res2.body)
+        # column-order: id code firstname lastname
+        first_member_row = pq('tr:nth-child(2)')
+        id_ = first_member_row('td:nth-child(1)')
+        self.assertEqual('1', id_.text())
+
+    def test_dashboard_orderByIdDesc_dashboardOrdered(self):
+        res = self._login()
+        res2 = self.testapp.get('/dashboard/0/id/desc')
+        pq = self._get_pyquery(res2.body)
+        first_member_row = pq('tr:nth-child(2)')
+        id_ = first_member_row('td:nth-child(1)')
+        self.assertEqual('3', id_.text())
+
+    def test_dashboard_orderByFirstnameAsc_dashboardOrdered(self):
+        res = self._login()
+        res2 = self.testapp.get('/dashboard/0/firstname/asc')
+        pq = self._get_pyquery(res2.body)
+        first_member_row = pq('tr:nth-child(2)')
+        first_name = first_member_row('td:nth-child(3)')
+        self.assertEqual(u'AAASomeFirstnäme', first_name.text())
+
+    def test_dashboard_orderByFirstnameDesc_dashboardOrdered(self):
+        res = self._login()
+        res2 = self.testapp.get('/dashboard/0/firstname/desc')
+        pq = self._get_pyquery(res2.body)
+        first_member_row = pq('tr:nth-child(2)')
+        first_name = first_member_row('td:nth-child(3)')
+        self.assertEqual(u'SomeFirstnäme', first_name.text())
+
+    def test_dashboard_orderByLastnameAsc_dashboardOrdered(self):
+        res = self._login()
+        res2 = self.testapp.get('/dashboard/0/lastname/asc')
+        pq = self._get_pyquery(res2.body)
+        first_member_row = pq('tr:nth-child(2)')
+        last_name = first_member_row('td:nth-child(4)')
+        self.assertEqual(u'AAASomeLastnäme', last_name.text())
+
+    def test_dashboard_orderByLastnameDesc_dashboardOrdered(self):
+        self._login()
+        res2 = self.testapp.get('/dashboard/0/lastname/desc')
+        pq = self._get_pyquery(res2.body)
+        first_member_row = pq('tr:nth-child(2)')
+        last_name = first_member_row('td:nth-child(4)')
+        self.assertEqual(u'XXXSomeLastnäme', last_name.text())
+
+    def test_dashboard_afterDelete_sameOrderAsBefore(self):
+        self._login()
+        self.testapp.get('/dashboard/0/lastname/asc')  # To set cookie with order and orderby
+        resdel = self.testapp.get('/delete/3')  # Delete member with lastname AAASomeLastnäme
+        resdel = resdel.follow()
+        resdel = resdel.follow()
+        pq = self._get_pyquery(resdel.body)
+        first_member_row = pq('tr:nth-child(2)')
+        last_name = first_member_row('td:nth-child(4)')
+        self.assertEqual(u'SomeLastnäme', last_name.text())
+
+    def test_dashboard_afterDelete_messageShown(self):
+        self._login()
+        resdel = self.testapp.get('/delete/1')
+        resdel = resdel.follow()
+        resdel = resdel.follow()
+        pq = self._get_pyquery(resdel.body)
+        message = pq('#message').text()
+        self.assertTrue('was deleted' in message)
+
+    def test_dashboard_onFirstPage_noPreviousLinkShown(self):
+        self._login()
+        self._change_num_to_show("1")
+        res = self.testapp.get('/dashboard/0/id/desc')
+        pq = self._get_pyquery(res.body)
+        self.assertTrue(len(pq("#navigate_previous")) == 0)
+
+    def test_dashboard_onFirstPage_nextLinkShown(self):
+        self._login()
+        self._change_num_to_show("1")
+        res = self.testapp.get('/dashboard/0/id/desc')
+        pq = self._get_pyquery(res.body)
+        self.assertTrue(len(pq("#navigate_next")) == 1)
+
+    def test_dashboard_onSomePage_nextPreviousLinkShown(self):
+        self._login()
+        self._change_num_to_show("1")
+        res = self.testapp.get('/dashboard/1/id/desc')
+        pq = self._get_pyquery(res.body)
+        self.assertTrue(len(pq("#navigate_next")) == 1)
+        self.assertTrue(len(pq("#navigate_previous")) == 1)
+
+    def test_dashboard_onLastPage_previousLinkShown(self):
+        self._login()
+        self._change_num_to_show("1")
+        res = self.testapp.get('/dashboard/3/id/desc')
+        pq = self._get_pyquery(res.body)
+        self.assertTrue(len(pq("#navigate_previous")) == 1)
+
+    def test_dashboard_onLastPage_noNextLinkShown(self):
+        self._login()
+        self._change_num_to_show("1")
+        res = self.testapp.get('/dashboard/3/id/desc')
+        pq = self._get_pyquery(res.body)
+        self.assertTrue(len(pq("#navigate_next")) == 0)
+
+    def _get_pyquery(self, html):
+        from pyquery import PyQuery as pq
+        pure_html = ''.join(html.split('\n')[2:])
+        pure_html = "<html>" + pure_html
+        d = pq(pure_html)
+        return d
+
+    def _login(self):
         res = self.testapp.get('/login', status=200)
         self.failUnless('login' in res.body)
         # try valid user, valid password
@@ -273,7 +427,25 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res3 = res2.follow()
+        res3 = res3.follow()
         self.failUnless('Dashboard' in res3.body)
+        return res3
+
+    def _change_num_to_show(self, num_to_show="1"):
+        res = self.testapp.get('/dashboard/0/id/desc')
+        form = res.forms[1]
+        form['num_to_show'] = num_to_show
+        resX = form.submit('submit', status=200)
+        return resX
+
+    def test_dashboard_search_code(self):
+        """
+        load the dashboard and search for confirmation code
+        """
+        #
+        # login
+        #
+        res3 = self._login()
 
         """
         we fill the confirmation code search form with a valid code,
@@ -308,6 +480,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res3 = res2.follow()
+        res3 = res3.follow()
         self.failUnless('Dashboard' in res3.body)
 
         """
@@ -338,6 +511,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res3 = res2.follow()
+        res3 = res3.follow()
+
         self.failUnless('Dashboard' in res3.body)
 
         """
@@ -883,3 +1058,4 @@ class FunctionalTests(unittest.TestCase):
 
         res2 = res.follow()
         self.failUnless("Please fill out the form" in res2.body)
+

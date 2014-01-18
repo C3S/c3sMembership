@@ -15,7 +15,9 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     Date,
-    Unicode
+    Unicode,
+    desc,
+    asc
 )
 from sqlalchemy.exc import (
     IntegrityError,
@@ -269,12 +271,16 @@ class C3sMember(Base):
         return DBSession.query(cls).count()
 
     @classmethod
-    def member_listing(cls, order_by, how_many=10, offset=0):
-        #print("offset: %s" % offset)
+    def member_listing(cls, order_by, how_many=10, offset=0, order="asc"):
+        try:
+            attr = getattr(cls, order_by)
+            order_function = getattr(attr, order)
+        except:
+            raise Exception("Invalid order_by ({0}) or order value ({1})".format(order_by, order))
         _how_many = int(offset) + int(how_many)
         _offset = int(offset)
-        q = DBSession.query(cls).all()[_offset:_how_many]
-        #return q.order_by(order_by)[:how_many]
+        q = DBSession.query(cls).order_by(order_function())\
+                                .slice(_offset, _how_many)
         return q
 
     @classmethod
