@@ -88,12 +88,34 @@ class TestMemberRepository(unittest.TestCase):
                 name_of_colsoc=u'',
                 num_shares=7,
             )
+            member4 = C3sMember(
+                firstname=u'Membership',
+                lastname=u'Lost',
+                email=u'membership.lost@example.com',
+                address1=u'Some Street 123',
+                address2=u'',
+                postcode=u"12345",
+                city=u"Some City",
+                country=u"Some Country",
+                locale=u"DE",
+                date_of_birth=date(1980, 1, 2),
+                email_is_confirmed=False,
+                email_confirm_code=u'MEMBERSHIP_LOST',
+                password=u'not_approved_member',
+                date_of_submission=date(1970, 1, 1),
+                membership_type=u'normal',
+                member_of_colsoc=True,
+                name_of_colsoc=u'',
+                num_shares=7,
+            )
             # pylint: disable=no-member
             DBSession.add(member1)
             # pylint: disable=no-member
             DBSession.add(member2)
             # pylint: disable=no-member
             DBSession.add(member3)
+            # pylint: disable=no-member
+            DBSession.add(member4)
 
             member1.membership_number = u'member1'
             member1.membership_date = date(2013, 1, 1)
@@ -102,6 +124,10 @@ class TestMemberRepository(unittest.TestCase):
             member2.membership_date = date(2013, 1, 5)
             member2.membership_accepted = True
             member3.payment_received_date = date(2016, 10, 11)
+            member4.membership_number = u'member3'
+            member4.membership_date = date(2014, 1, 5)
+            member4.membership_accepted = True
+            member4.membership_loss_date = date(2015, 12, 31)
 
     def tearDown(self):
         # pylint: disable=no-member
@@ -230,6 +256,26 @@ class TestMemberRepository(unittest.TestCase):
 
         members_count = MemberRepository.get_accepted_members_count(
             date(2013, 1, 5))
+        self.assertEqual(members_count, 2)
+
+        # member4 got membership the day after
+        members_count = MemberRepository.get_accepted_members_count(
+            date(2014, 1, 4))
+        self.assertEqual(members_count, 2)
+
+        # member4 got membership that day
+        members_count = MemberRepository.get_accepted_members_count(
+            date(2014, 1, 5))
+        self.assertEqual(members_count, 3)
+
+        # member4 lost membership that day but is still member
+        members_count = MemberRepository.get_accepted_members_count(
+            date(2015, 12, 31))
+        self.assertEqual(members_count, 3)
+
+        # member4 lost membership the day before
+        members_count = MemberRepository.get_accepted_members_count(
+            date(2016, 1, 1))
         self.assertEqual(members_count, 2)
 
         members_count = MemberRepository.get_accepted_members_count(

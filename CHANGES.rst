@@ -1,3 +1,11 @@
+Next Release
+============
+
+
+Fix membership list showing entities who lost membership before.
+
+
+
 1.20.6
 ======
 
