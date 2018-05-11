@@ -40,7 +40,8 @@ def init_testing_db():
             DBSession.delete(member)
         DBSession.flush()
 
-        member1 = C3sMember(  # german person
+        # German person
+        member1 = C3sMember(
             firstname=u'SomeFirstnäme',
             lastname=u'SomeLastnäme',
             email=u'some@shri.de',
@@ -60,7 +61,8 @@ def init_testing_db():
             name_of_colsoc=u"",
             num_shares=u'23',
         )
-        member2 = C3sMember(  # english person
+        # English person
+        member2 = C3sMember(
             firstname=u'AAASomeFirstnäme',
             lastname=u'XXXSomeLastnäme',
             email=u'some2@shri.de',
@@ -80,7 +82,8 @@ def init_testing_db():
             name_of_colsoc=u"",
             num_shares=u'23',
         )
-        member3 = C3sMember(  # german legalentity
+        # German legal entity
+        member3 = C3sMember(
             firstname=u'Cooles PlattenLabel',
             lastname=u'SomeLastnäme',
             email=u'some@shri.de',
@@ -100,7 +103,8 @@ def init_testing_db():
             name_of_colsoc=u"",
             num_shares=u'42',
         )
-        member4 = C3sMember(  # english legalentity
+        # English legal entity
+        member4 = C3sMember(
             firstname=u'Incredible Records',
             lastname=u'XXXSomeLastnäme',
             email=u'some2@shri.de',
@@ -133,7 +137,6 @@ def init_testing_db():
 
 
 class TestInvitation(unittest.TestCase):
-
     """
     Tests the invitations.
     """
@@ -176,7 +179,7 @@ class TestInvitation(unittest.TestCase):
         req.cookies['order'] = 'asc'
         req.cookies['orderby'] = 'id'
 
-        # try with nonexistant id
+        # try with non-existing id
         req.matchdict = {'m_id': 10000}
         res = invite_member_bcgv(req)
         self.assertEquals(302, res.status_code)
@@ -187,7 +190,7 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(member1.email_invite_flag_bcgv18, True)
         self.assertTrue(member1.email_invite_token_bcgv18 is not None)
 
-        # now really send email
+        # send email
         self.config.registry.settings['testing.mail_to_console'] = 'false'
         mailer = get_mailer(req)
         res = invite_member_bcgv(req)
@@ -202,7 +205,7 @@ class TestInvitation(unittest.TestCase):
         self.assertTrue(member1.email_invite_token_bcgv18
                         in mailer.outbox[1].body)
 
-        # now send invitation to english member
+        # send invitation to English member
         member2 = C3sMember.get_by_id(2)
         self.assertEqual(member2.email_invite_flag_bcgv18, False)
         self.assertTrue(member2.email_invite_token_bcgv18 is None)
@@ -242,7 +245,6 @@ class TestInvitation(unittest.TestCase):
 
         _messages = req.session.peek_flash('message_to_staff')
         # pylint: disable=superfluous-parens
-        print(_messages)
         self.assertTrue(
             'sent out 1 mails (to members with ids [1])' in _messages)
 

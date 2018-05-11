@@ -21,100 +21,74 @@ While developing these tests, it comes in handy to have Xephyr installed,
 a nested X server, so you see what is going on:
 selenium/webdriver makes the browser do things.
 """
+
 import logging
 import os
-# from pyvirtualdisplay import Display
+from subprocess import call
+import unittest
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.remote_connection import LOGGER
-from subprocess import call
-import time
-import unittest
+from webdriver_utils import Server
 
-from webdriver_utils import (
-    Server,
-    Client
-)
 
-LOGGER.setLevel(logging.WARNING)  # silence logging
+LOGGER.setLevel(logging.WARNING)
 
-"""
-this setting controls whether the browser will be visible (1) or not (0)
-"""
-is_visible = 1
+# this setting controls whether the browser will be visible (1) or not (0)
+IS_VISIBLE = 1
 
 # configuration of testing framework
-cfg = {
+CFG = {
     'app': {
         'host': '0.0.0.0',
-        'port': '6543',
+        'port': '6544',
         'db': 'webdrivertest.db',
         'ini': "webdrivertest.ini",
         'appSettings': {},
     },
 }
-server = Server()
-client = Client()
+SERVER = Server()
 
 
 class SeleniumTestBase(unittest.TestCase):
+    """
+    Base class for Selenium test cases
+    """
 
-    # overload: configuration of individual appSettings
     @classmethod
-    def appSettings(self):
+    def app_settings(cls):
+        """
+        Base method for application settings, can be overloaded when inherited
+        """
         return {}
 
-    def initialize_db(self):
+    @classmethod
+    def initialize_db(cls):
         """
         make sure we have entries in the DB
         """
         if os.path.isfile('webdrivertest.db'):
-            call(['rm', 'webdrivertest.db'])
-            print("old database was deleted.")
-        print("initialize the test database:")
-        call(['env/bin/initialize_c3sMembership_db', 'webdrivertest.ini'])
-        print("database was set up.")
+            call(['rm', 'webdrivertest.db'], stdout=open(os.devnull, 'w'))
+        call(
+            ['env/bin/initialize_c3sMembership_db', 'webdrivertest.ini'],
+            stdout=open(os.devnull, 'w'))
 
     def setUp(self):
-        # # daemon start/stop
-        # # stop the daemon iff running
-        # call(['env/bin/pserve', 'webdrivertest.ini', 'stop'])
-        # # start the app
-        # call(['env/bin/pserve', 'webdrivertest.ini', 'start'])
-
-        # wsgi way!
-        self.cfg = cfg
-
-        self.srv = server.connect(
+        self.cfg = CFG
+        self.srv = SERVER.connect(
             cfg=self.cfg,
-            customAppSettings=self.appSettings(),
+            customAppSettings=self.app_settings(),
             wrapper='StopableWSGIServer'
         )
-        # self.cli = client.connect(
-        #        cfg=self.cfg
-        # )
 
-        time.sleep(0.1)
-
-        # self.display = Display(
-        #     visible=is_visible,
-        #     size=(1024, 768)
-        #     # size=(1600, 1200)
-        # )
-        # self.display.start()
-        # self.driver = webdriver.Firefox()
         self.driver = webdriver.PhantomJS()
-        # self.driver = webdriver.Chrome()
-        # get rid of all cookies
         self.driver.delete_all_cookies()
 
     def tearDown(self):
         self.driver.close()
         self.driver.quit()
-        # self.display.stop()
-        # client.disconnect()
-        server.disconnect()
-        time.sleep(2)
+        SERVER.disconnect()
 
 
 class JoinFormTests(SeleniumTestBase):
@@ -125,18 +99,15 @@ class JoinFormTests(SeleniumTestBase):
         super(JoinFormTests, self).setUp()
 
     def tearDown(self):
-        # self.driver.quit()
         super(JoinFormTests, self).tearDown()
-        # call(['env/bin/pserve', 'webdrivertest.ini', 'stop'])
 
     def test_form_submission_de(self):
         """
-        A webdriver test for the join form, german version
+        A webdriver test for the join form, German version
         """
         self.assertEqual(self.driver.get_cookies(), [])
         # load the page with the form, choose german
-        self.driver.get("http://0.0.0.0:6543?de")
-        # self.driver.maximize_window()
+        self.driver.get("http://0.0.0.0:6544?de")
 
         self.driver.get_screenshot_as_file('test_form_submission_de.png')
         self.failUnless(
@@ -148,44 +119,26 @@ class JoinFormTests(SeleniumTestBase):
         # fill out the form
         self.driver.find_element_by_name("firstname").send_keys("Christoph")
         self.driver.find_element_by_name('lastname').send_keys('Scheid')
-        time.sleep(0.1)
         self.driver.find_element_by_name('email').send_keys('c@c3s.cc')
-        time.sleep(0.1)
         self.driver.find_element_by_name('password').send_keys('foobar')
-        time.sleep(0.1)
         self.driver.find_element_by_name('password-confirm').send_keys(
             'foobar')
-        time.sleep(0.1)
         self.driver.find_element_by_name('address1').send_keys('addr one')
-        time.sleep(0.11)
         self.driver.find_element_by_name('address2').send_keys('addr two')
-        time.sleep(0.11)
         self.driver.find_element_by_name('postcode').send_keys('98765')
-        time.sleep(0.1)
         self.driver.find_element_by_name('city').send_keys('townish')
-        time.sleep(0.1)
         self.driver.find_element_by_name('country').send_keys('Gri')
-        time.sleep(0.1)
         self.driver.find_element_by_name('year').send_keys(Keys.CONTROL, "a")
         self.driver.find_element_by_name('year').send_keys('1998')
-        time.sleep(0.1)
         self.driver.find_element_by_name('month').send_keys(Keys.CONTROL, "a")
         self.driver.find_element_by_name('month').send_keys('12')
-        time.sleep(0.1)
         self.driver.find_element_by_name('day').send_keys(Keys.CONTROL, "a")
         self.driver.find_element_by_name('day').send_keys('12')
-        time.sleep(0.1)
         self.driver.find_element_by_name('membership_type').click()
-        time.sleep(0.1)
         self.driver.find_element_by_name('other_colsoc').click()  # Yes
-        # self.driver.find_element_by_id('other_colsoc-1').click()  # No
-        time.sleep(0.1)
         self.driver.find_element_by_id('colsoc_name').send_keys('GEMA')
-        time.sleep(0.1)
         self.driver.find_element_by_name('got_statute').click()
-        time.sleep(0.1)
         self.driver.find_element_by_name('got_dues_regulations').click()
-        time.sleep(0.1)
         self.driver.find_element_by_name('num_shares').send_keys('7')
 
         self.driver.find_element_by_name('submit').click()
@@ -199,7 +152,6 @@ class JoinFormTests(SeleniumTestBase):
         self.assertTrue('Was nun passieren muss: Kontrolliere die Angaben '
                         'unten,' in self.driver.page_source)
         # TODO: check case colsoc = no views.py 765-767
-
         # TODO: check save to DB/randomstring: views.py 784-865
 
         self.failUnless(u'Daten bearbeiten' in self.driver.page_source)
@@ -207,17 +159,12 @@ class JoinFormTests(SeleniumTestBase):
         # back to the form
         self.driver.find_element_by_name('edit').click()
 
-        time.sleep(1)  # wait a little
         self.assertEqual(self.driver.find_element_by_name(
             'lastname').get_attribute('value'), 'Scheid')
         self.assertEqual(self.driver.find_element_by_name(
             'firstname').get_attribute('value'), 'Christoph')
         self.assertEqual(self.driver.find_element_by_name(
             'email').get_attribute('value'), 'c@c3s.cc')
-        # self.assertEqual(self.driver.find_element_by_name(
-        #    'password').get_attribute('value'), 'foobar')
-        # print("the password: %s" % self.driver.find_element_by_name(
-        #        'password').get_attribute('value'))
         self.assertEqual(self.driver.find_element_by_name(
             'address1').get_attribute('value'), 'addr one')
         self.assertEqual(self.driver.find_element_by_name(
@@ -253,7 +200,8 @@ class JoinFormTests(SeleniumTestBase):
         # verify we have to theck this again
         self.driver.find_element_by_name('got_statute').click()
         self.driver.find_element_by_name('got_dues_regulations').click()
-        self.driver.find_element_by_id('other_colsoc-1').click()  # No colsoc
+        # No colsoc
+        self.driver.find_element_by_id('other_colsoc-1').click()
         self.driver.find_element_by_id(
             'colsoc_name').send_keys(Keys.CONTROL, "a")
         self.driver.find_element_by_id('colsoc_name').send_keys(Keys.DELETE)
@@ -261,18 +209,13 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.find_element_by_name('password').send_keys('foobar')
         self.driver.find_element_by_name('password-confirm').send_keys(
             'foobar')
-        time.sleep(0.1)
 
         self.driver.find_element_by_name('submit').click()
-        time.sleep(0.1)
         self.assertTrue(
             'Bitte beachten: Es gab fehler' not in self.driver.page_source)
         self.assertTrue('addr two plus' in self.driver.page_source)
-        # print self.driver.page_source
-        # time.sleep(10)
 
         self.driver.find_element_by_name('send_email').click()
-        time.sleep(0.1)
 
         page = self.driver.page_source
 
@@ -295,12 +238,11 @@ class JoinFormTests(SeleniumTestBase):
         """
         self.assertEqual(self.driver.get_cookies(), [])
         # load the page with the form
-        self.driver.get("http://0.0.0.0:6543?en")
-        # self.driver.maximize_window()
+        self.driver.get("http://0.0.0.0:6544?en")
 
         self.driver.get_screenshot_as_file('test_form_submission_en.png')
 
-        self.failUnless(  # english !?!
+        self.failUnless(
             u'Application for Membership' in self.driver.page_source)
 
         # check for cookie -- should be 'en' for english
@@ -309,49 +251,31 @@ class JoinFormTests(SeleniumTestBase):
         # fill out the form
         self.driver.find_element_by_name("firstname").send_keys("Christoph")
         self.driver.find_element_by_name('lastname').send_keys('Scheid')
-        time.sleep(0.1)
         self.driver.find_element_by_name('email').send_keys('c@c3s.cc')
-        time.sleep(0.1)
         self.driver.find_element_by_name('password').send_keys('foobar')
-        time.sleep(0.1)
         self.driver.find_element_by_name('password-confirm').send_keys(
             'foobar')
-        time.sleep(0.1)
         self.driver.find_element_by_name('address1').send_keys('addr one')
-        time.sleep(0.11)
         self.driver.find_element_by_name('address2').send_keys('addr two')
-        time.sleep(0.11)
         self.driver.find_element_by_name('postcode').send_keys('98765')
-        time.sleep(0.1)
         self.driver.find_element_by_name('city').send_keys('townish')
-        time.sleep(0.1)
         self.driver.find_element_by_name('country').send_keys('Gro')
-        time.sleep(0.1)
         self.driver.find_element_by_name('year').send_keys(Keys.CONTROL, "a")
         self.driver.find_element_by_name('year').send_keys('1998')
-        time.sleep(0.1)
         self.driver.find_element_by_name('month').send_keys(Keys.CONTROL, "a")
         self.driver.find_element_by_name('month').send_keys('12')
-        time.sleep(0.1)
         self.driver.find_element_by_name('day').send_keys(Keys.CONTROL, "a")
         self.driver.find_element_by_name('day').send_keys('12')
-        time.sleep(0.1)
         self.driver.find_element_by_name('membership_type').click()
-        time.sleep(0.1)
-        self.driver.find_element_by_name('other_colsoc').click()  # Yes
-        # self.driver.find_element_by_id('other_colsoc-1').click()  # No
-        time.sleep(0.1)
+        # Yes
+        self.driver.find_element_by_name('other_colsoc').click()
         self.driver.find_element_by_id('colsoc_name').send_keys('GEMA')
-        time.sleep(0.1)
         self.driver.find_element_by_name('got_statute').click()
-        time.sleep(0.1)
         self.driver.find_element_by_name('got_dues_regulations').click()
-        time.sleep(0.1)
         self.driver.find_element_by_name('num_shares').send_keys('7')
 
         self.driver.find_element_by_name('submit').click()
 
-        # self.failUnless('E-Mail anfordern' in self.driver.page_source)
         self.failUnless('Send verification email' in self.driver.page_source)
 
         # TODO: check contents of success page XXX
@@ -362,23 +286,16 @@ class JoinFormTests(SeleniumTestBase):
                         'address,' in self.driver.page_source)
 
         # TODO: check case colsoc = no views.py 765-767
-
         # TODO: check save to DB/randomstring: views.py 784-865
-
         # TODO: check re-edit of form: views.py 877-880 XXX
         self.driver.find_element_by_name('edit').click()
         # back to the form
-        time.sleep(1)  # wait a little
         self.assertEqual(self.driver.find_element_by_name(
             'lastname').get_attribute('value'), 'Scheid')
         self.assertEqual(self.driver.find_element_by_name(
             'firstname').get_attribute('value'), 'Christoph')
         self.assertEqual(self.driver.find_element_by_name(
             'email').get_attribute('value'), 'c@c3s.cc')
-        # self.assertEqual(self.driver.find_element_by_name(
-        #    'password').get_attribute('value'), 'foobar')
-        # print("the password: %s" % self.driver.find_element_by_name(
-        #        'password').get_attribute('value'))
         self.assertEqual(self.driver.find_element_by_name(
             'address1').get_attribute('value'), 'addr one')
         self.assertEqual(self.driver.find_element_by_name(
@@ -414,49 +331,35 @@ class JoinFormTests(SeleniumTestBase):
         # verify we have to theck this again
         self.driver.find_element_by_name('got_statute').click()
         self.driver.find_element_by_name('got_dues_regulations').click()
-        self.driver.find_element_by_id('other_colsoc-1').click()  # No colsoc
+        # No colsoc
+        self.driver.find_element_by_id('other_colsoc-1').click()
         self.driver.find_element_by_id('colsoc_name').send_keys('')
         # enter password
         self.driver.find_element_by_name('password').send_keys('foobar')
         self.driver.find_element_by_name('password-confirm').send_keys(
             'foobar')
-        time.sleep(0.1)
 
         self.driver.find_element_by_name('submit').click()
-        time.sleep(0.1)
         self.assertTrue(
             'Bitte beachten: Es gab fehler' not in self.driver.page_source)
         self.assertTrue('addr two plus' in self.driver.page_source)
-        # print self.driver.page_source
-        # time.sleep(10)
 
         self.driver.find_element_by_name('send_email').click()
-        time.sleep(0.1)
 
         page = self.driver.page_source
 
-        # self.assertTrue('C3S Mitgliedsantrag: Bitte Emails abrufen.' in page)
         self.assertTrue('C3S Membership Application: Check your email' in page)
-        # self.assertTrue('Eine Email wurde verschickt,' in page)
         self.assertTrue('An email was sent,' in page)
         self.assertTrue('Christoph Scheid!' in page)
 
-        # self.assertTrue(
-        #    u'Du wirst eine Email von noreply@c3s.cc mit einem ' in page)
-        # self.assertTrue(
-        #    u'Bestätigungslink erhalten. Bitte rufe Deine Emails ab.' in page)
         self.assertTrue(
             u'You will receive an email from noreply@c3s.cc with ' in page)
         self.assertTrue(
             u'a link. Please check your email!' in page)
 
-        # self.assertTrue(u'Der Betreff der Email lautet:' in page)
         self.assertTrue(u'The email subject line will read:' in page)
-        # self.assertTrue(u'C3S: Email-Adresse' in page)
         self.assertTrue(u'C3S: confirm your email address ' in page)
-        # self.assertTrue(u'tigen und Formular abrufen.' in page)
         self.assertTrue(u'and load your PDF' in page)
-        time.sleep(0.1)
 
 
 class EmailVerificationTests(SeleniumTestBase):
@@ -471,21 +374,18 @@ class EmailVerificationTests(SeleniumTestBase):
         super(EmailVerificationTests, self).setUp()
 
     def tearDown(self):
-        # self.driver.quit()
         super(EmailVerificationTests, self).tearDown()
-        # call(['env/bin/pserve', 'webdrivertest.ini', 'stop'])
 
-    def test_verify_email_de(self):  # views.py 296-298
+    def test_verify_email_de(self):
         """
         This test checks -- after an application has been filled out --
         for the password supplied during application.
         If the password matches the email address, a link to a PDF is given.
         Thus, an half-ready application must be present in the DB.
         """
-        url = "http://0.0.0.0:6543/verify/uat.yes@c3s.cc/ABCDEFGHIJ?de"
+        url = "http://0.0.0.0:6544/verify/uat.yes@c3s.cc/ABCDEFGHIJ?de"
         self.driver.get(url)
 
-        # print(self.driver.page_source)
         self.assertTrue(
             u'Bitte gib Dein Passwort ein, um' in self.driver.page_source)
         self.assertTrue(
@@ -495,15 +395,15 @@ class EmailVerificationTests(SeleniumTestBase):
 
         # try with empty or wrong password -- must fail
         self.driver.find_element_by_name(
-            'password').send_keys('')  # empty password
+            'password').send_keys('')
         self.driver.find_element_by_name('submit').click()
-
         self.assertTrue(
             'Bitte das Passwort eingeben.' in self.driver.page_source)
 
         self.assertTrue('Hier geht es zum PDF...' in self.driver.page_source)
+        # wrong password
         self.driver.find_element_by_name(
-            'password').send_keys('schmoo')  # wrong password
+            'password').send_keys('schmoo')
         self.driver.find_element_by_name('submit').click()
 
         self.assertTrue(
@@ -514,52 +414,49 @@ class EmailVerificationTests(SeleniumTestBase):
         self.driver.find_element_by_name('password').send_keys('berries')
         self.driver.find_element_by_name('submit').click()
 
-        # print(self.driver.page_source)
         self.assertTrue('Lade Dein PDF...' in self.driver.page_source)
         self.assertTrue(
             'C3S_SCE_AFM_Firstn_meLastname.pdf' in self.driver.page_source)
         # XXX TODO: check PDF download
 
-    def test_verify_email_en(self):  # views.py 296-298
+    def test_verify_email_en(self):
         """
         This test checks -- after an application has been filled out --
         for the password supplied during application.
         If the password matches the email address, a link to a PDF is given.
         Thus, an half-ready application must be present in the DB.
         """
-        url = "http://0.0.0.0:6543/verify/uat.yes@c3s.cc/ABCDEFGHIJ?en"
+        url = "http://0.0.0.0:6544/verify/uat.yes@c3s.cc/ABCDEFGHIJ?en"
         self.driver.get(url)
 
-        # print(self.driver.page_source)
         # check text on page
         self.assertTrue(
             'Please enter your password in order ' in self.driver.page_source)
         self.assertTrue(
             'to verify your email address.' in self.driver.page_source)
 
-        #
         # enter empty or wrong password -- must fail
+        # empty password
         self.driver.find_element_by_name(
-            'password').send_keys('')  # empty password
-        self.driver.find_element_by_name('submit').click()  # submit
+            'password').send_keys('')
+        self.driver.find_element_by_name('submit').click()
 
         self.assertTrue(
             'Please enter your password.' in self.driver.page_source)
 
+        # wrong password
         self.driver.find_element_by_name(
-            'password').send_keys('schmoo')  # wrong password
-        self.driver.find_element_by_name('submit').click()  # submit
+            'password').send_keys('schmoo')
+        self.driver.find_element_by_name('submit').click()
 
         self.assertTrue(
             'Please enter your password.' in self.driver.page_source)
 
-        #
         # try correct password
         self.driver.find_element_by_name('password').send_keys('berries')
-        self.driver.find_element_by_name('submit').click()  # submit
+        self.driver.find_element_by_name('submit').click()
 
-        # print(self.driver.page_source)
         self.assertTrue('Load your PDF...' in self.driver.page_source)
-        self.assertTrue(  # PDF form is visible
+        self.assertTrue(
             'C3S_SCE_AFM_Firstn_meLastname.pdf' in self.driver.page_source)
         # XXX TODO: check PDF download
