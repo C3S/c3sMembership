@@ -450,4 +450,3 @@ class MembershipListTests(MemberTestsBase):
 
         self.assertTrue('Page 1 of 1' in res.body)
         self.assertTrue(u'SomeFirstnäme' in res.body.decode('utf-8'))
-        self.assertTrue('ABCDEFGFOO' in res.body)

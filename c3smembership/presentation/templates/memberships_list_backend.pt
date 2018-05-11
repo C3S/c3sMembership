@@ -110,10 +110,6 @@
                 certificate
             </th>
             <th>
-                mtype<br />
-                status
-            </th>
-            <th>
               <a href="${pagination.url.sort_property_alternating_direction('firstname')}"
                   title="Sort by firstname">
                 firstname
@@ -199,28 +195,6 @@
                   class="btn btn-success">PDF</a>
                 </div>
             </td>
-            <td>
-                <a tal:condition="(member.membership_type == 'startnext') or
-                        (member.membership_type == 'unknown') or
-                        (member.membership_type == '')"
-                href="${request.route_url('mail_mtype_form', afmid=member.id)}"
-                title="sende email mit mitgliedschafts-status-abfrage/link zum formular"
-                class="btn btn-danger">
-                    go
-                </a>
-                <a tal:condition="member.membership_type == 'pending'"
-                title="mail ging raus ${member.mtype_email_date.strftime('am %d.%m.%Y um %H:%M')}"
-                class="btn btn-warning">
-                    waiting
-                </a>
-                <a tal:condition="(member.membership_type == 'investing') or
-                        (member.membership_type == 'normal')"
-                title="status bekannt: ${member.membership_type}"
-                class="btn btn-default">
-                    ok
-                </a>
-            </td>
-            <!-- <td><a href="/detail/${member.id}">${member.email_confirm_code}</a></td> -->
             <td>${member.firstname}</td>
             <td>${member.lastname}</td>
             <td>
@@ -230,17 +204,17 @@
                 <div>
                     <a tal:condition="not member.email_is_confirmed and (isinstance(member.email_confirm_token, type(None)))"
                     href="${request.route_url('mail_mail_confirmation',
-                     memberid=member.id)}"
+                     member_id=member.id)}"
                     title="(click to send email confirmation email)"
                     class="btn btn-danger">No...</a>
                     <a tal:condition="(not member.email_is_confirmed) and (not isinstance(member.email_confirm_token, type(None)))"
                     href="${request.route_url('mail_mail_confirmation',
-                     memberid=member.id)}"
+                     member_id=member.id)}"
                     title="sent ${member.email_confirm_mail_date.strftime('%d.%m.%Y %H:%M')} (click to send email confirmation email again)"
                     class="btn btn-warning">Waiting...</a>
                     <a tal:condition="member.email_is_confirmed"
                     href="${request.route_url('mail_mail_confirmation',
-                     memberid=member.id)}"
+                     member_id=member.id)}"
                     title="${member.email_confirm_mail_date}"
                     class="btn btn-default">Yes.</a>
                 </div>

@@ -4,6 +4,13 @@ Next Release
 
 - Fix double entry when applicant edits details
 
+- Remove membership type handling: During the crowdfunding campaign C3S got
+  members of which the information was not complete. It was unknown whether
+  they were natural persons or legal entities and whether they were full or
+  investing members. The functionality to determine the membership type
+  including sending emails and handling responses is no longer needed and
+  therefore removed.
+
 
 
 1.20.5

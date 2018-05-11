@@ -101,10 +101,6 @@ def main(global_config, **settings):
     config.add_route('verify_email_password', '/verify/{email}/{code}')  # PDF
     # PDF download of Step 4.
     config.add_route('success_pdf', '/C3S_SCE_AFM_{namepart}.pdf')  # download
-    # confirm email address later (30c3 cases)
-    config.add_route(
-        'verify_afm_email',
-        '/vae/{refcode}/{token}/{email}')  # verify afm email
 
     # applications for membership
     config.add_route('dashboard', '/dashboard')
@@ -138,18 +134,13 @@ def main(global_config, **settings):
     config.add_route('mail_sig_confirmation', '/mail_sig_conf/{memberid}')
     config.add_route('regenerate_pdf', '/re_C3S_SCE_AFM_{code}.pdf')
     config.add_route('mail_pay_confirmation', '/mail_pay_conf/{member_id}')
-    config.add_route('mail_mail_confirmation', '/mail_mail_conf/{memberid}')
+    config.add_route('mail_mail_confirmation', '/mail_mail_conf/{member_id}')
     config.add_route('mail_sig_reminder', '/mail_sig_reminder/{memberid}')
     config.add_route('mail_pay_reminder', '/mail_pay_reminder/{memberid}')
     config.add_route('delete_entry', '/delete/{memberid}')
     config.add_route('delete_afms', '/delete_afms')
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')
-
-    # gather missing information
-    config.add_route('mail_mtype_form', '/mtype/{afmid}')  # mail link to form
-    config.add_route('mtype_form', '/mtype/{refcode}/{token}/{email}')  # form
-    config.add_route('mtype_thanks', '/mtype_thanks')  # thanks
 
     # applications for membership
     config.add_route('afms_awaiting_approval', '/afms_awaiting_approval')

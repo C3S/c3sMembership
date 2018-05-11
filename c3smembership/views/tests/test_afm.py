@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
 from datetime import date
-
 import unittest
-# from pyramid.config import Configurator
+
 from pyramid import testing
 from pyramid_mailer import get_mailer
 from sqlalchemy import engine_from_config
+import transaction
+from webtest import TestApp
+
+from c3smembership import main
 from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-import transaction
-from webtest import TestApp
-
 from c3smembership.models import (
     C3sMember,
     C3sStaff,
     Group,
 )
-from c3smembership.data.model.base import DBSession
-from c3smembership import main
 import c3smembership.views.afm as afm
 
 

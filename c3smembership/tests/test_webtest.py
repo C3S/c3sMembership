@@ -366,7 +366,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
         # print "the first row: {}".format(first_member_row)
-        first_name = first_member_row('td:nth-child(3)')
+        first_name = first_member_row('td:nth-child(2)')
         # print "the first name: {}".format(first_name)
         self.assertEqual(u'AAASomeFirstnäme', first_name.text())
 
@@ -375,7 +375,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'firstname', 'desc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        first_name = first_member_row('td:nth-child(3)')
+        first_name = first_member_row('td:nth-child(2)')
         self.assertEqual(u'SomeFirstnäme', first_name.text())
 
     def test_dashboard_orderByLastnameAsc_dashboardOrdered(self):
@@ -383,7 +383,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'lastname', 'asc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(4)')
+        last_name = first_member_row('td:nth-child(3)')
         self.assertEqual(u'AAASomeLastnäme', last_name.text())
 
     def test_dashboard_orderByLastnameDesc_dashboardOrdered(self):
@@ -391,7 +391,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(4)')
+        last_name = first_member_row('td:nth-child(3)')
         self.assertEqual(u'XXXSomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_sameOrderAsBefore(self):
@@ -402,7 +402,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resdel = resdel.follow()
         pq = self._get_pyquery(resdel.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(4)')
+        last_name = first_member_row('td:nth-child(3)')
         self.assertEqual(u'SomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_messageShown(self):
