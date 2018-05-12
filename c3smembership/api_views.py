@@ -26,7 +26,6 @@ There are two validators involved:
 
 from cornice import Service
 import json
-from types import NoneType
 from webob.exc import HTTPUnauthorized
 
 from c3smembership.models import C3sMember
@@ -76,7 +75,7 @@ def api_userinfo(request):
         print(u"the refcode received: {}".format(request.validated['refcode']))
 
     _m = C3sMember.get_by_bcgvtoken(request.validated['refcode'])
-    if isinstance(_m, NoneType):
+    if _m is None:
         return {
             'firstname': 'None',
             'lastname': 'None',

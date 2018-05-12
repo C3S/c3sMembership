@@ -17,7 +17,6 @@ from datetime import (
     datetime,
     date,
 )
-from types import NoneType
 
 import deform
 from deform import ValidationFailure
@@ -86,7 +85,7 @@ def accountants_login(request):
         controls = request.POST.items()
         try:
             appstruct = form.validate(controls)
-        except ValidationFailure, e_validation_failure:
+        except ValidationFailure as e_validation_failure:
             request.session.flash(
                 _(u"Please note: There were errors, "
                   "please check the form below."),
@@ -405,7 +404,7 @@ def mail_signature_reminder(request):
     """
     member_id = request.matchdict['memberid']
     member = C3sMember.get_by_id(member_id)
-    if isinstance(member, NoneType):
+    if member is None:
         request.session.flash(
             'that member was not found! (id: {})'.format(member_id),
             'messages'

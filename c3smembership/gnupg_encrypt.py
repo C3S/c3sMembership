@@ -16,6 +16,8 @@ import gnupg
 import tempfile
 import shutil
 
+from c3smembership import unicode
+
 DEBUG = False
 # DEBUG = True
 
@@ -108,7 +110,7 @@ iRxv2JwkwRYtQFg5bFO3NqulcEBAgSmz/TViRvGS3xBZtu08jUW55k9EIuAKzJ3K
         pass
 
     if DEBUG:  # pragma: no cover
-        print "list_keys(): " + str(gpg.list_keys())
+        print("list_keys(): " + str(gpg.list_keys()))
 
     # prepare
     to_encode = data
@@ -118,7 +120,7 @@ iRxv2JwkwRYtQFg5bFO3NqulcEBAgSmz/TViRvGS3xBZtu08jUW55k9EIuAKzJ3K
     #    print("encrypt_with_gnupg: type(data): %s") % type(data)
     #    print("type of to_encode: %s") % type(to_encode)
 
-    if isinstance(to_encode, unicode):
+    if type(to_encode) == unicode:
         # print("type is unicode")
         to_encrypt = to_encode.encode(gpg.encoding)
     else:
@@ -131,7 +133,7 @@ iRxv2JwkwRYtQFg5bFO3NqulcEBAgSmz/TViRvGS3xBZtu08jUW55k9EIuAKzJ3K
     #    print("type is neither str nor unicode: %s") % type(to_encode)
 
     if DEBUG:  # pragma: no cover
-        print "len(to_encrypt): " + str(len(str(to_encrypt)))
+        print("len(to_encrypt): " + str(len(str(to_encrypt))))
         # print("encrypt_with_gnupg: to_encrypt: %s") % to_encrypt
         print("encrypt_with_gnupg: type(to_encrypt): %s") % type(to_encrypt)
 
@@ -151,7 +153,7 @@ iRxv2JwkwRYtQFg5bFO3NqulcEBAgSmz/TViRvGS3xBZtu08jUW55k9EIuAKzJ3K
             encrypted.data)
         # print "encrypted: " + str(encrypted)
         # print "len(encrypted): " + str(len(str(encrypted)))
-        print ("========================================== GNUPG END")
+        print("========================================== GNUPG END")
     shutil.rmtree(keyfolder)
 
     return encrypted.data
@@ -168,7 +170,7 @@ if __name__ == '__main__':  # pragma: no coverage
     --                                      --
     """
     result = encrypt_with_gnupg(my_unicode_text)
-    print result
+    print(result)
 
     my_string = """
     --                                      --
@@ -179,4 +181,4 @@ if __name__ == '__main__':  # pragma: no coverage
     --                                      --
     """
     result = encrypt_with_gnupg(my_string)
-    print result
+    print(result)

@@ -470,7 +470,7 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
         with self.assertRaises(Exception):
             members = my_membership_signee_class.member_listing("foo")
             if DEBUG:
-                print members
+                print(members)
 
     def test_nonmember_listing(self):
         """

@@ -181,7 +181,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # login
         #
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         # try invalid user
         form = res.form
         form['login'] = 'foo'
@@ -458,7 +458,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
 
     def _login(self):
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         # try valid user, valid password
         form = res.form
         form['login'] = 'rut'
@@ -495,8 +495,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
         form = res3.forms[0]
         form['code_to_show'] = 'foo'
         res = form.submit()
-        self.failUnless('Search for members' in res.body)
-        self.failUnless('Code finden' in res.body)
+        self.failUnless('Search for members' in res.body.decode('utf-8'))
+        self.failUnless('Code finden' in res.body.decode('utf-8'))
         # now use existing code
         form = res.forms[0]
         # print form.fields
@@ -505,8 +505,9 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = form.submit()
         # print res2.body
         res = res2.follow()
-        self.failUnless('Details for Member Application' in res.body)
-        self.failUnless('ABCDEFGBAZ' in res.body)
+        self.failUnless('Details for Member Application' \
+            in res.body.decode('utf-8'))
+        self.failUnless('ABCDEFGBAZ' in res.body.decode('utf-8'))
 
     def test_search_people(self):
         """
@@ -526,8 +527,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
         form = res3.forms[0]
         form['code_to_show'] = 'foo'
         res = form.submit()
-        self.failUnless('Search for members' in res.body)
-        self.failUnless('Personen finden' in res.body)
+        self.failUnless('Search for members' in res.body.decode('utf-8'))
+        self.failUnless('Personen finden' in res.body.decode('utf-8'))
         # now use existing code
         form = res.forms[0]
         # print form.fields
@@ -548,7 +549,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # login
         #
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         # try valid user, valid password
         form = res.form
         form['login'] = 'rut'
@@ -679,9 +680,10 @@ class FunctionalTests(unittest.TestCase):
     def test_base_template(self):
         """load the front page, check string exists"""
         res = self.testapp.get('/', status=200)
-        self.failUnless('Cultural Commons Collecting Society' in res.body)
-        self.failUnless(
-            'Copyright 2014, C3S SCE' in res.body)
+        self.failUnless('Cultural Commons Collecting Society' \
+            in res.body.decode('utf-8'))
+        self.failUnless('Copyright 2014, C3S SCE' \
+            in res.body.decode('utf-8'))
 
     # def test_faq_template(self):
     #     """load the FAQ page, check string exists"""
@@ -696,18 +698,18 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/?_LOCALE_=en', status=200)
         self.failUnless(
-            'Application for Membership of ' in res.body)
+            'Application for Membership of ' in res.body.decode('utf-8'))
 
     def test_lang_en(self):
         """load the front page, set to english (w/ pretty query string),
         check english string exists"""
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/?en', status=302)
-        self.failUnless('The resource was found at' in res.body)
+        self.failUnless('The resource was found at' in res.body.decode('utf-8'))
         # we are being redirected...
         res1 = res.follow()
         self.failUnless(
-            'Application for Membership of ' in res1.body)
+            'Application for Membership of ' in res1.body.decode('utf-8'))
 
 # so let's test the app's obedience to the language requested by the browser
 # i.e. will it respond to http header Accept-Language?
@@ -733,9 +735,10 @@ class FunctionalTests(unittest.TestCase):
                 'Accept-Language': 'de-DE'})
         # print(res.body) #  if you want to see the pages source
         self.failUnless(
-            'Mitgliedschaftsantrag für die' in res.body)
+            'Mitgliedschaftsantrag für die' in res.body.decode('utf-8'))
         self.failUnless(
-            '<input type="hidden" name="locale" value="de"' in res.body)
+            '<input type="hidden" name="locale" value="de"' \
+            in res.body.decode('utf-8'))
 
     def test_accept_language_header_en(self):
         """check the http 'Accept-Language' header obedience: english
@@ -748,7 +751,7 @@ class FunctionalTests(unittest.TestCase):
         # print(res.body) #  if you want to see the pages source
         self.failUnless(
             "I want to become"
-            in res.body)
+            in res.body.decode('utf-8'))
 
     # def test_accept_language_header_es(self):
     #     """check the http 'Accept-Language' header obedience: spanish
@@ -780,7 +783,8 @@ class FunctionalTests(unittest.TestCase):
             headers={
                 'Accept-Language': 'af, cn'})  # ask for missing languages
         # print res.body
-        self.failUnless('Application for Membership' in res.body)
+        self.failUnless('Application for Membership' \
+            in res.body.decode('utf-8'))
 
 #############################################################################
 # check for validation stuff
@@ -802,15 +806,16 @@ class FunctionalTests(unittest.TestCase):
         """load the join form, check german string exists"""
         res = self.testapp.get('/?de', status=302)
         # print(res)
-        self.failUnless('The resource was found at' in res.body)
+        self.failUnless('The resource was found at' \
+            in res.body.decode('utf-8'))
         # we are being redirected...
         res2 = res.follow()
         # print(res2)
         # test for german translation of template text (lingua_xml)
         self.failUnless(
-            'Mitgliedschaftsantrag für die' in res2.body)
+            'Mitgliedschaftsantrag für die' in res2.body.decode('utf-8'))
         # test for german translation of form field label (lingua_python)
-        self.failUnless('Vorname' in res2.body)
+        self.failUnless('Vorname' in res2.body.decode('utf-8'))
 
     def test_form_lang_LOCALE_de(self):
         """load the join form in german, check german string exists
@@ -819,9 +824,9 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.get('/?_LOCALE_=de', status=200)
         # test for german translation of template text (lingua_xml)
         self.failUnless(
-            'Mitgliedschaftsantrag für die' in res.body)
+            'Mitgliedschaftsantrag für die' in res.body.decode('utf-8'))
         # test for german translation of form field label (lingua_python)
-        self.failUnless('Vorname' in res.body)
+        self.failUnless('Vorname' in res.body.decode('utf-8'))
 
 ###########################################################################
 # checking the success page that sends out email with verification link
@@ -831,7 +836,8 @@ class FunctionalTests(unittest.TestCase):
         check english string exists"""
         res = self.testapp.reset()
         res = self.testapp.get('/check_email?en', status=302)
-        self.failUnless('The resource was found at' in res.body)
+        self.failUnless('The resource was found at' \
+            in res.body.decode('utf-8'))
         # we are being redirected...
         res1 = res.follow()
         # print(res1)
@@ -849,7 +855,7 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.reset()
         res = self.testapp.get('/verify/foo@shri.de/ABCD-----', status=200)
         self.failUnless(
-            'Password' in res.body)
+            'Password' in res.body.decode('utf-8'))
         form = res.form
         form['password'] = 'foobar'
         res2 = form.submit('submit')
@@ -862,7 +868,7 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.reset()
         res = self.testapp.get('/verify/some@shri.de/ABCDEFGFOO', status=200)
         self.failUnless(
-            'Password' in res.body)
+            'Password' in res.body.decode('utf-8'))
         form = res.form
         form['password'] = 'arandompassword'
         res2 = form.submit('submit')
@@ -879,7 +885,8 @@ class FunctionalTests(unittest.TestCase):
         check for redirection and english string exists"""
         res = self.testapp.reset()
         res = self.testapp.get('/success?en', status=302)
-        self.failUnless('The resource was found at' in res.body)
+        self.failUnless('The resource was found at' \
+            in res.body.decode('utf-8'))
         # we are being redirected...
         res1 = res.follow()
         # print(res1)
@@ -897,7 +904,8 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.get(
             '/C3S_SCE_AFM_ThefirstnameThelastname.pdf',
             status=302)
-        self.failUnless('The resource was found at' in res.body)
+        self.failUnless('The resource was found at' \
+            in res.body.decode('utf-8'))
         # we are being redirected...
         res1 = res.follow()
         # print(res1)
@@ -938,7 +946,8 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.get(
             '/verify/NOTEXISTS@shri.de/ABCDEFGHIJ', status=200)
         # print(res.body)
-        self.failUnless("Please enter your password." in res.body)
+        self.failUnless("Please enter your password." \
+            in res.body.decode('utf-8'))
         # XXX this test shows nothing interesting
 
     def test_email_confirmation_wrong_code(self):
@@ -948,7 +957,8 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.reset()
         res = self.testapp.get('/verify/foo@shri.de/WRONGCODE', status=200)
         # print(res.body)
-        self.failUnless("Please enter your password." in res.body)
+        self.failUnless("Please enter your password." \
+            in res.body.decode('utf-8'))
 
     def test_success_check_email(self):
         """

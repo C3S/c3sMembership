@@ -22,7 +22,6 @@ from datetime import (
     datetime,
 )
 import logging
-from types import NoneType
 
 import colander
 from colander import (
@@ -38,6 +37,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from pyramid_mailer.message import Message
 
+from c3smembership import unicode
 from c3smembership.deform_text_input_slider_widget import (
     TextInputSliderWidget
 )
@@ -100,7 +100,7 @@ def join_c3s(request):
         locale_name = get_locale_name(request)
 
     if DEBUG:
-        print "-- locale_name: " + str(locale_name)
+        print("-- locale_name: " + str(locale_name))
 
     from c3smembership.utils import country_codes
     # set default of Country select widget according to locale
@@ -593,7 +593,7 @@ def success_verify_email(request):
         # get matching dataset from DB
         member = C3sMember.get_by_code(confirm_code)  # returns member or None
 
-        if isinstance(member, NoneType):
+        if member is None:
             # member not found: FAIL!
             not_found_msg = _(
                 u"Not found. Check verification URL. "

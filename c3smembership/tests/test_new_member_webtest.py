@@ -83,7 +83,7 @@ class NewMemberTests(unittest.TestCase):
 
     def _login(self):
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         res.form['login'] = 'rut'
         res.form['password'] = 'berries'
         res.form.submit('submit', status=302)
@@ -133,7 +133,8 @@ class NewMemberTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/new_member', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
 
         # so login first
         self._login()

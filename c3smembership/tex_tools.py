@@ -28,7 +28,7 @@ class TexTools(object):
         u'°': r'\degree{}',
         u'ß': r'\ss{}',
     }
-    regex = re.compile(u'|'.join(re.escape(unicode(key))
+    regex = re.compile(u'|'.join(re.escape(key)
                        for key in sorted(
                            conv.keys(),
                            key=lambda item: -len(item))))

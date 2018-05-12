@@ -8,6 +8,7 @@ so the board can decide during one of its virtual meetings.
 """
 from pyramid.view import view_config
 
+from c3smembership import unicode
 from c3smembership.models import (
     C3sMember,
 )

@@ -290,9 +290,19 @@ class PagingIterator(Paging):
         """
         return self
 
+    def __next__(self):
+        """
+        Returns the next object in iteration.
+
+        Python3 compatible.
+        """
+        return self.next()
+
     def next(self):
         """
         Returns the next object in iteration.
+
+        Python2 compatible.
         """
         if self.__iter_position < self.last_page.page_number:
             self.__iter_position += 1

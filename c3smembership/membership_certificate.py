@@ -25,7 +25,6 @@ from pyramid_mailer.message import Message
 import shutil
 import subprocess
 import tempfile
-from types import NoneType
 from c3smembership.mail_utils import (
     make_membership_certificate_email,
     send_message,
@@ -63,7 +62,7 @@ def send_certificate_email(request):
 
     mid = request.matchdict['id']
     member = C3sMember.get_by_id(mid)
-    if isinstance(member, NoneType) or not member.is_member():
+    if member is None or not member.is_member():
         return Response(
             'that id does not exist or is not an accepted member. go back',
             status='404 Not Found',)
@@ -116,11 +115,11 @@ def generate_certificate(request):
         member = C3sMember.get_by_id(mid)
 
         if DEBUG:  # pragma: no cover
-            print member.firstname
-            print member.certificate_token
-            print type(member.certificate_token)  # NoneType
-            print token
-            print type(token)  # unicode
+            print(member.firstname)
+            print(member.certificate_token)
+            print(type(member.certificate_token))
+            print(token)
+            print(type(token))
 
         # token may not ne None
         assert(member.certificate_token is not None)
@@ -143,7 +142,7 @@ def generate_certificate(request):
             status='404 Not Found',
         )
 
-    if isinstance(member, NoneType) or not member.is_member():
+    if member is None or not member.is_member():
         return Response(
             'that id does not exist or is not an accepted member. go back',
             status='404 Not Found',)
@@ -165,7 +164,7 @@ def generate_certificate_staff(request):
     if member is None:
         return Response('Not found. Please check URL.')
 
-    if isinstance(member, NoneType) or not member.is_member():
+    if member is None or not member.is_member():
         return Response(
             'Member with this id ({}) is not an accepted member!'.format(mid),
             status='404 Not Found',)
@@ -331,11 +330,11 @@ def gen_cert(member):
     latex_data += '\n\\input{%s}' % latex_footer_tex
 
     if DEBUG:  # pragma: no cover
-        print '*' * 70
+        print('*' * 70)
         print('*' * 30, 'latex data: ', '*' * 30)
-        print '*' * 70
-        print latex_data
-        print '*' * 70
+        print('*' * 70)
+        print(latex_data)
+        print('*' * 70)
     latex_file.write(latex_data.encode('utf-8'))
     latex_file.seek(0)  # rewind
 

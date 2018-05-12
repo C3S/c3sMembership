@@ -5,7 +5,6 @@ This module has functionality to let staff do administrative tasks.
 
 from datetime import datetime
 import logging
-from types import NoneType
 
 import colander
 import deform
@@ -101,7 +100,7 @@ your membership tool''' % (_staffer.login,
         controls = request.POST.items()
         try:
             appstruct = stafferform.validate(controls)
-        except ValidationFailure, error:
+        except ValidationFailure as error:
             return {
                 'stafferform': error.render()
             }
@@ -196,7 +195,7 @@ def delete_afms(request):
             _last = appstruct['last']
             # pylint: disable=superfluous-parens
             assert(_first < _last)
-        except ValidationFailure, error:
+        except ValidationFailure as error:
             return {
                 'resetform': error.render()
             }
@@ -219,7 +218,7 @@ def mail_mail_conf(request):
     '''
     member_id = request.matchdict['member_id']
     member = C3sMember.get_by_id(member_id)
-    if isinstance(member, NoneType):
+    if member is None:
         request.session.flash(
             'id not found. no mail sent.',
             'messages')

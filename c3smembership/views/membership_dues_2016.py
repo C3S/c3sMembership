@@ -29,6 +29,7 @@ from pyramid_mailer.message import Message
 from pyramid.response import Response
 from pyramid.view import view_config
 
+from c3smembership import unicode
 from c3smembership.data.model.base import DBSession
 from c3smembership.models import (
     C3sMember,
@@ -538,7 +539,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
 
     # generate tex command for pdflatex
     tex_cmd = u''
-    for key, val in tex_vars.iteritems():
+    for key, val in tex_vars.items():
         tex_cmd += '\\newcommand{\\%s}{%s}' % (key, TexTools.escape(val))
     tex_cmd += '\\input{%s}' % tpl_tex
     tex_cmd = u'"'+tex_cmd+'"'
@@ -936,7 +937,7 @@ def make_reversal_pdf_pdflatex(member, invoice=None):
 
     # generate tex command for pdflatex
     tex_cmd = u''
-    for key, val in tex_vars.iteritems():
+    for key, val in tex_vars.items():
         tex_cmd += '\\newcommand{\\%s}{%s}' % (key, TexTools.escape(val))
     tex_cmd += '\\input{%s}' % tpl_tex
     tex_cmd = u'"'+tex_cmd+'"'

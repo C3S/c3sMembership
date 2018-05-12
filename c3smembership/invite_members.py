@@ -38,7 +38,6 @@ module.
 
 from datetime import datetime
 import logging
-from types import NoneType
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
@@ -70,7 +69,7 @@ def invite_member_bcgv(request):
     """
     member_id = request.matchdict['m_id']
     member = C3sMember.get_by_id(member_id)
-    if isinstance(member, NoneType):
+    if member is None:
         request.session.flash(
             'id not found. no mail sent.',
             'messages')

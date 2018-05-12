@@ -77,7 +77,6 @@ class AccessToken(Base):
 
         Raises:
             TypeError:
-                If available_characters is not of type unicode.
                 If available_characters does not contain at least one
                 character.
                 If length is not of type int.
@@ -85,9 +84,6 @@ class AccessToken(Base):
                 AccessToken.LENGTH.
                 If expiration_timespan is not of type timedelta.
         """
-        if not isinstance(available_characters, unicode):
-            raise TypeError(
-                'Parameter available_characters must be of type unicode.')
         if len(available_characters) < 1:
             raise TypeError(
                 'Parameter available_characters must contain at least one '

@@ -1,6 +1,6 @@
-import StringIO
+from io import StringIO
 import unicodecsv
-from gnupg_encrypt import encrypt_with_gnupg
+from c3smembership.gnupg_encrypt import encrypt_with_gnupg
 
 
 class CSVRenderer(object):
@@ -8,7 +8,7 @@ class CSVRenderer(object):
         pass
 
     def __call__(self, value, system):
-        fout = StringIO.StringIO()
+        fout = StringIO()
         writer = unicodecsv.writer(
             fout, delimiter=';', quoting=unicodecsv.QUOTE_ALL)
 

@@ -4,6 +4,7 @@ This module holds the main method: config and route declarations
 """
 
 import os
+import sys
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -27,6 +28,15 @@ from c3smembership.presentation.views.membership_listing import (
 
 __version__ = open(os.path.join(os.path.abspath(
     os.path.dirname(__file__)), '../VERSION')).read()
+
+
+def _python3_unicode(value):
+    return str(value)
+
+if sys.version_info.major > 2:
+    unicode = _python3_unicode
+else:
+    unicode = unicode
 
 
 def main(global_config, **settings):

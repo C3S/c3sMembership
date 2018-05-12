@@ -144,7 +144,8 @@ class EditMemberTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/edit/1', status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.failUnless('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
 
         self.__login()
 
@@ -207,7 +208,7 @@ class EditMemberTests(unittest.TestCase):
         """
         Validate that the resource in res is the details page
         """
-        self.assertTrue('<h1>Details for' in res.body)
+        self.assertTrue('<h1>Details for' in res.body.decode('utf-8'))
 
     def __validate_successful_submit(self, res):
         """
@@ -243,7 +244,7 @@ class EditMemberTests(unittest.TestCase):
         """
         Set the properties of the form in the resource.
         """
-        for key, value in properties.iteritems():
+        for key, value in properties.items():
             res.form[key] = value
 
     def __validate_successful_edit(
@@ -284,7 +285,7 @@ class EditMemberTests(unittest.TestCase):
         res = self.testapp.get(
             '/edit/{0}'.format(member_id),
             status=200)
-        self.failUnless('Mitglied bearbeiten' in res.body)
+        self.failUnless('Mitglied bearbeiten' in res.body.decode('utf-8'))
         return res
 
     def __login(self):
@@ -292,7 +293,7 @@ class EditMemberTests(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -311,7 +312,7 @@ class EditMemberTests(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Dashboard' in res.body)
+        self.failUnless('Dashboard' in res.body.decode('utf-8'))
 
     def test_membership_loss(self):
         '''

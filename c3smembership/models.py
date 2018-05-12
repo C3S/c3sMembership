@@ -66,7 +66,7 @@ def hash_password(password):
     """
     Calculates the password hash.
     """
-    return unicode(CRYPT.encode(password))
+    return CRYPT.encode(password)
 
 
 # TODO: Use standard SQLAlchemy Decimal when a database is used which supports
@@ -245,7 +245,14 @@ class C3sStaff(Base):
             the answer of bcrypt.crypt, comparing the password supplied
                 and the hash from the database
         """
+        import logging
+        logging.getLogger(__name__).info('test')
+
         staffer = cls.get_by_login(login)
+
+        logging.getLogger(__name__).info(staffer.password)
+        logging.getLogger(__name__).info(password)
+
         return CRYPT.check(staffer.password, password)
 
     # this one is used by RequestWithUserAttribute

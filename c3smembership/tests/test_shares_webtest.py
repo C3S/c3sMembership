@@ -201,9 +201,10 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -229,9 +230,11 @@ class SharesTests(unittest.TestCase):
 
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('1: SomeFirstnäme SomeLastnäme' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' \
+            in res.body.decode('utf-8'))
+        self.assertTrue('1: SomeFirstnäme SomeLastnäme' \
+            in res.body.decode('utf-8'))
+        self.assertTrue('ABCDEFGH' in res.body.decode('utf-8'))
 
     def test_shares_edit(self):
         '''
@@ -240,9 +243,10 @@ class SharesTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         # try valid user
         form = res.form
         form['login'] = u'rut'
@@ -267,7 +271,7 @@ class SharesTests(unittest.TestCase):
 
         # now try valid id
         res = self.testapp.get('/shares_edit/1', status=200)
-        self.failUnless('Edit Details for Shares' in res.body)
+        self.failUnless('Edit Details for Shares' in res.body.decode('utf-8'))
 
         # now we change details, really editing that member
         form = res.form
@@ -299,9 +303,10 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -319,9 +324,11 @@ class SharesTests(unittest.TestCase):
 
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('1: SomeFirstnäme SomeLastnäme' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' \
+            in res.body.decode('utf-8'))
+        self.assertTrue('1: SomeFirstnäme SomeLastnäme' \
+            in res.body.decode('utf-8'))
+        self.assertTrue('ABCDEFGH' in res.body.decode('utf-8'))
 
         # try to delete a non-existing package
         res = self.testapp.get('/shares_delete/123', status=302)
@@ -338,6 +345,7 @@ class SharesTests(unittest.TestCase):
         res2 = res.follow()
 
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' \
+            in res.body.decode('utf-8'))
         # self.assertTrue('1: Not Found' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('ABCDEFGH' in res.body.decode('utf-8'))

@@ -246,8 +246,8 @@ def member_list_print_view(request):
                 assert(member.membership_number is not None)
             except AssertionError:
                 if DEBUG:  # pragma: no cover
-                    print u"failed at id {} lastname {}".format(
-                        member.id, member.lastname)
+                    print(u"failed at id {} lastname {}".format(
+                        member.id, member.lastname))
             member_list.append(member)
             count += 1
     # sort members alphabetically
@@ -285,7 +285,7 @@ def merge_member_view(request):
     afm_id = request.matchdict['afm_id']
     member_id = request.matchdict['mid']
     if DEBUG:  # pragma: no cover
-        print "shall merge {} to {}".format(afm_id, member_id)
+        print("shall merge {} to {}".format(afm_id, member_id))
 
     orig = C3sMember.get_by_id(member_id)
     merg = C3sMember.get_by_id(afm_id)
@@ -377,7 +377,6 @@ def make_member_view(request):
     try:  # does that id make sense? member exists?
         member = C3sMember.get_by_id(afm_id)
         assert(isinstance(member, C3sMember))  # is an application
-        # assert(isinstance(member.membership_number, NoneType)
         # not has number
     except AssertionError:
         return HTTPFound(
@@ -395,7 +394,7 @@ def make_member_view(request):
         try:
             member.membership_date = datetime.strptime(
                 request.POST['membership_date'], '%Y-%m-%d').date()
-        except ValueError, value_error:
+        except ValueError as value_error:
             request.session.flash(value_error.message, 'merge_message')
             return HTTPFound(
                 request.route_url('make_member', afm_id=member.id))

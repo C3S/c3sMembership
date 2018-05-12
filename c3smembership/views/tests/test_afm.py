@@ -8,7 +8,7 @@ from sqlalchemy import engine_from_config
 import transaction
 from webtest import TestApp
 
-from c3smembership import main
+from c3smembership import (main, unicode)
 from c3smembership.data.model.base import (
     DBSession,
     Base,
@@ -211,7 +211,8 @@ class TestViews(unittest.TestCase):
         form = self._fill_form_valid_natural(res.form)
         res = form.submit(u'submit', status=302)
         res = res.follow()
-        self.assertTrue('information below to be correct' in res.body)
+        self.assertTrue('information below to be correct' \
+            in res.body.decode('utf-8'))
 
         # success for 18th birthday
         res = self.testapp.get('/', status=200)
@@ -222,7 +223,8 @@ class TestViews(unittest.TestCase):
         form['day'] = u'29'
         res = form.submit(u'submit', status=302)
         res = res.follow()
-        self.assertTrue('information below to be correct' in res.body)
+        self.assertTrue('information below to be correct' \
+            in res.body.decode('utf-8'))
 
         # failure on test one day before 18th birthday
         res = self.testapp.get('/', status=200)
@@ -232,7 +234,8 @@ class TestViews(unittest.TestCase):
         form['month'] = u'04'
         form['day'] = u'30'
         res = form.submit(u'submit', status=200)
-        self.assertTrue('underaged person is currently not' in res.body)
+        self.assertTrue('underaged person is currently not' \
+            in res.body.decode('utf-8'))
 
         # failure for statute not checked
         res = self.testapp.get('/', status=200)

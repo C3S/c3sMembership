@@ -110,9 +110,10 @@ class AwaitingApprovalTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/afms_awaiting_approval', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert(
+            'Access was denied to this resource' in res.body.decode('utf-8'))
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -121,14 +122,16 @@ class AwaitingApprovalTests(unittest.TestCase):
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.failUnless(
-            'Dashboard' in res3.body)
+            'Dashboard' in res3.body.decode('utf-8'))
         # now look at the view to test
         res = self.testapp.get('/afms_awaiting_approval', status=200)
-        self.assertTrue('Neue Genossenschaftsmitglieder' not in res.body)
+        self.assertTrue('Neue Genossenschaftsmitglieder' \
+            not in res.body.decode('utf-8'))
 
         # create a member
         self.make_member_ready_for_approval()
 
         res = self.testapp.get('/afms_awaiting_approval', status=200)
-        self.assertTrue('Neue Genossenschaftsmitglieder' in res.body)
-        self.assertTrue('SomeFirstnäme' in res.body)
+        self.assertTrue('Neue Genossenschaftsmitglieder' \
+            in res.body.decode('utf-8'))
+        self.assertTrue('SomeFirstnäme' in res.body.decode('utf-8'))

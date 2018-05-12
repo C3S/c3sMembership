@@ -202,7 +202,7 @@ class MemberTestsBase(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -221,7 +221,7 @@ class MemberTestsBase(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Dashboard' in res.body)
+        self.failUnless('Dashboard' in res.body.decode('utf-8'))
 
 
 class MakeMergeMemberTests(MemberTestsBase):
@@ -237,7 +237,8 @@ class MakeMergeMemberTests(MemberTestsBase):
 
         res = self.testapp.get(
             '/make_member/{afm_id}'.format(afm_id=afm_id), status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.failUnless('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
 
         self._MemberTestsBase__login()
 
@@ -278,15 +279,14 @@ class MakeMergeMemberTests(MemberTestsBase):
             status=200)  # 200 -- OK
 
         # some assertions
-        self.assertTrue('You are about to make this person '
-                        'a proper member of C3S SCE:' in res.body)
-        self.assertTrue('Membership Number to be given: 1' in res.body)
-        self.assertTrue(
-            'form action="http://localhost/make_member/1' in res.body)
+        self.assertTrue('You are about to make this person a proper member '
+                        'of C3S SCE:' in res.body.decode('utf-8'))
+        self.assertTrue('Membership Number to be given: 1' \
+            in res.body.decode('utf-8'))
+        self.assertTrue('form action="http://localhost/make_member/1' \
+            in res.body.decode('utf-8'))
         self.assertTrue(
             u'SomeFirstnäme SomeLastnäme' in res.body.decode('utf-8'))
-        self.assertTrue('' in res.body)
-        self.assertTrue('' in res.body)
 
         # this member must not be accepted yet
         self.assertTrue(m1.membership_accepted is False)
@@ -339,7 +339,8 @@ class MakeMergeMemberTests(MemberTestsBase):
                 afm_id=afm.id,
                 mid=m.id),
             status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.failUnless('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
 
         # authenticate/authorize
         self._MemberTestsBase__login()
@@ -375,7 +376,8 @@ class MembershipListTests(MemberTestsBase):
         _bad_date = '2016-02-111111'  # any bad date
         res = self.testapp.reset()  # delete cookies
         res = self.testapp.get('/aml-' + _date + '.pdf', status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.failUnless('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
 
         self._MemberTestsBase__login()
 
@@ -413,7 +415,8 @@ class MembershipListTests(MemberTestsBase):
         '''
         res = self.testapp.reset()  # delete cookies
         res = self.testapp.get('/aml', status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.failUnless('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
 
         self._MemberTestsBase__login()
 
@@ -422,14 +425,14 @@ class MembershipListTests(MemberTestsBase):
         member4_lost.membership_number = 9876
 
         res = self.testapp.get('/aml', status=200)
-        self.assertTrue('2 Mitglieder' in res.body)
+        self.assertTrue('2 Mitglieder' in res.body.decode('utf-8'))
 
         member4_lost.membership_date = date.today() - timedelta(days=365)
         member4_lost.membership_loss_date = \
             date.today() - timedelta(days=30)
 
         res = self.testapp.get('/aml', status=200)
-        self.assertTrue('1 Mitglieder' in res.body)
+        self.assertTrue('1 Mitglieder' in res.body.decode('utf-8'))
 
     def test_membership_listing_backend_view(self):  # code lines 328-411
         '''
@@ -442,11 +445,12 @@ class MembershipListTests(MemberTestsBase):
         #  so it is not None --> keyerror
         #
         #
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.failUnless('Access was denied to this resource' \
+            in res.body.decode('utf-8'))
 
         self._MemberTestsBase__login()
 
         res = self.testapp.get('/memberships', status=200)
 
-        self.assertTrue('Page 1 of 1' in res.body)
+        self.assertTrue('Page 1 of 1' in res.body.decode('utf-8'))
         self.assertTrue(u'SomeFirstnäme' in res.body.decode('utf-8'))

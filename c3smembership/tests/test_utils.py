@@ -113,7 +113,7 @@ class TestUtilities(unittest.TestCase):
                 self.assertTrue(210000 > len(result.body) > 50000)
                 # TODO: check pdf for contents
 
-        except CalledProcessError, cpe:
+        except CalledProcessError as cpe:
             pass
 
     def test_generate_pdf_de(self):
@@ -153,7 +153,7 @@ class TestUtilities(unittest.TestCase):
                 self.assertTrue(210000 > len(result.body) > 50000)
                 # TODO: check pdf for contents
 
-        except CalledProcessError, cpe:
+        except CalledProcessError as cpe:
             pass
 
     def test_mail_body(self):

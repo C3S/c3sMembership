@@ -27,7 +27,6 @@ import logging
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 from pyramid.view import view_config
-from types import NoneType
 from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,
@@ -62,7 +61,7 @@ def edit_member(request):
         _id = request.matchdict['_id']
         assert(isinstance(int(_id), int))
         member = C3sMember.get_by_id(_id)
-        if isinstance(member, NoneType):
+        if member is None:
             return HTTPFound(request.route_url('dashboard'))
     except:
         return HTTPFound(request.route_url('dashboard'))
@@ -626,7 +625,7 @@ def edit_member(request):
         else:
             member.membership_accepted = appstruct[
                 'membership_meta']['membership_accepted']
-            if isinstance(member.membership_number, NoneType) \
+            if member.membership_number is None \
                     and member.membership_accepted:
                 member.membership_number = \
                     C3sMember.get_next_free_membership_number()

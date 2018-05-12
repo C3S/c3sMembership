@@ -30,7 +30,6 @@ from sqlalchemy.exc import (
     InvalidRequestError,
     IntegrityError
 )
-from types import NoneType
 
 country_default = 'Germany'
 
@@ -319,7 +318,7 @@ def new_member(request):
 
             # add a member with a DB id that had seen its entry deleted before
                 _mem = C3sMember.get_by_id(_id)  # load from id
-                if isinstance(_mem, NoneType):  # check deletion status
+                if _mem is None:  # check deletion status
                     member.id = _id  # set id as specified
         except:
             # print "no splitable url params found, creating new entry"
@@ -332,9 +331,9 @@ def new_member(request):
             # print(member.id)
             the_new_id = member.id
             # appstruct['email_confirm_code'] = randomstring  # ???
-        except InvalidRequestError, e:  # pragma: no cover
+        except InvalidRequestError as e:  # pragma: no cover
             print("InvalidRequestError! %s") % e
-        except IntegrityError, ie:  # pragma: no cover
+        except IntegrityError as ie:  # pragma: no cover
             print("IntegrityError! %s") % ie
 
         # send mail to accountants // prepare a mailer

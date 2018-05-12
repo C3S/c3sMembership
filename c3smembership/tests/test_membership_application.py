@@ -103,7 +103,7 @@ class MembershipApplicationTest(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode('utf-8'))
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -120,11 +120,11 @@ class MembershipApplicationTest(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Dashboard' in res.body)
+        self.failUnless('Dashboard' in res.body.decode('utf-8'))
 
     @classmethod
     def _response_to_bare_text(cls, res):
-        html = res.normal_body
+        html = res.normal_body.decode('utf-8')
         # remove JavaScript
         html = re.sub(re.compile('<script.*</script>'), '', html)
         # remove all tags
@@ -168,7 +168,7 @@ class MembershipApplicationTest(unittest.TestCase):
             'password': u'worst password ever chosen',
             'password-confirm': u'worst password ever chosen',
         }
-        for key, value in properties.iteritems():
+        for key, value in properties.items():
             res.form[key] = value
         res.form['country'].select(text=u'Sweden')
         res.form['membership_type'].value__set(u'normal')
@@ -212,7 +212,8 @@ class MembershipApplicationTest(unittest.TestCase):
             match.group('url'),
             status=200)
 
-        self.assertTrue(u'password in order to verify your email' in res.body)
+        self.assertTrue('password in order to verify your email' \
+            in res.body.decode('utf-8'))
         res.form['password'] = 'worst password ever chosen'
         res = res.form.submit(u'submit', status=200)
 
