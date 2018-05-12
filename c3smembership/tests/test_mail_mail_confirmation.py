@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date
+import unittest
+
 from pyramid import testing
+from pyramid_mailer import get_mailer
 from sqlalchemy import engine_from_config
 import transaction
-import unittest
 
 from c3smembership.data.model.base import (
     Base,
@@ -77,6 +79,8 @@ class TestMailMailConfirmationViews(unittest.TestCase):
         self.config.include('pyramid_mailer.testing')
         self.config.registry.settings['c3smembership.url'] = 'http://foo.com'
         self.config.registry.settings['c3smembership.mailaddr'] = 'c@c3s.cc'
+        self.config.registry.settings['testing.mail_to_console'] = 'false'
+        self.config.registry.get_mailer = get_mailer
         DBSession.remove()
         self.session = _initTestingDB()
 
@@ -99,7 +103,7 @@ class TestMailMailConfirmationViews(unittest.TestCase):
 
         result = mail_mail_conf(request)
 
-        self.assertTrue(result.status_code == 302)  # redirect
+        self.assertTrue(result.status_code == 302)
         self.assertTrue(  # to dashboard
             'http://example.com/dashboard/0/id/asc' in result.location)
 
@@ -120,22 +124,16 @@ class TestMailMailConfirmationViews(unittest.TestCase):
         mailer = get_mailer(request)
         result = mail_mail_conf(request)
 
-        self.assertTrue(result.status_code == 302)  # redirect
+        self.assertTrue(result.status_code == 302)
 
         self.assertEqual(len(mailer.outbox), 1)
         self.assertEqual(
             mailer.outbox[0].subject,
-            u"[C3S] Please confirm your email address! "
-            u"/ Bitte E-Mail-Adresse bestätigen!"
+            u'C3S: confirm your email address and load your PDF'
         )
-        # print mailer.outbox[0].body
         self.assertTrue(
-            u"Hello" in mailer.outbox[0].body)
-        self.assertTrue(
-            u"Hallo" in mailer.outbox[0].body)
-        _m = C3sMember.get_by_id(1)
+            u'Hallo' in mailer.outbox[0].body)
+        member = C3sMember.get_by_id(1)
         self.assertTrue(
             u'{} {}'.format(
-                _m.firstname, _m.lastname) in mailer.outbox[0].body)
-        self.assertTrue(
-            u"http://foo.com/vae/" in mailer.outbox[0].body)
+                member.firstname, member.lastname) in mailer.outbox[0].body)

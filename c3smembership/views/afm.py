@@ -438,6 +438,56 @@ def show_success(request):
     return HTTPFound(location=request.route_url('join'))
 
 
+def send_mail_confirmation_mail(member, base_url, mailer, localizer,
+                                testing_mail_to_console):
+    if 'de' in member.locale.lower():
+        the_mail_body = u'''
+Hallo {} {}!
+
+bitte benutze diesen Link um deine E-Mail-Adresse zu bestätigen
+und dein PDF herunterzuladen:
+
+{}/verify/{}/{}
+
+Danke!
+
+Dein C3S Team
+        '''
+    else:
+        the_mail_body = u'''
+Hello {} {}!
+
+please use this link to verify your email address
+and download your personalised PDF:
+
+{}/verify/{}/{}
+
+thanks!
+
+Your C3S team
+        '''
+    message = Message(
+        subject=localizer.translate(_(
+            'check-email-paragraph-check-email-subject',
+            default=u'C3S: confirm your email address and load your PDF')),
+        sender='noreply@c3s.cc',
+        recipients=[member.email],
+        body=the_mail_body.format(
+            member.firstname,
+            member.lastname,
+            base_url,
+            member.email,
+            member.email_confirm_code
+        )
+    )
+    if 'true' in testing_mail_to_console:
+        LOG.info(message.subject)
+        LOG.info(message.recipients)
+        LOG.info(message.body)
+    else:
+        mailer.send(message)
+
+
 @view_config(
     renderer='c3smembership:templates/check-mail.pt',
     route_name='success_check_email')
@@ -496,63 +546,12 @@ def success_check_email(request):
         )
         DBSession().add(member)
 
-        # we do have valid info from the form in the session (good)
-        appstruct = request.session['appstruct']
-        try:
-            mailer = request.registry.get_mailer(request)
-        except:
-            return HTTPFound(location=request.route_url('join'))
-
-        if 'de' in appstruct['person']['locale']:
-            the_mail_body = u'''
-Hallo {} {}!
-
-bitte benutze diesen Link um deine E-Mail-Adresse zu bestätigen
-und dein PDF herunterzuladen:
-
-   {}/verify/{}/{}
-
-Danke!
-
-Dein C3S Team
-            '''
-        else:
-            the_mail_body = u'''
-Hello {} {}!
-
-please use this link to verify your email address
-and download your personalised PDF:
-
-   {}/verify/{}/{}
-
-thanks!
-
-Your C3S team
-            '''
-        the_mail = Message(
-            subject=request.localizer.translate(_(
-                'check-email-paragraph-check-email-subject',
-                default=u'C3S: confirm your email address and load your PDF')),
-            sender="noreply@c3s.cc",
-            recipients=[appstruct['person']['email']],
-            body=the_mail_body.format(
-                appstruct['person']['firstname'],
-                appstruct['person']['lastname'],
-                request.registry.settings['c3smembership.url'],
-                appstruct['person']['email'],
-                email_confirm_code
-            )
-        )
-        if 'true' in request.registry.settings['testing.mail_to_console']:
-            LOG.info(the_mail.subject)
-            LOG.info(the_mail.recipients)
-            LOG.info(the_mail.body)
-            # just logging, not printing, b/c test fails otherwise:
-            # env/bin/nosetests
-            #    c3smembership/tests/test_views_webdriver.py:
-            #    JoinFormTests.test_form_submission_de
-        else:
-            mailer.send(the_mail)
+        send_mail_confirmation_mail(
+            member,
+            request.registry.settings['c3smembership.url'],
+            request.registry.get_mailer(request),
+            request.localizer,
+            request.registry.settings['testing.mail_to_console'])
 
         # make the session go away
         request.session.invalidate()

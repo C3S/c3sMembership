@@ -11,6 +11,8 @@ Next Release
   including sending emails and handling responses is no longer needed and
   therefore removed.
 
+- Fix email address confirmation email sending from backend
+
 
 
 1.20.5
