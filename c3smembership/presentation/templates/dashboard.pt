@@ -113,6 +113,7 @@
              title="Sort by lastname: descending"
              class="glyphicon glyphicon-chevron-down"></a>
         </th>
+        <th>type</th>
         <th>email</th>
         <th>email<br />conf'd?</th>
         <th>sig.<br />rec'd?</th>
@@ -136,6 +137,10 @@
         </td>
         <td>${member.firstname}</td>
         <td>${member.lastname}</td>
+        <td>
+          <abbr tal:condition="member.membership_type == 'normal'" title="Full membership">O</abbr>
+          <abbr tal:condition="member.membership_type == 'investing'" title="Investing membership">I</abbr>
+        </td>
         <td><a href="mailto:${member.email}" title="${member.email}">mailto</a></td>
         <td>
           <div>

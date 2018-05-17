@@ -2,7 +2,7 @@ Next Release
 ============
 
 
-- Fix double entry when applicant edits details
+- Fix double entry when applicant edits details.
 
 - Remove membership type handling: During the crowdfunding campaign C3S got
   members of which the information was not complete. It was unknown whether
@@ -11,7 +11,9 @@ Next Release
   including sending emails and handling responses is no longer needed and
   therefore removed.
 
-- Fix email address confirmation email sending from backend
+- Fix email address confirmation email sending from backend.
+
+- Add membership type column to dashboard and membership list.
 
 
 
