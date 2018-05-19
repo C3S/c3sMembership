@@ -15,6 +15,8 @@ Next Release
 
 - Add membership type column to dashboard and membership list.
 
+- Add membership loss to annual reporting.
+
 
 
 1.20.5

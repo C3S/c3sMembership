@@ -34,6 +34,11 @@
                 <td></td>
             </tr>
             <tr>
+                <td><a href="#new_members">Austritte</a></td>
+                <td>${len(lost_members)}</td>
+                <td></td>
+            </tr>
+            <tr>
                 <td><a href="#new_shares">Neue Anteile</a></td>
                 <td>${num_shares}</td>
                 <td>${num_shares * 50}</td>
@@ -56,9 +61,10 @@
         </p>
         <table class="table table-striped">
             <tr>
-                <th>ldf. Nr.</th>
-                <th>Member id</th>
-                <th>Nachname, Vorname</th>
+                <th>#</th>
+                <th>ID</th>
+                <th>Nachname</th>
+                <th>Vorname</th>
                 <th>Anteile im Zeitraum</th>
                 <th>Anteile heute gesammt</th>
                 <th>Aufn.Datum</th>
@@ -69,7 +75,8 @@
                     <td tal:content="python: m_num">${m_num}</td>
                 </span>
                 <td><a href="${request.route_url('detail', memberid=m.id)}">${m.id}</a></td>
-                <td>${m.lastname}, ${m.firstname}</td>
+                <td>${m.lastname}</td>
+                <td>${m.firstname}</td>
                 <td>
                     <table>
                         <tr tal:repeat="ms m.shares">
@@ -88,21 +95,52 @@
                 <td>${m.membership_date}</td>
             </tr>
             <tr>
-                <td>
-                </td>
-                <td>
-                </td>
-                <td>
-                </td>
-                <td>
-                    Summe: ${m_num_shares}
-                </td>
-                <td>
-                </td>
-                <td>
-                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Summe: ${m_num_shares}</td>
+                <td></td>
+                <td></td>
             </tr>
         </table>
+
+        <a name="lost_members"></a>
+        <h3>Mitgliedsaustritte</h3>
+        <p>
+          Mitglieder, deren Austritt im Zeitraum wirksam wurde: ${len(lost_members)}:
+        </p>
+        <table class="table table-striped">
+            <tr>
+                <th>#</th>
+                <th>ID</th>
+                <th>Nachname</th>
+                <th>Vorname</th>
+                <th>Anteile heute gesammt</th>
+                <th>Austrittsdatum</th>
+            </tr>
+            <span tal:define="global m_num_shares python:0"></span>
+            <tr tal:define="global m_num python: 0" tal:repeat="member lost_members">
+                <span tal:define="global m_num python: m_num + 1">
+                    <td tal:content="python: m_num">${m_num}</td>
+                </span>
+                <td><a href="${request.route_url('detail', memberid=member.id)}">${member.id}</a></td>
+                <td>${member.lastname}</td>
+                <td>${member.firstname}</td>
+                <td tal:define="global m_num_shares python: m_num_shares + member.num_shares">${member.num_shares}</td>
+                <td>${member.membership_loss_date}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Summe: ${m_num_shares}</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+
         <a name="new_shares"></a>
         <h3>Neuanteile</h3>
         <p>
@@ -110,9 +148,10 @@
         </p>
         <table class="table table-striped">
             <tr>
-                <th>lfd. Nr.</th>
-                <th>shares id</th>
-                <th>Nachname, Vorname</th>
+                <th>#</th>
+                <th>ID</th>
+                <th>Nachname</th>
+                <th>Vorname</th>
                 <th>Anteile</th>
                 <th>Aufn.Datum</th>
             </tr>
@@ -121,9 +160,10 @@
                     <td tal:content="python: s_num">${s_num}</td>
                 </span>
                 <td><a href="${request.route_url('shares_detail', id=s.id)}">${s.id}</a></td>
-                <td tal:condition="len(s.members) > 0">
-                    ${s.members[0].lastname}, ${s.members[0].firstname}</td>
+                <td tal:condition="len(s.members) > 0">${s.members[0].lastname}</td>
+                <td tal:condition="len(s.members) > 0">${s.members[0].firstname}</td>
                 <td tal:condition="len(s.members) == 0">Not Found</td>
+                <td tal:condition="len(s.members) == 0"></td>
                 <td>${s.number}</td>
                 <td>${s.date_of_acquisition}</td>
             </tr>
@@ -137,16 +177,18 @@
 
         <table class="table table-striped">
             <tr>
-                <th>Lfd. Nr.</th>
-                <th>AfM-ID</th>
-                <th>Nachname, Vorname</th>
+                <th>#</th>
+                <th>ID</th>
+                <th>Nachname</th>
+                <th>Vorname</th>
                 <th>Anteile</th>
-                <th>Datum Geldeingang (ca.)</th>
+                <th>Geldeingang</th>
             </tr>
             <tr tal:define="global ua_num python: 0" tal:repeat="p shares_paid_unapproved">
                 <td tal:define="global ua_num python: ua_num + 1">${ua_num}</td>
                 <td><a href="${request.route_url('detail', memberid=p.id)}">${p.id}</a></td>
-                <td>${p.lastname}, ${p.firstname}</td>
+                <td>${p.lastname}</td>
+                <td>${p.firstname}</td>
                 <td>${p.shares_count}</td>
                 <td>${p.payment_received_date}</td>
             </tr>

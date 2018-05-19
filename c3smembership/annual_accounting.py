@@ -109,20 +109,23 @@ def annual_report(request):  # pragma: no cover
         form.set_appstruct(appstruct)
 
     # prepare: get information from the database
-    # get memberships
     all_members = C3sMember.get_all()
-
-    # prepare filtering and counting
-    members = []  # all the members matching the criteria
-    members_count = 0
+    new_members = []
+    lost_members = []
 
     # now filter and count the afms and members
     for member in all_members:
         # if membership granted during time period
         if member.membership_date >= start_date \
                 and member.membership_date <= end_date:
-            members.append(member)
-            members_count += 1
+            new_members.append(member)
+        # if membership was gained before the end of the time period and lost
+        # during the time period
+        if member.membership_date <= end_date \
+                and member.membership_loss_date is not None \
+                and member.membership_loss_date >= start_date \
+                and member.membership_loss_date <= end_date:
+            lost_members.append(member)
 
     share_statistics = request.registry.share_information.get_statistics(
         start_date, end_date)
@@ -138,8 +141,9 @@ def annual_report(request):  # pragma: no cover
         'datetime': datetime,
         'date': date,
         # members
-        'new_members': members,
-        'num_members': members_count,
+        'new_members': new_members,
+        'num_members': len(new_members),
+        'lost_members': lost_members,
         # shares
         'num_shares': share_statistics['approved_shares_count'],
         'sum_shares': share_statistics['approved_shares_count'] * 50,
