@@ -678,12 +678,15 @@ class C3sMember(Base):
         DatabaseDecimal(12, 2), default=Decimal('0'))
     dues17_paid_date = Column(DateTime())  # paid when?
 
+    privacy_consent = Column(DateTime(), nullable=True)
+
     def __init__(self, firstname, lastname, email, password,
                  address1, address2, postcode, city, country, locale,
                  date_of_birth, email_is_confirmed, email_confirm_code,
                  num_shares,
                  date_of_submission,
-                 membership_type, member_of_colsoc, name_of_colsoc):
+                 membership_type, member_of_colsoc, name_of_colsoc,
+                 privacy_consent=None):
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
@@ -704,6 +707,7 @@ class C3sMember(Base):
         self.payment_received = False
         self.membership_type = membership_type
         self.member_of_colsoc = member_of_colsoc
+        self.privacy_consent = privacy_consent
         if self.member_of_colsoc is True:
             self.name_of_colsoc = name_of_colsoc
         else:

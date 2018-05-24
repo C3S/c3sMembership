@@ -139,6 +139,7 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.find_element_by_id('colsoc_name').send_keys('GEMA')
         self.driver.find_element_by_name('got_statute').click()
         self.driver.find_element_by_name('got_dues_regulations').click()
+        self.driver.find_element_by_name('privacy_consent').click()
         self.driver.find_element_by_name('num_shares').send_keys('7')
 
         self.driver.find_element_by_name('submit').click()
@@ -200,7 +201,7 @@ class JoinFormTests(SeleniumTestBase):
         # verify we have to theck this again
         self.driver.find_element_by_name('got_statute').click()
         self.driver.find_element_by_name('got_dues_regulations').click()
-        # No colsoc
+        self.driver.find_element_by_name('privacy_consent').click()
         self.driver.find_element_by_id('other_colsoc-1').click()
         self.driver.find_element_by_id(
             'colsoc_name').send_keys(Keys.CONTROL, "a")
@@ -272,6 +273,7 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.find_element_by_id('colsoc_name').send_keys('GEMA')
         self.driver.find_element_by_name('got_statute').click()
         self.driver.find_element_by_name('got_dues_regulations').click()
+        self.driver.find_element_by_name('privacy_consent').click()
         self.driver.find_element_by_name('num_shares').send_keys('7')
 
         self.driver.find_element_by_name('submit').click()
@@ -331,7 +333,7 @@ class JoinFormTests(SeleniumTestBase):
         # verify we have to theck this again
         self.driver.find_element_by_name('got_statute').click()
         self.driver.find_element_by_name('got_dues_regulations').click()
-        # No colsoc
+        self.driver.find_element_by_name('privacy_consent').click()
         self.driver.find_element_by_id('other_colsoc-1').click()
         self.driver.find_element_by_id('colsoc_name').send_keys('')
         # enter password

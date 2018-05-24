@@ -150,6 +150,10 @@
             <td>${member.membership_loss_type}</td>
         </tr>
         <tr>
+            <td>privacy consent</td>
+            <td>${member.privacy_consent.strftime('%Y-%m-%d %H:%M:%S') if member.privacy_consent is not None else ''}</td>
+        </tr>
+        <tr>
             <td><a name="comment"></a>staff comment</td>
             <td>${member.accountant_comment}</td>
         </tr>
