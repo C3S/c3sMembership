@@ -1,3 +1,11 @@
+1.20.6
+======
+
+
+Add mandatory data privacy statement consent to registration form.
+
+
+
 1.20.5
 ======
 

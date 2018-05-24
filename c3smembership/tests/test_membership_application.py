@@ -175,6 +175,7 @@ class MembershipApplicationTest(unittest.TestCase):
         res.form['other_colsoc'].value__set(u'yes')
         res.form['got_statute'].checked = True
         res.form['got_dues_regulations'].checked = True
+        res.form['privacy_consent'].checked = True
         res = res.form.submit(u'submit', status=302)
         res = res.follow()
 

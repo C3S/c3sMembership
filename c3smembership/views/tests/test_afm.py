@@ -161,6 +161,7 @@ class TestViews(unittest.TestCase):
         form['num_shares'] = u'23'
         form['got_statute'].value__set(True)
         form['got_dues_regulations'].value__set(True)
+        form['privacy_consent'].value__set(True)
         return form
 
     def test_join_c3s(self):

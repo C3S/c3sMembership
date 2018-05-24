@@ -266,7 +266,7 @@ def join_c3s(request):
         some legal requirements
         """
 
-        def statute_validator(node, value):
+        def empty_message_validator(node, value):
             """
             Validator for statute confirmation.
             """
@@ -288,20 +288,11 @@ def join_c3s(request):
             description=_(
                 u'You must confirm to have access to the statute.'),
             widget=deform.widget.CheckboxWidget(),
-            validator=statute_validator,
+            validator=empty_message_validator,
             required=True,
             oid='got_statute',
             #label=_('Yes, really'),
         )
-        def dues_regulations_validator(node, value):
-            """
-            Validator for dues regulations confirmation.
-            """
-            if not value:
-                # raise without additional error message as the description
-                # already explains the necessity of the checkbox
-                raise Invalid(node, u'')
-
         got_dues_regulations = colander.SchemaNode(
             colander.Bool(true_val=u'yes'),
             title=(u''),
@@ -313,10 +304,26 @@ def join_c3s(request):
                 u'You must confirm to have access to the temporary '
                 u'membership dues regulations.'),
             widget=deform.widget.CheckboxWidget(),
-            validator=dues_regulations_validator,
+            validator=empty_message_validator,
             required=True,
             oid='got_dues_regulations',
             #label=_('Yes'),
+        )
+        privacy_consent = colander.SchemaNode(
+            colander.Bool(true_val=u'yes'),
+            title=_(u'Privacy'),
+            label=_(
+                u'I hereby agree to the conditions of the data privacy '
+                u'statement available at '
+                u'https://www.c3s.cc/datenschutz (see link '
+                u'below).'),
+            description=_(
+                u'You must agree to the data privacy statement. Otherwise, we '
+                u'are not allowed to process your personal data.'),
+            widget=deform.widget.CheckboxWidget(),
+            validator=empty_message_validator,
+            required=True,
+            oid='privacy_consent',
         )
 
 
@@ -431,6 +438,7 @@ def join_c3s(request):
                 appstruct['membership_info']['member_of_colsoc'] == u'yes'),
             name_of_colsoc=appstruct['membership_info']['name_of_colsoc'],
             num_shares=appstruct['shares']['num_shares'],
+            privacy_consent=datetime.now(),
         )
         dbsession = DBSession()
         try:

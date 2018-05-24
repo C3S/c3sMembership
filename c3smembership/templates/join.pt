@@ -159,13 +159,12 @@
             </a>
         </p>
 
-        <p i18n:translate="join-form-disclaimer-title" class="infoIndent">
-            Disclaimer (Data Protection)
-        </p>
-        <p i18n:translate="join-form-disclaimer-paragraph">
-            We will store and use the information you provide for administrative purposes
-            and in order to protect your rights as an artist.
-            Responsible authority: C3S SCE, Rochusstraße 44, 40479 Düsseldorf.
+        <p class="infoIndent">
+            <a href="https://www.c3s.cc/datenschutz"
+                    target="_blank"
+                    i18n:translate="join-form-disclaimer-title">
+                Data Privacy Statement
+            </a>
         </p>
     </tal:block>
     <tal:block metal:fill-slot="deform-load">
