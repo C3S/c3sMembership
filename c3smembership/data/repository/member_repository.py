@@ -4,6 +4,10 @@ Repository for accessing and operating with member data.
 """
 
 from sqlalchemy.sql import func
+from sqlalchemy import (
+    and_,
+    not_,
+)
 from datetime import date
 
 from c3smembership.data.model.base import DBSession
@@ -65,7 +69,7 @@ class MemberRepository(object):
             All members which have been accepted until and including the
             specified effective date.
         """
-        return cls._accepted_members_query(effective_date).all()
+        return cls._members_query(effective_date).all()
 
     @classmethod
     def get_accepted_members_sorted(cls, effective_date=None):
@@ -84,12 +88,12 @@ class MemberRepository(object):
             specified effective date sorted by lastname ascending and firstname
             ascending.
         """
-        return cls._accepted_members_query(effective_date).order_by(
+        return cls._members_query(effective_date).order_by(
             C3sMember.lastname.asc(),
             C3sMember.firstname.asc()).all()
 
     @classmethod
-    def _accepted_members_query(cls, effective_date=None):
+    def _members_query(cls, effective_date=None):
         """
         Gets the query to retrieve members accepted until and including the
         specified effective date.
@@ -104,11 +108,8 @@ class MemberRepository(object):
             specified effective date.
         """
         # pylint: disable=no-member
-        all_members_query = DBSession.query(C3sMember)
-        accepted_members_query = cls._filter_accepted_member(
-            all_members_query,
-            effective_date)
-        return accepted_members_query
+        return DBSession.query(C3sMember) \
+            .filter(cls._is_member_filter(effective_date))
 
     @classmethod
     def get_accepted_members_count(cls, effective_date=None):
@@ -126,32 +127,71 @@ class MemberRepository(object):
             the specified effective date.
         """
         # pylint: disable=no-member
-        all_members_count_query = DBSession.query(func.count(C3sMember.id))
-        accepted_members_count_query = cls._filter_accepted_member(
-            all_members_count_query,
-            effective_date)
-        return accepted_members_count_query.scalar()
+        return DBSession.query(func.count(C3sMember.id)) \
+            .filter(cls._is_member_filter(effective_date)) \
+            .scalar()
 
     @classmethod
-    def _filter_accepted_member(cls, query, effective_date=None):
+    def _membership_lost_filter(cls, effective_date=None):
         """
-        Gets the filter for the query to retrieve members accepted until and
-        including the specified effective date.
+        Provides a SqlAlchemy filter only matching entities which lost
+        membership before the specified effective date.
 
         Args:
-            effective_date: Optional. The date on which the membership has been
-                accepted. If not specified system date is used as effective
-                date.
+            effective_date: Optional. The date before which the membership was
+                lost. If not specified then the current date of is used.
 
         Returns:
-            The filter for the query to retrieve members accepted until and
-            including the specified effective date.
+            A filter only matching entities which lost membership before the
+            specified effective date.
         """
         if effective_date is None:
             effective_date = date.today()
-        # SqlAlchemy not equal condition must be "!= None" although it usually
-        # it "is not None" in Python.
-        return query \
-            .filter(C3sMember.membership_number != None) \
-            .filter(C3sMember.membership_accepted) \
-            .filter(C3sMember.membership_date <= effective_date)
+        return and_(
+            C3sMember.membership_loss_date != None,
+            C3sMember.membership_loss_date < effective_date)
+
+    @classmethod
+    def _membership_accepted_filter(cls, effective_date=None):
+        """
+        Provides a SqlAlchemy filter only matching entities which had their
+        membership accepted before or on the specified effective date.
+
+        Args:
+            effective_date: Optional. The date before or on which the
+                membership was accepted. If not specified then the current date
+                of is used.
+
+        Returns:
+            A filter only matching entities which had their membership accepted
+            before or on the specified effective date.
+        """
+        if effective_date is None:
+            effective_date = date.today()
+        return and_(
+            C3sMember.membership_accepted,
+            C3sMember.membership_date != None,
+            C3sMember.membership_date <= effective_date)
+
+    @classmethod
+    def _is_member_filter(cls, effective_date=None):
+        """
+        Provides a SqlAlchemy filter only matching entities which are members
+        at the specified effective date.
+
+        For being a member the membership must have been accepted and the
+        membership must not have been lost.
+
+        Args:
+            effective_date: Optional. The date for which the membership status
+                is checked. If not specified then the current date of is used.
+
+        Returns:
+            A filter matching all entities which are members as the specified
+            effective date.
+        """
+        if effective_date is None:
+            effective_date = date.today()
+        return and_(
+            cls._membership_accepted_filter(effective_date),
+            not_(cls._membership_lost_filter(effective_date)))

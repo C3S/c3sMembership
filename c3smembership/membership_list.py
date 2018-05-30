@@ -45,6 +45,131 @@ DEBUG = False
 # How is the membership list reconstructed? By the processes only? This can
 # involve changes of the firstname, lastname, address, membership status etc.
 
+LATEX_HEADER = '''
+\\input{{{header_file}}}
+\\def\\numMembers{{{members_count}}}
+\\def\\numShares{{{shares_count}}}
+\\def\\sumShares{{{shares_value}}}
+\\def\\today{{{effective_date}}}
+\\input{{{footer_file}}}
+'''
+
+LATEX_FOOTER = '''
+%\\end{tabular}%
+\\end{longtable}%
+\\label{LastPage}
+\\end{document}
+'''
+
+LATEX_ADDRESS = '''
+{address1_latex}
+{address2_latex} \\linebreak
+{postal_code_latex} {city} ({country_code})
+'''
+
+LATEX_MEMBER_ROW = '''
+\\footnotesize {lastname} &
+\\footnotesize {firstname} &
+\\footnotesize {membership_number} &
+\\scriptsize {address} &
+\\footnotesize {membership_approval} &
+\\footnotesize {membership_loss} &
+\\footnotesize {shares} \\\\\\hline %
+'''
+
+
+def latex_address(address1, address2, postal_code, city, country_code):
+    address2_latex = ''
+    if len(address2) > 0:
+        address2_latex = '\\linebreak '
+        address2_latex += unicode(TexTools.escape(address2)).encode('utf-8')
+    return LATEX_ADDRESS.format(
+        address1_latex=unicode(TexTools.escape(address1)).encode('utf-8'),
+        address2_latex=address2_latex,
+        postal_code_latex=unicode(
+            TexTools.escape(postal_code)).encode('utf-8'),
+        city=unicode(TexTools.escape(city)).encode('utf-8'),
+        country_code=unicode(TexTools.escape(country_code)).encode('utf-8'))
+
+
+def latex_membership_loss(membership_loss_date, membership_loss_type):
+    membership_loss = u''
+    if membership_loss_date is not None:
+        membership_loss += membership_loss_date.strftime('%d.%m.%Y')
+    if membership_loss_type is not None:
+        membership_loss += '\\linebreak '
+        membership_loss += unicode(TexTools.escape(
+            membership_loss_type)).encode('utf-8')
+    return membership_loss
+
+
+def generate_membership_list_pdf(effective_date, members):
+    latex_dir = tempfile.mkdtemp()
+    latex_file = tempfile.NamedTemporaryFile(
+        suffix='.tex',
+        dir=latex_dir,
+        delete=False,
+    )
+
+    shares_count = sum([member['shares_count'] for member in members])
+
+    latex_file.write(
+        LATEX_HEADER.format(
+            header_file=os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    '../membership_list_pdflatex/header')),
+            footer_file=os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    '../membership_list_pdflatex/footer')),
+            members_count=len(members),
+            shares_count=shares_count,
+            shares_value=shares_count * 50,
+            effective_date=effective_date.strftime('%d.%m.%Y'),
+        ).encode('utf-8'))
+
+    # make table rows per member
+    for member in members:
+        latex_file.write(
+            LATEX_MEMBER_ROW.format(
+                lastname=TexTools.escape(member['lastname']).encode('utf-8'),
+                firstname=TexTools.escape(member['firstname']).encode('utf-8'),
+                membership_number=TexTools.escape(
+                    str(member['membership_number'])),
+                address=latex_address(
+                    member['address1'],
+                    member['address2'],
+                    member['postcode'],
+                    member['city'],
+                    member['country']),
+                membership_approval=member['membership_date'].strftime(
+                    '%d.%m.%Y'),
+                membership_loss=latex_membership_loss(
+                    member['membership_loss_date'],
+                    member['membership_loss_type']),
+                shares=str(member['shares_count'])))
+
+    latex_file.write(LATEX_FOOTER)
+    latex_file.close()
+
+    # generate file three times in order to make sure all back references like
+    # the number of total pages are properly calculated
+    for i in range(3):
+        subprocess.call(
+            [
+                'pdflatex',
+                '-output-directory={0}'.format(latex_dir),
+                latex_file.name
+            ],
+            stdout=open(os.devnull, 'w'),
+            stderr=subprocess.STDOUT,
+        )
+
+    pdf_file = open(latex_file.name.replace('.tex', '.pdf'), "r")
+    shutil.rmtree(latex_dir, ignore_errors=True)
+    return pdf_file
+
 
 @view_config(permission='manage',
              route_name='membership_listing_date_pdf')
@@ -72,157 +197,37 @@ def member_list_date_pdf_view(request):
         )
         return HTTPFound(request.route_url('error_page'))
 
-    shares_count_printed = 0
-
     # TODO: repositories are data layer and must only be used by the business
     # layer. Introduce business layer logic which uses the repositories and can
     # be accessed by this view via the request.
-    shares_count = request.registry.share_information.get_share_count(
+    members = request.registry.member_information.get_accepted_members_sorted(
         effective_date)
 
-    member_information = request.registry.member_information
-    members_count = member_information.get_accepted_members_count(
-        effective_date)
-    members = member_information.get_accepted_members_sorted(
-        effective_date)
-
-    """
-    Then a LaTeX file is constructed...
-    """
-    here = os.path.dirname(__file__)
-    latex_header_tex = os.path.abspath(
-        os.path.join(here, '../membership_list_pdflatex/header'))
-    latex_footer_tex = os.path.abspath(
-        os.path.join(here, '../membership_list_pdflatex/footer'))
-
-    # a temporary directory for the latex run
-    tempdir = tempfile.mkdtemp()
-    # now we prepare a .tex file to be pdflatex'ed
-    latex_file = tempfile.NamedTemporaryFile(
-        suffix='.tex',
-        dir=tempdir,
-        delete=False,  # directory will be deleted anyways
-    )
-    # and where to store the output
-    pdf_file = tempfile.NamedTemporaryFile(
-        dir=tempdir,
-        delete=False,  # directory will be deleted anyways
-    )
-    pdf_file.name = latex_file.name.replace('.tex', '.pdf')
-
-    # construct latex data: header + variables
-    latex_data = '''
-\\input{%s}
-\\def\\numMembers{%s}
-\\def\\numShares{%s}
-\\def\\sumShares{%s}
-\\def\\today{%s}
-    ''' % (
-        latex_header_tex,
-        members_count,
-        shares_count,
-        shares_count * 50,
-        effective_date.strftime('%d.%m.%Y'),
-    )
-
-    # add to the latex document
-    latex_data += '''
-\\input{%s}''' % latex_footer_tex
-
-    # print '*' * 70
-    # print latex_data
-    # print '*' * 70
-    latex_file.write(latex_data.encode('utf-8'))
-
-    # make table rows per member
+    membership_list_entries = []
     for member in members:
-        address = '''\\scriptsize{}'''
-        address += '''{}'''.format(
-            unicode(TexTools.escape(member.address1)).encode('utf-8'))
+        membership_list_entries.append({
+            'lastname': member.lastname,
+            'firstname': member.firstname,
+            'membership_number': member.membership_number,
+            'address1': member.address1,
+            'address2': member.address2,
+            'postcode': member.postcode,
+            'city': member.city,
+            'country': member.country,
+            'membership_date': member.membership_date,
+            'membership_loss_date': member.membership_loss_date,
+            'membership_loss_type': member.membership_loss_type,
+            'membership_number': member.membership_number,
+            'shares_count': request.registry.share_information \
+                .get_member_share_count(
+                        member.membership_number,
+                        effective_date)
+        })
 
-        # check for contents of address2:
-        if len(member.address2) > 0:
-            address += '''\\linebreak {}'''.format(
-                unicode(TexTools.escape(member.address2)).encode('utf-8'))
-        # add more...
-        address += ''' \\linebreak {} '''.format(
-            unicode(TexTools.escape(member.postcode)).encode('utf-8'))
-        address += '''{}'''.format(
-            unicode(TexTools.escape(member.city)).encode('utf-8'))
-        address += ''' ({})'''.format(
-            unicode(TexTools.escape(member.country)).encode('utf-8'))
-
-        member_share_count = \
-            request.registry.share_information.get_member_share_count(
-                member.membership_number,
-                effective_date)
-        shares_count_printed += member_share_count
-
-        membership_loss = u''
-        if member.membership_loss_date is not None:
-            membership_loss += \
-                member.membership_loss_date.strftime('%d.%m.%Y') + \
-                '\\linebreak '
-        if member.membership_loss_type is not None:
-            membership_loss += unicode(TexTools.escape(
-                member.membership_loss_type)).encode('utf-8')
-        latex_file.write(
-            ''' {0} & {1} & {2} & {3} & {4} & {5} & {6}  \\\\\\hline %
-            '''.format(
-                TexTools.escape(member.lastname).encode('utf-8'),  # 0
-                ' \\footnotesize ' + TexTools.escape(
-                    member.firstname).encode('utf-8'),  # 1
-                ' \\footnotesize ' + TexTools.escape(
-                    str(member.membership_number)),  # 2
-                address,  # 3
-                ' \\footnotesize ' + member.membership_date.strftime(
-                    '%d.%m.%Y'),  # 4
-                ' \\footnotesize ' + membership_loss + ' ',  # 5
-                ' \\footnotesize ' + str(member_share_count)  # 6
-            ))
-
-    latex_file.write('''
-%\\end{tabular}%
-\\end{longtable}%
-\\label{LastPage}
-\\end{document}
-''')
-    latex_file.seek(0)  # rewind
-
-    # pdflatex latex_file to pdf_file
-    fnull = open(os.devnull, 'w')  # hide output
-    pdflatex_output = subprocess.call(
-        [
-            'pdflatex',
-            '-output-directory=%s' % tempdir,
-            latex_file.name
-        ],
-        stdout=fnull, stderr=subprocess.STDOUT  # hide output
-    )
-    if DEBUG:  # pragma: no cover
-        print("the output of pdflatex run: %s" % pdflatex_output)
-
-    # if run was a success, run X times more...
-    if pdflatex_output == 0:
-        for i in range(2):
-            pdflatex_output = subprocess.call(
-                [
-                    'pdflatex',
-                    '-output-directory=%s' % tempdir,
-                    latex_file.name
-                ],
-                stdout=fnull, stderr=subprocess.STDOUT  # hide output
-            )
-            if DEBUG:  # pragma: no cover
-                print("run #{} finished.".format(i+1))
-
-    # sanity check: did we print exactly as many shares as calculated?
-    assert(shares_count == shares_count_printed)
-
-    # return a pdf file
     response = Response(content_type='application/pdf')
-    response.app_iter = open(pdf_file.name, "r")
-    shutil.rmtree(tempdir, ignore_errors=True)  # delete temporary directory
+    response.app_iter = generate_membership_list_pdf(
+        effective_date,
+        membership_list_entries)
     return response
 
 
