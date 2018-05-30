@@ -1,5 +1,5 @@
-Next Release
-============
+1.20.7
+======
 
 
 Fix membership list showing entities who lost membership before.
