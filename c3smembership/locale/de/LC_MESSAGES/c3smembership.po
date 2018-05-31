@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: c3smembership 0.1\n"
 "Report-Msgid-Bugs-To: markus.lorenz@c3s.cc\n"
-"POT-Creation-Date: 2018-05-31 17:10+0200\n"
+"POT-Creation-Date: 2018-05-31 17:16+0200\n"
 "PO-Revision-Date: 2017-10-12 17:42+0100\n"
 "Last-Translator: Markus Lorenz <mrks@lrnz.name>\n"
 "Language: de\n"
@@ -492,6 +492,16 @@ msgstr "https://www.c3s.cc/impressum/"
 #: c3smembership/templates/base_bootstrap.pt:61
 msgid "footer-imprint"
 msgstr "Impressum"
+
+#. Default: https://www.c3s.cc/en/datenschutz/#dsgvo-membership
+#: c3smembership/templates/base_bootstrap.pt:67
+msgid "footer-privacy-href"
+msgstr "https://www.c3s.cc/datenschutz/#dsgvo-membership"
+
+#. Default: Data Privacy Statement
+#: c3smembership/templates/base_bootstrap.pt:67
+msgid "footer-privacy"
+msgstr "Datenschutzerklärung"
 
 #. Default: C3S Membership Application: Check your email
 #: c3smembership/templates/check-mail.pt:16
