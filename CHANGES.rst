@@ -21,6 +21,8 @@ Next Release
 
 - Move privacy statement link to footer
 
+- Add privacy statement to application form PDF
+
 
 
 1.20.7

@@ -70,9 +70,9 @@ def generate_pdf(appstruct):
     import os
     here = os.path.dirname(__file__)
     declaration_pdf_de = os.path.join(
-        here, "../pdftk/C3S-SCE-AFM-v12-20170822-de.pdf")
+        here, "../pdftk/C3S-SCE-AFM-v13-20180531-de.pdf")
     declaration_pdf_en = os.path.join(
-        here, "../pdftk/C3S-SCE-AFM-v12-20170822-en.pdf")
+        here, "../pdftk/C3S-SCE-AFM-v13-20180531-en.pdf")
 
     if appstruct['locale'] == "de":
         pdf_to_be_used = declaration_pdf_de
