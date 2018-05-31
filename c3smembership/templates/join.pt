@@ -158,14 +158,6 @@
                 (english)
             </a>
         </p>
-
-        <p class="infoIndent">
-            <a href="https://www.c3s.cc/datenschutz"
-                    target="_blank"
-                    i18n:translate="join-form-disclaimer-title">
-                Data Privacy Statement
-            </a>
-        </p>
     </tal:block>
     <tal:block metal:fill-slot="deform-load">
         <script type="text/javascript">

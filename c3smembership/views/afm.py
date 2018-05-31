@@ -326,13 +326,12 @@ def join_c3s(request):
             colander.Bool(true_val=u'yes'),
             title=_(u'Privacy'),
             label=_(
-                u'I hereby agree to the conditions of the data privacy '
-                u'statement available at '
-                u'https://www.c3s.cc/datenschutz (see link '
-                u'below).'),
-            description=_(
-                u'You must agree to the data privacy statement. Otherwise, we '
-                u'are not allowed to process your personal data.'),
+                u'I hereby agree to my personal data entered in this form '
+                u'being stored and processed for the purpose of membership '
+                u'management. I have taken notice of the data privacy '
+                u'statement. '
+                u'https://www.c3s.cc/en/datenschutz/#dsgvo-membership (see '
+                u'link below)'),
             widget=deform.widget.CheckboxWidget(),
             validator=empty_message_validator,
             required=True,

@@ -17,6 +17,10 @@ Next Release
 
 - Add membership loss to annual reporting.
 
+- Adjust privacy statement checkbox text
+
+- Move privacy statement link to footer
+
 
 
 1.20.7

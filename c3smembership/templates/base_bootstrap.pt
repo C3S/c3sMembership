@@ -63,6 +63,12 @@
                         i18n:translate="footer-imprint">
                     Imprint
                 </a>
+                &amp;
+                <a href="https://www.c3s.cc/en/datenschutz/#dsgvo-membership"
+                        i18n:attributes="href footer-privacy-href"
+                        i18n:translate="footer-privacy">
+                    Data Privacy Statement
+                </a>
             </div>
         </div>
         <tal:block metal:define-slot="javascript-last"></tal:block>
