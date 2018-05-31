@@ -1,60 +1,70 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal">
-  <head>
-    <title i18n:translate="membership-form-title">
-      Membership Application for Cultural Commons Collecting Society (C3S SCE)
-    </title>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-    <meta name="keywords" content="Membership Application to join C3S SCE" />
-    <meta name="description" content="" />
-    <link rel="shortcut icon"
-          href="${request.static_url('c3smembership:static/favicon.ico')}" />
-    <link href="${request.static_url('c3smembership:static/bootstrap/css/bootstrap.min.css')}"
-          rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
-    <link rel="stylesheet"
-          href="${request.static_url('c3smembership:static/c3s_b.css')}"
-          type="text/css" media="screen" charset="utf-8" />
-    <tal:block metal:define-slot="head"></tal:block>
-    <!--[if lte IE 6]>
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        i18n:domain="c3smembership">
+    <head>
+        <title i18n:translate="membership-form-title">
+            Membership Application for Cultural Commons Collecting Society (C3S SCE)
+        </title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+        <meta name="keywords" content="Membership Application to join C3S SCE" />
+        <meta name="description" content="" />
+        <link rel="shortcut icon"
+                href="${request.static_url('c3smembership:static/favicon.ico')}" />
+        <link href="${request.static_url('c3smembership:static/bootstrap/css/bootstrap.min.css')}"
+                rel="stylesheet" type="text/css" media="screen" charset="utf-8" />
+        <link rel="stylesheet"
+                href="${request.static_url('c3smembership:static/c3s_b.css')}"
+                type="text/css" media="screen" charset="utf-8" />
+        <tal:block metal:define-slot="head"></tal:block>
+        <!--[if lte IE 6]>
         <link rel="stylesheet" href="${request.static_url('c3smembership:static/ie6.css')}"
-	      type="text/css" media="screen" charset="utf-8" />
-    <![endif]-->
-  </head>
-  <body>
-    <div id="container">
-      <div id="top">
-        <div class="top align-center">
-          <div><img src="${request.static_url('c3smembership:static/logo_horiz_w700.png')}"
-		    class="img-responsive"
-                    alt="Cultural Commons Collecting Society (C3S)"/></div>
+        type="text/css" media="screen" charset="utf-8" />
+        <![endif]-->
+    </head>
+    <body>
+        <div id="container">
+            <div id="top">
+                <div class="top align-center">
+                    <div>
+                        <img src="${request.static_url('c3smembership:static/logo_horiz_w700.png')}"
+                                class="img-responsive"
+                                alt="Cultural Commons Collecting Society (C3S)"/>
+                    </div>
+                </div>
+            </div>
+            <div id="middle">
+                <div class="middle">
+                    <p class="app-welcome">
+                        <tal:block metal:define-slot="middle"></tal:block>
+                    </p>
+                </div>
+            </div>
+            <div id="bottom">
+                <div class="bottom">
+                    <tal:block metal:define-slot="bottom"></tal:block>
+                </div>
+            </div>
         </div>
-      </div>
-      <div id="middle">
-        <div class="middle">
-          <p class="app-welcome">
-	    <tal:block metal:define-slot="middle"></tal:block>
-          </p>
+        <div id="footer">
+            <div class="footer">
+                &copy; Copyright 2014, C3S SCE.
+                <a href="https://www.c3s.cc/en/contact-us/"
+                        i18n:attributes="href footer-contact-href"
+                        i18n:translate="footer-contact">
+                    Contact
+                </a>
+                &amp;
+                <a href="https://www.c3s.cc/en/impressum/"
+                        i18n:attributes="href footer-imprint-href"
+                        i18n:translate="footer-imprint">
+                    Imprint
+                </a>
+            </div>
         </div>
-      </div>
-      <div id="bottom">
-        <div class="bottom">
-	  <tal:block metal:define-slot="bottom"></tal:block>
-      </div>
-      </div>
-    </div>
-    <div id="footer">
-      <div class="footer">
-        &copy; Copyright 2014, C3S SCE.
-        <a tal:attributes="href python:'https://www.c3s.cc/kontakt/' if request.locale_name == 'de' else 'https://www.c3s.cc/en/contact-us/'"
-           i18n:translate="">Contact</a>
-	&amp;
-	<a tal:attributes="href python:'https://www.c3s.cc/impressum/' if request.locale_name == 'de' else 'https://www.c3s.cc/en/impressum/'"
-           i18n:translate="">Imprint</a>
-      </div>
-    </div>
-    <tal:block metal:define-slot="javascript-last"></tal:block>
-  </body>
+        <tal:block metal:define-slot="javascript-last"></tal:block>
+    </body>
 </html>
