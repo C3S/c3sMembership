@@ -29,6 +29,9 @@ Next Release
   later on. Not the email is sent after the applicant confirmed their form data
   and thereby submitted.
 
+- Add payment list to toolbox. The list so far contains all membership dues
+  payments and is primarily intended for bookkeeping validation.
+
 
 
 1.20.7

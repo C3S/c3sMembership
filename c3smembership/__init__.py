@@ -117,6 +117,7 @@ def main(global_config, **settings):
     config.add_route('staff', '/staff')
     config.add_route('new_member', '/new_member')
     config.add_route('detail', '/detail/{memberid}')
+    config.add_route('member_details', '/members/{membership_number}')
     config.add_route('edit', '/edit/{_id}')
 
     # TODO: move application layer setup to separate module
@@ -250,6 +251,22 @@ def main(global_config, **settings):
     config.add_route(
         'batch_archive_pdf_invoices',
         '/batch_archive_pdf_invoices')
+
+    # Payments
+    from c3smembership.data.repository.payment_repository import \
+        PaymentRepository
+    from c3smembership.business.payment_information import PaymentInformation
+    config.registry.payment_information = PaymentInformation(
+        PaymentRepository())
+    config.add_route('payment_list', '/payments')
+
+    from c3smembership.presentation.views.payment_list import \
+        payment_content_size_provider
+    config.make_pagination_route(
+        'payment_list',
+        payment_content_size_provider,
+        sort_property_default='date',
+        page_size_default=30)
 
     # utilities & wizardry
     config.add_route('plz_dist', '/plz_dist')

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?python
+    from babel.numbers import format_currency
+?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend">
+    <tal:block metal:fill-slot="head">
+        <link rel="stylesheet" href="${request.static_url('deform:static/css/form.css')}"
+                type="text/css" media="screen" charset="utf-8" />
+        <link rel="stylesheet" href="${request.static_url('deform:static/css/typeahead.css')}"
+                type="text/css" media="screen" charset="utf-8" />
+        <script src="${request.static_url('c3smembership:static/jquery/jquery.min.js')}"
+                type="text/javascript"></script>
+        <script src="${request.static_url('deform:static/scripts/deform.js')}"
+                type="text/javascript"></script>
+    </tal:block>
+    <tal:block metal:fill-slot="javascript">
+        <script src="${request.static_url('deform:static/scripts/typeahead.min.js')}"
+                type="text/javascript"></script>
+        <script src="${request.static_url('deform:static/scripts/jquery.form.js')}"
+                type="text/javascript"></script>
+    </tal:block>
+    <tal:block metal:fill-slot="top">
+        <h1>Payments</h1>
+        <div>
+            <a href="${request.route_url('dashboard')}" class="btn btn-success">
+                Dashboard
+            </a>
+            <a href="${request.route_url('membership_listing_backend')}"
+                    class="btn btn-success">
+                Memberships
+            </a>
+            <a href="${request.route_url('toolbox')}"
+                    class="btn btn-primary">
+                Toolbox
+            </a>
+            <a href="${request.route_url('stats')}"
+                    class="btn btn-warning">
+                Statistics
+            </a>
+        </div>
+    </tal:block>
+    <tal:block metal:fill-slot="middle">
+        <p metal:use-macro="load: paging_bar_top.pt"></p>
+        <table class="table table-striped">
+            <thead>
+                <tr class="table-striped">
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Account
+                    </th>
+                    <th>
+                        Reference
+                    </th>
+                    <th>
+                        Membership number
+                    </th>
+                    <th>
+                        Firstname
+                    </th>
+                    <th>
+                        Lastname
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr tal:repeat="payment payments">
+                    <td>
+                        ${payment.date}
+                    </td>
+                    <td>
+                        ${payment.account}
+                    </td>
+                    <td>
+                        ${payment.reference}
+                    </td>
+                    <td>
+                        <a href="${request.route_url('member_details', membership_number=payment.membership_number)}">
+                            ${payment.membership_number}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="${request.route_url('member_details', membership_number=payment.membership_number)}">
+                            ${payment.firstname}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="${request.route_url('member_details', membership_number=payment.membership_number)}">
+                            ${payment.lastname}
+                        </a>
+                    </td>
+                    <td>
+                        ${format_currency(payment.amount, 'EUR')}
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>
+                        Count: ${len(payments)}
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                        <?python
+                            from decimal import Decimal
+                            amount_sum = reduce(lambda a, b: a + b['amount'], payments, Decimal('0.0'))
+                        ?>
+                        ${format_currency(amount_sum, 'EUR')}
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+        <p metal:use-macro="load: paging_bar_bottom.pt"></p>
+    </tal:block>
+</html>
