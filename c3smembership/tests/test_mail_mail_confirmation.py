@@ -129,7 +129,7 @@ class TestMailMailConfirmationViews(unittest.TestCase):
         self.assertEqual(len(mailer.outbox), 1)
         self.assertEqual(
             mailer.outbox[0].subject,
-            u'C3S: confirm your email address and load your PDF'
+            u'C3S: E-Mail-Adresse bestätigen und Formular abrufen'
         )
         self.assertTrue(
             u'Hallo' in mailer.outbox[0].body)

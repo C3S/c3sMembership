@@ -133,7 +133,7 @@ def generate_pdf(appstruct):
     return response
 
 
-def generate_csv(appstruct):
+def generate_csv(member):
     """
     returns a csv with the relevant data
     to ease import of new data sets
@@ -146,21 +146,20 @@ def generate_csv(appstruct):
     fields = (
         date.today().strftime("%Y-%m-%d"),
         'pending...',
-        appstruct['firstname'],
-        appstruct['lastname'],
-        appstruct['email'],
-        appstruct['email_confirm_code'],
-        appstruct['address1'],
-        appstruct['address2'],
-        appstruct['postcode'],
-        appstruct['city'],
-        appstruct['country'],
-        u'investing' if appstruct[
-            'membership_type'] == u'investing' else u'normal',
-        appstruct['date_of_birth'],
-        'j' if appstruct['member_of_colsoc'] == 'yes' else 'n',
-        appstruct['name_of_colsoc'].replace(',', '|'),
-        appstruct['num_shares'],
+        member.firstname,
+        member.lastname,
+        member.email,
+        member.email_confirm_code,
+        member.address1,
+        member.address2,
+        member.postcode,
+        member.city,
+        member.country,
+        u'investing' if member.membership_type == u'investing' else u'normal',
+        member.date_of_birth,
+        'j' if member.member_of_colsoc == 'yes' else 'n',
+        member.name_of_colsoc.replace(',', '|'),
+        member.num_shares,
     )
 
     csvw.writerow(fields)
@@ -169,7 +168,7 @@ def generate_csv(appstruct):
     return csv.readline()
 
 
-def make_mail_body(appstruct):
+def make_mail_body(member):
     """
     construct a multiline string to be used as the emails body
     """
@@ -195,47 +194,70 @@ member of coll. soc.:           {}
 
 that's it.. bye!""". \
     format(
-        appstruct['date_of_submission'],
-        appstruct['firstname'],
-        appstruct['lastname'],
-        appstruct['date_of_birth'],
-        appstruct['email'],
-        appstruct['email_confirm_code'],
-        appstruct['address1'],
-        appstruct['address2'],
-        appstruct['postcode'],
-        appstruct['city'],
-        appstruct['country'],
-        appstruct['membership_type'],
-        appstruct['num_shares'],
-        appstruct['member_of_colsoc'],
-        appstruct['name_of_colsoc'],
+        member.date_of_submission,
+        member.firstname,
+        member.lastname,
+        member.date_of_birth,
+        member.email,
+        member.email_confirm_code,
+        member.address1,
+        member.address2,
+        member.postcode,
+        member.city,
+        member.country,
+        member.membership_type,
+        member.num_shares,
+        member.member_of_colsoc,
+        member.name_of_colsoc,
     )
     return unencrypted
 
 
-def accountant_mail(appstruct):
+def create_accountant_mail(member, recipients):
     """
-    this function returns a message object for the mailer
-
-    it consists of a mail body and an attachment attached to it
+    Create an email message information the accountant about the new
+    membership application.
     """
-    unencrypted = make_mail_body(appstruct)
+    unencrypted = make_mail_body(member)
     encrypted = encrypt_with_gnupg(unencrypted)
-
-    message_recipient = appstruct['message_recipient']
 
     message = Message(
         subject="[C3S] Yes! a new member",
         sender="noreply@c3s.cc",
-        recipients=[message_recipient],
+        recipients=recipients,
         body=encrypted
     )
-    csv_payload_encd = encrypt_with_gnupg(generate_csv(appstruct))
+    csv_payload_encd = encrypt_with_gnupg(generate_csv(member))
 
     attachment = Attachment(
-        "C3S-SCE-AFM.csv.gpg", "application/gpg-encryption",
+        "C3S-SCE-AFM.csv.gpg",
+        "application/gpg-encryption",
         csv_payload_encd)
     message.attach(attachment)
-
     return message
+
+
+def send_accountant_mail(request, member):
+    """
+    Send an GPG encrypted email to the accountant informing about the new
+    membership application.
+    """
+    mailer = request.registry.get_mailer(request)
+    try:
+        the_mail = create_accountant_mail(
+            member,
+            request.registry.settings['c3smembership.mailaddr'])
+        if 'true' in request.registry.settings['testing.mail_to_console']:
+            print(the_mail.body)
+        else:
+            mailer.send(the_mail)
+    except:
+        mail = Message(
+            subject=_("[yes][ALERT] check the logs!"),
+            sender="noreply@c3s.cc",
+            recipients=['yes@c3s.cc'],
+            body="""
+A failure occurred at {}. A notification email could not be sent.
+Maybe gnupg failed and a key might be expired.
+            """.format(request.registry.settings['c3smembership.url']))
+        mailer.send(mail)

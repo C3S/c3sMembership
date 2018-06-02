@@ -23,6 +23,12 @@ Next Release
 
 - Add privacy statement to application form PDF
 
+- Fix accountant application email duplication. The email notification to the
+  accountant was sent each when the applicant loaded the application PDF. This
+  resulted in the accountant getting another email if the PDF was reloaded
+  later on. Not the email is sent after the applicant confirmed their form data
+  and thereby submitted.
+
 
 
 1.20.7

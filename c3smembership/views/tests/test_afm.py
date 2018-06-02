@@ -20,12 +20,35 @@ from c3smembership.models import (
     C3sStaff,
     Group,
 )
+import c3smembership.utils as utils
 import c3smembership.views.afm as afm
 from c3smembership.views.afm import (
     show_success,
+    show_success_pdf,
     success_check_email,
     success_verify_email,
 )
+
+
+def encrypt_with_gnupg_dummy(data):
+    return data
+
+
+class DummyCallable(object):
+
+    def __init__(self):
+        self._args = None
+        self._kwargs = None
+
+    def __call__(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+
+    def get_args(self):
+        return self._args
+
+    def get_kwargs(self):
+        return self._kwargs
 
 
 class DummyDate(object):
@@ -83,7 +106,12 @@ class TestViews(unittest.TestCase):
         self.assertTrue(result['lastname'] is 'bar')
         self.assertTrue(result['firstname'] is 'foo')
 
-    def test_success_check_email(self):
+    def test_show_success_no_appstruct(self):
+        self.config.add_route('join', '/')
+        result = show_success(testing.DummyRequest())
+        self.assertEqual(result.status_code, 302)
+
+    def test_success_check_email_de(self):
         """
         test the success_check_email view
         """
@@ -121,18 +149,96 @@ class TestViews(unittest.TestCase):
             },
         }
         mailer = get_mailer(request)
+
+        # Dependency injection to dirty way
+        original_encrypt_with_gnupg = utils.encrypt_with_gnupg
+        utils.encrypt_with_gnupg = encrypt_with_gnupg_dummy
+
+        result = success_check_email(request)
+
+        # Undo dependency injection
+        utils.encrypt_with_gnupg = original_encrypt_with_gnupg
+
+        self.assertTrue(result['lastname'] is 'bar')
+        self.assertTrue(result['firstname'] is 'foo')
+
+        # expect email to accountant and email to applicant for email address
+        # confirmation
+        self.assertEqual(len(mailer.outbox), 2)
+        self.assertEqual(
+            mailer.outbox[0].subject,
+            '[C3S] Yes! a new member')
+        self.assertEqual(
+            mailer.outbox[1].subject,
+            u'C3S: E-Mail-Adresse bestätigen und Formular abrufen')
+
+        verif_link = "https://yes.c3s.cc/verify/bar@shri.de/"
+        self.assertTrue("Hallo foo bar!" in mailer.outbox[1].body)
+        self.assertTrue(verif_link in mailer.outbox[1].body)
+
+    def test_success_check_email_en(self):
+        """
+        test the success_check_email view
+        """
+        self.config.add_route('join', '/')
+        request = testing.DummyRequest(
+            params={
+                'appstruct': {
+                    'firstname': 'foo',
+                    'lastname': 'bar',
+                }
+            }
+        )
+        request.session['appstruct'] = {
+            'person': {
+                'firstname': 'foo',
+                'lastname': 'bar',
+                'email': 'bar@shri.de',
+                'password': 'bad password',
+                'address1': 'Some Street',
+                'address2': '',
+                'postcode': 'ABC123',
+                'city': 'Stockholm',
+                'country': 'SE',
+                'locale': 'en',
+                'date_of_birth': '1980-01-01',
+            },
+            'membership_info': {
+                'membership_type': 'person',
+                'member_of_colsoc': 'no',
+                'name_of_colsoc': '',
+                'privacy_consent': datetime(2018, 5, 24, 22, 16, 23),
+            },
+            'shares': {
+                'num_shares': '3',
+            },
+        }
+        mailer = get_mailer(request)
+
+        # Dependency injection to dirty way
+        original_encrypt_with_gnupg = utils.encrypt_with_gnupg
+        utils.encrypt_with_gnupg = encrypt_with_gnupg_dummy
+
         result = success_check_email(request)
         self.assertTrue(result['lastname'] is 'bar')
         self.assertTrue(result['firstname'] is 'foo')
 
-        self.assertEqual(len(mailer.outbox), 1)
+        # Undo dependency injection
+        utils.encrypt_with_gnupg = original_encrypt_with_gnupg
+
+        # expect email to accountant and email to applicant for email address
+        # confirmation
+        self.assertEqual(len(mailer.outbox), 2)
         self.assertEqual(
             mailer.outbox[0].subject,
+            '[C3S] Yes! a new member')
+        self.assertEqual(
+            mailer.outbox[1].subject,
             'C3S: confirm your email address and load your PDF')
 
         verif_link = "https://yes.c3s.cc/verify/bar@shri.de/"
-        self.assertTrue("Hallo foo bar!" in mailer.outbox[0].body)
-        self.assertTrue(verif_link in mailer.outbox[0].body)
+        self.assertTrue("Hello foo bar!" in mailer.outbox[1].body)
+        self.assertTrue(verif_link in mailer.outbox[1].body)
 
     def test_success_check_email_redirect(self):
         """
@@ -260,3 +366,34 @@ class TestViews(unittest.TestCase):
         self.assertEqual(result['post_url'], '/verify/foo@shri.de/12345678')
         self.assertEqual(result['namepart'], '')
         self.assertEqual(result['correct'], False)
+
+    def test_show_success_pdf(self):
+        """
+        Test the show_success_pdf method.show_success_pdf
+
+        1. Generate PDF if appstruct is present
+        2. Redirect if no appstruct is present
+        """
+        # 1. Generate PDF if appstruct is present
+        self.config.add_route('join', '/')
+        request = testing.DummyRequest()
+        request.session['appstruct'] = {'test': 'dummy'}
+
+        # Dependency injection the dirty way
+        original_generate_pdf = afm.generate_pdf
+        generate_pdf = DummyCallable()
+        afm.generate_pdf = generate_pdf
+
+        result = show_success_pdf(request)
+
+        # Undo dependency injection
+        afm.generate_pdf = original_generate_pdf
+
+        self.assertEqual(generate_pdf.get_args(), ({'test': 'dummy'},))
+
+        # 2. Redirect if no appstruct is present
+        self.config.add_route('join', '/')
+        request = testing.DummyRequest()
+        result = show_success_pdf(request)
+        self.assertEqual('302 Found', result._status)
+        self.assertEqual('http://example.com/', result.location)

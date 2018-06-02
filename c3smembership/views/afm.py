@@ -49,7 +49,7 @@ from c3smembership.presentation.i18n import (
 )
 from c3smembership.utils import (
     generate_pdf,
-    accountant_mail,
+    send_accountant_mail,
 )
 
 
@@ -428,7 +428,8 @@ def show_success(request):
 def send_mail_confirmation_mail(member, base_url, mailer, localizer,
                                 testing_mail_to_console):
     if 'de' in member.locale.lower():
-        the_mail_body = u'''
+        email_subject = u'C3S: E-Mail-Adresse bestätigen und Formular abrufen'
+        email_body = u'''
 Hallo {} {}!
 
 bitte benutze diesen Link um deine E-Mail-Adresse zu bestätigen
@@ -441,7 +442,8 @@ Danke!
 Dein C3S Team
         '''
     else:
-        the_mail_body = u'''
+        email_subject = u'C3S: confirm your email address and load your PDF'
+        email_body = u'''
 Hello {} {}!
 
 please use this link to verify your email address
@@ -454,12 +456,10 @@ thanks!
 Your C3S team
         '''
     message = Message(
-        subject=localizer.translate(_(
-            'check-email-paragraph-check-email-subject',
-            default=u'C3S: confirm your email address and load your PDF')),
+        subject=email_subject,
         sender='noreply@c3s.cc',
         recipients=[member.email],
-        body=the_mail_body.format(
+        body=email_body.format(
             member.firstname,
             member.lastname,
             base_url,
@@ -528,6 +528,7 @@ def success_check_email(request):
             privacy_consent=appstruct['membership_info']['privacy_consent'],
         )
         DBSession().add(member)
+        send_accountant_mail(request, member)
 
         send_mail_confirmation_mail(
             member,
@@ -654,54 +655,9 @@ def success_verify_email(request):
 @view_config(route_name='success_pdf')
 def show_success_pdf(request):
     """
-    Given there is valid information in the session
-    this view sends an encrypted mail to C3S staff with the users data set
-    and returns a PDF for the user.
-
-    It is called after visiting the verification URL/page/view in
-    def success_verify_email below.
+    Generates the membership application PDF to be signed by the applicant.
     """
     # check if user has used form or 'guessed' this URL
     if 'appstruct' in request.session:
-        # we do have valid info from the form in the session
-        # send mail to accountants // prepare a mailer
-        mailer = request.registry.get_mailer(request)
-        appstruct = request.session['appstruct']
-        message_recipient = request.registry.settings['c3smembership.mailaddr']
-        appstruct['message_recipient'] = message_recipient
-        the_mail = accountant_mail(appstruct)
-        if 'true' in request.registry.settings['testing.mail_to_console']:
-            print(the_mail.body)
-        else:
-            try:
-                mailer.send(the_mail)
-            except:
-                # if mailout fails for some reason (gnupg, whatever), we need
-                # 1) a mail to staff, so we take notice and fix it
-                # 2) a message to $user, so she does not worry
-                staff_mail = Message(
-                    subject=_("[yes][ALERT] check the logs!"),
-                    sender="noreply@c3s.cc",
-                    recipients=['yes@c3s.cc'],
-                    body="""
-problems! problems!
-
-this is {}
-
-a user could not download her pdf, because....
-maybe gnupg failed? something else?
-
-go fix it!
-                    """.format(request.registry.settings['c3smembership.url']))
-                mailer.send(staff_mail)
-
-                request.session.flash(
-                    u"Oops. we hit a bug. Staff will be "
-                    u"informed. We will come back to you "
-                    u"once we fixed it!",
-                    'message_to_user'
-                )
-                return HTTPFound(request.route_url('error_page'))
-
         return generate_pdf(request.session['appstruct'])
     return HTTPFound(location=request.route_url('join'))

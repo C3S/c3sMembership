@@ -15,6 +15,7 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.models import C3sMember
+import c3smembership.utils as utils
 
 
 class TestUtilities(unittest.TestCase):
@@ -163,25 +164,28 @@ class TestUtilities(unittest.TestCase):
         from c3smembership.utils import make_mail_body
         import datetime
         dob = datetime.date(1999, 1, 1)
-        my_appstruct = {
-            'activity': [u'composer', u'dj'],
-            'firstname': u'Jöhn test_mail_body',
-            'lastname': u'Döe',
-            'date_of_birth': dob,
-            'address1': u'addr one',
-            'address2': u'addr two',
-            'postcode': u'12345 xyz',
-            'city': u'Town',
-            'email': u'devnull@c3s.cc',
-            'email_confirm_code': u'1234567890',
-            'country': u'af',
-            'member_of_colsoc': u'yes',
-            'name_of_colsoc': u'Buma',
-            'membership_type': u'investing',
-            'num_shares': u'23',
-            'date_of_submission': datetime.datetime.now(),
-        }
-        result = make_mail_body(my_appstruct)
+        member = C3sMember(
+            firstname=u'Jöhn test_mail_body',
+            lastname=u'Döe',
+            email=u'devnull@c3s.cc',
+            password=u'very_unsecure_password',
+            address1=u'addr one',
+            address2=u'addr two',
+            postcode=u'12345 xyz',
+            city=u'Town',
+            country=u'af',
+            locale=u'en',
+            date_of_birth=dob,
+            email_is_confirmed=False,
+            email_confirm_code=u'1234567890',
+            num_shares=u'23',
+            date_of_submission=datetime.datetime.now(),
+            membership_type=u'investing',
+            member_of_colsoc=u'yes',
+            name_of_colsoc=u'Buma',
+            privacy_consent=datetime.datetime.now(),
+        )
+        result = make_mail_body(member)
 
         self.failUnless(u'Jöhn test_mail_body' in result)
         self.failUnless(u'Döe' in result)
@@ -194,32 +198,34 @@ class TestUtilities(unittest.TestCase):
             u'member of coll. soc.:           yes' in result)
         self.failUnless(u'that\'s it.. bye!' in result)
 
-    def test_accountant_mail(self):
+    def test_create_accountant_mail(self):
         """
         Test creation of email message object
         """
-        from c3smembership.utils import accountant_mail
+        from c3smembership.utils import create_accountant_mail
         import datetime
-        my_appstruct = {
-            'firstname': u'Jöhn test_accountant_mail',
-            'lastname': u'Doe',
-            'email': u'devnull@example.com',
-            'email_confirm_code': 'ABCDEFGH',
-            'address1': 'address part one',
-            'address2': 'address part two',
-            'postcode': 'POSTCODE',
-            'city': u'Town',
-            'country': u'af',
-            'date_of_birth': datetime.date(1987, 6, 5),
-            'membership_type': u'normal',
-            'member_of_colsoc': u'yes',
-            'name_of_colsoc': u'Foo Colsoc',
-            'num_shares': 7,
-            # hä?
-            'message_recipient': 'yes@c3s.cc',
-            'date_of_submission': datetime.datetime.now(),
-        }
-        result = accountant_mail(my_appstruct)
+        member = C3sMember(
+            firstname=u'Jöhn test_create_accountant_mail',
+            lastname=u'Doe',
+            email=u'devnull@example.com',
+            password=u'very_unsecure_password',
+            address1='address part one',
+            address2='address part two',
+            postcode='POSTCODE',
+            city=u'Town',
+            country=u'af',
+            locale=u'en',
+            date_of_birth=datetime.date(1987, 6, 5),
+            email_is_confirmed=False,
+            email_confirm_code='ABCDEFGH',
+            num_shares=7,
+            date_of_submission=datetime.datetime.now(),
+            membership_type=u'normal',
+            member_of_colsoc=u'yes',
+            name_of_colsoc=u'Foo Colsoc',
+            privacy_consent=datetime.datetime.now(),
+        )
+        result = create_accountant_mail(member, ['yes@c3s.cc'])
 
         from pyramid_mailer.message import Message
 
