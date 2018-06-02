@@ -52,31 +52,8 @@ from c3smembership.utils import (
     accountant_mail,
 )
 
-DEBUG = False
-LOGGING = True
 
-if LOGGING:
-    LOG = logging.getLogger(__name__)
-
-
-def statute_validator(node, value):
-    """
-    Validator for statute confirmation.
-    """
-    if not value:
-        # raise without additional error message as the description
-        # already explains the necessity of the checkbox
-        raise Invalid(node, u'')
-
-
-def dues_regulations_validator(node, value):
-    """
-    Validator for dues regulations confirmation.
-    """
-    if not value:
-        # raise without additional error message as the description
-        # already explains the necessity of the checkbox
-        raise Invalid(node, u'')
+LOG = logging.getLogger(__name__)
 
 
 @view_config(renderer='c3smembership:templates/join.pt',
@@ -99,9 +76,6 @@ def join_c3s(request):
     else:
         locale_name = get_locale_name(request)
 
-    if DEBUG:
-        print "-- locale_name: " + str(locale_name)
-
     from c3smembership.utils import country_codes
     # set default of Country select widget according to locale
     locale_country_mapping = {
@@ -109,9 +83,6 @@ def join_c3s(request):
         'en': 'GB',
     }
     country_default = locale_country_mapping.get(locale_name)
-    if DEBUG:
-        print("== locale is :" + str(locale_name))
-        print("== choosing :" + str(country_default))
 
     class PersonalData(colander.MappingSchema):
         """
@@ -163,7 +134,6 @@ def join_c3s(request):
         date_of_birth = colander.SchemaNode(
             colander.Date(),
             title=_(u'Date of Birth'),
-            # css_class="hasDatePicker",
             widget=deform.widget.DatePartsWidget(),
             default=date(2013, 1, 1),
             validator=Range(
@@ -235,7 +205,6 @@ def join_c3s(request):
             validator=colander.OneOf([x[0] for x in yes_no]),
             widget=deform.widget.RadioChoiceWidget(values=yes_no),
             oid="other_colsoc",
-            # validator=colsoc_validator
         )
         name_of_colsoc = colander.SchemaNode(
             colander.String(),
@@ -247,9 +216,6 @@ def join_c3s(request):
                 u'If more than one, please separate them by comma.'),
             missing=unicode(''),
             oid="colsoc_name",
-            # validator=colander.All(
-            #    colsoc_validator,
-            # )
         )
 
     class Shares(colander.Schema):
@@ -380,8 +346,8 @@ def join_c3s(request):
         try:
             appstruct = form.validate(controls)
 
-            # data sanity: if not in collecting society, don't save
-            #  collsoc name even if it was supplied through form
+            # data sanity: if not in collecting society, don't save collsoc
+            # name even if it was supplied through form
             if 'no' in appstruct['membership_info']['member_of_colsoc']:
                 appstruct['membership_info']['name_of_colsoc'] = ''
 
@@ -416,7 +382,7 @@ def join_c3s(request):
         # empty the messages queue (as validation worked anyways)
         deleted_msg = request.session.pop_flash()
         del deleted_msg
-        return HTTPFound(  # redirect to success page
+        return HTTPFound(
             location=request.route_url('success'),
         )
 
@@ -456,7 +422,6 @@ def show_success(request):
             'firstname': appstruct['person']['firstname'],
             'lastname': appstruct['person']['lastname'],
         }
-    # 'else': send user to the form
     return HTTPFound(location=request.route_url('join'))
 
 
@@ -521,7 +486,6 @@ def success_check_email(request):
     and returns a note to go check mail.
     """
     # check if user has used the form (good) or 'guessed' this URL (bad)
-
     if 'appstruct' in request.session:
 
         appstruct = request.session['appstruct']
@@ -537,14 +501,10 @@ def success_check_email(request):
                     string.ascii_uppercase + string.digits
                 ) for x in range(10))
 
-        # make confirmation code and
         email_confirm_code = make_random_string()
-        # check if confirmation code is already used
         while C3sMember.check_for_existing_confirm_code(email_confirm_code):
-            # create a new one, if the new one already exists in the database
             email_confirm_code = make_random_string()  # pragma: no cover
 
-        # to store the data in the DB, an objet is created
         member = C3sMember(
             firstname=appstruct['person']['firstname'],
             lastname=appstruct['person']['lastname'],
@@ -582,7 +542,6 @@ def success_check_email(request):
             'firstname': appstruct['person']['firstname'],
             'lastname': appstruct['person']['lastname'],
         }
-    # 'else': send user to the form
     return HTTPFound(location=request.route_url('join'))
 
 
@@ -599,7 +558,6 @@ def success_verify_email(request):
     If the password matches, and all is correct,
     the view shows a download link and further info.
     """
-    # collect data from the URL/matchdict
     user_email = request.matchdict['email']
     confirm_code = request.matchdict['code']
     # if we want to ask the user for her password (through a form)
@@ -609,15 +567,13 @@ def success_verify_email(request):
     if 'submit' in request.POST:
         request.session.pop_flash('message_above_form')
         request.session.pop_flash('message_above_login')
-        # check for password ! ! !
         if 'password' in request.POST:
             _passwd = request.POST['password']
 
         # get matching dataset from DB
-        member = C3sMember.get_by_code(confirm_code)  # returns member or None
+        member = C3sMember.get_by_code(confirm_code)
 
         if isinstance(member, NoneType):
-            # member not found: FAIL!
             not_found_msg = _(
                 u"Not found. Check verification URL. "
                 "If all seems right, please use the form again.")
@@ -636,18 +592,16 @@ def success_verify_email(request):
                 _(u'Wrong Password!'),
                 'message_above_login')
 
-        # check if info from DB makes sense
-        # -member
-
         if (member.email == user_email) and correct:
             # set the email_is_confirmed flag in the DB for this signee
             member.email_is_confirmed = True
-            # dbsession.flush()
             namepart = member.firstname + member.lastname
+
+            # Replace special characters with underscore
             import re
-            pdf_file_name_part = re.sub(  # replace characters
-                '[^a-zA-Z0-9]',  # other than these
-                '_',  # with an underscore
+            pdf_file_name_part = re.sub(
+                '[^a-zA-Z0-9]',
+                '_',
                 namepart)
 
             appstruct = {
@@ -663,14 +617,10 @@ def success_verify_email(request):
                 'locale': member.locale,
                 'date_of_birth': member.date_of_birth,
                 'date_of_submission': member.date_of_submission,
-                # 'activity': set(activities),
-                # 'invest_member': u'yes' if member.invest_member else u'no',
                 'membership_type': member.membership_type,
                 'member_of_colsoc':
                     u'yes' if member.member_of_colsoc else u'no',
                 'name_of_colsoc': member.name_of_colsoc,
-                # 'opt_band': signee.opt_band,
-                # 'opt_URL': signee.opt_URL,
                 'num_shares': member.num_shares,
             }
             request.session['appstruct'] = appstruct
@@ -686,8 +636,6 @@ def success_verify_email(request):
                 'namepart': pdf_file_name_part,
                 'result_msg': _("Success. Load your PDF!")
             }
-    # else: code did not match OR SOMETHING...
-    # just display the form
     request.session.flash(
         _(u"Please enter your password."),
         'message_above_login',
@@ -718,7 +666,6 @@ def show_success_pdf(request):
         # we do have valid info from the form in the session
         # send mail to accountants // prepare a mailer
         mailer = request.registry.get_mailer(request)
-        # prepare mail
         appstruct = request.session['appstruct']
         message_recipient = request.registry.settings['c3smembership.mailaddr']
         appstruct['message_recipient'] = message_recipient
@@ -752,10 +699,9 @@ go fix it!
                     u"Oops. we hit a bug. Staff will be "
                     u"informed. We will come back to you "
                     u"once we fixed it!",
-                    'message_to_user'  # msg queue f. user
+                    'message_to_user'
                 )
                 return HTTPFound(request.route_url('error_page'))
 
         return generate_pdf(request.session['appstruct'])
-    # 'else': send user to the form
     return HTTPFound(location=request.route_url('join'))
