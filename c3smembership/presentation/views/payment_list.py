@@ -25,7 +25,7 @@ def payment_list(request):
     return {'payments': payments}
 
 
-def payment_content_size_provider():
+def payment_content_size_provider(request):
     """
     Provides the payment content size, i.e. the number of payments available
     to be displayed.

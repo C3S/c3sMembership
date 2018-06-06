@@ -53,7 +53,7 @@ class IContentSizeProviderTest(TestCase):
     def test_call(self):
         content_size_provider = IContentSizeProvider()
         with self.assertRaises(NotImplementedError):
-            content_size_provider()
+            content_size_provider('request')
 
 
 class FunctionsTest(TestCase):
@@ -184,6 +184,7 @@ class PaginationContextFoundSubscriberTest(TestCase):
         self.assertEqual(request.pagination, 'some pagination')
         self.assertEqual(pagination_reader.call_count, 1)
         self.assertEqual(content_size_provider_mock.call_count, 1)
+        self.assertEqual(content_size_provider_mock.get_request(), request)
 
 
     def test_call_exception(self):

@@ -149,9 +149,14 @@ class ContentSizeProviderMock(CallCallCounter, IContentSizeProvider):
     def __init__(self, call_result):
         super(ContentSizeProviderMock, self).__init__()
         self._call_result = call_result
+        self._request = None
 
-    def _call(self):
+    def _call(self, request):
+        self._request = request
         return self._call_result
+
+    def get_request(self):
+        return self._request
 
 
 class MockReader(IReader):

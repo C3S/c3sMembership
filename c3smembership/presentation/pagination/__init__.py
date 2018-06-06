@@ -10,7 +10,7 @@ Example::
     >>>
     >>> content = range(1000)
     >>>
-    >>> def content_size_provider():
+    >>> def content_size_provider(request):
     ...     return len(content)
     ...
     >>> @view_config(route_name='some_route', renderer='json')
@@ -165,7 +165,7 @@ class IContentSizeProvider(object):
 
             my_data = [1, 2, 3]
 
-            def some_content_size_provider():
+            def some_content_size_provider(request):
                 return len(my_data)
 
     Example:
@@ -185,9 +185,12 @@ class IContentSizeProvider(object):
             content_size_provider = DictionaryContentSizeProvider(my_dict)
     """
 
-    def __call__(self):
+    def __call__(self, request):
         """
         Returns the content size for pagination.
+
+        Args:
+            request: The pyramid.request.Request object of the current request.
         """
         raise NotImplementedError()
 
@@ -225,7 +228,7 @@ class PaginationContextFoundSubscriber(object):
             try:
                 request.pagination = pagination_reader(
                     request,
-                    content_size_provider())
+                    content_size_provider(request))
             except PageNotFoundException:
                 raise ParameterValidationException(
                     'Page does not exist.',
@@ -288,8 +291,7 @@ def make_pagination_route(
         config (pyramid.config.Configurator): The object to which the route
             belongs.
         route_name (str): The name of the route.
-        content_size_provider (IContentSizeProvider): A python callable
-            accepting a filtering parameter.
+        content_size_provider (IContentSizeProvider): A python callable.
         sort_property_default (str): The name of the default sort property which is
             used in case nothing else is specified.
         page_size_default (int): The default page size in case nothing else is

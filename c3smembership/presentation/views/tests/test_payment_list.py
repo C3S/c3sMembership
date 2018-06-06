@@ -135,7 +135,7 @@ class TestPaymentList(unittest.TestCase):
         payment_list_package.PaymentRepository = payment_repository_dummy
 
         # test
-        result = payment_content_size_provider()
+        result = payment_content_size_provider('request')
         self.assertTrue(payment_information_class_dummy.calledWith(
             payment_list_package.PaymentRepository))
         self.assertTrue(payment_information_dummy.get_payments.calledWith(

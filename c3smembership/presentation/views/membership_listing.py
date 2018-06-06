@@ -25,7 +25,7 @@ def membership_listing_backend(request):
     }
 
 
-def membership_content_size_provider():
+def membership_content_size_provider(request):
     return C3sMember.get_num_members_accepted()
 
 

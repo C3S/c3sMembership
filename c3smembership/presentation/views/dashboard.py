@@ -56,7 +56,7 @@ def dashboard(request):
     }
 
 
-def dashboard_content_size_provider():
+def dashboard_content_size_provider(request):
     # TODO: Architectural cleanup necessary as the presentation layer
     # is directly accessing the data layer. It should instead access the
     # business layer.
