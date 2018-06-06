@@ -122,13 +122,22 @@ class PaymentRepository(object):
         return payments
 
     @classmethod
-    def _sort_payments(cls, payments):
+    def _sort_payments(cls, payments, sort_property, sort_direction):
         """
-        Sorts the payments ascending by date and membership number-
+        Sorts the payments by sort property in sort direction.
+
+        Args:
+            payments: The payment list to be sorted.
+            sort_property: A string representing the payment property by which
+                the payment list is sorted.
+            sort_direction: A string representing the sort direction, either
+                "asc" for ascending sorting or "desc" for descending sorting.
         """
-        return sorted(payments, key=lambda k: (
-            k['date'],
-            k['membership_number']))
+        reverse = True if sort_direction.lower() == 'desc' else False
+        return sorted(
+            payments,
+            key=lambda k: k[sort_property],
+            reverse=reverse)
 
     @classmethod
     def _slice_payments(cls, payments, page_number, page_size):
@@ -141,19 +150,56 @@ class PaymentRepository(object):
         return payments[first_index:last_index]
 
     @classmethod
+    def _is_valid_sort_property(cls, sort_property):
+        return sort_property in [
+            'date',
+            'account',
+            'reference',
+            'membership_number',
+            'firstname',
+            'lastname',
+            'amount',
+        ]
+
+    # pylint: disable=too-many-arguments
+    @classmethod
     def get_payments(
-            cls, page_number, page_size, from_date=None, to_date=None):
+            cls, page_number, page_size, sort_property='date',
+            sort_direction='asc', from_date=None, to_date=None):
         """
         Gets the payments for a page filtered by dates.
 
         Args:
             page_number: The number of the page of payments to be returned.
             page_size: The size of the pages of payments.
+            sort_property: Optional. A string representing the payment property
+                by which the payment list is sorted. Valid sort properties are:
+
+                - date
+                - account
+                - reference
+                - membership_number
+                - firstname
+                - lastname
+                - amount
+
+                The default sort property is "date".
+            sort_direction: Optional. A string representing the sort direction,
+                either "asc" for ascending sorting or "desc" for descending
+                sorting. The default sort direction is ascending.
             from_date: Optional. The earliest payment date. All older payments
                 are filtered.
             to_date: Optional. The latest payment date. All younger payments
                 are filtered.
+
+        Raises:
+            ValueError: In case sort_property is not valid.
         """
+        if not cls._is_valid_sort_property(sort_property):
+            raise ValueError(
+                u'"{}"" is an invalid sort property.'.format(
+                    unicode(sort_property)))
+
         payments = []
         members = DBSession().query(C3sMember).all()
 
@@ -164,7 +210,7 @@ class PaymentRepository(object):
 
         # Arrange payments
         payments = cls._filter_payments(payments, from_date, to_date)
-        payments = cls._sort_payments(payments)
+        payments = cls._sort_payments(payments, sort_property, sort_direction)
         payments = cls._slice_payments(payments, page_number, page_size)
 
         return payments

@@ -31,8 +31,11 @@ class PaymentInformationDummy(object):
         self._result = result
         self._page_number = None
         self._page_size = None
+        self._sort_property = None
+        self._sort_direction = None
 
-    def get_payments(self, page_number, page_size):
+    def get_payments(
+            self, page_number, page_size, sort_property, sort_direction):
         """
         Gets the payments.
 
@@ -41,9 +44,15 @@ class PaymentInformationDummy(object):
                 get_page_number method.
             page_size: The page size which can be retrieved from the
                 get_page_size method.
+            sort_property: The sort property which can be retrieved from the
+                get_sort_property method.
+            sort_direction: The sort direction which can be retrieved from the
+                get_sort_direction method.
         """
         self._page_number = page_number
         self._page_size = page_size
+        self._sort_property = sort_property
+        self._sort_direction = sort_direction
         return self._result
 
     def get_page_number(self):
@@ -57,6 +66,18 @@ class PaymentInformationDummy(object):
         Gets the page size passed to the get_payments method.
         """
         return self._page_size
+
+    def get_sort_property(self):
+        """
+        Gets the sort property passed to the get_payments method.
+        """
+        return self._sort_property
+
+    def get_sort_direction(self):
+        """
+        Gets the sort direction passed to the get_payments method.
+        """
+        return self._sort_direction
 
 
 class TestPaymentList(unittest.TestCase):
@@ -76,12 +97,20 @@ class TestPaymentList(unittest.TestCase):
         request_dummy.pagination = Mock()
         request_dummy.pagination.paging.page_number = 12
         request_dummy.pagination.paging.page_size = 23
+        request_dummy.pagination.sorting.sort_property = 'sort property'
+        request_dummy.pagination.sorting.sort_direction = 'sort direction'
 
         result = payment_list(request_dummy)
 
         self.assertEqual(result, {'payments': 'payment list'})
         self.assertEqual(payment_information_dummy.get_page_number(), 12)
         self.assertEqual(payment_information_dummy.get_page_size(), 23)
+        self.assertEqual(
+            payment_information_dummy.get_sort_property(),
+            'sort property')
+        self.assertEqual(
+            payment_information_dummy.get_sort_direction(),
+            'sort direction')
 
     # pylint: disable=invalid-name
     def test_payment_content_size_provider(self):

@@ -49,25 +49,95 @@
             <thead>
                 <tr class="table-striped">
                     <th>
-                        Date
+                        <a href="${pagination.url.sort_property_alternating_direction('date')}"
+                                title="Sort by date">
+                            Date
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('date').sort_direction('asc')}"
+                           title="Sort by date ascending"
+                           class="glyphicon glyphicon-chevron-up"></a>
+                        <a href="${pagination.url.sort_property('date').sort_direction('desc')}"
+                           title="Sort by date descending"
+                           class="glyphicon glyphicon-chevron-down"></a>
                     </th>
                     <th>
-                        Account
+                        <a href="${pagination.url.sort_property_alternating_direction('account')}"
+                                title="Sort by account">
+                            Account
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('account').sort_direction('asc')}"
+                           title="Sort by account ascending"
+                           class="glyphicon glyphicon-chevron-up"></a>
+                        <a href="${pagination.url.sort_property('account').sort_direction('desc')}"
+                           title="Sort by account descending"
+                           class="glyphicon glyphicon-chevron-down"></a>
                     </th>
                     <th>
-                        Reference
+                        <a href="${pagination.url.sort_property_alternating_direction('reference')}"
+                                title="Sort by reference">
+                            Reference
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('reference').sort_direction('asc')}"
+                           title="Sort by reference ascending"
+                           class="glyphicon glyphicon-chevron-up"></a>
+                        <a href="${pagination.url.sort_property('reference').sort_direction('desc')}"
+                           title="Sort by reference descending"
+                           class="glyphicon glyphicon-chevron-down"></a>
                     </th>
                     <th>
-                        Membership number
+                        <a href="${pagination.url.sort_property_alternating_direction('membership_number')}"
+                                title="Sort by membership number">
+                            Membership number
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('membership_number').sort_direction('asc')}"
+                           title="Sort by membership number ascending"
+                           class="glyphicon glyphicon-chevron-up"></a>
+                        <a href="${pagination.url.sort_property('membership_number').sort_direction('desc')}"
+                           title="Sort by membership number descending"
+                           class="glyphicon glyphicon-chevron-down"></a>
                     </th>
                     <th>
-                        Firstname
+                        <a href="${pagination.url.sort_property_alternating_direction('firstname')}"
+                                title="Sort by firstname">
+                            Firstname
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('firstname').sort_direction('asc')}"
+                           title="Sort by firstname ascending"
+                           class="glyphicon glyphicon-chevron-up"></a>
+                        <a href="${pagination.url.sort_property('firstname').sort_direction('desc')}"
+                           title="Sort by firstname descending"
+                           class="glyphicon glyphicon-chevron-down"></a>
                     </th>
                     <th>
-                        Lastname
+                        <a href="${pagination.url.sort_property_alternating_direction('lastname')}"
+                                title="Sort by lastname">
+                            Lastname
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('lastname').sort_direction('asc')}"
+                           title="Sort by lastname ascending"
+                           class="glyphicon glyphicon-chevron-up"></a>
+                        <a href="${pagination.url.sort_property('lastname').sort_direction('desc')}"
+                           title="Sort by lastname descending"
+                           class="glyphicon glyphicon-chevron-down"></a>
                     </th>
                     <th>
-                        Amount
+                        <a href="${pagination.url.sort_property_alternating_direction('amount')}"
+                                title="Sort by amount">
+                            Amount
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('amount').sort_direction('asc')}"
+                           title="Sort by amount ascending"
+                           class="glyphicon glyphicon-chevron-up"></a>
+                        <a href="${pagination.url.sort_property('amount').sort_direction('desc')}"
+                           title="Sort by amount descending"
+                           class="glyphicon glyphicon-chevron-down"></a>
                     </th>
                 </tr>
             </thead>

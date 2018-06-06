@@ -19,6 +19,8 @@ def payment_list(request):
     payments = request.registry.payment_information.get_payments(
         request.pagination.paging.page_number,
         request.pagination.paging.page_size,
+        request.pagination.sorting.sort_property,
+        request.pagination.sorting.sort_direction,
     )
     return {'payments': payments}
 
