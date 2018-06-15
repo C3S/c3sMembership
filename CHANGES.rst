@@ -32,6 +32,8 @@ Next Release
 - Add payment list to toolbox. The list so far contains all membership dues
   payments and is primarily intended for bookkeeping validation.
 
+- Add date filtering to payment list.
+
 
 
 1.20.7

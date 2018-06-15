@@ -44,6 +44,7 @@
         </div>
     </tal:block>
     <tal:block metal:fill-slot="middle">
+        <div id="filter" tal:content="structure filter_form"/>
         <p metal:use-macro="load: paging_bar_top.pt"></p>
         <table class="table table-striped">
             <thead>

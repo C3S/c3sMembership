@@ -140,14 +140,28 @@ class PaymentRepository(object):
             reverse=reverse)
 
     @classmethod
-    def _slice_payments(cls, payments, page_number, page_size):
+    def _slice_payments(cls, payments, page_number=None, page_size=None):
         """
         Slices the payments to the given page number according to the page
         size.
+
+        If page number or page size are not specified then all available items
+        are returned without any slicing applied.
+
+        Args:
+            page_number: Optional. Integer specifying the page to be displayed.
+            page_size: Optional. Integer specifying the size of a page in terms
+                of number of items displayed on the page.
+
+        Returns:
+            An array of payments.
         """
-        first_index = cls._get_first_index(page_number, page_size)
-        last_index = cls._get_last_index(page_number, page_size)
-        return payments[first_index:last_index]
+        if page_number is not None and page_size is not None:
+            first_index = cls._get_first_index(page_number, page_size)
+            last_index = cls._get_last_index(page_number, page_size)
+            return payments[first_index:last_index]
+        else:
+            return payments
 
     @classmethod
     def _is_valid_sort_property(cls, sort_property):
@@ -164,14 +178,18 @@ class PaymentRepository(object):
     # pylint: disable=too-many-arguments
     @classmethod
     def get_payments(
-            cls, page_number, page_size, sort_property='date',
+            cls, page_number=None, page_size=None, sort_property='date',
             sort_direction='asc', from_date=None, to_date=None):
         """
         Gets the payments for a page filtered by dates.
 
+        If page number or page size are not specified then all available items
+        are returned without any slicing applied.
+
         Args:
-            page_number: The number of the page of payments to be returned.
-            page_size: The size of the pages of payments.
+            page_number: Optional. The number of the page of payments to be
+                returned.
+            page_size: Optional. The size of the pages of payments.
             sort_property: Optional. A string representing the payment property
                 by which the payment list is sorted. Valid sort properties are:
 
@@ -214,3 +232,23 @@ class PaymentRepository(object):
         payments = cls._slice_payments(payments, page_number, page_size)
 
         return payments
+
+
+    def get_payment_count(self, from_date=None, to_date=None):
+        """
+        Gets the count of payments of which the payment date is not older than
+        from date and not younger than to date.
+
+        Args:
+            from_date: Optional. A datetime.date specifying the oldest payment
+                date for payments to be counted.
+            to_date: Optional. A datetie.date specifying the youngest payment
+                date for payments to be counted.
+
+        Return:
+            An integer representing the count of payments available not older
+            than from date and not younger than to date.
+        """
+        return len(self.get_payments(
+            from_date=from_date,
+            to_date=to_date))
