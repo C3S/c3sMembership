@@ -53,11 +53,12 @@ def upgrade():
         sa.Column(
             'invoice_amount',
             SqliteDecimal(length=12, collation=2),
-            nullable=True),
-        sa.Column('is_cancelled', sa.Boolean(), nullable=True),
+            nullable=True,
+            default=Decimal('0.0')),
+        sa.Column('is_cancelled', sa.Boolean(), nullable=True, default=False),
         sa.Column('cancelled_date', sa.DateTime(), nullable=True),
-        sa.Column('is_reversal', sa.Boolean(), nullable=True),
-        sa.Column('is_altered', sa.Boolean(), nullable=True),
+        sa.Column('is_reversal', sa.Boolean(), nullable=True, default=False),
+        sa.Column('is_altered', sa.Boolean(), nullable=True, default=False),
         sa.Column('member_id', sa.Integer(), nullable=True),
         sa.Column('membership_no', sa.Integer(), nullable=True),
         sa.Column('email', sa.Unicode(length=255), nullable=True),
@@ -72,15 +73,18 @@ def upgrade():
         batch_op.add_column(sa.Column(
             'dues18_amount',
             SqliteDecimal(length=12, collation=2),
-            nullable=True))
+            nullable=True,
+            default=Decimal('0.0')))
         batch_op.add_column(sa.Column(
             'dues18_amount_paid',
             SqliteDecimal(length=12, collation=2),
-            nullable=True))
+            nullable=True,
+            default=Decimal('0.0')))
         batch_op.add_column(sa.Column(
             'dues18_amount_reduced',
             SqliteDecimal(length=12, collation=2),
-            nullable=True))
+            nullable=True,
+            default=Decimal('0.0')))
         batch_op.add_column(sa.Column(
             'dues18_balance',
             SqliteDecimal(length=12, collation=2),
@@ -89,11 +93,13 @@ def upgrade():
         batch_op.add_column(sa.Column(
             'dues18_balanced',
             sa.Boolean(),
-            nullable=True))
+            nullable=True,
+            default=False))
         batch_op.add_column(sa.Column(
             'dues18_invoice',
             sa.Boolean(),
-            nullable=True))
+            nullable=True,
+            default=False))
         batch_op.add_column(sa.Column(
             'dues18_invoice_date',
             sa.DateTime(),
@@ -105,7 +111,8 @@ def upgrade():
         batch_op.add_column(sa.Column(
             'dues18_paid',
             sa.Boolean(),
-            nullable=True))
+            nullable=True,
+            default=False))
         batch_op.add_column(sa.Column(
             'dues18_paid_date',
             sa.DateTime(),
@@ -113,7 +120,8 @@ def upgrade():
         batch_op.add_column(sa.Column(
             'dues18_reduced',
             sa.Boolean(),
-            nullable=True))
+            nullable=True,
+            default=False))
         batch_op.add_column(sa.Column(
             'dues18_start',
             sa.Unicode(length=255),
