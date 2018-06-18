@@ -12,6 +12,7 @@ from c3smembership.models import (
     Dues15Invoice,
     Dues16Invoice,
     Dues17Invoice,
+    Dues18Invoice,
 )
 
 
@@ -70,6 +71,7 @@ def stats_view(request):
         'dues15_stats': Dues15Invoice.get_monthly_stats(),
         'dues16_stats': Dues16Invoice.get_monthly_stats(),
         'dues17_stats': Dues17Invoice.get_monthly_stats(),
+        'dues18_stats': Dues18Invoice.get_monthly_stats(),
 
         # staff figures
         'num_staff': len(C3sStaff.get_all())

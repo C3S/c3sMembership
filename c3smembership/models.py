@@ -678,6 +678,29 @@ class C3sMember(Base):
         DatabaseDecimal(12, 2), default=Decimal('0'))
     dues17_paid_date = Column(DateTime())  # paid when?
 
+    # membership dues for 2018
+    dues18_invoice = Column(Boolean, default=False)
+    dues18_invoice_date = Column(DateTime())
+    dues18_invoice_no = Column(Integer())
+    dues18_token = Column(Unicode(10))
+    dues18_start = Column(Unicode(255))
+    dues18_amount = Column(
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    dues18_reduced = Column(Boolean, default=False)
+    _dues18_amount_reduced = Column(
+        'dues18_amount_reduced',
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    # balance
+    _dues18_balance = Column(
+        'dues18_balance',
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues18_balanced = Column(Boolean, default=True)
+    # payment
+    dues18_paid = Column(Boolean, default=False)
+    dues18_amount_paid = Column(
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues18_paid_date = Column(DateTime())
+
     privacy_consent = Column(DateTime(), nullable=True)
 
     def __init__(self, firstname, lastname, email, password,
@@ -833,6 +856,43 @@ class C3sMember(Base):
             and \
             self.dues17_amount_reduced != self.dues17_amount
 
+    @hybrid_property
+    def dues18_balance(self):
+        """
+        TODO: write this docstring
+        TODO: write testcase in test_models.py
+        """
+        return self._dues18_balance
+
+    @dues18_balance.setter
+    def dues18_balance(self, dues18_balance):
+        """
+        TODO: write this docstring
+        TODO: write testcase in test_models.py
+        """
+        self._dues18_balance = dues18_balance
+        self.dues18_balanced = self._dues18_balance == Decimal('0')
+
+    @hybrid_property
+    def dues18_amount_reduced(self):
+        """
+        TODO: write this docstring
+        TODO: write testcase in test_models.py
+        """
+        return self._dues18_amount_reduced
+
+    @dues18_amount_reduced.setter
+    def dues18_amount_reduced(self, dues18_amount_reduced):
+        """
+        TODO: write this docstring
+        TODO: write testcase in test_models.py
+        """
+        self._dues18_amount_reduced = dues18_amount_reduced
+        self.dues18_reduced = \
+            not math.isnan(self.dues18_amount_reduced) \
+            and \
+            self.dues18_amount_reduced != self.dues18_amount
+
     @classmethod
     def get_by_code(cls, email_confirm_code):
         """
@@ -902,6 +962,11 @@ class C3sMember(Base):
     def get_by_dues17_token(cls, code):
         """return one member by fee token"""
         return DBSession.query(cls).filter(cls.dues17_token == code).first()
+
+    @classmethod
+    def get_by_dues18_token(cls, code):
+        """return one member by fee token"""
+        return DBSession.query(cls).filter(cls.dues18_token == code).first()
 
     @classmethod
     def get_all(cls):
@@ -1012,6 +1077,38 @@ class C3sMember(Base):
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(2017, 1, 1),
+                ),
+            )).slice(0, num).all()
+
+    @classmethod
+    def get_dues18_invoicees(cls, num):
+        """
+        Get a given number *n* of members to send dues invoices to.
+
+        Queries the database for members, where
+
+        * members are accepted
+        * members have not received their dues invoice email yet
+
+        Args:
+          num is the number *n* of C3sMembers to return
+
+        Returns:
+          a list of *n* member objects
+        """
+
+        # In SqlAlchemy the True comparison must be done as "a == True" and not
+        # in the python default way "a is True". Therefore:
+        # pylint: disable=singleton-comparison
+        return DBSession.query(cls).filter(
+            and_(
+                cls.membership_accepted == True,
+                cls.dues18_invoice == False,
+                cls.membership_date < date(2019, 1, 1),
+                cls.membership_type.in_([u'normal', u'investing']),
+                or_(
+                    cls.membership_loss_date == None,
+                    cls.membership_loss_date >= date(2018, 1, 1),
                 ),
             )).slice(0, num).all()
 
@@ -1667,6 +1764,40 @@ class C3sMember(Base):
             self.dues17_amount_reduced = reduced_amount
         else:
             self.dues17_amount_reduced = Decimal('NaN')
+
+    def set_dues18_payment(self, paid_amount, paid_date):
+        if math.isnan(self.dues18_amount_paid):
+            dues18_amount_paid = Decimal('0')
+        else:
+            dues18_amount_paid = self.dues18_amount_paid
+
+        self.dues18_paid = True
+        self.dues18_amount_paid = dues18_amount_paid + paid_amount
+        self.dues18_paid_date = paid_date
+        self.dues18_balance = self.dues18_balance - paid_amount
+
+    def set_dues18_amount(self, dues_amount):
+        if self.dues18_amount is None \
+                or not isinstance(self.dues18_amount, Decimal):
+            dues18_amount = Decimal('0')
+        else:
+            dues18_amount = self.dues18_amount
+
+        self.dues18_balance = self.dues18_balance - dues18_amount + Decimal(
+            dues_amount)  # what they actually have to pay
+        self.dues18_amount = dues_amount  # what they have to pay (calc'ed)
+
+    def set_dues18_reduced_amount(self, reduced_amount):
+        if reduced_amount != self.dues18_amount:
+            previous_amount_in_balance = (
+                self.dues18_amount_reduced
+                if self.dues18_reduced
+                else self.dues18_amount)
+            self.dues18_balance = self.dues18_balance - \
+                previous_amount_in_balance + reduced_amount
+            self.dues18_amount_reduced = reduced_amount
+        else:
+            self.dues18_amount_reduced = Decimal('NaN')
 
     def get_url_safe_name(self):
         """
@@ -2338,6 +2469,207 @@ class Dues17Invoice(Base):
             ).label('amount_invoiced_reversal'),
             func.sum(C3sMember.dues17_amount_paid).label('amount_paid')
         ).filter(C3sMember.dues17_paid_date.isnot(None)) \
+            .group_by(payment_date_month)
+        # union invoice amounts and payments
+        union_all_query = expression.union_all(
+            member_payments_query, invoice_amounts_query)
+        # aggregate invoice amounts and payments by month
+        result_query = DBSession.query(
+            union_all_query.c.month.label('month'),
+            func.sum(union_all_query.c.amount_invoiced_normal).label(
+                'amount_invoiced_normal'),
+            func.sum(union_all_query.c.amount_invoiced_reversal).label(
+                'amount_invoiced_reversal'),
+            func.sum(union_all_query.c.amount_paid).label('amount_paid')
+        ) \
+            .group_by(union_all_query.c.month) \
+            .order_by(union_all_query.c.month)
+        for month_stat in result_query.all():
+            result.append(
+                {
+                    'month': datetime(
+                        int(month_stat[0][0:4]),
+                        int(month_stat[0][5:7]),
+                        1),
+                    'amount_invoiced_normal': month_stat[1],
+                    'amount_invoiced_reversal': month_stat[2],
+                    'amount_paid': month_stat[3]
+                })
+        return result
+
+
+class Dues18Invoice(Base):
+    """
+    This table stores the invoices for the 2015 version of dues.
+
+    We need this for bookkeeping,
+    because whenever a member is granted a reduction of her dues,
+    the old invoice is canceled by a reversal invoice
+    and a new invoice must be issued.
+
+    Edge case: if reduced to 0, no new invoice needed.
+
+    """
+    __tablename__ = 'dues18invoices'
+    # pylint: disable=invalid-name
+    id = Column(Integer, primary_key=True)
+    """tech. id. / no. in table (integer, primary key)"""
+    # this invoice
+    invoice_no = Column(Integer(), unique=True)
+    """invoice number (Integer, unique)"""
+    invoice_no_string = Column(Unicode(255), unique=True)
+    """invoice number string (unique)"""
+    invoice_date = Column(DateTime())
+    """timestamp of invoice creation (DateTime)"""
+    invoice_amount = Column(DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    """amount (DatabaseDecimal(12,2))"""
+    # has it been superseeded by reversal?
+    is_cancelled = Column(Boolean, default=False)
+    """flag: invoice has been superseeded by reversal or cancellation"""
+    cancelled_date = Column(DateTime())
+    """timestamp of cancellation/reversal"""
+    # is it a reversal?
+    is_reversal = Column(Boolean, default=False)
+    """flag: is this a reversal invoice?"""
+    # is it a reduction (or even more than default)?
+    is_altered = Column(Boolean, default=False)
+    """flag: has the amount been reduced or increased?"""
+    # person reference
+    member_id = Column(Integer())
+    """reference to C3sMember id"""
+    membership_no = Column(Integer())
+    """reference to C3sMember membership_number"""
+    email = Column(Unicode(255))
+    """C3sMembers email we sent this invoice to"""
+    token = Column(Unicode(255))
+    """used to limit access to this invoice"""
+    # referrals
+    preceding_invoice_no = Column(Integer(), default=None)
+    """the invoice number preceeding this one, if applicable"""
+    succeeding_invoice_no = Column(Integer(), default=None)
+    """the invoice number succeeding this one, if applicable"""
+
+    def __init__(
+            self,
+            invoice_no,
+            invoice_no_string,
+            invoice_date,
+            invoice_amount,
+            member_id,
+            membership_no,
+            email,
+            token):
+        """
+        Make a new invoice object
+
+        Args:
+            invoice_no: invoice number
+            invoice_no_string: invoice number string
+            invoice_date: timestamp of creation
+            invoice_amount: amount of money
+            member_id: references C3sMember
+            membership_no: references C3sMember
+            email: email to send it to
+            token: a token to limit access
+        """
+        self.invoice_no = invoice_no
+        self.invoice_no_string = invoice_no_string
+        self.invoice_date = invoice_date
+        self.invoice_amount = invoice_amount
+        self.member_id = member_id
+        self.membership_no = membership_no
+        self.email = email
+        self.token = token
+
+    @classmethod
+    def get_all(cls):
+        """
+        Return all dues18 invoices
+        """
+        return DBSession.query(cls).all()
+
+    @classmethod
+    def get_by_invoice_no(cls, _no):
+        """return one invoice by invoice number"""
+        return DBSession.query(cls).filter(cls.invoice_no == _no).first()
+
+    @classmethod
+    def get_by_membership_no(cls, _no):
+        """return all invoices of one member by membership number"""
+        return DBSession.query(cls).filter(cls.membership_no == _no).all()
+
+    @classmethod
+    def get_max_invoice_no(cls):
+        """
+        Get the maximum invoice number.
+
+        Returns:
+            * Integer: maximum of given invoice numbers or 0"""
+        res, = DBSession.query(func.max(cls.id)).first()
+
+        if res is None:
+            return 0
+        return res
+
+    @classmethod
+    def check_for_existing_dues18_token(cls, dues_token):
+        """
+        Check if a dues token is already present.
+
+        Args:
+            dues_token: a given string
+
+        Returns:
+            * **True**, if token already in table
+            * **False** else
+        """
+        check = DBSession.query(cls).filter(
+            cls.token == dues_token).first()
+        return check is not None
+
+    @classmethod
+    def get_monthly_stats(cls):
+        """
+        Gets the monthly statistics.
+
+        Provides sums of the normale as well as reversal invoices per
+        calendar month based on the invoice date.
+        """
+        result = []
+        # SQLite specific: substring for SQLite as it does not support
+        # date_trunc.
+        # invoice_date_month = func.date_trunc(
+        #     'month',
+        #     Dues18Invoice.invoice_date)
+        invoice_date_month = func.substr(Dues18Invoice.invoice_date, 1, 7)
+        payment_date_month = func.substr(C3sMember.dues18_paid_date, 1, 7)
+
+        # collect the invoice amounts per month
+        invoice_amounts_query = DBSession.query(
+            invoice_date_month.label('month'),
+            func.sum(expression.case(
+                [(
+                    expression.not_(Dues18Invoice.is_reversal),
+                    Dues18Invoice.invoice_amount)],
+                else_=Decimal('0.0'))).label('amount_invoiced_normal'),
+            func.sum(expression.case(
+                [(
+                    Dues18Invoice.is_reversal,
+                    Dues18Invoice.invoice_amount)],
+                else_=Decimal('0.0'))).label('amount_invoiced_reversal'),
+            expression.literal_column(
+                '\'0.0\'', SqliteDecimal).label('amount_paid')
+        ).group_by(invoice_date_month)
+        # collect the payments per month
+        member_payments_query = DBSession.query(
+            payment_date_month.label('month'),
+            expression.literal_column(
+                '\'0.0\'', SqliteDecimal).label('amount_invoiced_normal'),
+            expression.literal_column(
+                '\'0.0\'', SqliteDecimal
+            ).label('amount_invoiced_reversal'),
+            func.sum(C3sMember.dues18_amount_paid).label('amount_paid')
+        ).filter(C3sMember.dues18_paid_date.isnot(None)) \
             .group_by(payment_date_month)
         # union invoice amounts and payments
         union_all_query = expression.union_all(

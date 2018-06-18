@@ -46,6 +46,7 @@ from c3smembership.models import (
     Dues15Invoice,
     Dues16Invoice,
     Dues17Invoice,
+    Dues18Invoice,
 )
 from c3smembership.presentation.i18n import _
 from c3smembership.presentation.schemas.accountant_login import (
@@ -246,6 +247,7 @@ def get_member_details(request, member):
     invoices15 = Dues15Invoice.get_by_membership_no(member.membership_number)
     invoices16 = Dues16Invoice.get_by_membership_no(member.membership_number)
     invoices17 = Dues17Invoice.get_by_membership_no(member.membership_number)
+    invoices18 = Dues18Invoice.get_by_membership_no(member.membership_number)
     shares = request.registry.share_information.get_member_shares(
         member.membership_number)
 
@@ -257,6 +259,7 @@ def get_member_details(request, member):
         'invoices15': invoices15,
         'invoices16': invoices16,
         'invoices17': invoices17,
+        'invoices18': invoices18,
     }
 
 

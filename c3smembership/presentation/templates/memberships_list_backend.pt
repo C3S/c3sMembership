@@ -100,12 +100,10 @@
                 bc &amp; ga<br />
                 invitation
             </th>
-            <!--!
             <th>
-                dues17<br />
+                dues18<br />
                 invoice
             </th>
-            -->
             <th>
                 certificate
             </th>
@@ -167,20 +165,18 @@
                       class="btn btn-success"></a>
                 </div>
             </td>
-            <!--!
             <td>
-                <div tal:omit-tag="" tal:condition="not member.membership_date > date(2017,12,31) and (member.membership_loss_date is None or member.membership_loss_date >= date(2017,1,1))">
-                    <a tal:condition="member.dues17_invoice is False"
-                        href="${request.route_url('send_dues17_invoice_email', member_id=member.id)}"
+                <div tal:omit-tag="" tal:condition="not member.membership_date > date(2018,12,31) and (member.membership_loss_date is None or member.membership_loss_date >= date(2018,1,1))">
+                    <a tal:condition="member.dues18_invoice is False"
+                        href="${request.route_url('send_dues18_invoice_email', member_id=member.id)}"
                         title="Dues invoice not sent yet. Click to send!"
                         class="btn btn-danger"></a>
-                    <a tal:condition="member.dues17_invoice is True"
-                        href="${request.route_url('send_dues17_invoice_email', member_id=member.id)}"
-                        title="Invoice sent at ${member.dues17_invoice_date.strftime('%d.%m.%Y %H:%M')}"
+                    <a tal:condition="member.dues18_invoice is True"
+                        href="${request.route_url('send_dues18_invoice_email', member_id=member.id)}"
+                        title="Invoice sent at ${member.dues18_invoice_date.strftime('%d.%m.%Y %H:%M')}"
                         class="btn btn-success"></a>
                 </div>
             </td>
-            -->
             <td>
                 <div tal:condition="member.is_member()" tal:omit-tag="">
                   <a tal:condition="not member.certificate_email"
