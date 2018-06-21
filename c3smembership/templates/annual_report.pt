@@ -1,14 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="backend">
-    <tal:block metal:fill-slot="top">
-        <p>
-            Please <a href="${request.route_url('logout')}">log out</a>
-            when you are done.
-            Or go <a href="${request.route_url('toolbox')}">back to toolbox</a>.
-        </p>
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="load: ../presentation/templates/backend.pt">
+    <tal:block metal:fill-slot="content">
         <h1>Annual Reporting</h1>
         <p>
             Hier kann ermittelt werden, wie viele Personen und Körperschaften
@@ -20,13 +15,12 @@
             Für einen bestimmten Tag zweimal das selbe Datum eingeben.
         </p>
         <div id="form" tal:content="structure form"/>
-
-        <h3>tl;dr</h3>
+        <h3>Summary</h3>
         <table class="table table-striped">
             <tr>
-                <th>was</th>
-                <td>stück</td>
-                <td>wert/&euro;</td>
+                <th>Was</th>
+                <th>Stück</th>
+                <th>Wert</th>
             </tr>
             <tr>
                 <td><a href="#new_members">Neumitglieder</a></td>
@@ -41,7 +35,7 @@
             <tr>
                 <td><a href="#new_shares">Neue Anteile</a></td>
                 <td>${num_shares}</td>
-                <td>${num_shares * 50}</td>
+                <td>${num_shares * 50}&nbsp;€</td>
             </tr>
             <tr>
                 <td>
@@ -50,7 +44,7 @@
                     </a>
                 </td>
                 <td>${shares_paid_unapproved_count}</td>
-                <td>${shares_paid_unapproved_count * 50}</td>
+                <td>${shares_paid_unapproved_count * 50}&nbsp;€</td>
             </tr>
         </table>
 
