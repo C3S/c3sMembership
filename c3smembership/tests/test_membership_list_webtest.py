@@ -7,6 +7,7 @@ from datetime import (
     date,
     timedelta,
 )
+import re
 import unittest
 
 from pyramid import testing
@@ -236,6 +237,17 @@ class MakeMergeMemberTests(MemberTestsBase):
     Test member merge
     """
 
+    @classmethod
+    def _response_to_bare_text(cls, res):
+        html = res.normal_body
+        # remove JavaScript
+        html = re.sub(re.compile('<script.*</script>'), '', html)
+        # remove all tags
+        html = re.sub(re.compile('<.*?>'), '', html)
+        # remove html characters like &nbsp;
+        html = re.sub(re.compile('&[A-Za-z]+;'), '', html)
+        return html
+
     def test_make_member_view(self):
         '''
         Tests for the make member view
@@ -321,10 +333,8 @@ class MakeMergeMemberTests(MemberTestsBase):
         res3 = res2.follow()
         # this now is a member!
         self.failUnless('Details for Member Application #1' in res3.body)
-        self.failUnless("""<td>membership_accepted</td>
-            <td>
-                Yes
-            </td>""" in res3.body)
+        self.failUnless('Membership accepted  Yes' in \
+            self._response_to_bare_text(res3))
 
     def test_merge_member_view(self):
         '''

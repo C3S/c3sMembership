@@ -263,7 +263,7 @@ class SharesTests(unittest.TestCase):
         # lets try invalid input
         res = self.testapp.get('/shares_edit/foo', status=302)
         res2 = res.follow()
-        self.failUnless('Memberships' in res2.body)
+        self.failUnless('Members' in res2.body)
 
         # now try valid id
         res = self.testapp.get('/shares_edit/1', status=200)
