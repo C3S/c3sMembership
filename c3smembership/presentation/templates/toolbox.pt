@@ -167,12 +167,6 @@
       <div tal:content="structure membership_listing_year_end_pdf">
       </div>
     </p>
-    <h3>Payments</h3>
-    <p>
-      <a href="${request.route_url('payment_list')}"
-          class="btn btn-success">List of payments</a>
-    </p>
-
 
     <h3>Mail Invitations for GA &amp; BC 2018</h3>
     <p>
