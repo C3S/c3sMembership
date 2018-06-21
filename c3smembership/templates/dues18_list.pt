@@ -1,81 +1,61 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="backend">
-  <tal:block metal:fill-slot="top">
-    <h1>Liste der Rechnungen der Mitgliedsbeiträge 2018
-      <small>${count} Rechnungen</small>
-      <small>Stand ${_today}</small></h1>
-  </tal:block>
-  <tal:block metal:fill-slot="middle">
-    <p>
-      <a href="${request.route_url('dashboard')}"
-          class="btn btn-primary">
-        Dashboard
-      </a>
-      <a href="${request.route_url('membership_listing_backend')}"
-          class="btn btn-primary">
-        Memberships
-      </a>
-      <a href="${request.route_url('toolbox')}" class="btn btn-primary">
-        Toolbox
-      </a>
-    </p>
-    <table class="table table-striped" rules="rows">
-      <tr class="table-striped">
-        <th>id</th>
-        <th>invoice no</th>
-        <th>invoice string<br/>download PDF</th>
-        <th>date</th>
-        <th>amount</th>
-        <th>was<br/>cancelled</th>
-        <th>reversal<br/>invoice?</th>
-        <th>member id</th>
-        <th>membership no</th>
-        <th>member email</th>
-        <th>preced.</th>
-        <th>succ.</th>
-      </tr>
-      <!--! loop over the list of invoices -->
-      <tr tal:repeat="i invoices"
-          tal:attributes="id python: 'invoice_{0}'.format(i.id)">
-        <td>${i.id}</td>
-        <td><a title="${i.invoice_no}">${i.invoice_no}</a></td>
-        <td>
-          <!-- if this invoice is a normal invoice -->
-          <a tal:condition="not i.is_reversal"
-              href="${request.route_url('make_dues18_invoice_no_pdf',
-                    i=str(i.invoice_no).zfill(4),
-                    email=i.email,
-                    code=i.token)}"
-              title="download ${i.invoice_no_string}.pdf">
-            ${i.invoice_no_string}
-          </a>
-          <!-- if this invoice is a REVERSAL INVOICE -->
-          <a  tal:condition="i.is_reversal"
-              href="${request.route_url('make_dues18_reversal_invoice_pdf',
-                    no=str(i.invoice_no).zfill(4),
-                    email=i.email,
-                    code=i.token)}"
-              title="download ${i.invoice_no_string}-S.pdf">
-            ${i.invoice_no_string}
-          </a>
-        </td>
-        <td>${i.invoice_date.strftime('%d.%m.%Y %H:%M')}</td>
-        <td>${i.invoice_amount}</td>
-        <td>${'yes' if i.is_cancelled else 'no'}</td>
-        <td>${'reversal' if i.is_reversal else 'normal'}</td>
-        <td><a href="${request.route_url('detail',
-                     memberid=i.member_id) + '#dues18'}"
-               title="click to navigate to members dues">
-            ${i.member_id}</a></td>
-        <td>${i.membership_no}</td>
-        <td>${i.email}</td>
-        <td>${i.preceding_invoice_no}</td>
-        <td>${i.succeeding_invoice_no}</td>
-      </tr>
-    </table>
-  </tal:block>
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="load: ../presentation/templates/backend.pt">
+    <tal:block metal:fill-slot="content">
+        <h1>Mitgliedsbeitragsrechnungen 2018</h1>
+        <p>
+            ${count} Rechnungen
+        </p>
+        <p>
+            Stand ${_today}
+        </p>
+        <table class="table table-striped" rules="rows">
+            <tr class="table-striped">
+                <th>Number</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Cancelled</th>
+                <th>Reversal</th>
+                <th>Membership Number</th>
+                <th>Preceding</th>
+                <th>Succeeding</th>
+            </tr>
+            <tr tal:repeat="i invoices"
+                    tal:attributes="id python: 'invoice_{0}'.format(i.id)">
+                <td>
+                    <!-- if this invoice is a normal invoice -->
+                    <a tal:condition="not i.is_reversal"
+                            href="${request.route_url('make_dues18_invoice_no_pdf',
+                                i=str(i.invoice_no).zfill(4),
+                                email=i.email,
+                                code=i.token)}"
+                            title="download ${i.invoice_no_string}.pdf">
+                        ${i.invoice_no_string}
+                    </a>
+                    <!-- if this invoice is a REVERSAL INVOICE -->
+                    <a  tal:condition="i.is_reversal"
+                            href="${request.route_url('make_dues18_reversal_invoice_pdf',
+                                no=str(i.invoice_no).zfill(4),
+                                email=i.email,
+                                code=i.token)}"
+                            title="download ${i.invoice_no_string}-S.pdf">
+                        ${i.invoice_no_string}
+                    </a>
+                </td>
+                <td>${i.invoice_date.strftime('%d.%m.%Y %H:%M')}</td>
+                <td>${i.invoice_amount}</td>
+                <td>${'yes' if i.is_cancelled else 'no'}</td>
+                <td>${'reversal' if i.is_reversal else 'normal'}</td>
+                <td>
+                    <a href="${request.route_url('member_details', membership_number=i.membership_no)}">
+                        ${i.membership_no}
+                    </a>
+                </td>
+                <td>${i.preceding_invoice_no}</td>
+                <td>${i.succeeding_invoice_no}</td>
+            </tr>
+        </table>
+    </tal:block>
 </html>
