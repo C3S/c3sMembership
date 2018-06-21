@@ -1,208 +1,143 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      metal:use-macro="backend"
-      i18n:domain="c3smembership">
-  <tal:block metal:fill-slot="head">
-    <link rel="stylesheet" href="${request.static_url('deform:static/css/form.css')}"
-          type="text/css" media="screen" charset="utf-8" />
-    <link rel="stylesheet" href="${request.static_url('deform:static/css/typeahead.css')}"
-          type="text/css" media="screen" charset="utf-8" />
-    <!--! jquery and deform.js need to be on top for autocomplete -->
-    <script src="${request.static_url('c3smembership:static/jquery/jquery.min.js')}"
-            type="text/javascript"></script>
-    <!-- Krissik -->
-    <script type="text/javascript">
-        $().ready(function() {
-            console.debug("ready");
-            $(".import-takes-time").click(function(event) {
-                answer = confirm("Import might take a litte while. Are you ready to wait? You will be redirected once finished. (521 entries take about 45 secs)");
-                if(answer == false) {
-                    event.preventDefault();
-                }
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="load: backend.pt">
+    <tal:block metal:fill-slot="content">
+        <strong class="text-danger" tal:repeat="message request.session.pop_flash('message_to_staff')">
+            ${message}
+        </strong>
+        <h1>Toolbox</h1>
+        <h2>Membership Dues</h2>
+        <p>
+            <a href="${request.route_url('dues15_listing')}" class="btn btn-success">
+                List of Dues Invoices for 2015
+            </a>
+        </p>
+        <p>
+            <a href="${request.route_url('dues16_listing')}" class="btn btn-success">
+                List of Dues Invoices for 2016
+            </a>
+        </p>
+        <p>
+            <a href="${request.route_url('dues17_listing')}" class="btn btn-success">
+                List of Dues Invoices for 2017
+            </a>
+        </p>
+        <p>
+            <a href="${request.route_url('dues18_listing')}" class="btn btn-success">
+                List of Dues Invoices for 2018
+            </a>
+        </p>
+        <h3>Mail Invoices for Membership Dues 2018</h3>
+        <p>
+            <a href="${request.route_url('send_dues18_invoice_batch', number=5)}"
+                    title="Note: change number in URL as appropriate! Default is 5."
+                    class="btn btn-success">
+                Send 5 Invoices for Membership Dues
+            </a>
+            <br />
+            You may send more than 5 invoices at once by using another number (in the URL):
+            <form method='POST' action="${request.route_url('send_dues18_invoice_batch', number='foo')}">
+                <input type='text' name='number'></input>
+                <input type='submit' name='submit'></input>
+            </form>
+        </p>
+
+        <h2>Search</h2>
+        <p>
+            <a href="${request.route_url('search_people')}"
+                    class="btn btn-success">
+                Search for People
+            </a>
+            <a href="${request.route_url('search_codes')}"
+                    class="btn btn-success">
+                Search for ReferenceCodes
+            </a>
+        </p>
+        <h2>Browse</h2>
+        <h3>Applications</h3>
+        <p>
+            <a href="${request.route_url('dashboard', page_number=0, sort_property='id', sort_direction='asc')}"
+                    title="The List of going-to-be-Members / unfinished Applications for Membership"
+                    class="btn btn-primary">
+                AfM Dashboard
+            </a>
+            <a href="${request.route_url('afms_awaiting_approval')}"
+                    title="almost finished Applications for Membership: awaiting approval"
+                    class="btn btn-warning">
+                AfMs ready for approval by the board
+            </a>
+        </p>
+        <h3>Members</h3>
+        <h4>HTML</h4>
+        <p>
+            <a href="${request.route_url('membership_listing_backend')}"
+                    class="btn btn-success">
+                Membership List (backend/with links)
+            </a>
+            <a href="${request.route_url('membership_listing_alphabetical')}"
+                    class="btn btn-success">
+                Alphabetical Member List (HTML/without links/for printout)
+            </a>
+            <a href="${request.route_url('membership_listing_aufstockers')}"
+                    class="btn btn-success">Alphabetical Aufstockers List
+                (Members with more than one package of shares (HTML with links)
+            </a>
+        </p>
+
+        <h4>PDF</h4>
+        <p>
+            <a href="${request.route_url('membership_listing_date_pdf', date=date)}"
+                    title="Note: change date in URL as appropriate! Default is today."
+                    class="btn btn-success">
+                Alphabetical Member List (PDF)
+            </a>
+        </p>
+        <h4>PDF for specific date</h4>
+        <p>
+            <div tal:content="structure membership_listing_date_pdf">
+            </div>
+        </p>
+        <h4>PDF for end of years</h4>
+        <p>
+            <div tal:content="structure membership_listing_year_end_pdf">
+            </div>
+        </p>
+
+        <h3>Mail Invitations for GA &amp; BC 2018</h3>
+        <p>
+            <a href="${request.route_url('invite_batch', number=5)}"
+                    title="Note: change number in URL as appropriate! Default is 5."
+                    class="btn btn-success">
+                Send 5 Invitations
+            </a>
+            <br />
+            You may send more than 5 invitations at once by using another number (in the URL):
+            <form method='POST' action="${request.route_url('invite_batch', number='foo')}">
+                <input type='text' name='number'></input>
+                <input type='submit' name='submit'></input>
+            </form>
+        </p>
+
+        <h3>Applications for Membership</h3>
+        <p>
+            <a href="${request.route_url('delete_afms')}"
+                    class="btn btn-danger">
+                Delete a range of AfMs from the Dashboard
+            </a>
+        </p>
+    </tal:block>
+    <tal:block metal:fill-slot="javascript">
+        <script type="text/javascript">
+            $().ready(function() {
+                $(".import-takes-time").click(function(event) {
+                    answer = confirm("Import might take a litte while. Are you ready to wait? You will be redirected once finished. (521 entries take about 45 secs)");
+                    if(answer == false) {
+                        event.preventDefault();
+                    }
+                });
             });
-        });
-    </script>
-    <!-- /Krissik -->
-    <script src="${request.static_url('deform:static/scripts/deform.js')}"
-            type="text/javascript"></script>
-  </tal:block>    <!--! javascripts -->
-  <tal:block metal:fill-slot="middle">
-    <div style="text-align:left;">
-      <strong style="color:red;" tal:repeat="message request.session.pop_flash('message_to_staff')">
-	${message}
-      </strong>
-    </div>
-    <h1>Toolbox</h1>
-    <h2>Statistics and Reporting</h2>
-    <p>
-      <a href="${request.route_url('stats')}"
-         class="btn btn-warning">Statistics</a>
-      <a href="${request.route_url('annual_reporting')}"
-         class="btn btn-warning">Annual Reporting</a>
-    </p>
-
-    <h2>Membership Dues</h2>
-    <p>
-      <a href="${request.route_url('dues15_listing')}" class="btn btn-success">
-        List of Dues Invoices for 2015
-      </a>
-    </p>
-    <p>
-      <a href="${request.route_url('dues16_listing')}" class="btn btn-success">
-        List of Dues Invoices for 2016
-      </a>
-    </p>
-    <p>
-      <a href="${request.route_url('dues17_listing')}" class="btn btn-success">
-        List of Dues Invoices for 2017
-      </a>
-    </p>
-    <p>
-      <a href="${request.route_url('dues18_listing')}" class="btn btn-success">
-        List of Dues Invoices for 2018
-      </a>
-    </p>
-    <!--!
-    <h3>Mail Invoices for Membership Dues 2015</h3>
-    <p>
-      <a href="${request.route_url('send_dues15_invoice_batch', number=5)}"
-         title="Note: change number in URL as appropriate! Default is 5."
-         class="btn btn-success">Send 5 Invoices for Membership Dues
-      </a><br />
-      You may send more than 5 invoices at once by using another number (in the URL):
-      <form method='POST' action="${request.route_url('send_dues15_invoice_batch', number='foo')}">
-        <input type='text' name='number'></input>
-        <input type='submit' name='submit'></input>
-      </form>
-    </p>
-    -->
-    <!--!
-    <h3>Mail Invoices for Membership Dues 2016</h3>
-    <p>
-      <a href="${request.route_url('send_dues16_invoice_batch', number=5)}"
-         title="Note: change number in URL as appropriate! Default is 5."
-         class="btn btn-success">Send 5 Invoices for Membership Dues
-      </a><br />
-      You may send more than 5 invoices at once by using another number (in the URL):
-      <form method='POST' action="${request.route_url('send_dues16_invoice_batch', number='foo')}">
-        <input type='text' name='number'></input>
-        <input type='submit' name='submit'></input>
-      </form>
-    </p>
-    -->
-    <!--!
-    <h3>Mail Invoices for Membership Dues 2017</h3>
-    <p>
-      <a href="${request.route_url('send_dues17_invoice_batch', number=5)}"
-         title="Note: change number in URL as appropriate! Default is 5."
-         class="btn btn-success">Send 5 Invoices for Membership Dues
-      </a><br />
-      You may send more than 5 invoices at once by using another number (in the URL):
-      <form method='POST' action="${request.route_url('send_dues17_invoice_batch', number='foo')}">
-        <input type='text' name='number'></input>
-        <input type='submit' name='submit'></input>
-      </form>
-    </p>
-    -->
-    <h3>Mail Invoices for Membership Dues 2018</h3>
-    <p>
-      <a href="${request.route_url('send_dues18_invoice_batch', number=5)}"
-         title="Note: change number in URL as appropriate! Default is 5."
-         class="btn btn-success">Send 5 Invoices for Membership Dues
-      </a><br />
-      You may send more than 5 invoices at once by using another number (in the URL):
-      <form method='POST' action="${request.route_url('send_dues18_invoice_batch', number='foo')}">
-        <input type='text' name='number'></input>
-        <input type='submit' name='submit'></input>
-      </form>
-    </p>
-
-    <h2>Search</h2>
-    <p>
-      <a href="${request.route_url('search_people')}"
-         class="btn btn-success">Search for People</a>
-      <a href="${request.route_url('search_codes')}"
-         class="btn btn-success">Search for ReferenceCodes</a>
-    </p>
-    <h2>Browse</h2>
-    <h3>Applications</h3>
-    <p>
-      <a href="${request.route_url('dashboard', page_number=0, sort_property='id', sort_direction='asc')}"
-         title="The List of going-to-be-Members / unfinished Applications for Membership"
-         class="btn btn-primary">AfM Dashboard</a>
-      <a href="${request.route_url('afms_awaiting_approval')}"
-         title="almost finished Applications for Membership: awaiting approval"
-         class="btn btn-warning">AfMs ready for approval by the board</a>
-    </p>
-    <h3>Members</h3>
-    <h4>HTML</h4>
-    <p>
-      <a href="${request.route_url('membership_listing_backend')}"
-         class="btn btn-success">Membership List (backend/with links)</a>
-      <a href="${request.route_url('membership_listing_alphabetical')}"
-         class="btn btn-success">Alphabetical Member List (HTML/without links/for printout)</a>
-      <a href="${request.route_url('membership_listing_aufstockers')}"
-         class="btn btn-success">Alphabetical Aufstockers List
-        (Members with more than one package of shares (HTML with links)
-      </a>
-    </p>
-
-    <h4>PDF</h4>
-    <p>
-      <a href="${request.route_url('membership_listing_date_pdf', date=date)}"
-         title="Note: change date in URL as appropriate! Default is today."
-         class="btn btn-success">Alphabetical Member List (PDF)
-      </a>
-    </p>
-    <h4>PDF for specific date</h4>
-    <p>
-      <div tal:content="structure membership_listing_date_pdf">
-      </div>
-    </p>
-    <h4>PDF for end of years</h4>
-    <p>
-      <div tal:content="structure membership_listing_year_end_pdf">
-      </div>
-    </p>
-
-    <h3>Mail Invitations for GA &amp; BC 2018</h3>
-    <p>
-      <a href="${request.route_url('invite_batch', number=5)}"
-         title="Note: change number in URL as appropriate! Default is 5."
-         class="btn btn-success">Send 5 Invitations
-      </a><br />
-      You may send more than 5 invitations at once by using another number (in the URL):
-      <form method='POST' action="${request.route_url('invite_batch', number='foo')}">
-        <input type='text' name='number'></input>
-        <input type='submit' name='submit'></input>
-      </form>
-    </p>
-
-    <h3>Applications for Membership</h3>
-    <p>
-      <a href="${request.route_url('dashboard', page_number=0, sort_property='id', sort_direction='asc')}"
-         class="btn btn-primary">AfM Dashboard</a>
-      <a href="${request.route_url('delete_afms')}"
-         class="btn btn-danger">Delete a range of AfMs from the Dashboard</a>
-      <hr />
-    </p>
-    <h3>Memberships</h3>
-    <p>
-      <a href="${request.route_url('membership_listing_backend')}"
-         class="btn btn-primary">Show Memberships</a>
-    </p>
-    <h3>Staff</h3>
-    <p>
-      <a href="${request.route_url('staff')}"
-         class="btn btn-primary">Show Staff</a>
-    </p>
-    <h3>Done?</h3>
-    <p>
-      <a href="${request.route_url('dashboard')}"
-         class="btn btn-primary">Back to Dashboard</a>
-    </p>
-  </tal:block>
+        </script>
+    </tal:block>
 </html>
