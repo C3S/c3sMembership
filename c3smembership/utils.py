@@ -246,7 +246,7 @@ def send_accountant_mail(request, member):
     try:
         the_mail = create_accountant_mail(
             member,
-            request.registry.settings['c3smembership.mailaddr'])
+            [request.registry.settings['c3smembership.mailaddr']])
         if 'true' in request.registry.settings['testing.mail_to_console']:
             print(the_mail.body)
         else:

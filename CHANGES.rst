@@ -2,6 +2,18 @@ Next Release
 ============
 
 
+- Add date filtering to payment list.
+
+- Copy the logic for the 2017 dues invoices for 2018 as a dirty quick fix. The
+  whole dues and invoicing logic still needs a complete redesign to make it
+  reusable for any year, any type of invoice and any type of accounting.
+
+
+
+1.21
+====
+
+
 - Fix double entry when applicant edits details.
 
 - Remove membership type handling: During the crowdfunding campaign C3S got
@@ -31,12 +43,6 @@ Next Release
 
 - Add payment list to toolbox. The list so far contains all membership dues
   payments and is primarily intended for bookkeeping validation.
-
-- Add date filtering to payment list.
-
-- Copy the logic for the 2017 dues invoices for 2018 as a dirty quick fix. The
-  whole dues and invoicing logic still needs a complete redesign to make it
-  reusable for any year, any type of invoice and any type of accounting.
 
 
 
