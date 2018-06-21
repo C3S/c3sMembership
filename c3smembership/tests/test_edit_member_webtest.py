@@ -311,7 +311,7 @@ class EditMemberTests(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Dashboard' in res.body)
+        self.failUnless('Membership Acquisition' in res.body)
 
     def test_membership_loss(self):
         '''

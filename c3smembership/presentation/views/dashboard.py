@@ -16,7 +16,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 
-@view_config(renderer='../templates/dashboard.pt',
+@view_config(renderer='../templates/membership_acquisition.pt',
              permission='manage',
              route_name='dashboard')
 def dashboard(request):

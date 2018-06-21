@@ -204,7 +204,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res4 = res3.follow()
         # print(res4.body)
         self.failUnless(
-            'Dashboard' in res4.body)
+            'Membership Acquisition' in res4.body)
         # now that we are logged in,
         # the login view should redirect us to the dashboard
         res5 = self.testapp.get('/login', status=302)
@@ -212,7 +212,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res6 = res5.follow()
         # print(res4.body)
         self.failUnless(
-            'Dashboard' in res6.body)
+            'Membership Acquisition' in res6.body)
         # choose number of applications shown
         res6a = self.testapp.get(
             '/dashboard',
@@ -222,24 +222,24 @@ class AccountantsFunctionalTests(unittest.TestCase):
             }
         )
 
-        self.failUnless('<h1>Dashboard' in res6a.body)
-        res6a = self.get_dashboard_page(1, 'id', 'asc', 200)
+        self.failUnless('Membership Acquisition' in res6a.body)
+        res6a = self.get_dashboard_page(1, 'lastname', 'asc', 200)
 
-        self.failUnless('<h1>Dashboard' in res6a.body)
+        self.failUnless('Membership Acquisition' in res6a.body)
         # invalid sorting property
         # expect redirect to valid sorting property
         res6b = self.get_dashboard_page(1, 'invalid', 'asc', 400)
 
         # invalid sorting direction
         # expect displaying of the default sort direction
-        res6b = self.get_dashboard_page(1, 'id', 'invalid', 200)
+        res6b = self.get_dashboard_page(1, 'lastname', 'invalid', 200)
 
         # invalid page number: string
         # expect displaying of the first page
-        res6b = self.get_dashboard_page('invalid', 'id', 'asc', 200)
+        res6b = self.get_dashboard_page('invalid', 'lastname', 'asc', 200)
 
         self.failUnless(
-            '<p>Number of data sets:' in res6b.body)
+            'Number of data sets' in res6b.body)
 
         # change the number of items to show
         form = res6b.forms[0]
@@ -255,7 +255,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # now look at some members details with nonexistant id
         res7 = self.testapp.get('/detail/5000', status=302)
         res7a = res7.follow()
-        self.failUnless('Dashboard' in res7a.body)
+        self.failUnless('Toolbox' in res7a.body)
 
         # now look at some members details
         res7 = self.testapp.get('/detail/1', status=200)
@@ -342,23 +342,6 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res10 = res9.follow()
         self.failUnless('login' in res10.body)
 
-    def test_dashboard_orderByIdAsc_dashboardOrdered(self):
-        res2 = self._login()
-        res2 = self.get_dashboard_page(1, 'id', 'asc', 200)
-        pq = self._get_pyquery(res2.body)
-        # column-order: id code firstname lastname
-        first_member_row = pq('tr:nth-child(2)')
-        id_ = first_member_row('td:nth-child(1)')
-        self.assertEqual('1', id_.text())
-
-    def test_dashboard_orderByIdDesc_dashboardOrdered(self):
-        res2 = self._login()
-        res2 = self.get_dashboard_page(1, 'id', 'desc', 200)
-        pq = self._get_pyquery(res2.body)
-        first_member_row = pq('tr:nth-child(2)')
-        id_ = first_member_row('td:nth-child(1)')
-        self.assertEqual('3', id_.text())
-
     def test_dashboard_orderByFirstnameAsc_dashboardOrdered(self):
         res2 = self._login()
         res2 = self.get_dashboard_page(1, 'firstname', 'asc', 200)
@@ -383,7 +366,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'lastname', 'asc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(3)')
+        last_name = first_member_row('td:nth-child(1)')
         self.assertEqual(u'AAASomeLastnäme', last_name.text())
 
     def test_dashboard_orderByLastnameDesc_dashboardOrdered(self):
@@ -391,7 +374,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(3)')
+        last_name = first_member_row('td:nth-child(1)')
         self.assertEqual(u'XXXSomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_sameOrderAsBefore(self):
@@ -402,7 +385,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resdel = resdel.follow()
         pq = self._get_pyquery(resdel.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(3)')
+        last_name = first_member_row('td:nth-child(1)')
         self.assertEqual(u'SomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_messageShown(self):
@@ -416,36 +399,36 @@ class AccountantsFunctionalTests(unittest.TestCase):
     def test_dashboard_onFirstPage_noPreviousLinkShown(self):
         self._login()
         self._change_num_to_show("1")
-        res = self.get_dashboard_page(1, 'id', 'desc', 200)
+        res = self.get_dashboard_page(1, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res.body)
         self.assertEqual(len(pq("#navigate_previous")), 0)
 
     def test_dashboard_onFirstPage_nextLinkShown(self):
         self._login()
         self._change_num_to_show("1")
-        res = self.get_dashboard_page(1, 'id', 'desc', 200)
+        res = self.get_dashboard_page(1, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res.body)
-        self.assertEqual(len(pq("#navigate_next")), 1)
+        self.assertEqual(len(pq("#navigate_next")), 2)
 
     def test_dashboard_onSomePage_nextPreviousLinkShown(self):
         self._login()
         self._change_num_to_show("1")
-        res = self.get_dashboard_page(2, 'id', 'desc', 200)
+        res = self.get_dashboard_page(2, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res.body)
-        self.assertEqual(len(pq("#navigate_next")), 1)
-        self.assertEqual(len(pq("#navigate_previous")), 1)
+        self.assertEqual(len(pq("#navigate_next")), 2)
+        self.assertEqual(len(pq("#navigate_previous")), 2)
 
     def test_dashboard_onLastPage_previousLinkShown(self):
         self._login()
         self._change_num_to_show("1")
-        res = self.get_dashboard_page(3, 'id', 'desc', 200)
+        res = self.get_dashboard_page(3, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res.body)
-        self.assertEqual(len(pq("#navigate_previous")), 1)
+        self.assertEqual(len(pq("#navigate_previous")), 2)
 
     def test_dashboard_onLastPage_noNextLinkShown(self):
         self._login()
         self._change_num_to_show("1")
-        res = self.get_dashboard_page(3, 'id', 'desc', 200)
+        res = self.get_dashboard_page(3, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res.body)
         self.assertEqual(len(pq("#navigate_next")), 0)
 
@@ -467,11 +450,11 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res3 = res2.follow()
-        self.failUnless('Dashboard' in res3.body)
+        self.failUnless('Membership Acquisition' in res3.body)
         return res3
 
     def _change_num_to_show(self, num_to_show="1"):
-        res = self.get_dashboard_page(1, 'id', 'desc', 200)
+        res = self.get_dashboard_page(1, 'lastname', 'desc', 200)
         form = res.forms[0]
         form['page_size'] = num_to_show
         resX = form.submit('submit', status=200)
@@ -557,7 +540,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res3 = res2.follow()
-        self.failUnless('Dashboard' in res3.body)
+        self.failUnless('Membership Acquisition' in res3.body)
 
         """
         try to load a users PDF
@@ -592,7 +575,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
     #     res3 = res2.follow()
     #     res3 = res3.follow()
 
-    #     self.failUnless('Dashboard' in res3.body)
+    #     self.failUnless('Membership Acquisition' in res3.body)
 
     #     """
     #     try to send out the signature confirmation email
