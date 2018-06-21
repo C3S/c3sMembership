@@ -1,0 +1,66 @@
+.menu .nav-link
+{
+    color: #222222;
+}
+
+.menu ul ul
+{
+    font-size: 85%;
+    padding-left: 1.2em;
+}
+
+.menu ul ul ul
+{
+    font-size: 85%;
+    padding-left: 1.2em;
+}
+
+.menu ul ul .nav-link
+{
+    color: #555555;
+}
+
+.menu li.active
+{
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.settings-menu {
+    font-size: 1.2em;
+}
+
+.menu .nav-link:hover,
+.menu ul ul .nav-link:hover,
+.settings-menu a:hover
+{
+    color: #00A000;
+}
+
+.settings-menu a
+{
+    font-size: 1.5em;
+    color: #222222;
+    text-decoration: none
+}
+
+.pagination-bar .inactive {
+    color: #A0A0A0;
+}
+
+.application-process-step {
+    font-weight: bold;
+    border: 1px solid #6c757d;
+    border-radius: .25rem;
+    padding: .375rem .75rem;
+    margin: 0;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 1.5;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.icons {
+    font-size: 1.2em;
+}
