@@ -1,0 +1,17 @@
+<p metal:define-macro="paging_bar_bottom" class="pagination-bar">
+    <div>
+        <p>
+            Showing ${pagination.paging.page_size} per page. Change
+            to:
+            <form action="${pagination.url.first_page}"
+                    method="post"
+                    class="form">
+                <!--! TODO: Get post name for page size from pagination object instead of using hard-coded page_size. -->
+                <input name="page_size"
+                        type="text"
+                        value="${pagination.paging.page_size}"
+                        class="form-control"/>
+            </form>
+        </p>
+    </div>
+</p>

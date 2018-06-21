@@ -1,0 +1,39 @@
+<p metal:define-macro="paging_bar_top" class="pagination-bar">
+    <a id="navigate_first"
+            tal:condition="not pagination.paging.is_first_page"
+            href="${pagination.url.first_page}"
+            class="fas fa-fast-backward"
+            title="go to first page">
+    </a>
+    <i class="fas fa-fast-backward inactive"
+            tal:condition="pagination.paging.is_first_page">
+    </i>
+    <a id="navigate_previous"
+            tal:condition="not pagination.paging.is_first_page"
+            href="${pagination.url.previous_page}"
+            class="fas fa-backward"
+            title="go to previous page">
+    </a>
+    <i class="fas fa-backward inactive"
+            tal:condition="pagination.paging.is_first_page">
+    </i>
+    Page ${pagination.paging.page_number} of ${pagination.paging.page_count}
+    <a id="navigate_next"
+            tal:condition="not pagination.paging.is_last_page"
+            href="${pagination.url.next_page}"
+            class="fas fa-forward"
+            title="go to next page">
+    </a>
+    <i class="fas fa-forward inactive"
+            tal:condition="pagination.paging.is_last_page">
+    </i>
+    <a id="navigate_last"
+            tal:condition="not pagination.paging.is_last_page"
+            href="${pagination.url.last_page}"
+            class="fas fa-fast-forward"
+            title="go to last page">
+    </a>
+    <i class="fas fa-fast-forward inactive"
+            tal:condition="pagination.paging.is_last_page">
+    </i>
+</p>

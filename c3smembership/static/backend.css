@@ -1,45 +1,60 @@
 .menu .nav-link
 {
+    /* Set menu text color */
     color: #222222;
 }
 
 .menu ul ul
 {
+    /* Shrink font size and indent 2nd level menu */
     font-size: 85%;
     padding-left: 1.2em;
 }
 
 .menu ul ul ul
 {
+    /* Shrink font size and indent 3rd level menu */
     font-size: 85%;
     padding-left: 1.2em;
 }
 
 .menu ul ul .nav-link
 {
+    /* Lighter color for 2nd level menu */
     color: #555555;
 }
 
-.menu li.active
+.menu > ul > li.active
 {
+    /* Make space between active 1st level menu item and other menu items */
     padding-top: 1em;
     padding-bottom: 1em;
 }
 
-.settings-menu {
-    font-size: 1.2em;
+.menu > ul > li > a.active
+{
+    /* Make active 1st level menu item bold */
+    font-weight: bold;
+}
+
+.menu > ul > li > ul > li > a.active
+{
+    /* Make active 2st level menu item bold */
+    font-weight: bold;
 }
 
 .menu .nav-link:hover,
 .menu ul ul .nav-link:hover,
 .settings-menu a:hover
 {
+    /* Set hover for menu links color */
     color: #00A000;
 }
 
 .settings-menu a
 {
-    font-size: 1.5em;
+    /* Make settings menu icons larger */
+    font-size: 2em;
     color: #222222;
     text-decoration: none
 }
