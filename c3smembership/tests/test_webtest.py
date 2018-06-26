@@ -260,8 +260,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # now look at some members details
         res7 = self.testapp.get('/detail/1', status=200)
         self.failUnless('Firstnäme' in res7.body)
-        self.failUnless('Eingang bestätigen' in res7.body)
-        self.failUnless('Zahlungseingang bestätigen' in res7.body)
+        self.failUnless('Confirm signature' in res7.body)
+        self.failUnless('Confirm payment' in res7.body)
 
         # if we are logged in and try to access the login page
         # we will be redirected to the dashboard straight away
@@ -309,7 +309,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resD2b = resD2a.follow()  # we are taken to the dashboard
         resD2b = self.testapp.get('/detail/1', status=200)
         self.assertTrue(
-            "Eingang bestätigen" in resD2b.body)
+            "Confirm signature" in resD2b.body)
         #
         # switch payment
         resD3a = self.testapp.get(
@@ -319,13 +319,13 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resD3b = resD3a.follow()  # we are taken to the dashboard
         resD3b = self.testapp.get('/detail/1', status=200)
         self.assertTrue(
-            "Zahlungseingang bestätigen" not in resD3b.body)
+            "Confirm payment" not in resD3b.body)
         resD3a = self.testapp.get('/switch_pay/1', status=302,
                                   headers=headers_dash)  # # # # ON
         resD3b = resD3a.follow()  # we are taken to the dashboard
         resD3b = self.testapp.get('/detail/1', status=200)
         self.assertTrue(
-            "Zahlungseingang bestätigen" in resD3b.body)
+            "Confirm payment" in resD3b.body)
         #
         ####################################################################
         # delete an entry

@@ -226,27 +226,26 @@ class MembershipApplicationTest(unittest.TestCase):
         res = self.testapp.get('/detail/{0}'.format(member_id), status=200)
 
         body = self._response_to_bare_text(res)
-        self.assertTrue('firstname Sönke' in body)
-        self.assertTrue('lastname Blømqvist' in body)
-        self.assertTrue('email soenke@example.com' in body)
-        self.assertTrue('email confirmed? Yes' in body)
-        self.assertTrue('address1 ℅ Big Boss' in body)
-        self.assertTrue('address2 Håkanvägen 12' in body)
-        self.assertTrue('postcode ABC1234' in body)
-        self.assertTrue('city Stockholm' in body)
-        self.assertTrue('country SE' in body)
-        self.assertTrue('date_of_birth 1980-01-02' in body)
-        self.assertTrue('membership_accepted  No' in body)
-        self.assertTrue('entity type Person' in body)
-        self.assertTrue('membership type normal' in body)
-        self.assertTrue('member_of_colsoc Yes' in body)
-        self.assertTrue('name_of_colsoc Svenska Tonsättares Internationella Musikbyrå' in body)
-        self.assertTrue('date_of_submission ' in body)
-        self.assertTrue('signature received?   Nein' in body)
-        self.assertTrue('signature confirmed (mail sent)?No' in body)
-        self.assertTrue('payment received?   Nein' in body)
-        self.assertTrue('payment confirmed?No' in body)
-        self.assertTrue('# shares  total: 15' in body)
+        self.assertTrue('Firstname Sönke' in body)
+        self.assertTrue('Lastname Blømqvist' in body)
+        self.assertTrue('Email address soenke@example.com' in body)
+        self.assertTrue('Email address confirmed Yes' in body)
+        self.assertTrue('Address line 1 ℅ Big Boss' in body)
+        self.assertTrue('Address line 2 Håkanvägen 12' in body)
+        self.assertTrue('Postcode ABC1234' in body)
+        self.assertTrue('City Stockholm' in body)
+        self.assertTrue('Country SE' in body)
+        self.assertTrue('Date of birth 1980-01-02' in body)
+        self.assertTrue('Membership accepted  No' in body)
+        self.assertTrue('Entity type Natural person' in body)
+        self.assertTrue('Membership type normal' in body)
+        self.assertTrue('Member of collecting societies Yes Svenska Tonsättares Internationella Musikbyrå' in body)
+        self.assertTrue('Date of submission' in body)
+        self.assertTrue('Signature received    No' in body)
+        self.assertTrue('Signature confirmed No' in body)
+        self.assertTrue('Payment received   No' in body)
+        self.assertTrue('Payment confirmed No' in body)
+        self.assertTrue('Shares  Total: 15' in body)
         # TODO:
         # - code
         # - locale, set explicitly and test both German and English
@@ -259,8 +258,8 @@ class MembershipApplicationTest(unittest.TestCase):
             status=302)
         res = res.follow()
         body = self._response_to_bare_text(res)
-        self.assertTrue('payment received?    Ja' in body)
-        self.assertTrue('payment reception date 2018-04-26 12:23:34' in body)
+        self.assertTrue('Payment received    Yes' in body)
+        self.assertTrue('Payment reception date 2018-04-26 12:23:34' in body)
 
         # 8. Set signature received
         res = self.testapp.get(
@@ -269,8 +268,8 @@ class MembershipApplicationTest(unittest.TestCase):
             status=302)
         res = res.follow()
         body = self._response_to_bare_text(res)
-        self.assertTrue('signature received?    Ja' in body)
-        self.assertTrue('signature reception date2018-04-26 12:23:34' in body)
+        self.assertTrue('Signature received    Yes' in body)
+        self.assertTrue('Signature reception date 2018-04-26 12:23:34' in body)
 
         # 9. Make member
         res = self.testapp.get(
@@ -284,10 +283,10 @@ class MembershipApplicationTest(unittest.TestCase):
         # 10. Verify member details
         membership_number = C3sMember.get_next_free_membership_number() - 1
         body = self._response_to_bare_text(res)
-        self.assertTrue('membership_accepted  Yes' in body)
+        self.assertTrue('Membership accepted  Yes' in body)
         self.assertTrue(
-            'membership_number  {0}'.format(membership_number) in body)
-        self.assertTrue('membership_date 2018-04-27' in body)
-        self.assertTrue('# shares  total: 15' in body)
+            'Membership number  {0}'.format(membership_number) in body)
+        self.assertTrue('Membership date 2018-04-27' in body)
+        self.assertTrue('Shares  Total: 15' in body)
         self.assertTrue('1 package(s)' in body)
         self.assertTrue('15 shares   (2018-04-27)' in body)
