@@ -230,7 +230,7 @@ class SharesTests(unittest.TestCase):
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
         self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('1: SomeFirstnäme SomeLastnäme' in res.body)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body)
         self.assertTrue('ABCDEFGH' in res.body)
 
     def test_shares_edit(self):
@@ -320,7 +320,7 @@ class SharesTests(unittest.TestCase):
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
         self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('1: SomeFirstnäme SomeLastnäme' in res.body)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body)
         self.assertTrue('ABCDEFGH' in res.body)
 
         # try to delete a non-existing package
