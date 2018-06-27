@@ -1,17 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
         xml:lang="en"
         xmlns:tal="http://xml.zope.org/namespaces/tal"
         xmlns:metal="http://xml.zope.org/namespaces/metal"
-        metal:use-macro="backend">
-    <tal:block metal:fill-slot="top">
+        metal:use-macro="load: ../presentation/templates/backend.pt">
+    <tal:block metal:fill-slot="content">
         <h1>Alphabetische Mitgliederliste</h1>
         <p>
             ${count} Mitglieder<br />
             Stand ${_today}
         </p>
-    </tal:block>
-    <tal:block metal:fill-slot="middle">
         <table class="table table-striped" rules="rows">
             <tr class="table-striped">
                 <th>Nachname</th>
@@ -34,14 +31,16 @@
                     </div>
                     <small>
                         (id ${member.id}; t: ${member.membership_type})
-                    </small><br />
+                    </small>
+                    <br />
                 </td>
                 <td align="left" valign="bottom">
-                    <table style="vertical-align:text-bottom;">
-                        <tr><td>${member.address1}</td></tr>
-                        <tr><td>${member.address2}</td></tr>
-                        <tr><td>${member.postcode} ${member.city} (${member.country})</td></tr>
-                    </table>
+                    ${member.address1}<br />
+                    <div tal:condition="len(member.address2) > 0"
+                            tal:omit-tag="">
+                        ${member.address2}<br />
+                    </div>
+                    ${member.postcode} ${member.city} (${member.country})
                 </td>
                 <td>
                     <span tal:condition="not member.is_legalentity">
@@ -49,14 +48,16 @@
                     </span>
                 </td>
                 <td>
-                    ${member.membership_date.strftime('%d.%m.%Y')}<br />
+                    ${member.membership_date.strftime('%d.%m.%Y')}
+                    <br />
                     <small>${member.email_confirm_code}</small><br />
                 </td>
                 <td>
                     ${member.membership_loss_date.strftime('%d.%m.%Y')
                         if member.membership_loss_date is not None
                         else ''
-                    }<br />
+                    }
+                    <br />
                     ${member.membership_loss_type}
                 </td>
                 <td>
