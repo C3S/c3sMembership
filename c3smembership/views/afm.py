@@ -46,6 +46,7 @@ from c3smembership.models import C3sMember
 from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,
+    ZPT_RENDERER_BS3,
 )
 from c3smembership.utils import (
     generate_pdf,
@@ -333,7 +334,7 @@ def join_c3s(request):
             deform.Button('reset', _(u'Reset'))
         ],
         use_ajax=True,
-        renderer=ZPT_RENDERER
+        renderer=ZPT_RENDERER_BS3
     )
 
     # if the form has NOT been used and submitted, remove error messages if any

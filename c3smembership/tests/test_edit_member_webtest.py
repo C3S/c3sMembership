@@ -284,7 +284,7 @@ class EditMemberTests(unittest.TestCase):
         res = self.testapp.get(
             '/edit/{0}'.format(member_id),
             status=200)
-        self.failUnless('Mitglied bearbeiten' in res.body)
+        self.failUnless('Edit member' in res.body)
         return res
 
     def __login(self):
