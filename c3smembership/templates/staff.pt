@@ -1,70 +1,59 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      metal:use-macro="backend"
-      i18n:domain="c3smembership">
-  <tal:block metal:fill-slot="middle">
-    <h3><small>Mitarbeiter_innen</small> ansehen, ändern &amp; löschen </h3>
-    <p>
-      Accounts der Gruppe "staff" dürfen auf das Dashboard.<br />
-    </p>
-    <table border="0" cellpadding="10" width="90%" class="table table-striped">
-      <tr class="table-striped">
-        <td>id</td>
-        <td>Name</td>
-        <td>Gruppe(n)</td>
-        <td>Letzte PW-Änd.</td>
-        <td>bearbeiten</td>
-        <td>löschen</td>
-      </tr>
-      <tr tal:repeat="staffer staffers" class="table-striped">
-	<td><a href="/staff/${staffer.id}">${staffer.id}</a></td>
-	<td>${staffer.login}</td>
-	<td>${staffer.groups[0].name}</td>
-	<td>${staffer.last_password_change}</td>
-	<td>
-          <form action="${request.route_url('staff')}"
-                method="post">
-            <input type="submit"
-                   class="btn btn-warning"
-                   value="bearbeiten" />
-            <input type="hidden"
-                   name="action"
-                   value="edit" />
-            <input type="hidden"
-                   name="id"
-                   value="${staffer.id}" />
-          </form>
-        </td>
-	<td>
-          <form action="${request.route_url('staff')}"
-                method="post">
-            <input type="submit"
-                   class="btn btn-danger"
-                   value="löschen" />
-            <input type="hidden"
-                   name="action"
-                   value="delete" />
-            <input type="hidden"
-                   name="id"
-                   value="${staffer.id}" />
-          </form>
-        </td>
-      </tr>
-    </table>
-    <h3><small>Staff-Account</small> anlegen </h3>
-    <div class="alert alert-warning img-rounded">
-      <div tal:content="structure stafferform">
-        the form to add a staffer
-      </div>
-    </div>
-    
-  </tal:block>
-  <tal:block metal:fill-slot="bottom">
-    <p><a href="${request.route_url('dashboard')}" class="btn btn-success">Dashboard</a></p>
-    <p><a href="${request.route_url('logout')}" class="btn btn-danger">${request.authenticated_userid} Abmelden</a></p>
-  </tal:block>
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="load: ../presentation/templates/backend.pt">
+    <tal:block metal:fill-slot="content">
+        <h3>Staff</h3>
+        <p>
+            Staff accounts have backend access.
+        </p>
+        <table class="table table-striped">
+            <tr class="table-striped">
+                <th>ID</th>
+                <th>Name</th>
+                <th>Groups</th>
+                <th>Last password change</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr tal:repeat="staffer staffers" class="table-striped">
+                <td><a href="/staff/${staffer.id}">${staffer.id}</a></td>
+                <td>${staffer.login}</td>
+                <td>${staffer.groups[0].name}</td>
+                <td>${staffer.last_password_change}</td>
+                <td>
+                    <form action="${request.route_url('staff')}"
+                            method="post">
+                        <input type="submit"
+                                class="btn btn-warning"
+                                value="bearbeiten" />
+                        <input type="hidden"
+                                name="action"
+                                value="edit" />
+                        <input type="hidden"
+                                name="id"
+                                value="${staffer.id}" />
+                    </form>
+                </td>
+                <td>
+                    <form action="${request.route_url('staff')}"
+                            method="post">
+                        <input type="submit"
+                                class="btn btn-danger"
+                                value="löschen" />
+                        <input type="hidden"
+                                name="action"
+                                value="delete" />
+                        <input type="hidden"
+                                name="id"
+                                value="${staffer.id}" />
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <h3>Create new staff account</h3>
+        <div tal:content="structure stafferform">
+        </div>
+    </tal:block>
 </html>
