@@ -1,69 +1,68 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="backend">
-  <tal:block metal:fill-slot="top">
-    <p>
-      Please <a href="${request.route_url('logout')}">log out</a>
-      when you are done.
-      Or go <a href="${request.route_url('dashboard')}">back to dashboard</a>.
-    </p>
-    <h1>Edit Details for Shares #${s.id}</h1>
-
-    <table class="table table-striped">
-      <tr>
-        <td>id</td>
-	<td>${s.id}</td>
-      </tr>
-      <tr>
-        <td>number</td>
-	<td>${s.number}</td>
-      </tr>
-      <tr>
-        <td>whose shares?</td>
-	<td>
-          <a href="${request.route_url('detail', memberid=s.members[0].id)}">
-            ${s.members[0].id}: ${s.members[0].firstname} ${s.members[0].lastname}</a>
-        </td>
-      </tr>
-      <tr>
-        <td>reference code</td>
-	<td>${s.reference_code}</td>
-      </tr>
-      <tr>
-        <td>date_of_acquisition</td>
-	<td>${s.date_of_acquisition}</td>
-      </tr>
-      <tr>
-        <td>signature received?</td><td>${s.signature_received or "No"}</td>
-      </tr>
-      <tr tal:condition="s.signature_received">
-        <td>signature reception date</td><td>${s.signature_received_date}</td>
-      </tr>
-      <tr>
-        <td>signature confirmed (by email)?</td><td>${s.signature_confirmed or "No"}</td>
-      </tr>
-      <tr tal:condition="s.signature_confirmed">
-        <td>signature confirmation date</td><td>${s.signature_confirmed_date}</td>
-      </tr>
-      <tr>
-        <td>payment received?</td><td>${s.payment_received or "No"}</td>
-      </tr>
-      <tr tal:condition="s.payment_received">
-        <td>payment reception date</td><td>${s.payment_received_date}</td>
-      </tr>
-      <tr>
-        <td>payment confirmed (by email)?</td><td>${s.payment_confirmed or "No"}</td>
-      </tr>
-      <tr tal:condition="s.payment_confirmed">
-        <td>payment confirmation date</td><td>${s.payment_confirmed_date}</td>
-      </tr>
-    </table>
-    
-    <div id="form" tal:content="structure form"/>
-    
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-  </tal:block>
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="load: ../presentation/templates/backend.pt">
+    <tal:block metal:fill-slot="content">
+        <h1>Edit Details for Shares #${s.id}</h1>
+        <table class="table table-striped">
+            <tr>
+                <td>ID</td>
+                <td>${s.id}</td>
+            </tr>
+            <tr>
+                <td>Number</td>
+                <td>${s.number}</td>
+            </tr>
+            <tr>
+                <td>Member</td>
+                <td>
+                    <a href="${request.route_url('detail', memberid=s.members[0].id)}">
+                        ${s.members[0].firstname} ${s.members[0].lastname}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Reference code</td>
+                <td>${s.reference_code}</td>
+            </tr>
+            <tr>
+                <td>Date of acquisition</td>
+                <td>${s.date_of_acquisition}</td>
+            </tr>
+            <tr>
+                <td>Signature received</td>
+                <td>${s.signature_received or "No"}</td>
+            </tr>
+            <tr tal:condition="s.signature_received">
+                <td>Signature reception date</td>
+                <td>${s.signature_received_date}</td>
+            </tr>
+            <tr>
+                <td>Signature confirmed</td>
+                <td>${s.signature_confirmed or "No"}</td>
+            </tr>
+            <tr tal:condition="s.signature_confirmed">
+                <td>Signature confirmation date</td>
+                <td>${s.signature_confirmed_date}</td>
+            </tr>
+            <tr>
+                <td>Payment received</td>
+                <td>${s.payment_received or "No"}</td>
+            </tr>
+            <tr tal:condition="s.payment_received">
+                <td>Payment reception date</td>
+                <td>${s.payment_received_date}</td>
+            </tr>
+            <tr>
+                <td>Payment confirmed</td>
+                <td>${s.payment_confirmed or "No"}</td>
+            </tr>
+            <tr tal:condition="s.payment_confirmed">
+                <td>Payment confirmation date</td>
+                <td>${s.payment_confirmed_date}</td>
+            </tr>
+        </table>
+        <div id="form" tal:content="structure form"/>
+    </tal:block>
 </html>
