@@ -143,7 +143,6 @@ class JoinFormTests(SeleniumTestBase):
 
         self.driver.find_element_by_name('submit').click()
 
-        self.driver.get_screenshot_as_file('test_form_submission_de.png')
         self.failUnless(
             u'Nach Anfordern der Bestätigungsmail' in self.driver.page_source)
 
@@ -155,10 +154,8 @@ class JoinFormTests(SeleniumTestBase):
         # TODO: check case colsoc = no views.py 765-767
         # TODO: check save to DB/randomstring: views.py 784-865
 
-        self.failUnless(u'Daten bearbeiten' in self.driver.page_source)
-
         # back to the form
-        self.driver.find_element_by_name('edit').click()
+        self.driver.find_element_by_id('back').click()
 
         self.assertEqual(self.driver.find_element_by_name(
             'lastname').get_attribute('value'), 'Scheid')
@@ -216,7 +213,7 @@ class JoinFormTests(SeleniumTestBase):
             'Bitte beachten: Es gab fehler' not in self.driver.page_source)
         self.assertTrue('addr two plus' in self.driver.page_source)
 
-        self.driver.find_element_by_name('send_email').click()
+        self.driver.find_element_by_id('next').click()
 
         page = self.driver.page_source
 
@@ -240,8 +237,6 @@ class JoinFormTests(SeleniumTestBase):
         self.assertEqual(self.driver.get_cookies(), [])
         # load the page with the form
         self.driver.get("http://0.0.0.0:6544?en")
-
-        self.driver.get_screenshot_as_file('test_form_submission_en.png')
 
         self.failUnless(
             u'Application for Membership' in self.driver.page_source)
@@ -278,6 +273,8 @@ class JoinFormTests(SeleniumTestBase):
 
         self.driver.find_element_by_name('submit').click()
 
+        # self.driver.get_screenshot_as_file('test_form_submission_en.png')
+
         self.failUnless(
             'Click the button to have an email' in self.driver.page_source)
 
@@ -291,7 +288,7 @@ class JoinFormTests(SeleniumTestBase):
         # TODO: check case colsoc = no views.py 765-767
         # TODO: check save to DB/randomstring: views.py 784-865
         # TODO: check re-edit of form: views.py 877-880 XXX
-        self.driver.find_element_by_name('edit').click()
+        self.driver.find_element_by_id('back').click()
         # back to the form
         self.assertEqual(self.driver.find_element_by_name(
             'lastname').get_attribute('value'), 'Scheid')
@@ -347,7 +344,7 @@ class JoinFormTests(SeleniumTestBase):
             'Bitte beachten: Es gab fehler' not in self.driver.page_source)
         self.assertTrue('addr two plus' in self.driver.page_source)
 
-        self.driver.find_element_by_name('send_email').click()
+        self.driver.find_element_by_id('next').click()
 
         page = self.driver.page_source
 

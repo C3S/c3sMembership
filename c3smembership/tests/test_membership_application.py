@@ -195,7 +195,7 @@ class MembershipApplicationTest(unittest.TestCase):
         self.assertTrue('Membership(s): Svenska Tonsättares Internationella Musikbyrå' in body)
         self.assertTrue('Number of Shares: 15' in body)
         self.assertTrue('Cost of Shares (50 € each): 750 €' in body)
-        res = res.forms[1].submit(status=200)
+        res = self.testapp.get('/check_email', status=200)
 
         # 3. Verify sent confirmation email
         mailer = self.get_mailer(None)
