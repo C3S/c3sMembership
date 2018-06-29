@@ -1,48 +1,62 @@
 <span tal:define="name name|field.name;
-                  size size|field.widget.size;
-                  css_class css_class|field.widget.css_class;
-                  oid oid|field.oid;
-                  mask mask|field.widget.mask;
-                  mask_placeholder mask_placeholder|field.widget.mask_placeholder;
-                  style style|field.widget.style|None;
-                  "
-      tal:omit-tag="">
-<script type="text/javascript">
-$(function() {
-  $( "#slider-div-num_shares" ).slider({
-    range: "max",
-    min: 1,
-    max: 60,
-    value: ${cstruct},
-    slide: function( event, ui ) {
-      $( "#num_shares" ).val( ui.value );
-      $( "#num_shares-calculated" ).val( ui.value * 50 );
-    }
-  });
-  $( "#num_shares" ).val( $( "#slider-div-num_shares" ).slider( "value" ) );
-});
-</script>
-  <input type="text" name="${name}" value="${cstruct}" 
-         tal:attributes="size size;
-                         class css_class;
-                         style style"
-         id="${oid}"/>
-  (= <input type="text" name="${name}-calculated" value="${int(cstruct)*50}" 
-         tal:attributes="size size;
-                         class css_class;
-                         style style"
-         id="${oid}-calculated"/>€)
-  
-  <div id="slider-div-${oid}"></div><br />
-  <script tal:condition="mask" type="text/javascript">
-    deform.addCallback(
-    '${oid}',
-    function (oid) {
-    $("#" + oid).mask("${mask}", 
-    {placeholder:"${mask_placeholder}"});
-    });
-  </script>
+            size size|field.widget.size;
+            css_class css_class|field.widget.css_class;
+            oid oid|field.oid;
+            mask mask|field.widget.mask;
+            mask_placeholder mask_placeholder|field.widget.mask_placeholder;
+            style style|field.widget.style|None;"
+        tal:omit-tag="">
+    <input type="text" name="${name}" value="${cstruct}" 
+            tal:attributes="size size;
+            class css_class;
+            style style"
+            id="${oid}"/>
+        (= <input type="text" name="${name}-calculated" value="${int(cstruct)*50}" 
+                tal:attributes="size size;
+                class css_class;
+                style style"
+                id="${oid}-value"/>€)
+    <input type="range" name="${name}-slider" value="${cstruct}" id="${oid}-slider"
+            min="1" max="60"
+            class="slider"
+            tal:attributes="size size;
+                class css_class;
+                style style" />
+    <script>
+        var share_count = document.getElementById("${oid}");
+        var share_slider = document.getElementById("${oid}-slider");
+        var share_value = document.getElementById("${oid}-value");
+
+        function update_inputs(value) {
+            share_count.value = value;
+            share_slider.value = value;
+            share_value.value = value * 50;
+        }
+
+        share_slider.oninput = function() {
+            update_inputs(share_slider.value);
+        }
+        share_count.oninput = function() {
+            if (share_count.value > 60) {
+                share_count.value = 60;
+            }
+            update_inputs(share_count.value);
+        }
+        share_value.onfocusout = function() {
+            // Use !>= instead of the less than sign as a workaround for a bug
+            // in i18n which apparently detects the less than sign as the start
+            // of a tag and complains "Aborting due to parse error in ...: not
+            // well-formed (invalid token)".
+            if (!(share_value.value >= 50)) {
+                share_value.value = 50;
+            }
+            if (share_value.value > 3000) {
+                share_value.value = 3000;
+            }
+            // Ensure the value can be divided by 50
+            share_value.value = Math.floor(share_value.value / 50) * 50;
+
+            update_inputs(share_value.value / 50);
+        }
+    </script>
 </span>
-
-
-

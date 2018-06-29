@@ -37,14 +37,3 @@ ZPT_RENDERER = deform.ZPTRendererFactory(
     ],
     translator=translator,
 )
-
-# Bootstrap 3 renderer for legacy support of the registration process until
-# it's migrated to bootstrap 4. As deform has native support for Bootstrap 3
-# the custom templates must not be used as they are only for Boostrap 4.
-ZPT_RENDERER_BS3 = deform.ZPTRendererFactory(
-    [
-        MY_TEMPLATE_DIR,
-        DEFORM_TEMPLATE_DIR,
-    ],
-    translator=translator,
-)

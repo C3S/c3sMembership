@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal">
+    <head>
+        <!--! General meta -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <!--! CSS dependencies -->
+        <link rel="stylesheet"
+                href="${request.static_url('c3smembership:static/bootstrap-4.1.1/css/bootstrap.min.css')}" />
+        <link rel="stylesheet"
+                href="${request.static_url('c3smembership:static/fontawesome-free-5.0.13/css/fontawesome-all.min.css')}" />
+        <!--! Custom CSS -->
+        <link rel="stylesheet"
+                href="${request.static_url('c3smembership:static/c3s_b.css')}"
+                type="text/css" media="screen" charset="utf-8" />
+        <!--! Page meta -->
+        <title>Membership</title>
+        <link rel="shortcut icon"
+                href="${request.static_url('c3smembership:static/favicon.ico')}" />
+        <tal:block metal:define-slot="head"></tal:block>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 pt-2">
+                    <main role="main">
+                        <img src="${request.static_url('c3smembership:static/logo_horiz_w700.png')}"
+                                class="img-responsive"
+                                alt="Cultural Commons Collecting Society (C3S)"/>
+                        <tal:block metal:define-slot="content"></tal:block>
+                    </main>
+                </div>
+            </div>
+            <div>
+                &copy; Copyright 2014, C3S SCE.
+                <a href="https://www.c3s.cc/en/contact-us/"
+                        i18n:attributes="href footer-contact-href"
+                        i18n:translate="footer-contact">
+                    Contact
+                </a>
+                &ndash;
+                <a href="https://www.c3s.cc/en/impressum/"
+                        i18n:attributes="href footer-imprint-href"
+                        i18n:translate="footer-imprint">
+                    Imprint
+                </a>
+                &ndash;
+                <a href="https://www.c3s.cc/en/datenschutz/#dsgvo-membership"
+                        i18n:attributes="href footer-privacy-href"
+                        i18n:translate="footer-privacy">
+                    Data Privacy Statement
+                </a>
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+        <!--! JavaScript dependencies -->
+        <script src="${request.static_url('c3smembership:static/jquery-3.3.1/js/jquery.min.js')}"></script>
+        <script src="${request.static_url('c3smembership:static/bootstrap-4.1.1/js/bootstrap.min.js')}"></script>
+        <!--! Custom JavaScript -->
+        <tal:block metal:define-slot="javascript"></tal:block>
+    </body>
+</html>

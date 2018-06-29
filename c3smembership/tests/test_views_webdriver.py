@@ -109,7 +109,6 @@ class JoinFormTests(SeleniumTestBase):
         # load the page with the form, choose german
         self.driver.get("http://0.0.0.0:6544?de")
 
-        self.driver.get_screenshot_as_file('test_form_submission_de.png')
         self.failUnless(
             u'Mitgliedschaftsantrag' in self.driver.page_source)
 
@@ -144,8 +143,9 @@ class JoinFormTests(SeleniumTestBase):
 
         self.driver.find_element_by_name('submit').click()
 
+        self.driver.get_screenshot_as_file('test_form_submission_de.png')
         self.failUnless(
-            u'Bestätigungs-E-Mail schicken' in self.driver.page_source)
+            u'Nach Anfordern der Bestätigungsmail' in self.driver.page_source)
 
         # TODO: check contents of success page XXX
         self.assertTrue('Christoph' in self.driver.page_source)
@@ -278,7 +278,8 @@ class JoinFormTests(SeleniumTestBase):
 
         self.driver.find_element_by_name('submit').click()
 
-        self.failUnless('Send verification email' in self.driver.page_source)
+        self.failUnless(
+            'Click the button to have an email' in self.driver.page_source)
 
         # TODO: check contents of success page XXX
         self.assertTrue('Christoph' in self.driver.page_source)
@@ -458,7 +459,7 @@ class EmailVerificationTests(SeleniumTestBase):
         self.driver.find_element_by_name('password').send_keys('berries')
         self.driver.find_element_by_name('submit').click()
 
-        self.assertTrue('Load your PDF...' in self.driver.page_source)
+        self.assertTrue('Load your PDF' in self.driver.page_source)
         self.assertTrue(
             'C3S_SCE_AFM_Firstn_meLastname.pdf' in self.driver.page_source)
         # XXX TODO: check PDF download

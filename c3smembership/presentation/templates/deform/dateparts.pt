@@ -1,0 +1,47 @@
+<div i18n:domain="deform"
+        tal:omit-tag=""
+        tal:define="oid oid|field.oid;
+            name name|field.name;
+            css_class css_class|field.widget.css_class;
+            style style|field.widget.style;">
+    ${field.start_mapping()}
+    <div class="row ${field.error and 'is-invalid' or ''}">
+        <div class="input-group col-4">
+            <div class="input-group-prepend">
+                <span class="input-group-text" i18n:translate="">
+                    Year
+                </span>
+            </div>
+            <input type="text" name="year" value="${year}"
+                    class="span2 form-control ${field.error and 'is-invalid' or ''} ${css_class or ''}"
+                    tal:attributes="style style"
+                    maxlength="4"
+                    id="${oid}"/>
+        </div>
+        <div class="input-group col-4">
+            <div class="input-group-prepend">
+                <span class="input-group-text" i18n:translate="">
+                    Month
+                </span>
+            </div>
+            <input type="text" name="month" value="${month}"
+                    class="span2 form-control ${field.error and 'is-invalid' or ''} ${css_class or ''}"
+                    tal:attributes="style style"
+                    maxlength="2"
+                    id="${oid}-month"/>
+        </div>
+        <div class="input-group col-4">
+            <div class="input-group-prepend">
+                <span class="input-group-text" i18n:translate="">
+                    Day
+                </span>
+            </div>
+            <input type="text" name="day" value="${day}"
+                    class="span2 form-control ${field.error and 'is-invalid' or ''} ${css_class or ''}"
+                    tal:attributes="style style"
+                    maxlength="2"
+                    id="${oid}-day"/>
+        </div>
+    </div>
+    ${field.end_mapping()}
+</div>

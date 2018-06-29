@@ -3,10 +3,6 @@
 html, body, #top, #container {
     background-color:#d9f0c8 !important;
 }
-.registration-progress-bar {
-    margin-top: 2em;
-    margin-bottom: 2em;
-}
 .ueberschrift{
     color:#4dbd38;
     font-weight: bold;
@@ -65,31 +61,36 @@ input[type=text], select {
     font-size:120%;
     border-color:#4dbd38;
 }
-#password {
-    font-size: 120%;
-    border-color: #4dbd38;
-}
-#password-confirm {
-    font-size: 120%;
-    border-color: #4dbd38;
-}
 /* error messages: enlarge font a bit */
 .error {
     font-size: 120%;
     color: #a94442;
 }
 /* the number of shares display */
-.num_shares_input {
+.num_shares_input#num_shares {
     border: 0; color: #4dbd38; font-weight: bold;
     font-size:120%;
-    width: 50px!important;
+    width: 50px;
 }
-.num_shares_input#num_shares-calculated {
-    border: 0; color: #4dbd38; font-weight: bold;
-    font-size:120%;text-align:right;
-    width:60px!important;
+.num_shares_input#num_shares-value {
+    border: 0;
+    color: #4dbd38;
+    font-weight: bold;
+    font-size:120%;
+    text-align:right;
+    width: 60px;
 }
-#slider-div-num_shares {width:60%;} /* 430px */
+.num_shares_input#num_shares-slider {
+    width: 60%;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+.num_shares_input#num_shares-slider::-webkit-slider-thumb {
+    background-color: #4dbd38;
+}
+.num_shares_input#num_shares-slider::-moz-range-thumb {
+    background-color: #4dbd38;
+}
 .ui-slider-handle {
     border:#d9f0c8;
     background:#4dbd38!important;}
@@ -103,11 +104,6 @@ a {text-decoration: underline;}
     background-color:#d9f0c8!important;
     background-image:url(/static/g8532.png); background-repeat:repeat-x;
     height:300px;
-}
-.footer {
-    height:auto;
-    width:auto;
-    vertical-align: bottom!important;
 }
 
 /* part 2 : the success page */
@@ -126,3 +122,18 @@ a {text-decoration: underline;}
     font-size:140%;
     font-weight:bold;
 }
+
+
+/* Fix Bootstrap 4 issues which only shows .invalid-feedback in restricted
+   scenarios*/
+.is-invalid~.invalid-feedback,
+.has-error > .invalid-feedback
+{
+    display: block;
+}
+.has-error,
+.has-error > .text-muted
+{
+    color: #dc3545 !important;
+}
+/* End of Bootstrap 4 fixes */

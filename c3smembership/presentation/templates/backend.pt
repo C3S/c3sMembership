@@ -110,7 +110,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <!--! CSS dependencies -->
         <link rel="stylesheet"
-                href="${request.static_url('c3smembership:static/bootstrap-4.0.0/css/bootstrap.min.css')}" />
+                href="${request.static_url('c3smembership:static/bootstrap-4.1.1/css/bootstrap.min.css')}" />
         <link rel="stylesheet"
                 href="${request.static_url('c3smembership:static/fontawesome-free-5.0.13/css/fontawesome-all.min.css')}" />
         <!--! Custom CSS -->
@@ -186,7 +186,7 @@
         </div>
         <!--! JavaScript dependencies -->
         <script src="${request.static_url('c3smembership:static/jquery-3.3.1/js/jquery.min.js')}"></script>
-        <script src="${request.static_url('c3smembership:static/bootstrap-4.0.0/js/bootstrap.min.js')}"></script>
+        <script src="${request.static_url('c3smembership:static/bootstrap-4.1.1/js/bootstrap.min.js')}"></script>
         <!--! Custom JavaScript -->
         <tal:block metal:define-slot="javascript"></tal:block>
     </body>
