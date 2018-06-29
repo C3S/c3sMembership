@@ -901,7 +901,7 @@ class FunctionalTests(unittest.TestCase):
         form['password'] = 'arandompassword'
         res2 = form.submit('submit')
         # print res2.body
-        self.failUnless("Load your PDF..." in res2.body)
+        self.failUnless("Load your PDF" in res2.body)
         self.failUnless(
             "/C3S_SCE_AFM_SomeFirstn_meSomeLastn_me.pdf" in res2.body)
         # load the PDF, check size
