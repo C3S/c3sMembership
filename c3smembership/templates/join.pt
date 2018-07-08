@@ -22,20 +22,18 @@
             <strong style="color:red;" tal:repeat="message request.session.peek_flash('message_above_form')">
                 ${message}
             </strong>
-        </div> &nbsp;
+        </div>
         <div>
             <a href="/?en">
-                <img src="static/images/en.png"
+                <img src="static/images/uk.svg"
                         title="English"
                         height="30"
-                        alt="switch to English language" />
-            </a>
+                        alt="switch to English language" /></a>
             <a href="/?de">
-                <img src="static/images/de.png"
+                <img src="static/images/de.svg"
                         title="Deutsch"
                         height="30"
-                        alt="auf deutsche Sprache umschalten" />
-            </a>
+                        alt="auf deutsche Sprache umschalten" /></a>
         </div>
         <h2 i18n:translate="join-form-headline" class="ueberschrift">
             Application for Membership of the Cultural Commons Collecting
