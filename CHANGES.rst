@@ -1,5 +1,5 @@
-Next Release
-============
+1.22
+====
 
 
 - Add date filtering to payment list.
