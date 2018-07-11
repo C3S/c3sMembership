@@ -8,42 +8,6 @@
             ${message}
         </strong>
         <h1>Toolbox</h1>
-        <h2>Membership Dues</h2>
-        <p>
-            <a href="${request.route_url('dues15_listing')}" class="btn btn-success">
-                List of Dues Invoices for 2015
-            </a>
-        </p>
-        <p>
-            <a href="${request.route_url('dues16_listing')}" class="btn btn-success">
-                List of Dues Invoices for 2016
-            </a>
-        </p>
-        <p>
-            <a href="${request.route_url('dues17_listing')}" class="btn btn-success">
-                List of Dues Invoices for 2017
-            </a>
-        </p>
-        <p>
-            <a href="${request.route_url('dues18_listing')}" class="btn btn-success">
-                List of Dues Invoices for 2018
-            </a>
-        </p>
-        <h3>Mail Invoices for Membership Dues 2018</h3>
-        <p>
-            <a href="${request.route_url('send_dues18_invoice_batch', number=5)}"
-                    title="Note: change number in URL as appropriate! Default is 5."
-                    class="btn btn-success">
-                Send 5 Invoices for Membership Dues
-            </a>
-            <br />
-            You may send more than 5 invoices at once by using another number (in the URL):
-            <form method='POST' action="${request.route_url('send_dues18_invoice_batch', number='foo')}">
-                <input type='text' name='number'></input>
-                <input type='submit' name='submit'></input>
-            </form>
-        </p>
-
         <h2>Search</h2>
         <p>
             <a href="${request.route_url('search_people')}"

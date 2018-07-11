@@ -65,17 +65,18 @@
         #         },
         #     ]
         # },
-        # {
-        #     'caption': 'Dues',
-        #     'class': 'fas fa-money-bill-alt',
-        #     'sub-menu': [
+        {
+            'caption': 'Dues',
+            'class': 'fas fa-money-bill-alt',
+            'route': 'dues',
+            'sub-menu': [
                 {
                     'route': 'payment_list',
                     'caption': 'Payments',
                     'class': 'fas fa-coins',
                 },
-        #     ],
-        # },
+            ],
+        },
         {
             'route': 'toolbox',
             'caption': 'Toolbox',

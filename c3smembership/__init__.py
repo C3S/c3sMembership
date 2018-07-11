@@ -265,6 +265,9 @@ def main(global_config, **settings):
         'batch_archive_pdf_invoices',
         '/batch_archive_pdf_invoices')
 
+    # Dues
+    config.add_route('dues', '/dues')
+
     # Payments
     from c3smembership.data.repository.payment_repository import \
         PaymentRepository
