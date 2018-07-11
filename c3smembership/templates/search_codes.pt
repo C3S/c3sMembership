@@ -33,6 +33,9 @@
     <p>
       <a href="${request.route_url('search_people')}"
          class="btn btn-success">Search People</a>
+      <a href="${request.route_url('dashboard')}" class="btn btn-default">
+          Back
+      </a>
     </p>
   </tal:block>
 </html>
