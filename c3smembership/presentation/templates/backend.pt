@@ -92,10 +92,11 @@
             'caption': 'Statistics',
             'class': 'fas fa-chart-pie',
         },
-        # {
-        #     'caption': 'General Assembly',
-        #     'class': 'fas fa-hand-point-up',
-        # }
+        {
+            'caption': 'General Assembly',
+            'class': 'fas fa-hand-point-up',
+            'route': 'general_assembly',
+        }
     ]
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml"
