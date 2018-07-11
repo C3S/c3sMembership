@@ -7,63 +7,58 @@
         <strong class="text-danger" tal:repeat="message request.session.pop_flash('message_to_staff')">
             ${message}
         </strong>
-        <h1>Toolbox</h1>
+        <h1>Membership tools</h1>
         <h2>Search</h2>
         <p>
             <a href="${request.route_url('search_people')}"
-                    class="btn btn-success">
-                Search for People
+                    class="btn btn-primary">
+                Search for people
             </a>
             <a href="${request.route_url('search_codes')}"
-                    class="btn btn-success">
-                Search for ReferenceCodes
+                    class="btn btn-primary">
+                Search for reference codes
             </a>
         </p>
-        <h2>Browse</h2>
-        <h3>Applications</h3>
+        <h2>Applications</h2>
         <p>
-            <a href="${request.route_url('dashboard', page_number=0, sort_property='id', sort_direction='asc')}"
-                    title="The List of going-to-be-Members / unfinished Applications for Membership"
-                    class="btn btn-primary">
-                AfM Dashboard
-            </a>
             <a href="${request.route_url('afms_awaiting_approval')}"
                     title="almost finished Applications for Membership: awaiting approval"
-                    class="btn btn-warning">
+                    class="btn btn-primary">
                 AfMs ready for approval by the board
             </a>
         </p>
-        <h3>Members</h3>
-        <h4>HTML</h4>
+        <h3>Membership list HTML</h3>
         <p>
             <a href="${request.route_url('membership_listing_backend')}"
-                    class="btn btn-success">
+                    class="btn btn-primary">
                 Membership List (backend/with links)
             </a>
+            <br />
             <a href="${request.route_url('membership_listing_alphabetical')}"
-                    class="btn btn-success">
+                    class="btn btn-primary">
                 Alphabetical Member List (HTML/without links/for printout)
             </a>
+            <br />
             <a href="${request.route_url('membership_listing_aufstockers')}"
-                    class="btn btn-success">Alphabetical Aufstockers List
+                    class="btn btn-primary">Alphabetical Aufstockers List
                 (Members with more than one package of shares (HTML with links)
             </a>
         </p>
 
-        <h4>PDF</h4>
+        <h3>Membership list PDF</h3>
         <p>
             <a href="${request.route_url('membership_listing_date_pdf', date=date)}"
                     title="Note: change date in URL as appropriate! Default is today."
-                    class="btn btn-success">
-                Alphabetical Member List (PDF)
+                    class="btn btn-primary">
+                Alphabetical membership list
             </a>
         </p>
-        <h4>PDF for specific date</h4>
+        <h4>For a specific date</h4>
         <p>
             <div tal:content="structure membership_listing_date_pdf">
             </div>
         </p>
-        <h4>PDF for end of years</h4>
+        <h4>For end of year</h4>
         <p>
             <div tal:content="structure membership_listing_year_end_pdf">
             </div>

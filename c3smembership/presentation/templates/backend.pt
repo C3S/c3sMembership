@@ -37,6 +37,11 @@
                 #     'caption': 'Loss',
                 #     'class': 'fas fa-user-minus',
                 # },
+                {
+                    'route': 'toolbox',
+                    'caption': 'Tools',
+                    'class': 'fas fa-wrench',
+                },
             ],
         },
         # {
@@ -76,11 +81,6 @@
                     'class': 'fas fa-coins',
                 },
             ],
-        },
-        {
-            'route': 'toolbox',
-            'caption': 'Toolbox',
-            'class': 'fas fa-wrench',
         },
         {
             'route': 'annual_reporting',

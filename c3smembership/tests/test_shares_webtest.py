@@ -223,7 +223,7 @@ class SharesTests(unittest.TestCase):
         # because the shares package did not exist
         self.assertTrue(
             'This shares id was not found in the database!' in res2.body)
-        self.assertTrue('Toolbox' in res2.body)
+        self.assertTrue('Membership tools' in res2.body)
 
         self.make_member_with_shares()
 
