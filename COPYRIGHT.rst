@@ -76,3 +76,9 @@ Redistributes works are copyright and licensed as follows:
   Licensed under MIT
   (http://digitalbush.com/projects/masked-input-plugin/#license)
 
+- Font Awesome -- Copyright (c) @fontawesome, https://fontawesome.com. Licensed
+  under:
+
+  - Icons: CC BY 4.0 License (https://creativecommons.org/licenses/by/4.0/)
+  - Fonts: SIL OFL 1.1 License (https://scripts.sil.org/OFL)
+  - Code: MIT License (https://opensource.org/licenses/MIT)
