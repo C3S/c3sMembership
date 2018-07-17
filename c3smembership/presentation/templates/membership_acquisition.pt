@@ -58,6 +58,19 @@
         <table class="table table-striped">
             <tr class="table-striped">
                 <th>
+                    <a href="${pagination.url.sort_property_alternating_direction('id')}"
+                            title="Sort by ID">
+                        <i class="fas fa-sort"></i>
+                        ID
+                    </a>
+                    <a href="${pagination.url.sort_property('id').sort_direction('asc')}"
+                            title="Sort by ID: ascending"
+                            class="fas fa-sort-numeric-down"></a>
+                    <a href="${pagination.url.sort_property('id').sort_direction('desc')}"
+                            title="Sort by ID: descending"
+                            class="fas fa-sort-numeric-down"></a>
+                </th>
+                <th>
                     <a href="${pagination.url.sort_property_alternating_direction('lastname')}"
                             title="Sort by lastname">
                         <i class="fas fa-sort"></i>
@@ -92,6 +105,11 @@
             <!--! loop over the list of applications for membership -->
             <tr tal:repeat="member members"
                     tal:attributes="id python: 'member_{0}'.format(member.id)">
+                <td>
+                    <a href="${request.route_url('detail', memberid=member.id)}">
+                        ${member.id}
+                    </a>
+                </td>
                 <td>
                     <a href="${request.route_url('detail', memberid=member.id)}">
                         ${member.lastname}
