@@ -11,7 +11,7 @@
 	${message}
       </strong>
     </div>
-    <h2>login</h2>
+    <h1>Login</h1>
     <div id="form" tal:content="structure form"/>
   </tal:block>
 </html>

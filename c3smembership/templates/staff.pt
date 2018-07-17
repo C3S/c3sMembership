@@ -4,7 +4,7 @@
         xmlns:metal="http://xml.zope.org/namespaces/metal"
         metal:use-macro="load: ../presentation/templates/backend.pt">
     <tal:block metal:fill-slot="content">
-        <h3>Staff</h3>
+        <h1>Staff</h1>
         <p>
             Staff accounts have backend access.
         </p>
@@ -52,7 +52,7 @@
                 </td>
             </tr>
         </table>
-        <h3>Create new staff account</h3>
+        <h2>Create new staff account</h2>
         <div tal:content="structure stafferform">
         </div>
     </tal:block>

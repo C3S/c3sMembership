@@ -61,7 +61,7 @@
             </tr>
         </table>
 
-        <h3>Membership Meta</h3>
+        <h2>Membership Meta</h2>
         <table class="table table-striped">
             <tr>
                 <td>Membership accepted</td>
@@ -111,7 +111,7 @@
 
 
         <a name="membership_info"></a>
-        <h3>Membership Info</h3>
+        <h2>Membership Info</h2>
 
         <table class="table table-striped">
             <tr tal:condition="member.signature_received and member.payment_received and not member.membership_accepted">
@@ -260,7 +260,7 @@
         </table>
 
         <div tal:condition="member.is_member()">
-            <h3 id="certificate">Membership Certificate</h3>
+            <h2 id="certificate">Membership Certificate</h2>
             <table class="table table-striped">
                 <tr>
                     <td>
@@ -308,7 +308,7 @@
         <div tal:condition="member.membership_accepted">
             <div tal:omit-tag="" tal:condition="not member.membership_date > date(2015,12,31) and (member.membership_loss_date is None or member.membership_loss_date >= date(2015,1,1))">
                 <a name="dues15"></a>
-                <h3 id="certificate">Membership Dues 2015</h3>
+                <h2 id="certificate">Membership Dues 2015</h2>
                 <table class="table table-striped">
                     <tr tal:condition="'investing' not in member.membership_type
                             and member.dues15_invoice
@@ -457,7 +457,7 @@
 
         <div tal:omit-tag="" tal:condition="not member.membership_date > date(2016,12,31) and (member.membership_loss_date is None or member.membership_loss_date >= date(2016,1,1))">
             <a name="dues16"></a>
-            <h3 id="certificate">Membership Dues 2016</h3>
+            <h2 id="certificate">Membership Dues 2016</h2>
             <table class="table table-striped">
                 <!--! payments for dues -->
                 <!--! case one: not paid yet -->
@@ -614,7 +614,7 @@
 
         <div tal:omit-tag="" tal:condition="not member.membership_date > date(2017,12,31) and (member.membership_loss_date is None or member.membership_loss_date >= date(2017,1,1))">
             <a name="dues17"></a>
-            <h3 id="certificate">Membership Dues 2017</h3>
+            <h2 id="certificate">Membership Dues 2017</h2>
             <table class="table table-striped">
                 <tr>
                     <td>
@@ -883,7 +883,7 @@
 
         <div tal:omit-tag="" tal:condition="not member.membership_date > date(2018,12,31) and (member.membership_loss_date is None or member.membership_loss_date >= date(2018,1,1))">
             <a name="dues18"></a>
-            <h3 id="certificate">Membership Dues 2018</h3>
+            <h2 id="certificate">Membership Dues 2018</h2>
             <table class="table table-striped">
                 <tr>
                     <td>
@@ -1149,7 +1149,7 @@
         </div>
 
         <a name="account_balance"></a>
-        <h3 id="certificate">Account Balance</h3>
+        <h2 id="certificate">Account Balance</h2>
         <table class="table table-striped">
             <?python
                 balance = 0

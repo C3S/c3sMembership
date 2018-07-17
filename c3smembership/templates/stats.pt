@@ -5,7 +5,7 @@
         metal:use-macro="load: ../presentation/templates/backend.pt">
     <tal:block metal:fill-slot="content">
         <h1>Statistiken</h1>
-        <h3>Anzahl Mitgliedschaftsanträge, Anteile etc.</h3>
+        <h2>Anzahl Mitgliedschaftsanträge, Anteile etc.</h2>
         <p>
             ${_number_of_datasets} DB-Einträge <small>Eingegangene
             Mitgliedschaftsanträge und vollständige Mitgliedschaften</small>
@@ -17,7 +17,7 @@
             Summe: ${python: int(afm_shares_paid)*50}€<br />
         </p>
         
-        <h4>Throughput/Turnover</h4>
+        <h3>Throughput/Turnover</h3>
         <p>
             Anzahl fertiger mitgliedschaften: ${num_members_accepted}
             <a href="${request.route_url('membership_listing_backend')}">
@@ -35,7 +35,7 @@
             = ${num_members_accepted + num_non_accepted}
             <small>(num_members_accepted + num_non_accepted)</small>
         </p>
-        <h3>GenossInnen/Mitgliedschaften</h3>
+        <h2>GenossInnen/Mitgliedschaften</h2>
 
         <p>
             Anzahl Mitgliedschaften: ${num_members_accepted} <small>incl.
@@ -59,7 +59,7 @@
             Mitglieder nicht enthalten): ${num_shares_members}<br />
         </p>
 
-        <h4>Mitgliedschaftsnummern</h4>
+        <h3>Mitgliedschaftsnummern</h3>
         Anzahl vergebener Mitgliedschaftsnummern: ${num_memnums}
         &nbsp;&nbsp;&nbsp;<small>incl: phorsichts 999.999.999</small><br />
         <span tal:condition="num_memnums >= 1">
@@ -69,7 +69,7 @@
             Nächste zuvergebene Mitgliedschaftsnummer: ${next_memnum}
         </span>
 
-        <h3>Länder</h3>
+        <h2>Länder</h2>
         Angaben ohne Gewähr auf Richtigkeit.
         Zahlen beinhalten Mitglieder und Nichtmitglieder.<br />
         Anzahl verschiedener Länder: ${num_countries}
@@ -84,7 +84,8 @@
             </tr>
         </table>
 
-        <h3 i18n:translate="stats-dues-2015">Dues 2015</h3>
+        <h2>Dues</h2>
+        <h3 i18n:translate="stats-dues-2015">2015</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -148,7 +149,7 @@
             </tfoot>
         </table>
 
-        <h3 i18n:translate="stats-dues-2016">Dues 2016</h3>
+        <h3 i18n:translate="stats-dues-2016">2016</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -212,7 +213,7 @@
             </tfoot>
         </table>
 
-        <h3 i18n:translate="stats-dues-2017">Dues 2017</h3>
+        <h3 i18n:translate="stats-dues-2017">2017</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -276,7 +277,7 @@
             </tfoot>
         </table>
 
-        <h3 i18n:translate="stats-dues-2018">Dues 2018</h3>
+        <h3 i18n:translate="stats-dues-2018">2018</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -340,7 +341,7 @@
             </tfoot>
         </table>
 
-        <h3>Staff</h3>
+        <h2>Staff</h2>
         <p>
             Wie viele Accounts gibt es? ${num_staff}<br />
             Welche genau? siehe

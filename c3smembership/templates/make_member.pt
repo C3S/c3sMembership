@@ -54,10 +54,10 @@
             <strike>similar</strike> entries or even the same person registered
             in the database of memberships already.
         </p>
-        <h3>Similar memberships</h3>
+        <h2>Similar memberships</h2>
 
         <div tal:condition="len(same_mships_lastn) is not 0">
-            <h4>Same lastname</h4>
+            <h3>Same lastname</h3>
             <ul>
                 <li tal:repeat="sim same_mships_lastn">
                     ${sim.firstname} ${sim.lastname} (${sim.num_shares} shares)<br />
@@ -79,7 +79,7 @@
 
         <!--! firstname -->
         <div tal:condition="len(same_mships_firstn) is not 0">
-            <h4>Same firstname</h4>
+            <h3>Same firstname</h3>
             <ul>
                 <li tal:repeat="sim same_mships_firstn">
                     ${sim.firstname} ${sim.lastname} (${sim.num_shares} shares)<br />

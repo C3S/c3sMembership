@@ -22,7 +22,7 @@
             type="text/javascript"></script>
   </tal:block>
   <tal:block metal:fill-slot="top">
-    <h1><small>Search for members by</small> name</h1>
+    <h1>Search for members by name</h1>
     <div class="list-inline">
       <div class="panel panel-primary">
         <div tal:content="structure autoform">
@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <h3><small>Search for members by</small> reference code</h3>
+    <h2>Search for members by reference code</h2>
     <p>
       <a href="${request.route_url('search_codes')}"
          class="btn btn-success">Search Codes</a>

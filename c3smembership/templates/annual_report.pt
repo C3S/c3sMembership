@@ -15,7 +15,7 @@
             Für einen bestimmten Tag zweimal das selbe Datum eingeben.
         </p>
         <div id="form" tal:content="structure form"/>
-        <h3>Summary</h3>
+        <h2>Summary</h2>
         <table class="table table-striped">
             <tr>
                 <th>Was</th>
@@ -49,7 +49,7 @@
         </table>
 
         <a name="new_members"></a>
-        <h3>Neumitglieder</h3>
+        <h2>Neumitglieder</h2>
         <p>
           Mitglieder, die im Zeitraum neu aufgenommen wurden: ${num_members}:
         </p>
@@ -100,7 +100,7 @@
         </table>
 
         <a name="lost_members"></a>
-        <h3>Mitgliedsaustritte</h3>
+        <h2>Mitgliedsaustritte</h2>
         <p>
           Mitglieder, deren Austritt im Zeitraum wirksam wurde: ${len(lost_members)}:
         </p>
@@ -136,7 +136,7 @@
         </table>
 
         <a name="new_shares"></a>
-        <h3>Neuanteile</h3>
+        <h2>Neuanteile</h2>
         <p>
             Anteile, die im Zeitraum aufgenommen wurden: ${num_shares} (im Wert von ${sum_shares} Euro):
         </p>
@@ -163,7 +163,7 @@
             </tr>
         </table>
         <a name="afms_paid_unfinished"></a>
-        <h3>Bezahlte, nicht aufgenommene Anteile</h3>
+        <h2>Bezahlte, nicht aufgenommene Anteile</h2>
         <p>
             Anteile, die im Zeitraum bezahlt wurden, die aber noch nicht aufgenommen wurden:
             ${shares_paid_unapproved_count} (im Wert von ${shares_paid_unapproved_count * 50} Euro):

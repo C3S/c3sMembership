@@ -22,14 +22,14 @@
             type="text/javascript"></script>
   </tal:block>
   <tal:block metal:fill-slot="top">
-    <h1><small>Search for members by</small> reference code</h1>
+    <h1>Search for members by reference code</h1>
     <div class="list-inline">
       <div class="panel panel-primary">
         <!-- h3 class="panel-title">Find entry by confirmation code</h3 -->
         <div tal:content="structure refcodeform">the autocomplete form to search for codes</div>
       </div>
     </div>
-    <h3><small>Search for members by</small> lastname</h3>
+    <h2>Search for members by lastname</h2>
     <p>
       <a href="${request.route_url('search_people')}"
          class="btn btn-success">Search People</a>

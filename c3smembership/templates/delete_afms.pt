@@ -4,7 +4,7 @@
         xmlns:metal="http://xml.zope.org/namespaces/metal"
         metal:use-macro="load: ../presentation/templates/backend.pt">
     <tal:block metal:fill-slot="content">
-        <h3>Mitgliedsanträge löschen</h3>
+        <h1>Mitgliedsanträge löschen</h1>
         <p>
             Es können mehrere Mitgliedschaftsanträge auf einmal gelöscht werden:
         </p>
