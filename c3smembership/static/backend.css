@@ -76,6 +76,12 @@
     display: inline-block;
 }
 
+/* Icons in membership acquisition, membership list etc. */
 .icons {
+    /* Increase icon size */
     font-size: 1.2em;
+}
+.icons .fas {
+    /* Increase space between icons */
+    margin: .3em;
 }
