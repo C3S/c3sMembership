@@ -288,7 +288,6 @@ def main(global_config, **settings):
     config.add_route('general_assembly', '/general-assembly')
 
     # utilities & wizardry
-    config.add_route('plz_dist', '/plz_dist')
     config.add_route('get_member', '/members/{member_id}')
     config.add_route('error_page', '/error')  # generic error view
 
