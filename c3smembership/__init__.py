@@ -289,7 +289,7 @@ def main(global_config, **settings):
 
     # utilities & wizardry
     config.add_route('get_member', '/members/{member_id}')
-    config.add_route('error_page', '/error')  # generic error view
+    config.add_route('error', '/error')  # generic error view
 
     # shares
     config.add_route('shares_detail', '/shares_detail/{id}')

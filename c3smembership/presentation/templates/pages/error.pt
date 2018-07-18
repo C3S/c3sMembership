@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend">
+    <tal:block metal:fill-slot="content">
+        <h2>Ooops, es ist ein Fehler aufgetreten!</h2>
+        <p class="lead alert alert-danger">
+            <span  color="red" tal:repeat="error request.session.pop_flash('message_to_user')">
+                ${error}
+            </span>
+        </p>
+    </tal:block>
+</html>

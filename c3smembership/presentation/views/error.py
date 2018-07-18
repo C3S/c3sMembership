@@ -9,11 +9,11 @@ from pyramid.view import view_config
 
 
 @view_config(
-    renderer='templates/error_page.pt',
-    route_name='error_page',
+    renderer='../templates/pages/error.pt',
+    route_name='error',
 )
 def error_view(request):
     """
     display error stored in session.
     """
-    return {'foo': 'bar'}  # return dumb dictionary; info is in session.
+    return {}
