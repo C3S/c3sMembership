@@ -27,9 +27,5 @@
         <script type="text/javascript"
                 src="${request.static_url('c3smembership:static/deform/deform.js')}">
         </script>
-        <script type="text/javascript">
-            deform.load()
-            $(document).ready(sortDropDownListByText('#country'));
-        </script>
     </tal:block>
 </html>

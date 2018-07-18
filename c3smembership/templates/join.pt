@@ -18,7 +18,6 @@
         <link href="${request.static_url('c3smembership:static/jquery-ui/jquery-ui.css')}"
                 rel="stylesheet" />
         <script src="${request.static_url('c3smembership:static/jquery-ui/jquery-ui.min.js')}"></script>
-        <script src="${request.static_url('c3smembership:static/dropdownsort.js')}"></script>
     </tal:block>
     <tal:block metal:fill-slot="middle">
         <h1 i18n:translate="join-form-title">
@@ -158,10 +157,5 @@
                 (english)
             </a>
         </p>
-    </tal:block>
-    <tal:block metal:fill-slot="deform-load">
-        <script type="text/javascript">
-            $(document).ready(sortDropDownListByText('#country'));
-        </script>
     </tal:block>
 </html>

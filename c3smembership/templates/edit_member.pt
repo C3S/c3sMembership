@@ -18,8 +18,5 @@
     </tal:block>
     <tal:block metal:fill-slot="javascript">
         <script type="text/javascript">deform.load()</script>
-        <script type="text/javascript">
-                $(document).ready(sortDropDownListByText('#country'));
-        </script>
     </tal:block>
 </html>
