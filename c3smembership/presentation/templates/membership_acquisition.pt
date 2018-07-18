@@ -36,7 +36,7 @@
     </tal:block>
     <tal:block metal:fill-slot="content">
         <h1>
-            Membership Acquisition
+            Acquisition of membership
         </h1>
         <h2 tal:condition="message" class="message" id="message">
             ${message}
@@ -58,19 +58,6 @@
         <table class="table table-striped">
             <tr class="table-striped">
                 <th>
-                    <a href="${pagination.url.sort_property_alternating_direction('id')}"
-                            title="Sort by ID">
-                        <i class="fas fa-sort"></i>
-                        ID
-                    </a>
-                    <a href="${pagination.url.sort_property('id').sort_direction('asc')}"
-                            title="Sort by ID: ascending"
-                            class="fas fa-sort-numeric-down"></a>
-                    <a href="${pagination.url.sort_property('id').sort_direction('desc')}"
-                            title="Sort by ID: descending"
-                            class="fas fa-sort-numeric-down"></a>
-                </th>
-                <th>
                     <a href="${pagination.url.sort_property_alternating_direction('lastname')}"
                             title="Sort by lastname">
                         <i class="fas fa-sort"></i>
@@ -81,7 +68,7 @@
                             class="fas fa-sort-alpha-down"></a>
                     <a href="${pagination.url.sort_property('lastname').sort_direction('desc')}"
                             title="Sort by lastname: descending"
-                            class="fas fa-sort-alpha-down"></a>
+                            class="fas fa-sort-alpha-up"></a>
                 </th>
                 <th>
                     <a href="${pagination.url.sort_property_alternating_direction('firstname')}"
@@ -94,7 +81,20 @@
                             class="fas fa-sort-alpha-down"></a>
                     <a href="${pagination.url.sort_property('firstname').sort_direction('desc')}"
                             title="Sort by firstname: descending"
-                            class="fas fa-sort-alpha-down"></a>
+                            class="fas fa-sort-alpha-up"></a>
+                </th>
+                <th>
+                    <a href="${pagination.url.sort_property_alternating_direction('date_of_submission')}"
+                            title="Sort by date of submission">
+                        <i class="fas fa-sort"></i>
+                        Submission
+                    </a>
+                    <a href="${pagination.url.sort_property('date_of_submission').sort_direction('asc')}"
+                            title="Sort by date of submission: ascending"
+                            class="fas fa-sort-numeric-down"></a>
+                    <a href="${pagination.url.sort_property('date_of_submission').sort_direction('desc')}"
+                            title="Sort by date of submission: descending"
+                            class="fas fa-sort-numeric-up"></a>
                 </th>
                 <th>Type</th>
                 <th>Shares</th>
@@ -103,13 +103,7 @@
                 <th>Edit</th>
             </tr>
             <!--! loop over the list of applications for membership -->
-            <tr tal:repeat="member members"
-                    tal:attributes="id python: 'member_{0}'.format(member.id)">
-                <td>
-                    <a href="${request.route_url('detail', memberid=member.id)}">
-                        ${member.id}
-                    </a>
-                </td>
+            <tr tal:repeat="member members">
                 <td>
                     <a href="${request.route_url('detail', memberid=member.id)}">
                         ${member.lastname}
@@ -118,6 +112,11 @@
                 <td>
                     <a href="${request.route_url('detail', memberid=member.id)}">
                         ${member.firstname}
+                    </a>
+                </td>
+                <td>
+                    <a href="${request.route_url('detail', memberid=member.id)}">
+                        ${member.date_of_submission.strftime('%Y-%m-%d')}
                     </a>
                 </td>
                 <td class="icons">
@@ -149,8 +148,10 @@
                         </table>
                     </div>
                 </td>
-                <td>
-                    <a href="mailto:${member.email}" title="${member.email}">mailto</a>
+                <td class="icons">
+                    <a href="mailto:${member.email}"
+                            title="${member.email}"
+                            class="fas fa-at"></a>
                 </td>
                 <td>
                     <div class="icons">
@@ -169,7 +170,7 @@
                                         class="fas fa-at text-success">
                                 </span>
                                 <i class="fas fa-bell text-secondary"
-                                        title="The email address confirmation reminder can only be sent if the email address has not yet been confirmed">
+                                        title="The email address confirmation reminder can only be sent if the email address has been confirmed">
                                 </i>
                             </div>
                         </span>
@@ -186,7 +187,7 @@
                                         membername="${member.firstname} ${member.lastname}">
                                 </a>
                                 <i class="fas fa-envelope text-secondary"
-                                        title="Confirmations can only be sent when the signature has not yet been received."></i>
+                                        title="Confirmations can only be sent when the signature has been received."></i>
                             </div>
                             <div tal:condition="member.signature_received" tal:omit-tag="">
                                 <a href="${request.route_url('switch_sig', memberid=member.id)}"
@@ -218,7 +219,7 @@
                                         membername="${member.firstname} ${member.lastname}">
                                 </a>
                                 <i class="fas fa-envelope text-secondary"
-                                        title="Confirmations can only be sent when the payment has not yet been received."></i>
+                                        title="Confirmations can only be sent when the payment has been received."></i>
                             </div>
                             <div tal:condition="member.payment_received" tal:omit-tag="">
                                 <a href="${request.route_url('switch_pay', memberid=member.id)}"

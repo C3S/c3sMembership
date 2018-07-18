@@ -110,11 +110,11 @@
                         <a tal:condition="member.email_invite_flag_bcgv18 is not True"
                                 href="${request.route_url('invite_member', m_id=member.id)}"
                                 title="invitation not sent yet. Click to send!"
-                                class="fas fa-bell text-danger"></a>
+                                class="fas fa-envelope text-danger"></a>
                         <a tal:condition="member.email_invite_flag_bcgv18 is True"
                                 href="${request.route_url('invite_member', m_id=member.id)}"
                                 title="gesendet ${member.email_invite_date_bcgv18.strftime('am %d.%m.%Y um %H:%M')}"
-                                class="fas fa-bell text-success"></a>
+                                class="fas fa-envelope text-success"></a>
                     </div>
                 </td>
                 -->
@@ -123,22 +123,22 @@
                         <a tal:condition="member.dues18_invoice is False"
                                 href="${request.route_url('send_dues18_invoice_email', member_id=member.id)}"
                                 title="Dues invoice not sent yet. Click to send!"
-                                class="fas fa-bell text-danger"></a>
+                                class="fas fa-envelope text-danger"></a>
                         <a tal:condition="member.dues18_invoice is True"
                                 href="${request.route_url('send_dues18_invoice_email', member_id=member.id)}"
                                 title="Invoice sent at ${member.dues18_invoice_date.strftime('%d.%m.%Y %H:%M')}"
-                                class="fas fa-bell text-success"></a>
+                                class="fas fa-envelope text-success"></a>
                     </div>
                 </td>
                 <td class="icons">
                     <a tal:condition="not member.certificate_email"
                             href="${request.route_url('certificate_mail', id=member.id)}"
                             title="certificate not sent yet"
-                            class="fas fa-bell text-danger"></a>
+                            class="fas fa-envelope text-danger"></a>
                     <a tal:condition="member.certificate_email"
                             href="${request.route_url('certificate_mail', id=member.id)}"
                             title="gesendet ${member.certificate_email_date.strftime('am %d.%m.%Y um %H:%M')}"
-                            class="fas fa-bell text-success"></a>
+                            class="fas fa-envelope text-success"></a>
                     <a href="${request.route_url('certificate_pdf_staff', id=member.id, name=member.get_url_safe_name())}"
                             title="Mitgliedschaftsurkunde ansehen"
                             class="fas fa-download">
