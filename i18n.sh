@@ -8,4 +8,6 @@ echo "edit with POEDIT or transifex <-- TODO!"
 # TODO :-)
 echo "compiling catalog (POEDIT does this anyways)"
 env/bin/python setup.py compile_catalog
-echo "done. restart pyramid to see effects"
+touch c3smembership/__init__.py
+echo "Pyramid should restart if stared with --reload. Otherwise restart \
+manually to see the internationalization's effects."
