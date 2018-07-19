@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend">
+    <tal:block metal:fill-slot="content">
+        <h1>Staff</h1>
+        <p>
+            Staff accounts have backend access.
+        </p>
+        <table class="table table-striped">
+            <tr class="table-striped">
+                <th>ID</th>
+                <th>Name</th>
+                <th>Groups</th>
+                <th>Last password change</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr tal:repeat="staffer staffers" class="table-striped">
+                <td><a href="/staff/${staffer.id}">${staffer.id}</a></td>
+                <td>${staffer.login}</td>
+                <td>${staffer.groups[0].name}</td>
+                <td>${staffer.last_password_change}</td>
+                <td>
+                    <form action="${request.route_url('staff')}"
+                            method="post">
+                        <input type="submit"
+                                class="btn btn-warning"
+                                value="bearbeiten" />
+                        <input type="hidden"
+                                name="action"
+                                value="edit" />
+                        <input type="hidden"
+                                name="id"
+                                value="${staffer.id}" />
+                    </form>
+                </td>
+                <td>
+                    <form action="${request.route_url('staff')}"
+                            method="post">
+                        <input type="submit"
+                                class="btn btn-danger"
+                                value="löschen" />
+                        <input type="hidden"
+                                name="action"
+                                value="delete" />
+                        <input type="hidden"
+                                name="id"
+                                value="${staffer.id}" />
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <h2>Create new staff account</h2>
+        <div tal:content="structure stafferform">
+        </div>
+    </tal:block>
+</html>

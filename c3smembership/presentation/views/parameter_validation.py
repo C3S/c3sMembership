@@ -5,8 +5,10 @@ from c3smembership.presentation.parameter_validation import (
 )
 
 
-@view_config(context=ParameterValidationException,
-             renderer='../templates/parameter_validation_exception.pt')
+@view_config(
+    context=ParameterValidationException,
+    renderer='c3smembership.presentation:templates/pages/'
+             'parameter_validation_exception.pt')
 def parameter_validation_view(exc, request):
     """
     """

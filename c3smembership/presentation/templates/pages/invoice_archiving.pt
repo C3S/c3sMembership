@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="backend">
+    <tal:block metal:fill-slot="content">
+        <h1>Archiving Dues Invoice 2015</h1>
+        <a href="${request.route_url('toolbox')}" class="btn btn-success">Toolbox</a>
+        <a href="${request.route_url('dues15_listing')}" class="btn btn-success">Dues listing</a>
+        <p tal:condition="status == 'failed-count'" class="bg-danger">
+            Invalid number of invoices to archive.
+        </p>
+        <p tal:condition="status == 'failed-generation'" class="bg-danger">
+            An error occurred during archiving the invoices.
+        </p>
+        <p tal:condition="status == 'succeeded'" class="bg-success">
+            <div tal:condition="len(invoices) == 0" tal:omit-tag="">
+                There were no invoices to be archived.
+            </div>
+            <div tal:condition="len(invoices) > 0" tal:omit-tag="">
+                Successfully archived ${len(invoices)} invoices.
+                <div tal:condition="len(invoices) == count" tal:omit-tag="">
+                    There might be more invoices to be archived.
+                </div>
+                <!--!
+                    Unfortunately, the internationalization parsing has issues
+                    with the smaller than sign "<" in the condition
+                    "len(invoices) < count" as it interprets it as a tag opening
+                    sign without any tag name. To solve this issue, the positive
+                    boolean condition is replaced by its negative.
+
+                    len(invoices) < count  <=>  not (len(invoices) >= count)
+                -->
+                <div tal:condition="not (len(invoices) >= count)" tal:omit-tag="">
+                    There are no more invoices to be archived at the moment.
+                </div>
+            </div>
+        </p>
+        <div tal:condition="len(invoices) > 0">
+            <p>
+                The following invoices have been archived:
+            </p>
+            <ol>
+                <li tal:repeat="invoice invoices">
+                    ${invoice}
+                </li>
+            </ol>
+        </div>
+        <p>
+            You can archive membership dues 2015 invoices. They will be
+            generated and permanently stored on the server. As this process may
+            take some time you can choose the number of invoices to be archived
+            at a time.
+        </p>
+        <p>
+            <form method="POST"
+                    action="${request.route_url('batch_archive_pdf_invoices')}">
+                <input type="text" name="count" value="${count}"></input>
+                <input type="submit" name="submit" value="Archive invoices"></input>
+            </form>
+        </p>
+        <a href="${request.route_url('toolbox')}" class="btn btn-success">Toolbox</a>
+        <a href="${request.route_url('dues15_listing')}" class="btn btn-success">Dues listing</a>
+  </tal:block>
+</html>

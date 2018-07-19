@@ -5,9 +5,11 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 
-@view_config(renderer='../templates/memberships_list_backend.pt',
-             permission='manage',
-             route_name='membership_listing_backend')
+@view_config(
+    renderer='c3smembership.presentation:templates/pages/'
+             'membership_members.pt',
+    permission='manage',
+    route_name='membership_listing_backend')
 def membership_listing_backend(request):
     """
     This view lets accountants view all members.

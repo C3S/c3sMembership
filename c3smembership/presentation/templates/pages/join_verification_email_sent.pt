@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        metal:use-macro="frontend"
+        i18n:domain="c3smembership">
+    <tal:block metal:fill-slot="content">
+        <h1 i18n:translate="check-email-title">
+            C3S Membership Application: Check your email
+        </h1>
+        <div class="btn-group d-flex" role="group">
+            <button type="button"
+                    class="btn w-100 btn-success"
+                    i18n:translate="reg-process-enter-data">
+                1. Enter data
+            </button>
+            <button type="button"
+                    class="btn w-100 btn-success"
+                    i18n:translate="reg-process-check-data">
+                2. Check data
+            </button>
+            <button type="button"
+                    class="btn w-100 btn-primary"
+                    i18n:translate="reg-process-verify-email-address">
+                3. Verify email address
+            </button>
+            <button type="button"
+                    class="btn w-100 btn-default"
+                    i18n:translate="reg-process-mail-application-form">
+                4. Mail application form
+            </button>
+        </div>
+        <div class="card my-3">
+            <div class="card-body">
+                <h3>
+                    <span i18n:translate="check-email-headline" class="deform">
+                        An email was sent,
+                    </span>
+                    ${firstname} ${lastname}!
+                </h3>
+                <p i18n:translate="check-email-paragraph-check-email">
+                    You will receive an email from noreply@c3s.cc with a link. Please
+                    check your email!
+                </p>
+                <p>
+                    <span i18n:translate="check-email-paragraph-check-email-hint">
+                        The email subject line will read:
+                    </span>
+                    <strong i18n:translate="check-email-paragraph-check-email-subject">
+                        C3S: confirm your email address and load your PDF
+                    </strong>.
+                </p>
+            </div>
+        </div>
+    </tal:block>
+</html>

@@ -4,20 +4,23 @@ from pyramid.i18n import (
 )
 
 
-def add_base_template(event):
-    base = get_renderer('templates/base.pt').implementation()
-    event.update({'base': base})
-
-
-def add_base_bootstrap_template(event):
-    base_bootstrap = get_renderer(
-        'templates/base_bootstrap.pt').implementation()
-    event.update({'base_bootstrap': base_bootstrap})
+def add_frontend_template(event):
+    frontend = get_renderer(
+        'presentation/templates/page-base/frontend.pt').implementation()
+    event.update({'frontend': frontend})
 
 
 def add_backend_template(event):
-    backend = get_renderer('templates/backend.pt').implementation()
+    backend = get_renderer(
+        'presentation/templates/page-base/backend.pt').implementation()
     event.update({'backend': backend})
+
+
+def add_old_backend_template(event):
+    old_backend = get_renderer(
+        'presentation/templates/page-base/old_backend.pt').implementation()
+    event.update({'old_backend': old_backend})
+
 
 BROWSER_LANGUAGES = {  # a dictionary of codes the browsers send
     'da': 'da',  # # # # and the locales we choose for them

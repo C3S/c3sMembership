@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend">
+    <tal:block metal:fill-slot="content">
+        <h1>Mitgliedsanträge löschen</h1>
+        <p>
+            Es können mehrere Mitgliedschaftsanträge auf einmal gelöscht werden:
+        </p>
+        <div>
+            <strong style="color:red;" tal:repeat="message request.session.peek_flash('message_above_form')">
+                ${message}
+            </strong>
+        </div>
+        <div id="form" tal:content="structure delete_form"/>
+    </tal:block>
+    <tal:block metal:fill-slot="javascript">
+        <script type="text/javascript" src="${request.static_url('c3smembership:static/deform/deform.js')}"></script>
+        <script type="text/javascript">deform.load()</script>
+    </tal:block>
+</html>

@@ -56,9 +56,10 @@ def build_form_renderer():
     return form_renderer
 
 
-@view_config(renderer='../templates/toolbox.pt',
-             permission='manage',
-             route_name='toolbox')
+@view_config(
+    renderer='c3smembership.presentation:templates/pages/membership_tools.pt',
+    permission='manage',
+    route_name='toolbox')
 def toolbox(request):
     """
     Toolbox: This view shows many options.

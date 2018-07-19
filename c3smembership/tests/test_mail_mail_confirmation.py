@@ -92,7 +92,8 @@ class TestMailMailConfirmationViews(unittest.TestCase):
         """
         test the mail_mail_confirmation view
         """
-        from c3smembership.administration import mail_mail_conf
+        from c3smembership.presentation.views.membership_acquisition import \
+            mail_mail_conf
         self.config.add_route('join', '/')
         self.config.add_route('dashboard', '/dashboard/0/id/asc')
         request = testing.DummyRequest()
@@ -111,7 +112,8 @@ class TestMailMailConfirmationViews(unittest.TestCase):
         """
         test the mail_mail_confirmation view
         """
-        from c3smembership.administration import mail_mail_conf
+        from c3smembership.presentation.views.membership_acquisition import \
+            mail_mail_conf
         self.config.add_route('join', '/')
         self.config.add_route('dashboard', '/')
         from pyramid_mailer import get_mailer

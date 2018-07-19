@@ -10,7 +10,7 @@ from c3smembership.business.dues_invoice_archiving import DuesInvoiceArchiving
 
 @view_config(
     route_name='batch_archive_pdf_invoices',
-    renderer='c3smembership:presentation/templates/dues_invoice_archiving.pt')
+    renderer='c3smembership:presentation/templates/pages/invoice_archiving.pt')
 def batch_archive_pdf_invoices(request):
     """
     Generates and archives a number of invoices.

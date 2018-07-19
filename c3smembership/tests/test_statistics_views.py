@@ -121,7 +121,7 @@ class TestViews(unittest.TestCase):
         """
         test the statistics view
         """
-        from c3smembership.statistics_view import stats_view
+        from c3smembership.presentation.views.statistics import stats_view
         self.config.add_route('join', '/')
         request = testing.DummyRequest()
 

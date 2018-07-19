@@ -1,0 +1,175 @@
+<?python
+    from babel.numbers import format_currency
+?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend">
+    <tal:block metal:fill-slot="content">
+        <h1>Payments</h1>
+        <div id="filter" tal:content="structure filter_form"/>
+        <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links.pt"></p>
+        <table class="table table-striped">
+            <thead>
+                <tr class="table-striped">
+                    <th>
+                        <a href="${pagination.url.sort_property_alternating_direction('date')}"
+                                title="Sort by date">
+                            <i class="fas fa-sort"></i>
+                            Date
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('date').sort_direction('asc')}"
+                           title="Sort by date ascending"
+                           class="fas fa-sort-numeric-down"></a>
+                        <a href="${pagination.url.sort_property('date').sort_direction('desc')}"
+                           title="Sort by date descending"
+                           class="fas fa-sort-numeric-up"></a>
+                    </th>
+                    <th>
+                        <a href="${pagination.url.sort_property_alternating_direction('account')}"
+                                title="Sort by account">
+                            <i class="fas fa-sort"></i>
+                            Account
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('account').sort_direction('asc')}"
+                           title="Sort by account ascending"
+                           class="fas fa-sort-alpha-down"></a>
+                        <a href="${pagination.url.sort_property('account').sort_direction('desc')}"
+                           title="Sort by account descending"
+                           class="fas fa-sort-alpha-up"></a>
+                    </th>
+                    <th>
+                        <a href="${pagination.url.sort_property_alternating_direction('reference')}"
+                                title="Sort by reference">
+                            <i class="fas fa-sort"></i>
+                            Reference
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('reference').sort_direction('asc')}"
+                           title="Sort by reference ascending"
+                           class="fas fa-sort-alpha-down"></a>
+                        <a href="${pagination.url.sort_property('reference').sort_direction('desc')}"
+                           title="Sort by reference descending"
+                           class="fas fa-sort-alpha-up"></a>
+                    </th>
+                    <th>
+                        <a href="${pagination.url.sort_property_alternating_direction('membership_number')}"
+                                title="Sort by membership number">
+                            <i class="fas fa-sort"></i>
+                            Membership number
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('membership_number').sort_direction('asc')}"
+                           title="Sort by membership number ascending"
+                           class="fas fa-sort-numeric-down"></a>
+                        <a href="${pagination.url.sort_property('membership_number').sort_direction('desc')}"
+                           title="Sort by membership number descending"
+                           class="fas fa-sort-numeric-up"></a>
+                    </th>
+                    <th>
+                        <a href="${pagination.url.sort_property_alternating_direction('firstname')}"
+                                title="Sort by firstname">
+                            <i class="fas fa-sort"></i>
+                            Firstname
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('firstname').sort_direction('asc')}"
+                           title="Sort by firstname ascending"
+                           class="fas fa-sort-alpha-down"></a>
+                        <a href="${pagination.url.sort_property('firstname').sort_direction('desc')}"
+                           title="Sort by firstname descending"
+                           class="fas fa-sort-alpha-up"></a>
+                    </th>
+                    <th>
+                        <a href="${pagination.url.sort_property_alternating_direction('lastname')}"
+                                title="Sort by lastname">
+                            <i class="fas fa-sort"></i>
+                            Lastname
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('lastname').sort_direction('asc')}"
+                           title="Sort by lastname ascending"
+                           class="fas fa-sort-alpha-down"></a>
+                        <a href="${pagination.url.sort_property('lastname').sort_direction('desc')}"
+                           title="Sort by lastname descending"
+                           class="fas fa-sort-alpha-up"></a>
+                    </th>
+                    <th>
+                        <a href="${pagination.url.sort_property_alternating_direction('amount')}"
+                                title="Sort by amount">
+                            <i class="fas fa-sort"></i>
+                            Amount
+                        </a>
+                        &nbsp;
+                        <a href="${pagination.url.sort_property('amount').sort_direction('asc')}"
+                           title="Sort by amount ascending"
+                           class="fas fa-sort-numeric-down"></a>
+                        <a href="${pagination.url.sort_property('amount').sort_direction('desc')}"
+                           title="Sort by amount descending"
+                           class="fas fa-sort-numeric-up"></a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr tal:repeat="payment payments">
+                    <td>
+                        ${payment.date}
+                    </td>
+                    <td>
+                        ${payment.account}
+                    </td>
+                    <td>
+                        ${payment.reference}
+                    </td>
+                    <td>
+                        <a href="${request.route_url('member_details', membership_number=payment.membership_number)}">
+                            ${payment.membership_number}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="${request.route_url('member_details', membership_number=payment.membership_number)}">
+                            ${payment.firstname}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="${request.route_url('member_details', membership_number=payment.membership_number)}">
+                            ${payment.lastname}
+                        </a>
+                    </td>
+                    <td>
+                        ${format_currency(payment.amount, 'EUR')}
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>
+                        Count: ${len(payments)}
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                    </th>
+                    <th>
+                        <?python
+                            from decimal import Decimal
+                            amount_sum = reduce(lambda a, b: a + b['amount'], payments, Decimal('0.0'))
+                        ?>
+                        ${format_currency(amount_sum, 'EUR')}
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+        <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links.pt"></p>
+        <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_size_form.pt"></p>
+    </tal:block>
+</html>

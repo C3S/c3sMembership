@@ -1,0 +1,100 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        metal:use-macro="frontend"
+        i18n:domain="c3smembership">
+    <tal:block metal:fill-slot="content">
+        <h1 i18n:translate="success-title">C3S Membership Application</h1>
+        <div class="btn-group d-flex" role="group">
+            <button type="button"
+                    class="btn w-100 btn-success"
+                    i18n:translate="reg-process-enter-data">
+                1. Enter data
+            </button>
+            <button type="button"
+                    class="btn w-100 btn-primary"
+                    i18n:translate="reg-process-check-data">
+                2. Check data
+            </button>
+            <button type="button"
+                    class="btn w-100 btn-default"
+                    i18n:translate="reg-process-verify-email-address">
+                3. Verify email address
+            </button>
+            <button type="button"
+                    class="btn w-100 btn-default"
+                    i18n:translate="reg-process-mail-application-form">
+                4. Mail application form
+            </button>
+        </div>
+        <div class="card my-3">
+            <div class="card-body">
+                <h3 i18n:translate="success-headline-data-received">
+                    Your data we received
+                </h3>
+                <p i18n:translate="success-paragraph-thanks">
+                    What happens next: You need to check the information below to be correct,
+                    receive an email to verify your address, download the form with your data,
+                    print out the form, sign it and send it back to us.
+                </p>
+                <h4 class="c3s-subheading-4" i18n:translate=''>Personal Data</h4>
+                <p>
+                    <span i18n:translate=''>(Real) First Name</span>:&nbsp; ${firstname}<br />
+                    <span i18n:translate=''>(Real) Last Name</span>:&nbsp; ${lastname}<br />
+                    <span i18n:translate=''>Email Address</span>:&nbsp; ${request.session['appstruct']['person']['email']}<br />
+                    <span i18n:translate=''>Address Line 1</span>:&nbsp; ${request.session['appstruct']['person']['address1']}<br />
+                    <span i18n:translate=''>Address Line 2</span>:&nbsp; ${request.session['appstruct']['person']['address2']}<br />
+                    <span i18n:translate=''>Postal Code</span>:&nbsp; ${request.session['appstruct']['person']['postcode']}<br />
+                    <span i18n:translate=''>City</span>:&nbsp; ${request.session['appstruct']['person']['city']}<br />
+                    <span i18n:translate=''>Country</span>:&nbsp; ${request.session['appstruct']['person']['country']}<br />
+                    <span i18n:translate=''>Date of Birth</span>:&nbsp; ${request.session['appstruct']['person']['date_of_birth']}<br />
+                </p>
+                <h4 class="c3s-subheading-4" i18n:translate=''>Membership Requirements</h4>
+                <p>
+                    <span i18n:translate=''>Type of Membership</span>:&nbsp;${request.session['appstruct']['membership_info']['membership_type']} <br />
+                    <span i18n:translate=''>Member of other Collecting Society</span>:&nbsp; ${request.session['appstruct']['membership_info']['member_of_colsoc']}<br />
+                    <div tal:condition="request.session['appstruct']['membership_info']['member_of_colsoc'] == u'yes'">
+                        <span i18n:translate=''>Membership(s)</span>:&nbsp; ${request.session['appstruct']['membership_info']['name_of_colsoc']}<br />
+                    </div>
+                </p>
+                <h4 class="c3s-subheading-4" i18n:translate=''>Shares</h4>
+                <p>
+                    <span i18n:translate=''>Number of Shares</span>:&nbsp; ${request.session['appstruct']['shares']['num_shares']}<br />
+                    <span i18n:translate=''>Cost of Shares (50 € each)</span>:&nbsp; ${int(request.session['appstruct']['shares']['num_shares']) * 50} €<br />
+                </p>
+                <p i18n:translate="success-paragraph-change-details">
+                    In case there are errors or you want to change details:
+                </p>
+                <p i18n:translate="success-paragraph-all-correct">
+                    If all information above is correct please verify your email
+                    address in the next step.
+                </p>
+                <h3 i18n:translate="success-headline-verify-email" class="deform">
+                    Verify your email address
+                </h3>
+                <p i18n:translate="success-paragraph-verify-email">
+                    Click the button to have an email sent to your email address.
+                    Then check your email and use the link which we send you to get your
+                    membership application form. This needs to be printed out, signed, and
+                    sent back to us.
+                </p>
+            </div>
+        </div>
+        <p>
+            <a href="/"
+                    id="back"
+                    class="btn btn-secondary"
+                    i18n:translate="back-button">
+                Back
+            </a>
+            <a href="/check_email"
+                    id="next"
+                    class="btn btn-success"
+                    i18n:translate="next-button">
+                Next
+            </a>
+        </p>
+    </tal:block>
+</html>

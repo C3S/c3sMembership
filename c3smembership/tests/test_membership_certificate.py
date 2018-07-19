@@ -122,7 +122,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         if DEBUG:
             print('test_send_certificate_email_german')
-        from c3smembership.membership_certificate import send_certificate_email
+        from c3smembership.presentation.views.membership_certificate import \
+            send_certificate_email
         self.config.add_route('join', '/')
         self.config.add_route('dashboard', '/')
         self.config.add_route('certificate_pdf', '/')
@@ -190,7 +191,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         if DEBUG:
             print('test_send_certificate_email_english')
-        from c3smembership.membership_certificate import send_certificate_email
+        from c3smembership.presentation.views.membership_certificate import \
+            send_certificate_email
         self.config.add_route('join', '/')
         self.config.add_route('dashboard', '/')
         self.config.add_route('certificate_pdf', '/')
@@ -246,7 +248,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         test the certificate download view (english)
         """
-        from c3smembership.membership_certificate import generate_certificate
+        from c3smembership.presentation.views.membership_certificate import \
+            generate_certificate
         request = testing.DummyRequest()
         request.matchdict = {
             'id': '2',
@@ -300,7 +303,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         test the certificate download view (german)
         """
-        from c3smembership.membership_certificate import generate_certificate
+        from c3smembership.presentation.views.membership_certificate import \
+            generate_certificate
         request = testing.DummyRequest()
         request.matchdict = {
             'id': '1',
@@ -363,7 +367,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         test the certificate download view (german)
         """
-        from c3smembership.membership_certificate import generate_certificate
+        from c3smembership.presentation.views.membership_certificate import \
+            generate_certificate
         request = testing.DummyRequest()
         request.matchdict = {
             'id': '3',
@@ -411,7 +416,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         test the certificate generation with awkward characters in datasets
         because LaTeX interprets some characters as special characters.
         """
-        from c3smembership.membership_certificate import generate_certificate
+        from c3smembership.presentation.views.membership_certificate import \
+            generate_certificate
         request = testing.DummyRequest()
         request.matchdict = {
             'id': '1',
@@ -450,7 +456,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         test the certificate generation option in the backend
         """
-        from c3smembership.membership_certificate import \
+        from c3smembership.presentation.views.membership_certificate import \
+            \
             generate_certificate_staff
         request = testing.DummyRequest()
 

@@ -17,7 +17,7 @@ from c3smembership.security import (
     Root,
     groupfinder
 )
-from c3smembership.presentation.views.dashboard import (
+from c3smembership.presentation.views.membership_acquisition import (
     dashboard_content_size_provider
 )
 from c3smembership.presentation.views.membership_listing import (
@@ -69,13 +69,13 @@ def main(global_config, **settings):
         'docs',
         '../docs/_build/html/', cache_max_age=3600)
 
-    config.add_subscriber('c3smembership.subscribers.add_base_template',
+    config.add_subscriber('c3smembership.subscribers.add_frontend_template',
                           'pyramid.events.BeforeRender')
-    config.add_subscriber(
-        'c3smembership.subscribers.add_base_bootstrap_template',
-        'pyramid.events.BeforeRender')
     config.add_subscriber('c3smembership.subscribers.add_backend_template',
                           'pyramid.events.BeforeRender')
+    config.add_subscriber('c3smembership.subscribers.add_old_backend_template',
+                          'pyramid.events.BeforeRender')
+
     config.add_subscriber('c3smembership.subscribers.add_locale_to_cookie',
                           'pyramid.events.NewRequest')
     config.add_renderer(name='csv',
@@ -112,7 +112,7 @@ def main(global_config, **settings):
             settings.get('c3smembership.dashboard_number', 30)))
 
     config.add_route('dash', '/dash/{number}/{orderby}/{order}')
-    config.add_route('toolbox', '/toolbox')
+    config.add_route('toolbox', '/membership-tools')
     config.add_route('stats', '/stats')
     config.add_route('staff', '/staff')
     config.add_route('new_member', '/new_member')
@@ -246,7 +246,7 @@ def main(global_config, **settings):
     from c3smembership.business.dues_invoice_archiving import (
         DuesInvoiceArchiving
     )
-    from c3smembership.views.membership_dues import (
+    from c3smembership.presentation.views.dues_2015 import (
         make_invoice_pdf_pdflatex,
         make_reversal_pdf_pdflatex,
     )

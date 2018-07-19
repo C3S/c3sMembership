@@ -245,9 +245,10 @@ def handle_filtering(
     return (filter_form, filtering)
 
 
-@view_config(renderer='../templates/payment_list.pt',
-             permission='manage',
-             route_name='payment_list')
+@view_config(
+    renderer='c3smembership.presentation:templates/pages/payment_list.pt',
+    permission='manage',
+    route_name='payment_list')
 def payment_list(request):
     """
     Provides the payments according to sorting and filtering as well as a form

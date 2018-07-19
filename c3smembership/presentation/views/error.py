@@ -9,7 +9,7 @@ from pyramid.view import view_config
 
 
 @view_config(
-    renderer='../templates/pages/error.pt',
+    renderer='c3smembership.presentation:templates/pages/error.pt',
     route_name='error',
 )
 def error_view(request):
