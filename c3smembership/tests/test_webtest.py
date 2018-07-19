@@ -204,7 +204,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res4 = res3.follow()
         # print(res4.body)
         self.failUnless(
-            'Membership Acquisition' in res4.body)
+            'Acquisition of membership' in res4.body)
         # now that we are logged in,
         # the login view should redirect us to the dashboard
         res5 = self.testapp.get('/login', status=302)
@@ -212,7 +212,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res6 = res5.follow()
         # print(res4.body)
         self.failUnless(
-            'Membership Acquisition' in res6.body)
+            'Acquisition of membership' in res6.body)
         # choose number of applications shown
         res6a = self.testapp.get(
             '/dashboard',
@@ -222,10 +222,10 @@ class AccountantsFunctionalTests(unittest.TestCase):
             }
         )
 
-        self.failUnless('Membership Acquisition' in res6a.body)
+        self.failUnless('Acquisition of membership' in res6a.body)
         res6a = self.get_dashboard_page(1, 'lastname', 'asc', 200)
 
-        self.failUnless('Membership Acquisition' in res6a.body)
+        self.failUnless('Acquisition of membership' in res6a.body)
         # invalid sorting property
         # expect redirect to valid sorting property
         res6b = self.get_dashboard_page(1, 'invalid', 'asc', 400)
@@ -349,7 +349,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
         # print "the first row: {}".format(first_member_row)
-        first_name = first_member_row('td:nth-child(3)')
+        first_name = first_member_row('td:nth-child(2)')
         # print "the first name: {}".format(first_name)
         self.assertEqual(u'AAASomeFirstnäme', first_name.text())
 
@@ -358,7 +358,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'firstname', 'desc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        first_name = first_member_row('td:nth-child(3)')
+        first_name = first_member_row('td:nth-child(2)')
         self.assertEqual(u'SomeFirstnäme', first_name.text())
 
     def test_dashboard_orderByLastnameAsc_dashboardOrdered(self):
@@ -366,7 +366,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'lastname', 'asc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(2)')
+        last_name = first_member_row('td:nth-child(1)')
         self.assertEqual(u'AAASomeLastnäme', last_name.text())
 
     def test_dashboard_orderByLastnameDesc_dashboardOrdered(self):
@@ -374,7 +374,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = self.get_dashboard_page(1, 'lastname', 'desc', 200)
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(2)')
+        last_name = first_member_row('td:nth-child(1)')
         self.assertEqual(u'XXXSomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_sameOrderAsBefore(self):
@@ -385,7 +385,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resdel = resdel.follow()
         pq = self._get_pyquery(resdel.body)
         first_member_row = pq('tr:nth-child(2)')
-        last_name = first_member_row('td:nth-child(2)')
+        last_name = first_member_row('td:nth-child(1)')
         self.assertEqual(u'SomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_messageShown(self):
@@ -450,7 +450,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res3 = res2.follow()
-        self.failUnless('Membership Acquisition' in res3.body)
+        self.failUnless('Acquisition of membership' in res3.body)
         return res3
 
     def _change_num_to_show(self, num_to_show="1"):
@@ -540,7 +540,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res3 = res2.follow()
-        self.failUnless('Membership Acquisition' in res3.body)
+        self.failUnless('Acquisition of membership' in res3.body)
 
         """
         try to load a users PDF
@@ -575,7 +575,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
     #     res3 = res2.follow()
     #     res3 = res3.follow()
 
-    #     self.failUnless('Membership Acquisition' in res3.body)
+    #     self.failUnless('Acquisition of membership' in res3.body)
 
     #     """
     #     try to send out the signature confirmation email

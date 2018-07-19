@@ -215,7 +215,7 @@ class SharesTests(unittest.TestCase):
         # print('<'*20)
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.failUnless(
-            'Membership Acquisition' in res3.body)
+            'Acquisition of membership' in res3.body)
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=302)
         res2 = res.follow()
@@ -250,7 +250,7 @@ class SharesTests(unittest.TestCase):
         res2 = form.submit('submit', status=302)
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
-        self.failUnless('Membership Acquisition' in res3.body)
+        self.failUnless('Acquisition of membership' in res3.body)
 
         # no member in DB, so redirecting to dashboard
         res = self.testapp.get('/shares_edit/1', status=302)
@@ -313,7 +313,7 @@ class SharesTests(unittest.TestCase):
         # print('<'*20)
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.failUnless(
-            'Membership Acquisition' in res3.body)
+            'Acquisition of membership' in res3.body)
 
         self.make_member_with_shares()
 

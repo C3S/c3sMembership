@@ -229,7 +229,7 @@ class MemberTestsBase(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Membership Acquisition' in res.body)
+        self.failUnless('Acquisition of membership' in res.body)
 
 
 class MakeMergeMemberTests(MemberTestsBase):

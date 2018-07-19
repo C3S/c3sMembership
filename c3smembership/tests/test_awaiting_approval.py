@@ -121,7 +121,7 @@ class AwaitingApprovalTests(unittest.TestCase):
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.failUnless(
-            'Membership Acquisition' in res3.body)
+            'Acquisition of membership' in res3.body)
         # now look at the view to test
         res = self.testapp.get('/afms_awaiting_approval', status=200)
         self.assertTrue('Neue Genossenschaftsmitglieder' not in res.body)
