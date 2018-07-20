@@ -57,9 +57,48 @@
                             class="fas fa-sort-alpha-up">
                     </a>
                 </th>
-                <th>Type</th>
-                <th>Number</th>
-                <th>Shares</th>
+                <th>
+                    <a href="${pagination.url.sort_property_alternating_direction('membership_type')}"
+                            title="Sort by membership type">
+                        <i class="fas fa-sort"></i>
+                        Type
+                    </a>
+                    <a href="${pagination.url.sort_property('membership_type').sort_direction('asc')}"
+                            title="Sort by membership type: ascending"
+                            class="fas fa-sort-alpha-down"></a>
+                    <a href="${pagination.url.sort_property('membership_type').sort_direction('desc')}"
+                            title="Sort by membership type: descending"
+                            class="fas fa-sort-alpha-up">
+                    </a>
+                </th>
+                <th>
+                    <a href="${pagination.url.sort_property_alternating_direction('membership_number')}"
+                            title="Sort by membership number">
+                        <i class="fas fa-sort"></i>
+                        Number
+                    </a>
+                    <a href="${pagination.url.sort_property('membership_number').sort_direction('asc')}"
+                            title="Sort by membership number: ascending"
+                            class="fas fa-sort-numeric-down"></a>
+                    <a href="${pagination.url.sort_property('membership_number').sort_direction('desc')}"
+                            title="Sort by membership number: descending"
+                            class="fas fa-sort-numeric-up">
+                    </a>
+                </th>
+                <th>
+                    <a href="${pagination.url.sort_property_alternating_direction('num_shares')}"
+                            title="Sort by number of shares">
+                        <i class="fas fa-sort"></i>
+                        Shares
+                    </a>
+                    <a href="${pagination.url.sort_property('num_shares').sort_direction('asc')}"
+                            title="Sort by number of shares: ascending"
+                            class="fas fa-sort-numeric-down"></a>
+                    <a href="${pagination.url.sort_property('num_shares').sort_direction('desc')}"
+                            title="Sort by number of shares: descending"
+                            class="fas fa-sort-numeric-up">
+                    </a>
+                </th>
                 <th>Email</th>
                 <!--!
                 <th>
@@ -101,8 +140,10 @@
                         ${member.num_shares}
                     </a>
                 </td>
-                <td>
-                    <a href="mailto:${member.email}" title="${member.email}">mailto</a>
+                <td class="icons">
+                    <a href="mailto:${member.email}"
+                            title="${member.email}"
+                            class="fas fa-at"></a>
                 </td>
                 <!--!
                 <td class="icons">
