@@ -42,7 +42,7 @@ from c3smembership.deform_text_input_slider_widget import (
     TextInputSliderWidget
 )
 from c3smembership.data.model.base import DBSession
-from c3smembership.models import C3sMember
+from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,

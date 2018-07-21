@@ -3,9 +3,7 @@
 from pyramid.decorator import reify
 from pyramid.request import Request
 from pyramid.security import unauthenticated_userid
-from c3smembership.models import (
-    C3sStaff,
-    )
+from c3smembership.data.model.base.staff import Staff
 
 
 class RequestWithUserAttribute(Request):
@@ -32,7 +30,7 @@ class RequestWithUserAttribute(Request):
             # this should return None if the user doesn't exist
             # in the database
             # return dbsession.query('users').filter(user.user_id == userid)
-            return C3sStaff.check_user_or_none(userid)
+            return Staff.check_user_or_none(userid)
         # else: userid == None
         return userid  # pragma: no cover
 

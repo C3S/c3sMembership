@@ -17,10 +17,8 @@ from pyramid.security import authenticated_userid
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.gnupg_encrypt import encrypt_with_gnupg
-from c3smembership.models import (
-    C3sStaff,
-    Group,
-)
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.staff import Staff
 
 
 DEBUG = False
@@ -40,7 +38,7 @@ def staff_view(request):
     - edit/change password
     - delete
     """
-    _staffers = C3sStaff.get_all()
+    _staffers = Staff.get_all()
 
     class Staffer(colander.MappingSchema):
         """
@@ -66,11 +64,11 @@ def staff_view(request):
 
     if 'action' in request.POST:
         try:
-            _staffer = C3sStaff.get_by_id(int(request.POST['id']))
+            _staffer = Staff.get_by_id(int(request.POST['id']))
         except (KeyError, ValueError):
             return HTTPFound(location=request.route_url('staff'))
         if request.POST['action'] == u'delete':
-            C3sStaff.delete_by_id(_staffer.id)
+            Staff.delete_by_id(_staffer.id)
             encrypted = encrypt_with_gnupg('''hi,
 %s was deleted from the backend by %s.
 
@@ -102,7 +100,7 @@ your membership tool''' % (_staffer.login,
             return {
                 'stafferform': error.render()
             }
-        existing = C3sStaff.get_by_login(appstruct['login'])
+        existing = Staff.get_by_login(appstruct['login'])
         if existing is not None:
             if u'_UNCHANGED_' in appstruct['password']:
                 pass
@@ -124,7 +122,7 @@ your membership tool''' % (existing.login,
             )
 
         else:  # create new entry
-            staffer = C3sStaff(
+            staffer = Staff(
                 login=appstruct['login'],
                 password=appstruct['password'],
                 email=u'',

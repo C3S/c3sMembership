@@ -3,28 +3,25 @@
 Views for editing member data including form generation from schema.
 """
 
-from c3smembership.models import (
-    C3sMember,
-)
-from c3smembership.utils import (
-    country_codes,
-    locale_codes
-)
+from datetime import date
+import logging
+from types import NoneType
 
 import colander
 from colander import (
     Range,
 )
-from datetime import date
 import deform
 from deform import ValidationFailure
-
-import logging
-
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 from pyramid.view import view_config
-from types import NoneType
+
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.utils import (
+    country_codes,
+    locale_codes
+)
 from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,

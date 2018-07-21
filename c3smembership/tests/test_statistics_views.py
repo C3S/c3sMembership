@@ -6,12 +6,13 @@ from pyramid import testing
 from sqlalchemy import create_engine
 import transaction
 
-from c3smembership.data.model.base import DBSession
-from c3smembership.models import (
-    Group,
-    C3sMember,
-    C3sStaff,
+from c3smembership.data.model.base import (
+    Base,
+    DBSession,
 )
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.staff import Staff
 
 
 class TestViews(unittest.TestCase):
@@ -22,7 +23,6 @@ class TestViews(unittest.TestCase):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
         engine = create_engine(u'sqlite://')
-        from c3smembership.models import Base
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
         with transaction.manager:
@@ -99,7 +99,7 @@ class TestViews(unittest.TestCase):
                 print("could not add group staff.")
                 # pass
             # staff personnel
-            staffer1 = C3sStaff(
+            staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
                 email=u"noreply@c3s.cc",

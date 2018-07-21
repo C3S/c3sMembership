@@ -30,10 +30,8 @@ from pyramid.response import Response
 from pyramid.view import view_config
 
 from c3smembership.data.model.base import DBSession
-from c3smembership.models import (
-    C3sMember,
-    Dues16Invoice,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 
 from c3smembership.mail_utils import send_message
 from .dues_texts import (

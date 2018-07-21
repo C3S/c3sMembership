@@ -13,10 +13,10 @@ from sqlalchemy.sql import (
 )
 
 from c3smembership.data.model.base import DBSession
+from c3smembership.data.model.base.shares import Shares
 from c3smembership.data.repository.member_repository import MemberRepository
-from c3smembership.models import (
+from c3smembership.data.model.base.c3smember import (
     C3sMember,
-    Shares,
     members_shares,
 )
 

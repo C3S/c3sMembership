@@ -240,9 +240,9 @@ def main(global_config, **settings):
     config.add_route('dues18_listing', '/dues18_listing')
 
     # TODO: move application layer setup to separate module
-    from c3smembership.models import C3sMember
-    from c3smembership.models import Dues15Invoice
     from c3smembership.data.model.base import DBSession
+    from c3smembership.data.model.base.c3smember import C3sMember
+    from c3smembership.data.model.base.dues15invoice import Dues15Invoice
     from c3smembership.business.dues_invoice_archiving import (
         DuesInvoiceArchiving
     )

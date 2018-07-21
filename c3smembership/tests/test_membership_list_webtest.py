@@ -20,12 +20,11 @@ from c3smembership.data.model.base import (
     Base,
     DBSession,
 )
-from c3smembership.models import (
-    C3sMember,
-    C3sStaff,
-    Group,
-    Shares,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.shares import Shares
+from c3smembership.data.model.base.staff import Staff
+
 
 DEBUG = False
 
@@ -58,7 +57,7 @@ class MemberTestsBase(unittest.TestCase):
             DBSession.add(accountants_group)
             DBSession.flush()
             # staff personnel
-            staffer1 = C3sStaff(
+            staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
                 email=u"noreply@c3s.cc",

@@ -6,8 +6,8 @@ Repository for accessing payments
 import datetime
 from decimal import Decimal
 
+from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base import DBSession
-from c3smembership.models import C3sMember
 
 
 # pylint: disable=too-few-public-methods

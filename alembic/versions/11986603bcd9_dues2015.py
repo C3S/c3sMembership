@@ -18,7 +18,7 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 import sqlalchemy.types as types
 
-from c3smembership.models import C3sMember
+from c3smembership.data.model.base.c3smember import C3sMember
 
 
 

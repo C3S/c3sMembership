@@ -13,7 +13,7 @@ from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import C3sMember
+from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.repository.member_repository import MemberRepository
 
 

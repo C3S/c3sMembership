@@ -13,7 +13,7 @@ import deform
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 
-from c3smembership.models import C3sMember
+from c3smembership.data.model.base.c3smember import C3sMember
 
 
 @view_config(

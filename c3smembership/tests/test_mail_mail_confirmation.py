@@ -12,9 +12,7 @@ from c3smembership.data.model.base import (
     Base,
     DBSession,
 )
-from c3smembership.models import (
-    C3sMember,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
 
 
 def _initTestingDB():

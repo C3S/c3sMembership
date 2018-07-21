@@ -13,10 +13,8 @@ from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import (
-    C3sMember,
-    Shares,
-)
+from c3smembership.data.model.base.shares import Shares
+from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.repository.share_repository import ShareRepository
 
 

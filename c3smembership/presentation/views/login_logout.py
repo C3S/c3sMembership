@@ -16,7 +16,7 @@ from pyramid.security import (
 from pyramid.url import route_url
 from pyramid.view import view_config
 
-from c3smembership.models import C3sStaff
+from c3smembership.data.model.base.staff import Staff
 from c3smembership.presentation.i18n import _
 from c3smembership.presentation.schemas.accountant_login import (
     AccountantLogin
@@ -71,7 +71,7 @@ def login(request):
         password = appstruct['password']
 
         try:
-            checked = C3sStaff.check_password(username, password)
+            checked = Staff.check_password(username, password)
         except AttributeError:  # pragma: no cover
             checked = False
         if checked:

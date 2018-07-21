@@ -29,10 +29,8 @@ from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import (
-    C3sMember,
-    Dues15Invoice,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.dues15invoice import Dues15Invoice
 
 
 def _initTestingDB():
@@ -298,8 +296,8 @@ class TestDues15Views(unittest.TestCase):
 
         """
         from pyramid_mailer import get_mailer
-        from c3smembership.presentation.views.dues_2015 import send_dues15_invoice_email
-        from c3smembership.models import Dues15Invoice
+        from c3smembership.presentation.views.dues_2015 import \
+            send_dues15_invoice_email
 
         _number_of_invoices = len(Dues15Invoice.get_all())
 

@@ -18,15 +18,14 @@ from c3smembership.data.model.base import (
     Base,
     DBSession,
 )
-from c3smembership.models import (
-    C3sMember,
-    C3sStaff,
-    Dues15Invoice,
-    Dues16Invoice,
-    Dues17Invoice,
-    Dues18Invoice,
-    Group,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.dues15invoice import Dues15Invoice
+from c3smembership.data.model.base.dues16invoice import Dues16Invoice
+from c3smembership.data.model.base.dues17invoice import Dues17Invoice
+from c3smembership.data.model.base.dues18invoice import Dues18Invoice
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.staff import Staff
+
 
 # Disable Pylint error message when using DBSession methods
 # pylint: disable=no-member
@@ -876,7 +875,7 @@ class GroupTests(unittest.TestCase):
         self.assertEquals(res, 'group:staff')
 
 
-class C3sStaffTests(unittest.TestCase):
+class StaffTests(unittest.TestCase):
     """
     test the staff and cashiers accounts
     """
@@ -905,12 +904,12 @@ class C3sStaffTests(unittest.TestCase):
         # os.remove('test_model_staff.db')
 
     def test_staff(self):
-        staffer1 = C3sStaff(
+        staffer1 = Staff(
             login=u'staffer1',
             password=u'stafferspassword'
         )
         staffer1.group = ['staff']
-        staffer2 = C3sStaff(
+        staffer2 = Staff(
             login=u'staffer2',
             password=u'staffer2spassword',
         )
@@ -926,31 +925,31 @@ class C3sStaffTests(unittest.TestCase):
         self.assertTrue(staffer2.password is not '')
 
         self.assertEqual(
-            C3sStaff.get_by_id(_staffer1_id),
-            C3sStaff.get_by_login(u'staffer1')
+            Staff.get_by_id(_staffer1_id),
+            Staff.get_by_login(u'staffer1')
         )
         self.assertEqual(
-            C3sStaff.get_by_id(_staffer2_id),
-            C3sStaff.get_by_login(u'staffer2')
+            Staff.get_by_id(_staffer2_id),
+            Staff.get_by_login(u'staffer2')
         )
 
         # test get_all
-        res = C3sStaff.get_all()
+        res = Staff.get_all()
         self.assertEqual(len(res), 2)
 
         # test delete_by_id
-        C3sStaff.delete_by_id(1)
-        res = C3sStaff.get_all()
+        Staff.delete_by_id(1)
+        res = Staff.get_all()
         self.assertEqual(len(res), 1)
 
         # test check_user_or_none
-        res1 = C3sStaff.check_user_or_none(u'staffer2')
-        res2 = C3sStaff.check_user_or_none(u'staffer1')
+        res1 = Staff.check_user_or_none(u'staffer2')
+        res2 = Staff.check_user_or_none(u'staffer1')
         self.assertTrue(res1 is not None)
         self.assertTrue(res2 is None)
 
         # test check_password
-        C3sStaff.check_password(u'staffer2', u'staffer2spassword')
+        Staff.check_password(u'staffer2', u'staffer2spassword')
 
 
 class Dues15InvoiceModelTests(unittest.TestCase):

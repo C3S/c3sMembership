@@ -32,7 +32,7 @@ from c3smembership.mail_utils import (
     make_payment_confirmation_email,
     send_message,
 )
-from c3smembership.models import (
+from c3smembership.data.model.base.c3smember import (
     C3sMember,
     InvalidPropertyException,
     InvalidSortDirection,

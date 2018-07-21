@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
-from c3smembership.models import C3sMember
+from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.mail_utils import get_salutation
 from datetime import date
 

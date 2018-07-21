@@ -12,14 +12,11 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
-from c3smembership.models import (
-    C3sMember,
-    Dues15Invoice,
-    Dues16Invoice,
-    Dues17Invoice,
-    Dues18Invoice,
-)
-
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.dues15invoice import Dues15Invoice
+from c3smembership.data.model.base.dues16invoice import Dues16Invoice
+from c3smembership.data.model.base.dues17invoice import Dues17Invoice
+from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 
 LOG = logging.getLogger(__name__)
 

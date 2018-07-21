@@ -53,7 +53,7 @@ from c3smembership.mail_utils import (
 from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
-from c3smembership.models import C3sMember
+from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
 )

@@ -29,10 +29,8 @@ from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import (
-    C3sMember,
-    Dues18Invoice,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 
 
 def _initTestingDB():
@@ -289,7 +287,6 @@ class TestDues18Views(unittest.TestCase):
         from c3smembership.presentation.views.dues_2018 import (
             send_dues18_invoice_email,
         )
-        from c3smembership.models import Dues18Invoice
 
         _number_of_invoices = len(Dues18Invoice.get_all())
 

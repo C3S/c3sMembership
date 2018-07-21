@@ -25,6 +25,7 @@ selenium/webdriver makes the browser do things.
 import logging
 import os
 from subprocess import call
+import time
 import unittest
 
 from selenium import webdriver
@@ -84,6 +85,10 @@ class SeleniumTestBase(unittest.TestCase):
 
         self.driver = webdriver.PhantomJS()
         self.driver.delete_all_cookies()
+        # Sleep one second to let the webdriver initialize in order to try to
+        # fix the issue that webdriver tests are breaking unpredictably on
+        # the first get request.
+        time.sleep(1)
 
     def tearDown(self):
         self.driver.close()

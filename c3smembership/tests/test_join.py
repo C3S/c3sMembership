@@ -16,10 +16,8 @@ from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import (
-    C3sStaff,
-    Group,
-)
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.staff import Staff
 import c3smembership.utils as utils
 import c3smembership.presentation.views.join as join
 from c3smembership.presentation.views.join import (
@@ -291,7 +289,7 @@ class TestViews(unittest.TestCase):
             accountants_group = Group(name=u"staff")
             DBSession.add(accountants_group)
             DBSession.flush()
-            staffer1 = C3sStaff(
+            staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
                 email=u"noreply@c3s.cc",

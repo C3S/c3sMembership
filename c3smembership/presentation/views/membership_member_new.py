@@ -4,9 +4,7 @@ This module has functionality for staff to enter new member application
 datasets into the database from the backend.
 """
 from c3smembership.data.model.base import DBSession
-from c3smembership.models import (
-    C3sMember,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,

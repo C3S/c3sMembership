@@ -2,21 +2,20 @@
 """
 This module holds tests for the awaiting_approval module.
 """
+from datetime import date
 import unittest
+
 from pyramid import testing
+from sqlalchemy import engine_from_config
+import transaction
 
 from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import (
-    C3sMember,
-    C3sStaff,
-    Group,
-)
-from sqlalchemy import engine_from_config
-import transaction
-from datetime import date
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.staff import Staff
 
 DEBUG = False
 
@@ -54,7 +53,7 @@ class AwaitingApprovalTests(unittest.TestCase):
                 # print("could not add group staff.")
                 pass
             # staff personnel
-            staffer1 = C3sStaff(
+            staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
                 email=u"noreply@c3s.cc",

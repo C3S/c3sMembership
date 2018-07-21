@@ -5,15 +5,13 @@ Prepares statistics.
 
 from pyramid.view import view_config
 
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.dues15invoice import Dues15Invoice
+from c3smembership.data.model.base.dues16invoice import Dues16Invoice
+from c3smembership.data.model.base.dues17invoice import Dues17Invoice
+from c3smembership.data.model.base.dues18invoice import Dues18Invoice
+from c3smembership.data.model.base.staff import Staff
 from c3smembership.data.repository.share_repository import ShareRepository
-from c3smembership.models import (
-    C3sMember,
-    C3sStaff,
-    Dues15Invoice,
-    Dues16Invoice,
-    Dues17Invoice,
-    Dues18Invoice,
-)
 
 
 @view_config(
@@ -75,5 +73,5 @@ def stats_view(request):
         'dues18_stats': Dues18Invoice.get_monthly_stats(),
 
         # staff figures
-        'num_staff': len(C3sStaff.get_all())
+        'num_staff': len(Staff.get_all())
     }

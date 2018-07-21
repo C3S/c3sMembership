@@ -4,24 +4,23 @@
 Tests for c3smembership.presentation.views.membership_member_edit
 """
 
-import unittest
-from pyramid import testing
+from datetime import date, timedelta
 
+from pyramid import testing
+from sqlalchemy import engine_from_config
+import transaction
+import unittest
+from webtest import TestApp
+import webtest
+
+from c3smembership import main
 from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import (
-    C3sMember,
-    C3sStaff,
-    Group,
-)
-from sqlalchemy import engine_from_config
-import transaction
-from datetime import date, timedelta
-from c3smembership import main
-from webtest import TestApp
-import webtest
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.staff import Staff
 
 DEBUG = False
 
@@ -56,7 +55,7 @@ class EditMemberTests(unittest.TestCase):
             DBSession.add(accountants_group)
             DBSession.flush()
             # staff personnel
-            staffer1 = C3sStaff(
+            staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
                 email=u"noreply@c3s.cc",

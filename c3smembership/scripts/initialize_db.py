@@ -18,11 +18,9 @@ from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
-from c3smembership.models import (
-    Group,
-    C3sStaff,
-    C3sMember,
-)
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.group import Group
+from c3smembership.data.model.base.staff import Staff
 
 """
 this module holds database initialization code
@@ -91,7 +89,7 @@ def main(argv=sys.argv):
             # pass
     with transaction.manager:
         # staff personnel
-        staffer1 = C3sStaff(
+        staffer1 = Staff(
             login=u"rut",
             password=u"berries",
             email=u"noreply@c3s.cc",
@@ -104,7 +102,7 @@ def main(argv=sys.argv):
             print("it borked! (rut)")
     # one more staffer
     with transaction.manager:
-        staffer2 = C3sStaff(
+        staffer2 = Staff(
             login=u"reel",
             password=u"boo",
             email=u"noreply@c3s.cc",
