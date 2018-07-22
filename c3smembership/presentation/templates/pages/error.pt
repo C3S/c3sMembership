@@ -2,7 +2,8 @@
         xml:lang="en"
         xmlns:tal="http://xml.zope.org/namespaces/tal"
         xmlns:metal="http://xml.zope.org/namespaces/metal"
-        metal:use-macro="backend">
+        metal:use-macro="backend"
+        i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
         <h2>Ooops, es ist ein Fehler aufgetreten!</h2>
         <p class="lead alert alert-danger">

@@ -3,7 +3,8 @@
       xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="old_backend">
+      metal:use-macro="old_backend"
+      i18n:domain="c3smembership">
   <tal:block metal:fill-slot="head">
     <link rel="stylesheet" href="${request.static_url('deform:static/css/form.css')}"
           type="text/css" media="screen" charset="utf-8" />

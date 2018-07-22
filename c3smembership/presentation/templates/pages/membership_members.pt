@@ -6,7 +6,8 @@
         xml:lang="en"
         xmlns:tal="http://xml.zope.org/namespaces/tal"
         xmlns:metal="http://xml.zope.org/namespaces/metal"
-        metal:use-macro="backend">
+        metal:use-macro="backend"
+        i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
         <div>
             <strong tal:repeat="message request.session.pop_flash('message_to_staff')"

@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
         xml:lang="en"
         xmlns:tal="http://xml.zope.org/namespaces/tal"
-        xmlns:metal="http://xml.zope.org/namespaces/metal">
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        i18n:domain="c3smembership">
     <head>
         <!--! General meta -->
         <meta charset="utf-8" />
