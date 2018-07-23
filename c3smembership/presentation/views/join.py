@@ -459,7 +459,7 @@ Your C3S team
         '''
     message = Message(
         subject=email_subject,
-        sender='noreply@c3s.cc',
+        sender='yes@c3s.cc',
         recipients=[member.email],
         body=email_body.format(
             member.firstname,

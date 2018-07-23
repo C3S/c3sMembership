@@ -226,7 +226,7 @@ def create_accountant_mail(member, recipients):
 
     message = Message(
         subject="[C3S] Yes! a new member",
-        sender="noreply@c3s.cc",
+        sender="yes@c3s.cc",
         recipients=recipients,
         body=encrypted
     )
@@ -257,7 +257,7 @@ def send_accountant_mail(request, member):
     except:
         mail = Message(
             subject=_("[yes][ALERT] check the logs!"),
-            sender="noreply@c3s.cc",
+            sender="yes@c3s.cc",
             recipients=['yes@c3s.cc'],
             body="""
 A failure occurred at {}. A notification email could not be sent.

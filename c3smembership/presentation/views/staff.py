@@ -77,7 +77,7 @@ your membership tool''' % (_staffer.login,
                            authenticated_userid(request)))
             message = Message(
                 subject='[C3S Yes] staff was deleted.',
-                sender='noreply@c3s.cc',
+                sender='yes@c3s.cc',
                 recipients=[
                     request.registry.settings['c3smembership.mailaddr']],
                 body=encrypted
@@ -115,7 +115,7 @@ your membership tool''' % (existing.login,
                            authenticated_userid(request)))
             message = Message(
                 subject='[C3S Yes] staff password changed.',
-                sender='noreply@c3s.cc',
+                sender='yes@c3s.cc',
                 recipients=[
                     request.registry.settings['c3smembership.mailaddr']],
                 body=encrypted
@@ -139,7 +139,7 @@ your membership tool''' % (staffer.login,
                            authenticated_userid(request)))
             message = Message(
                 subject='[C3S Yes] staff was added.',
-                sender='noreply@c3s.cc',
+                sender='yes@c3s.cc',
                 recipients=[
                     request.registry.settings['c3smembership.mailaddr']],
                 body=encrypted

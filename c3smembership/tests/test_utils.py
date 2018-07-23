@@ -238,5 +238,5 @@ class TestUtilities(unittest.TestCase):
         self.failUnless(
             '[C3S] Yes! a new member' in result.subject,
             'something missing in the mail subject!')
-        self.failUnless('noreply@c3s.cc' == result.sender,
+        self.failUnless('yes@c3s.cc' == result.sender,
                         'something missing in the mail body!')
