@@ -517,6 +517,14 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
         invoice_no = str(member.dues16_invoice_no).zfill(4)
         invoice_date = member.dues16_invoice_date
 
+    dues15_balance = D('0.0')
+    dues16_balance = D('0.0')
+
+    if not math.isnan(member.dues15_balance):
+        dues15_balance = member.dues15_balance
+    if not math.isnan(member.dues16_balance):
+        dues16_balance = member.dues16_balance
+
     # set variables for tex command
     tex_vars = {
         'personalFirstname': member.firstname,
@@ -528,7 +536,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
         'personalMShipNo': unicode(member.membership_number),
         'invoiceNo': str(invoice_no).zfill(4),  # leading zeroes!
         'invoiceDate': invoice_date,
-        'account': unicode(-member.dues15_balance -member.dues16_balance),
+        'account': unicode(-dues15_balance - dues16_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else string_start_quarter_dues16(member),
         'duesAmount': unicode(invoice.invoice_amount),
@@ -547,6 +555,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
 
     # XXX: try to find out, why utf-8 doesn't work on debian
+    # TODO: Handle any return code not equal to zero
     subprocess.call(
         [
             'pdflatex',

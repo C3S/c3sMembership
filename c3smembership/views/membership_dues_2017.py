@@ -20,10 +20,12 @@ from datetime import (
     date,
 )
 from decimal import Decimal as D
+import math
 import os
 import shutil
 import subprocess
 import tempfile
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid_mailer.message import Message
 from pyramid.response import Response
@@ -34,19 +36,19 @@ from c3smembership.models import (
     C3sMember,
     Dues17Invoice,
 )
-
 from c3smembership.mail_utils import send_message
-from .membership_dues_texts import (
+from c3smembership.presentation.views.membership_listing import (
+    get_memberhip_listing_redirect
+)
+from c3smembership.views.membership_dues_texts import (
     make_dues17_invoice_email,
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,
     make_dues17_reduction_email,
     make_dues_exemption_email,
 )
-from c3smembership.presentation.views.membership_listing import (
-    get_memberhip_listing_redirect
-)
 from c3smembership.tex_tools import TexTools
+
 
 DEBUG = False
 LOGGING = True
@@ -520,6 +522,17 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
         invoice_no = str(member.dues17_invoice_no).zfill(4)
         invoice_date = member.dues17_invoice_date
 
+    dues15_balance = D('0.0')
+    dues16_balance = D('0.0')
+    dues17_balance = D('0.0')
+
+    if not math.isnan(member.dues15_balance):
+        dues15_balance = member.dues15_balance
+    if not math.isnan(member.dues16_balance):
+        dues16_balance = member.dues16_balance
+    if not math.isnan(member.dues17_balance):
+        dues17_balance = member.dues17_balance
+
     # set variables for tex command
     tex_vars = {
         'personalFirstname': member.firstname,
@@ -531,8 +544,8 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
         'personalMShipNo': unicode(member.membership_number),
         'invoiceNo': str(invoice_no).zfill(4),  # leading zeroes!
         'invoiceDate': invoice_date,
-        'account': unicode(-member.dues15_balance - member.dues16_balance \
-            - member.dues17_balance),
+        'account': unicode(-dues15_balance - dues16_balance \
+                - dues17_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else string_start_quarter_dues17(member),
         'duesAmount': unicode(invoice.invoice_amount),
@@ -551,6 +564,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
 
     # XXX: try to find out, why utf-8 doesn't work on debian
+    # TODO: Handle any return code not equal to zero
     subprocess.call(
         [
             'pdflatex',

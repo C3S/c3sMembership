@@ -18,35 +18,38 @@ This module holds code for Membership Dues (2018 edition).
 from datetime import (
     datetime,
     date,
+    timedelta,
 )
 from decimal import Decimal as D
+import math
 import os
 import shutil
 import subprocess
 import tempfile
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid_mailer.message import Message
 from pyramid.response import Response
 from pyramid.view import view_config
 
 from c3smembership.data.model.base import DBSession
+from c3smembership.mail_utils import send_message
 from c3smembership.models import (
     C3sMember,
     Dues18Invoice,
 )
-
-from c3smembership.mail_utils import send_message
-from .membership_dues_texts import (
+from c3smembership.presentation.views.membership_listing import (
+    get_memberhip_listing_redirect
+)
+from c3smembership.views.membership_dues_texts import (
     make_dues18_invoice_email,
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,
     make_dues18_reduction_email,
     make_dues_exemption_email,
 )
-from c3smembership.presentation.views.membership_listing import (
-    get_memberhip_listing_redirect
-)
 from c3smembership.tex_tools import TexTools
+
 
 DEBUG = False
 LOGGING = True
@@ -54,6 +57,24 @@ LOGGING = True
 if LOGGING:  # pragma: no cover
     import logging
     LOG = logging.getLogger(__name__)
+
+PDFLATEX_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        '../../certificate/'
+    ))
+
+PDF_BACKGROUNDS = {
+    'blank': PDFLATEX_DIR + '/' + 'Urkunde_Hintergrund_blank.pdf',
+}
+
+LATEX_TEMPLATES = {
+    # 'generic': PDFLATEX_DIR + '/' + 'membership_dues_receipt.tex',
+    'invoice_de': PDFLATEX_DIR + '/' + 'dues18_invoice_de.tex',
+    'invoice_en': PDFLATEX_DIR + '/' + 'dues18_invoice_en.tex',
+    'storno_de': PDFLATEX_DIR + '/' + 'dues18_storno_de.tex',
+    'storno_en': PDFLATEX_DIR + '/' + 'dues18_storno_en.tex',
+}
 
 
 def make_random_string():
@@ -352,72 +373,76 @@ def send_dues18_invoice_batch(request):
     return HTTPFound(request.route_url('toolbox'))
 
 
-@view_config(route_name='make_dues18_invoice_no_pdf')
-def make_dues18_invoice_no_pdf(request):
+def get_dues18_invoice(invoice, request):
     """
-    Create invoice PDFs on-the-fly.
+    Gets the invoice and returns a PDF response.
 
-    This view checks supplied information (in URL) against info in database
-    and returns
-    - an error message OR
-    - a PDF as receipt
+    Args:
+        invoice: The invoice for which the PDF is requested.
+        request: The pyramid.request.Request object.
 
-    === ===========================================================
-    URL http://app:port/dues_invoice_no/EMAIL/CAQJGCGUFW/C3S-dues18-0001.pdf
-    === ===========================================================
-
+    Returns:
+        A PDF response in case the invoice exists. Otherwise a redirect to the
+        error page.
     """
-    token = request.matchdict['code']
-    invoice_number = request.matchdict['i']
-
-    try:
-        member = C3sMember.get_by_dues18_token(token)
-        assert member is not None
-        assert member.dues18_token == token
-    except AssertionError:
+    if invoice is None:
         request.session.flash(
-            u"This member and token did not match!",
+            u'No invoice found!',
             'message_to_user'  # message queue for user
         )
         return HTTPFound(request.route_url('error_page'))
 
-    try:
-        invoice = Dues18Invoice.get_by_invoice_no(
-            invoice_number.lstrip('0'))
-        assert invoice is not None
-    except AssertionError:
+    if invoice.is_reversal:
+        pdf_file = make_reversal_pdf_pdflatex(invoice)
+    else:
+        pdf_file = make_invoice_pdf_pdflatex(invoice)
+    response = Response(content_type='application/pdf')
+    pdf_file.seek(0)
+    response.app_iter = open(pdf_file.name, "r")
+    return response
+
+
+@view_config(
+    route_name='dues18_invoice_pdf_backend',
+    permission='manage')
+def make_dues18_invoice_pdf_backend(request):
+    """
+    Show the invoice to a backend user
+    """
+    invoice_number = request.matchdict['i']
+    invoice = Dues18Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
+    return get_dues18_invoice(invoice, request)
+
+
+@view_config(route_name='make_dues18_invoice_no_pdf')
+def make_dues18_invoice_no_pdf(request):
+    """
+    Show the invoice to a member verified by a URL token
+    """
+    token = request.matchdict['code']
+    invoice_number = request.matchdict['i']
+    invoice = Dues18Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
+
+    member = None
+    token_is_invalid = True
+    older_than_a_year = True
+    if invoice is not None:
+        member = C3sMember.get_by_id(invoice.member_id)
+        token_is_invalid = token != invoice.token
+        older_than_a_year = (
+            date.today() - invoice.invoice_date.date() > timedelta(days=365))
+
+    if invoice is None or token_is_invalid or invoice.is_reversal \
+            or older_than_a_year or member.dues18_paid:
         request.session.flash(
             u"No invoice found!",
             'message_to_user'  # message queue for user
         )
         return HTTPFound(request.route_url('error_page'))
 
-    # sanity check: invoice token must match with token
-    try:
-        assert(invoice.token == token)
-    except AssertionError:
-        request.session.flash(
-            u"Token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error_page'))
-
-    # sanity check: invoice must not be reversal
-    try:
-        assert(not invoice.is_reversal)
-    except AssertionError:
-        request.session.flash(
-            u"Token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error_page'))
-
-    # return a pdf file
-    pdf_file = make_invoice_pdf_pdflatex(member, invoice)
-    response = Response(content_type='application/pdf')
-    pdf_file.seek(0)  # rewind to beginning
-    response.app_iter = open(pdf_file.name, "r")
-    return response
+    return get_dues18_invoice(invoice, request)
 
 
 def get_dues18_invoice_archive_path():
@@ -455,89 +480,11 @@ def get_dues18_archive_invoice(invoice):
         return None
 
 
-def make_invoice_pdf_pdflatex(member, invoice=None):
-    """
-    This function uses pdflatex to create a PDF
-    as receipt for the members membership dues.
-
-    default output is the current invoice.
-    if i_no is suplied, the relevant invoice number is produced
-    """
-
-    dues18_archive_invoice = get_dues18_archive_invoice(invoice)
-    if dues18_archive_invoice is not None:
-        return dues18_archive_invoice
-
-    # directory of pdf and tex files
-    pdflatex_dir = os.path.abspath(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            '../../certificate/'
-        ))
-
-    # pdf backgrounds
-    pdf_backgrounds = {
-        'blank': pdflatex_dir + '/' + 'Urkunde_Hintergrund_blank.pdf',
-    }
-
-    # latex templates
-    latex_templates = {
-        # 'generic': pdflatex_dir + '/' + 'membership_dues_receipt.tex',
-        'generic': pdflatex_dir + '/' + 'dues18_invoice_de.tex',
-        'generic_en': pdflatex_dir + '/' + 'dues18_invoice_en.tex',
-    }
-
-    # choose background and template
-    background = 'blank'
-    template_name = 'generic' if 'de' in member.locale else 'generic_en'
-
-    # pick background and template
-    bg_pdf = pdf_backgrounds[background]
-    tpl_tex = latex_templates[template_name]
-
-    # pick temporary file for pdf
-    receipt_pdf = tempfile.NamedTemporaryFile(prefix='invoice_', suffix='.pdf')
+def create_pdf(tex_vars, tpl_tex, invoice):
+    receipt_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
 
     (path, filename) = os.path.split(receipt_pdf.name)
     filename = os.path.splitext(filename)[0]
-
-    # on invoice, print start quarter or "reduced". prepare string:
-    if (
-            not invoice.is_reversal and
-            invoice.is_altered and
-            invoice.preceding_invoice_no is not None):
-        is_altered_str = u'angepasst' if (
-            'de' in member.locale) else u'altered'
-
-    if invoice is not None:
-        # use invoice no from URL
-        invoice_no = str(invoice.invoice_no).zfill(4)
-        invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
-    else:  # pragma: no cover
-        # this branch is deprecated, because we always supply an invoice number
-        # use invoice no from member record
-        invoice_no = str(member.dues18_invoice_no).zfill(4)
-        invoice_date = member.dues18_invoice_date
-
-    # set variables for tex command
-    tex_vars = {
-        'personalFirstname': member.firstname,
-        'personalLastname': member.lastname,
-        'personalAddressOne': member.address1,
-        'personalAddressTwo': member.address2,
-        'personalPostCode': member.postcode,
-        'personalCity': member.city,
-        'personalMShipNo': unicode(member.membership_number),
-        'invoiceNo': str(invoice_no).zfill(4),  # leading zeroes!
-        'invoiceDate': invoice_date,
-        'account': unicode(-member.dues15_balance - member.dues16_balance \
-            - member.dues17_balance - member.dues18_balance),
-        'duesStart':  is_altered_str if (
-            invoice.is_altered) else string_start_quarter_dues18(member),
-        'duesAmount': unicode(invoice.invoice_amount),
-        'lang': 'de',
-        'pdfBackground': bg_pdf,
-    }
 
     # generate tex command for pdflatex
     tex_cmd = u''
@@ -550,6 +497,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
 
     # XXX: try to find out, why utf-8 doesn't work on debian
+    # TODO: Handle any return code not equal to zero
     subprocess.call(
         [
             'pdflatex',
@@ -561,7 +509,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
         ],
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
-        cwd=pdflatex_dir
+        cwd=PDFLATEX_DIR
     )
 
     # cleanup
@@ -572,6 +520,59 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     archive_dues18_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
+
+
+def make_invoice_pdf_pdflatex(invoice):
+    """
+    This function uses pdflatex to create a PDF
+    as receipt for the members membership dues.
+
+    default output is the current invoice.
+    if i_no is suplied, the relevant invoice number is produced
+    """
+
+    dues18_archive_invoice = get_dues18_archive_invoice(invoice)
+    if dues18_archive_invoice is not None:
+        return dues18_archive_invoice
+
+    member = C3sMember.get_by_id(invoice.member_id)
+
+    template_name = 'invoice_de' if 'de' in member.locale else 'invoice_en'
+    bg_pdf = PDF_BACKGROUNDS['blank']
+    tpl_tex = LATEX_TEMPLATES[template_name]
+
+    # on invoice, print start quarter or "reduced". prepare string:
+    if (
+            not invoice.is_reversal and
+            invoice.is_altered and
+            invoice.preceding_invoice_no is not None):
+        is_altered_str = u'angepasst' if (
+            'de' in member.locale) else u'altered'
+
+    invoice_no = str(member.dues18_invoice_no).zfill(4)
+    invoice_date = member.dues18_invoice_date.strftime('%d. %m. %Y')
+
+    # set variables for tex command
+    tex_vars = {
+        'personalFirstname': member.firstname,
+        'personalLastname': member.lastname,
+        'personalAddressOne': member.address1,
+        'personalAddressTwo': member.address2,
+        'personalPostCode': member.postcode,
+        'personalCity': member.city,
+        'personalMShipNo': unicode(member.membership_number),
+        'invoiceNo': invoice_no,
+        'invoiceDate': invoice_date,
+        'account': unicode(-member.dues15_balance - member.dues16_balance
+            - member.dues17_balance - member.dues18_balance),
+        'duesStart':  is_altered_str if (
+            invoice.is_altered) else string_start_quarter_dues18(member),
+        'duesAmount': unicode(invoice.invoice_amount),
+        'lang': 'de',
+        'pdfBackground': bg_pdf,
+    }
+
+    return create_pdf(tex_vars, tpl_tex, invoice)
 
 
 @view_config(
@@ -813,6 +814,19 @@ def dues18_reduction(request):
         '#dues18')
 
 
+@view_config(
+    route_name='dues18_reversal_pdf_backend',
+    permission='manage')
+def make_dues18_reversal_pdf_backend(request):
+    """
+    Show the invoice to a backend user
+    """
+    invoice_number = request.matchdict['i']
+    invoice = Dues18Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
+    return get_dues18_invoice(invoice, request)
+
+
 @view_config(route_name='make_dues18_reversal_invoice_pdf')
 def make_dues18_reversal_invoice_pdf(request):
     """
@@ -825,58 +839,34 @@ def make_dues18_reversal_invoice_pdf(request):
 
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
+    invoice = Dues18Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
 
-    try:
-        member = C3sMember.get_by_dues18_token(token)
-        assert member is not None
-        assert member.dues18_token == token
+    member = None
+    token_is_invalid = True
+    older_than_a_year = True
+    if invoice is not None:
+        member = C3sMember.get_by_id(invoice.member_id)
+        token_is_invalid = token != invoice.token
+        older_than_a_year = (
+            date.today() - invoice.invoice_date.date() > timedelta(days=365))
 
-    except AssertionError:
-        request.session.flash(
-            u"This member and token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error_page'))
-
-    try:
-        invoice = Dues18Invoice.get_by_invoice_no(invoice_number)
-        assert invoice is not None
-    except AssertionError:
+    if invoice is None or token_is_invalid or not invoice.is_reversal \
+            or older_than_a_year or member.dues18_paid:
         request.session.flash(
             u"No invoice found!",
             'message_to_user'  # message queue for user
         )
         return HTTPFound(request.route_url('error_page'))
 
-    # sanity check: invoice token must match with token
-    try:
-        assert(invoice.token == token)
-    except AssertionError:
-        request.session.flash(
-            u"Token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error_page'))
-
-    # sanity check: reversal invoice token must be reversal
-    try:
-        assert(invoice.is_reversal)
-    except AssertionError:
-        request.session.flash(
-            u"No reversal invoice found!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error_page'))
-
-    # return a pdf file
-    pdf_file = make_reversal_pdf_pdflatex(member, invoice)
+    pdf_file = make_reversal_pdf_pdflatex(invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "r")
     return response
 
 
-def make_reversal_pdf_pdflatex(member, invoice=None):
+def make_reversal_pdf_pdflatex(invoice):
     """
     This function uses pdflatex to create a PDF
     as reversal invoice: cancel and balance out a former invoice.
@@ -886,38 +876,13 @@ def make_reversal_pdf_pdflatex(member, invoice=None):
     if dues18_archive_invoice is not None:
         return dues18_archive_invoice
 
-    pdflatex_dir = os.path.abspath(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            '../../certificate/'
-        ))
-    # pdf backgrounds
-    pdf_backgrounds = {
-        'blank': pdflatex_dir + '/' + 'Urkunde_Hintergrund_blank.pdf',
-    }
-
-    # latex templates
-    latex_templates = {
-        'generic': pdflatex_dir + '/' + 'dues18_storno_de.tex',
-        'generic_en': pdflatex_dir + '/' + 'dues18_storno_en.tex',
-    }
-
-    # choose background and template
-    background = 'blank'
-    template_name = 'generic' if 'de' in member.locale else 'generic_en'
-
-    # pick background and template
-    bg_pdf = pdf_backgrounds[background]
-    tpl_tex = latex_templates[template_name]
-
-    # pick temporary file for pdf
-    receipt_pdf = tempfile.NamedTemporaryFile(prefix='storno_', suffix='.pdf')
-
-    (path, filename) = os.path.split(receipt_pdf.name)
-    filename = os.path.splitext(filename)[0]
-
+    member = C3sMember.get_by_id(invoice.member_id)
+    template_name = 'storno_de' if 'de' in member.locale else 'storno_en'
+    bg_pdf = PDF_BACKGROUNDS['blank']
+    tpl_tex = LATEX_TEMPLATES[template_name]
     invoice_no = str(invoice.invoice_no).zfill(4) + '-S'
     invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
+
     # set variables for tex command
     tex_vars = {
         'personalFirstname': member.firstname,
@@ -936,36 +901,7 @@ def make_reversal_pdf_pdflatex(member, invoice=None):
         'pdfBackground': bg_pdf,
     }
 
-    # generate tex command for pdflatex
-    tex_cmd = u''
-    for key, val in tex_vars.iteritems():
-        tex_cmd += '\\newcommand{\\%s}{%s}' % (key, TexTools.escape(val))
-    tex_cmd += '\\input{%s}' % tpl_tex
-    tex_cmd = u'"'+tex_cmd+'"'
-
-    # XXX: try to find out, why utf-8 doesn't work on debian
-    subprocess.call(
-        [
-            'pdflatex',
-            '-jobname', filename,
-            '-output-directory', path,
-            '-interaction', 'nonstopmode',
-            '-halt-on-error',
-            tex_cmd.encode('latin_1')
-        ],
-        stdout=open(os.devnull, 'w'),  # hide output
-        stderr=subprocess.STDOUT,
-        cwd=pdflatex_dir
-    )
-
-    # cleanup
-    aux = os.path.join(path, filename + '.aux')
-    if os.path.isfile(aux):
-        os.unlink(aux)
-
-    archive_dues18_invoice(receipt_pdf, invoice)
-
-    return receipt_pdf
+    return create_pdf(tex_vars, tpl_tex, invoice)
 
 
 @view_config(
