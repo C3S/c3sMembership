@@ -97,8 +97,34 @@
                             title="Sort by date of submission: descending"
                             class="fas fa-sort-numeric-up"></a>
                 </th>
-                <th>Type</th>
-                <th>Shares</th>
+                <th>
+                    <a href="${pagination.url.sort_property_alternating_direction('membership_type')}"
+                            title="Sort by membership type">
+                        <i class="fas fa-sort"></i>
+                        Type
+                    </a>
+                    <a href="${pagination.url.sort_property('membership_type').sort_direction('asc')}"
+                            title="Sort by membership type: ascending"
+                            class="fas fa-sort-alpha-down"></a>
+                    <a href="${pagination.url.sort_property('membership_type').sort_direction('desc')}"
+                            title="Sort by membership type: descending"
+                            class="fas fa-sort-alpha-up">
+                    </a>
+                </th>
+                <th>
+                    <a href="${pagination.url.sort_property_alternating_direction('num_shares')}"
+                            title="Sort by number of shares">
+                        <i class="fas fa-sort"></i>
+                        Shares
+                    </a>
+                    <a href="${pagination.url.sort_property('num_shares').sort_direction('asc')}"
+                            title="Sort by number of shares: ascending"
+                            class="fas fa-sort-numeric-down"></a>
+                    <a href="${pagination.url.sort_property('num_shares').sort_direction('desc')}"
+                            title="Sort by number of shares: descending"
+                            class="fas fa-sort-numeric-up">
+                    </a>
+                </th>
                 <th>Email</th>
                 <th>Application Process</th>
                 <th>Edit</th>
