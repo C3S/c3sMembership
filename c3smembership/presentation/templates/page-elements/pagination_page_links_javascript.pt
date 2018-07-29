@@ -1,0 +1,8 @@
+<script type="text/javascript">
+    // Focus input when modal is opened and select the content so that the new
+    // value can be entered.
+    $("#page-size-modal").on("shown.bs.modal", function() {
+        $("#page-size").focus();
+        $("#page-size").select();
+    });
+</script>

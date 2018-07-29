@@ -200,7 +200,6 @@
             </tr>
         </table>
         <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links.pt"></p>
-        <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_size_form.pt"></p>
     </tal:block>
     <tal:block metal:fill-slot="javascript">
         <script type="text/javascript">
@@ -235,5 +234,6 @@
         </script>
         <script src="${request.static_url('deform:static/scripts/deform.js')}"
                 type="text/javascript"></script>
-        </tal:block>
+        <script metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links_javascript.pt"></script>
+    </tal:block>
 </html>

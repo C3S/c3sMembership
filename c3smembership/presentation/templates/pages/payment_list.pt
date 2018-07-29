@@ -7,6 +7,9 @@
         xmlns:metal="http://xml.zope.org/namespaces/metal"
         metal:use-macro="backend"
         i18n:domain="c3smembership">
+    <tal:block metal:fill-slot="javascript">
+        <script metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links_javascript.pt"></script>
+    </tal:block>
     <tal:block metal:fill-slot="content">
         <h1>Payments</h1>
         <div id="filter" tal:content="structure filter_form"/>
@@ -171,6 +174,5 @@
             </tfoot>
         </table>
         <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links.pt"></p>
-        <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_size_form.pt"></p>
     </tal:block>
 </html>

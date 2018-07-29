@@ -34,6 +34,7 @@
                 });
             });
         </script>
+        <script metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links_javascript.pt"></script>
     </tal:block>
     <tal:block metal:fill-slot="content">
         <h1>
@@ -292,6 +293,5 @@
             </tr>
         </table>
         <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links.pt"></p>
-        <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_size_form.pt"></p>
     </tal:block>
 </html>
