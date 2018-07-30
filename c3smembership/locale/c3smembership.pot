@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: c3smembership 1.22\n"
+"Project-Id-Version: c3smembership 1.23\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-07-11 07:57+0200\n"
+"POT-Creation-Date: 2018-07-30 20:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -155,7 +155,7 @@ msgid "Signature Received"
 msgstr ""
 
 #: c3smembership/edit_member.py:269
-msgid "Signature Receipt Date"
+msgid "Signature reception date"
 msgstr ""
 
 #: c3smembership/edit_member.py:280
@@ -163,7 +163,7 @@ msgid "Payment Received"
 msgstr ""
 
 #: c3smembership/edit_member.py:284
-msgid "Payment Receipt Date"
+msgid "Payment reception date"
 msgstr ""
 
 #: c3smembership/edit_member.py:297
@@ -653,77 +653,77 @@ msgstr ""
 msgid "join-form-dues-regulations-linktitle-en"
 msgstr ""
 
-#. Default: Dues 2015
-#: c3smembership/templates/stats.pt:87
+#. Default: 2015
+#: c3smembership/templates/stats.pt:88
 msgid "stats-dues-2015"
 msgstr ""
 
 #. Default: Month
-#: c3smembership/templates/stats.pt:91 c3smembership/templates/stats.pt:155
-#: c3smembership/templates/stats.pt:219 c3smembership/templates/stats.pt:283
+#: c3smembership/templates/stats.pt:92 c3smembership/templates/stats.pt:156
+#: c3smembership/templates/stats.pt:220 c3smembership/templates/stats.pt:284
 msgid "stats-dues-month"
 msgstr ""
 
 #. Default: Normal amount invoiced
-#: c3smembership/templates/stats.pt:92 c3smembership/templates/stats.pt:156
-#: c3smembership/templates/stats.pt:220 c3smembership/templates/stats.pt:284
+#: c3smembership/templates/stats.pt:93 c3smembership/templates/stats.pt:157
+#: c3smembership/templates/stats.pt:221 c3smembership/templates/stats.pt:285
 msgid "stats-dues-amount-invoiced-normal"
 msgstr ""
 
 #. Default: Reversal amount invoiced
-#: c3smembership/templates/stats.pt:93 c3smembership/templates/stats.pt:157
-#: c3smembership/templates/stats.pt:221 c3smembership/templates/stats.pt:285
+#: c3smembership/templates/stats.pt:94 c3smembership/templates/stats.pt:158
+#: c3smembership/templates/stats.pt:222 c3smembership/templates/stats.pt:286
 msgid "stats-dues-amount-invoiced-reversal"
 msgstr ""
 
 #. Default: Amount invoiced
-#: c3smembership/templates/stats.pt:94 c3smembership/templates/stats.pt:158
-#: c3smembership/templates/stats.pt:222 c3smembership/templates/stats.pt:286
+#: c3smembership/templates/stats.pt:95 c3smembership/templates/stats.pt:159
+#: c3smembership/templates/stats.pt:223 c3smembership/templates/stats.pt:287
 msgid "stats-dues-amount-invoiced"
 msgstr ""
 
 #. Default: Amount paid
-#: c3smembership/templates/stats.pt:95 c3smembership/templates/stats.pt:159
-#: c3smembership/templates/stats.pt:223 c3smembership/templates/stats.pt:287
+#: c3smembership/templates/stats.pt:96 c3smembership/templates/stats.pt:160
+#: c3smembership/templates/stats.pt:224 c3smembership/templates/stats.pt:288
 msgid "stats-dues-amount-paid"
 msgstr ""
 
 #. Default: Current amount invoiced
-#: c3smembership/templates/stats.pt:96 c3smembership/templates/stats.pt:160
-#: c3smembership/templates/stats.pt:224 c3smembership/templates/stats.pt:288
+#: c3smembership/templates/stats.pt:97 c3smembership/templates/stats.pt:161
+#: c3smembership/templates/stats.pt:225 c3smembership/templates/stats.pt:289
 msgid "stats-dues-amount-invoiced-current"
 msgstr ""
 
 #. Default: Current amount paid
-#: c3smembership/templates/stats.pt:97 c3smembership/templates/stats.pt:161
-#: c3smembership/templates/stats.pt:225 c3smembership/templates/stats.pt:289
+#: c3smembership/templates/stats.pt:98 c3smembership/templates/stats.pt:162
+#: c3smembership/templates/stats.pt:226 c3smembership/templates/stats.pt:290
 msgid "stats-dues-amount-paid-current"
 msgstr ""
 
 #. Default: Current balance
-#: c3smembership/templates/stats.pt:98 c3smembership/templates/stats.pt:162
-#: c3smembership/templates/stats.pt:226 c3smembership/templates/stats.pt:290
+#: c3smembership/templates/stats.pt:99 c3smembership/templates/stats.pt:163
+#: c3smembership/templates/stats.pt:227 c3smembership/templates/stats.pt:291
 msgid "stats-dues-amount-current"
 msgstr ""
 
 #. Default: Total
-#: c3smembership/templates/stats.pt:139 c3smembership/templates/stats.pt:203
-#: c3smembership/templates/stats.pt:267 c3smembership/templates/stats.pt:331
+#: c3smembership/templates/stats.pt:140 c3smembership/templates/stats.pt:204
+#: c3smembership/templates/stats.pt:268 c3smembership/templates/stats.pt:332
 msgid "stats-dues-sum"
 msgstr ""
 
-#. Default: Dues 2016
-#: c3smembership/templates/stats.pt:151
+#. Default: 2016
+#: c3smembership/templates/stats.pt:152
 msgid "stats-dues-2016"
 msgstr ""
 
-#. Default: Dues 2017
-#: c3smembership/templates/stats.pt:215
+#. Default: 2017
+#: c3smembership/templates/stats.pt:216
 msgid "stats-dues-2017"
 msgstr ""
 
-#. Default: Dues 2018
-#: c3smembership/templates/stats.pt:279
+#. Default: 2018
+#: c3smembership/templates/stats.pt:280
 msgid "stats-dues-2018"
 msgstr ""
 
