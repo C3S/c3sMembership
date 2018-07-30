@@ -109,6 +109,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         DBSession.remove()
         self.session = _initTestingDB()
         self.config.registry.settings['testing.mail_to_console'] = 'no'
+        self.config.registry.settings['c3smembership.mailaddr'] = \
+            'test@example.com'
         # set this to true to see mail bodies, but:
         # tests will fail: no mail in outbox
 

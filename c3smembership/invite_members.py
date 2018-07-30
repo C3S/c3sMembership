@@ -95,12 +95,9 @@ def invite_member_bcgv(request):
     email_subject, email_body = make_bcga18_invitation_email(member, url)
     message = Message(
         subject=email_subject,
-        sender='yes@c3s.cc',
+        sender=request.registry.settings['c3smembership.mailaddr'],
         recipients=[member.email],
         body=email_body,
-        extra_headers={
-            'Reply-To': 'office@c3s.cc',
-            }
     )
     send_message(request, message)
 
@@ -159,12 +156,9 @@ def batch_invite(request):
         email_subject, email_body = make_bcga18_invitation_email(member, url)
         message = Message(
             subject=email_subject,
-            sender='yes@c3s.cc',
+            sender=request.registry.settings['c3smembership.mailaddr'],
             recipients=[member.email],
             body=email_body,
-            extra_headers={
-                'Reply-To': 'office@c3s.cc',
-            }
         )
         send_message(request, message)
 

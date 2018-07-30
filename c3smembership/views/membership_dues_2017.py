@@ -268,12 +268,9 @@ def send_dues17_invoice_email(request, m_id=None):
             start_quarter)
         message = Message(
             subject=email_subject,
-            sender='yes@c3s.cc',
+            sender=request.registry.settings['c3smembership.mailaddr'],
             recipients=[member.email],
             body=email_body,
-            extra_headers={
-                'Reply-To': 'office@c3s.cc',
-            }
         )
     elif 'investing' in member.membership_type:
         if member.is_legalentity:
@@ -284,12 +281,9 @@ def send_dues17_invoice_email(request, m_id=None):
                 make_dues_invoice_investing_email(member)
         message = Message(
             subject=email_subject,
-            sender='yes@c3s.cc',
+            sender=request.registry.settings['c3smembership.mailaddr'],
             recipients=[member.email],
             body=email_body,
-            extra_headers={
-                'Reply-To': 'office@c3s.cc',
-            }
         )
 
     # print to console or send mail
@@ -807,12 +801,9 @@ def dues17_reduction(request):
 
     message = Message(
         subject=email_subject,
-        sender='yes@c3s.cc',
+        sender=request.registry.settings['c3smembership.mailaddr'],
         recipients=[member.email],
         body=email_body,
-        extra_headers={
-            'Reply-To': 'office@c3s.cc',
-        }
     )
     if is_exemption:
         request.session.flash('exemption email was sent to user!',

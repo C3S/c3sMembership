@@ -74,6 +74,8 @@ class TestReminderViews(unittest.TestCase):
         self.config.include('pyramid_mailer.testing')
         self.config.include('c3smembership.presentation.pagination')
         self.config.registry.settings['testing.mail_to_console'] = 'false'
+        self.config.registry.settings['c3smembership.mailaddr'] = \
+            'test@example.com'
         self.config.add_route('dashboard', '/')
         def dashboard_content_size_provider(filtering):
             return 0

@@ -156,21 +156,25 @@ class MemberApplicationTest(TestCase):
         membership_application.datetime = mock.Mock()
         membership_application.datetime.now.side_effect = ['now result']
 
+        pyramid_request_mock = mock.Mock()
+        pyramid_request_mock.registry.settings = {
+            'c3smembership.mailaddr': 'test@example.com'}
+
         membership_application.mail_signature_confirmation(
             'member id',
-            'pyramid request')
+            pyramid_request_mock)
 
         make_signature_confirmation_email.assert_called_with(member_mock)
         member_repository_mock.get_member_by_id.assert_called_with('member id')
         self.assertEqual(
             send_message.call_args[0][0],
-            'pyramid request')
+            pyramid_request_mock)
         self.assertEqual(
             send_message.call_args[0][1].subject,
             'email subject')
         self.assertEqual(
             send_message.call_args[0][1].sender,
-            'yes@c3s.cc')
+            'test@example.com')
         self.assertEqual(
             send_message.call_args[0][1].recipients,
             ['jane@example.com'])
