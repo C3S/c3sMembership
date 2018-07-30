@@ -266,7 +266,7 @@ def edit_member(request):
         )
         signature_received_date = colander.SchemaNode(
             colander.Date(),
-            title=_('Signature Receipt Date'),
+            title=_('Signature reception date'),
             validator=Range(
                 min=date(1070, 1, 1),
                 max=date.today(),
@@ -281,7 +281,7 @@ def edit_member(request):
         )
         payment_received_date = colander.SchemaNode(
             colander.Date(),
-            title=_(u'Payment Receipt Date'),
+            title=_(u'Payment reception date'),
             validator=Range(
                 min=date(1970, 1, 1),
                 max=date.today(),

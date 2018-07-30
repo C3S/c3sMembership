@@ -1,3 +1,16 @@
+Next Release
+============
+
+
+- Restrict dues invoice access. Dues invoices can only be downloaded if they
+  have not been paid yet and only for one year.
+
+- Use email address from settings instead of hard-coded.
+
+- Unify descriptions and field names for signature and payment reception date
+
+
+
 1.23
 ====
 
