@@ -1090,7 +1090,7 @@
                                     <!--! if this invoice is a REVERSAL INVOICE -->
                                     <a  tal:condition="i.is_reversal"
                                             href="${request.route_url('dues18_reversal_pdf_backend',
-                                                no=str(i.invoice_no).zfill(4))}"
+                                                i=str(i.invoice_no).zfill(4))}"
                                             title="download ${i.invoice_no_string}-S.pdf">
                                         ${i.invoice_no_string}
                                     </a>
