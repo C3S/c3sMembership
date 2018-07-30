@@ -208,8 +208,19 @@
                                         title="Confirm signature"
                                         class="fas fa-pencil-alt text-danger">
                                 </a>
+                                <?python
+                                    signature_number_text = \
+                                        'Send signature reminder no. {0}' \
+                                        .format(int(member.sent_signature_reminder + 1))
+                                    last_signature_text = ''
+                                    if member.sent_signature_reminder > 0:
+                                        last_signature_text = \
+                                            ', last sent on {0}' \
+                                            .format(member.sent_signature_reminder_date.strftime('%Y-%m-%d'))
+                                    signature_reminder_title = signature_number_text + last_signature_text
+                                ?>
                                 <a href="${request.route_url('mail_sig_reminder', memberid=member.id)}"
-                                        title="Send signature reminder no. ${member.sent_signature_reminder + 1}"
+                                        title="${signature_reminder_title}"
                                         class="fas fa-bell"
                                         id="send-reminder-${member.id}"
                                         membername="${member.firstname} ${member.lastname}">
@@ -240,8 +251,19 @@
                                         title="Confirm payment"
                                         class="fas fa-coins text-danger">
                                 </a>
+                                <?python
+                                    payment_number_text = \
+                                        'Send payment reminder no. {0}' \
+                                        .format(int(member.sent_payment_reminder + 1))
+                                    last_payment_text = ''
+                                    if member.sent_payment_reminder > 0:
+                                        last_payment_text = \
+                                            ', last sent on {0}' \
+                                            .format(member.sent_payment_reminder_date.strftime('%Y-%m-%d'))
+                                    payment_reminder_title = payment_number_text + last_payment_text
+                                ?>
                                 <a href="${request.route_url('mail_pay_reminder', memberid=member.id)}"
-                                        title="Send payment reminder no. ${member.sent_payment_reminder + 1}"
+                                        title="${payment_reminder_title}"
                                         class="fas fa-bell"
                                         id="send-reminder-${member.id}"
                                         membername="${member.firstname} ${member.lastname}">
