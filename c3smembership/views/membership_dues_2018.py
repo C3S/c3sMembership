@@ -438,7 +438,7 @@ def make_dues18_invoice_no_pdf(request):
     if older_than_a_year or member.dues18_paid:
         request.session.flash(
             u'This invoice cannot be downloaded anymore. '
-            u'Please contact yes@c3s.cc for further information.',
+            u'Please contact office@c3s.cc for further information.',
             'message_to_user'
         )
         return HTTPFound(request.route_url('error_page'))
