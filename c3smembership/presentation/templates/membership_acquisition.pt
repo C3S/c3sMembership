@@ -8,25 +8,20 @@
             $().ready(function() {
                 $(".delete-link").click(function(event) {
                     event.preventDefault();
-                    member_id = $(this).attr('id').split('-')[2];
-                    ajaxUrl = '${request.route_url('get_member', member_id=0)}'
-                    ajaxUrl = ajaxUrl.substring(0, ajaxUrl.length - 1) + member_id;
-                    member_data = $.get(
-                        ajaxUrl,
-                        function(member) {
-                            answer = confirm("Do you want to delete member " + member.id + " \"" + member.lastname + ", " + member.firstname + "\"?");
-                            if (answer) {
-                                deleteUrl = '${request.route_url('delete_entry', memberid='{memberid}', _query={'redirect': 'dashboard'})}';
-                                deleteUrl = deleteUrl.replace(encodeURIComponent('{memberid}'), member_id) + '&amp;deletion_confirmed=1';
-                                window.location.href = deleteUrl;
-                            }
-                        }
-                    );
+                    member_id = $(this).attr('member-id');
+                    member_name = $(this).attr('member-name');
+
+                    answer = confirm("Do you want to delete member " + member_id + " \"" + member_name + "\"?");
+                    if (answer) {
+                        deleteUrl = "${request.route_url('delete_entry', memberid='{memberid}', _query={'redirect': 'dashboard'})}";
+                        deleteUrl = deleteUrl.replace(encodeURIComponent("{memberid}"), member_id) + "&amp;deletion_confirmed=1";
+                        window.location.href = deleteUrl;
+                    }
                 });
                 $(".send-reminder").click(function(event) {
                     member_id = $(this).attr('id').split('-')[2];
-                    member_name = $(this).attr('membername');
-                    answer = confirm("Are you sure you want to send the reminder email to " + member_name + " (afm id " + member_id + ") ?");
+                    member_name = $(this).attr('member-name');
+                    answer = confirm("Are you sure you want to send the reminder email to member " + member_id + " \"" + member_name + "\"?");
                     if(answer == false) {
                       event.preventDefault();
                     }
@@ -188,7 +183,8 @@
                                 </span>
                                 <a href="${request.route_url('mail_mail_confirmation', member_id=member.id)}"
                                         title="Send email confirmation reminder"
-                                        class="fas fa-bell">
+                                        class="fas fa-bell send-reminder"
+                                        member-name="${member.firstname} ${member.lastname}">
                                 </a>
                             </div>
                             <div tal:condition="member.email_is_confirmed" tal:omit-tag="">
@@ -208,9 +204,9 @@
                                 </a>
                                 <a href="${request.route_url('mail_sig_reminder', memberid=member.id)}"
                                         title="Send signature reminder no. ${member.sent_signature_reminder + 1}"
-                                        class="fas fa-bell"
+                                        class="fas fa-bell send-reminder"
                                         id="send-reminder-${member.id}"
-                                        membername="${member.firstname} ${member.lastname}">
+                                        member-name="${member.firstname} ${member.lastname}">
                                 </a>
                                 <i class="fas fa-envelope text-secondary"
                                         title="Confirmations can only be sent when the signature has been received."></i>
@@ -240,9 +236,9 @@
                                 </a>
                                 <a href="${request.route_url('mail_pay_reminder', memberid=member.id)}"
                                         title="Send payment reminder no. ${member.sent_payment_reminder + 1}"
-                                        class="fas fa-bell"
+                                        class="fas fa-bell send-reminder"
                                         id="send-reminder-${member.id}"
-                                        membername="${member.firstname} ${member.lastname}">
+                                        member-name="${member.firstname} ${member.lastname}">
                                 </a>
                                 <i class="fas fa-envelope text-secondary"
                                         title="Confirmations can only be sent when the payment has been received."></i>
@@ -285,7 +281,9 @@
                     <a href="${request.route_url('delete_entry', memberid=member.id, _query={'redirect': 'dashboard'})}"
                             class="fas fa-trash delete-link"
                             title="Delete"
-                            id="delete-link-${member.id}">
+                            id="delete-link-${member.id}"
+                            member-id="${member.id}"
+                            member-name="${member.firstname} ${member.lastname}">
                     </a>
                 </td>
             </tr>
