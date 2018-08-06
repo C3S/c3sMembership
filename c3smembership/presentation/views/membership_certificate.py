@@ -76,7 +76,7 @@ def send_certificate_email(request):
 
     the_message = Message(
         subject=email_subject,
-        sender='office@c3s.cc',
+        sender=request.registry.settings['c3smembership.mailaddr'],
         recipients=[member.email],
         body=email_body
     )

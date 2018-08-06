@@ -194,7 +194,9 @@
                     <a href="${request.route_url('delete_entry', memberid=member.id, _query={'redirect': 'membership_listing_backend'})}"
                             class="fas fa-trash delete-link"
                             title="Delete"
-                            id="delete-link-${member.id}">
+                            id="delete-link-${member.id}"
+                            member-id="${member.id}"
+                            member-name="${member.firstname} ${member.lastname}">
                     </a>
                 </td>
             </tr>
@@ -204,30 +206,16 @@
     <tal:block metal:fill-slot="javascript">
         <script type="text/javascript">
             $().ready(function() {
-                console.debug("ready");
                 $(".delete-link").click(function(event) {
                     event.preventDefault();
-                    member_id = $(this).attr('id').split('-')[2];
-                    ajaxUrl = '${request.route_url('get_member', member_id=0)}'
-                    ajaxUrl = ajaxUrl.substring(0, ajaxUrl.length - 1) + member_id;
-                    member_data = $.get(
-                        ajaxUrl,
-                        function(member) {
-                            answer = confirm("Do you want to delete member " + member.id + " \"" + member.lastname + ", " + member.firstname + "\"?");
-                            if (answer) {
-                                deleteUrl = '${request.route_url('delete_entry', memberid='{memberid}', _query={'redirect': 'membership_listing_backend'})}';
-                                deleteUrl = deleteUrl.replace(encodeURIComponent('{memberid}'), member_id) + '&amp;deletion_confirmed=1';
-                                window.location.href = deleteUrl;
-                            }
-                        }
-                    );
-                });
-                $(".send-reminder").click(function(event) {
-                    member_id = $(this).attr('id').split('-')[2];
-                    member_name = $(this).attr('membername');
-                    answer = confirm("Are you sure you want to send the reminder email to " + member_name + " (afm id " + member_id + ") ?");
-                    if(answer == false) {
-                        event.preventDefault();
+                    member_id = $(this).attr('member-id');
+                    member_name = $(this).attr('member-name');
+
+                    answer = confirm("Do you want to delete member " + member_id + " \"" + member_name + "\"?");
+                    if (answer) {
+                        deleteUrl = "${request.route_url('delete_entry', memberid='{memberid}', _query={'redirect': 'dashboard'})}";
+                        deleteUrl = deleteUrl.replace(encodeURIComponent("{memberid}"), member_id) + "&amp;deletion_confirmed=1";
+                        window.location.href = deleteUrl;
                     }
                 });
             });

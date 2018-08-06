@@ -142,7 +142,7 @@ class MembershipApplication(object):
         email_subject, email_body = _make_signature_confirmation_email(member)
         message = Message(
             subject=email_subject,
-            sender='yes@c3s.cc',
+            sender=request.registry.settings['c3smembership.mailaddr'],
             recipients=[member.email],
             body=email_body
         )

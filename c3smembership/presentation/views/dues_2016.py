@@ -260,12 +260,9 @@ def send_dues16_invoice_email(request, m_id=None):
             start_quarter)
         message = Message(
             subject=email_subject,
-            sender='yes@c3s.cc',
+            sender=request.registry.settings['c3smembership.mailaddr'],
             recipients=[member.email],
             body=email_body,
-            extra_headers={
-                'Reply-To': 'office@c3s.cc',
-            }
         )
     elif 'investing' in member.membership_type:
         if member.is_legalentity:
@@ -276,12 +273,9 @@ def send_dues16_invoice_email(request, m_id=None):
                 make_dues_invoice_investing_email(member)
         message = Message(
             subject=email_subject,
-            sender='yes@c3s.cc',
+            sender=request.registry.settings['c3smembership.mailaddr'],
             recipients=[member.email],
             body=email_body,
-            extra_headers={
-                'Reply-To': 'office@c3s.cc',
-            }
         )
 
     # print to console or send mail
@@ -515,6 +509,14 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
         invoice_no = str(member.dues16_invoice_no).zfill(4)
         invoice_date = member.dues16_invoice_date
 
+    dues15_balance = D('0.0')
+    dues16_balance = D('0.0')
+
+    if not math.isnan(member.dues15_balance):
+        dues15_balance = member.dues15_balance
+    if not math.isnan(member.dues16_balance):
+        dues16_balance = member.dues16_balance
+
     # set variables for tex command
     tex_vars = {
         'personalFirstname': member.firstname,
@@ -526,7 +528,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
         'personalMShipNo': unicode(member.membership_number),
         'invoiceNo': str(invoice_no).zfill(4),  # leading zeroes!
         'invoiceDate': invoice_date,
-        'account': unicode(-member.dues15_balance -member.dues16_balance),
+        'account': unicode(-dues15_balance - dues16_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else string_start_quarter_dues16(member),
         'duesAmount': unicode(invoice.invoice_amount),
@@ -545,6 +547,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
 
     # XXX: try to find out, why utf-8 doesn't work on debian
+    # TODO: Handle any return code not equal to zero
     subprocess.call(
         [
             'pdflatex',
@@ -787,12 +790,9 @@ def dues16_reduction(request):
 
     message = Message(
         subject=email_subject,
-        sender='yes@c3s.cc',
+        sender=request.registry.settings['c3smembership.mailaddr'],
         recipients=[member.email],
         body=email_body,
-        extra_headers={
-            'Reply-To': 'office@c3s.cc',
-        }
     )
     if is_exemption:
         request.session.flash('exemption email was sent to user!',

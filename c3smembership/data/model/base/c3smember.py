@@ -1497,9 +1497,8 @@ class C3sMember(Base):
         self.dues18_balance = self.dues18_balance - paid_amount
 
     def set_dues18_amount(self, dues_amount):
-        if self.dues18_amount is None \
-                or not isinstance(self.dues18_amount, Decimal) \
-                or math.isnan(self.dues18_amount):
+        if math.isnan(self.dues18_amount) \
+                or not isinstance(self.dues18_amount, Decimal):
             dues18_amount = Decimal('0')
         else:
             dues18_amount = self.dues18_amount

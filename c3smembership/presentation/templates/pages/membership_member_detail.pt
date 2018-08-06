@@ -669,19 +669,6 @@
                         </a>
                     </td>
                 </tr>
-                <tr tal:condition="'investing' not in member.membership_type and member.dues17_invoice">
-                    <td>PDF generieren (download)</td>
-                    <td>
-                        <a href="${request.route_url('make_dues17_invoice_no_pdf',
-                                    email=member.email,
-                                    code=member.dues17_token,
-                                    i=str(member.dues17_invoice_no).zfill(4))}"
-                                title="Mitgliedschaftsbeitragsrechnung ansehen"
-                                class="btn btn-success">
-                            PDF generieren und laden
-                        </a>
-                    </td>
-                </tr>
                 <!--! reduction / exemption -->
                 <tr tal:condition="'investing' not in member.membership_type and member.dues17_invoice">
                     <td>
@@ -940,9 +927,7 @@
                 <tr tal:condition="'investing' not in member.membership_type and member.dues18_invoice">
                     <td>PDF generieren (download)</td>
                     <td>
-                        <a href="${request.route_url('make_dues18_invoice_no_pdf',
-                                    email=member.email,
-                                    code=member.dues18_token,
+                        <a href="${request.route_url('dues18_invoice_pdf_backend',
                                     i=str(member.dues18_invoice_no).zfill(4))}"
                                 title="Mitgliedschaftsbeitragsrechnung ansehen"
                                 class="btn btn-success">
@@ -1122,19 +1107,15 @@
                                 <td>
                                     <!--! if this invoice is a normal invoice -->
                                     <a tal:condition="not i.is_reversal"
-                                            href="${request.route_url('make_dues18_invoice_no_pdf',
-                                                i=str(i.invoice_no).zfill(4),
-                                                email=i.email,
-                                                code=i.token)}"
+                                            href="${request.route_url('dues18_invoice_pdf_backend',
+                                                i=str(i.invoice_no).zfill(4))}"
                                             title="download ${i.invoice_no_string}.pdf">
                                         ${i.invoice_no_string}
                                     </a>
                                     <!--! if this invoice is a REVERSAL INVOICE -->
                                     <a  tal:condition="i.is_reversal"
-                                            href="${request.route_url('make_dues18_reversal_invoice_pdf',
-                                                no=str(i.invoice_no).zfill(4),
-                                                email=i.email,
-                                                code=i.token)}"
+                                            href="${request.route_url('dues18_reversal_pdf_backend',
+                                                i=str(i.invoice_no).zfill(4))}"
                                             title="download ${i.invoice_no_string}-S.pdf">
                                         ${i.invoice_no_string}
                                     </a>
