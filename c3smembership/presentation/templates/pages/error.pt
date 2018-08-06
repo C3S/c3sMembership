@@ -5,14 +5,15 @@
         metal:use-macro="frontend"
         i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
-    <div class="card my-3">
-        <div class="card-body">
-            <h2>Ooops, es ist ein Fehler aufgetreten!</h2>
-            <p class="lead alert alert-danger">
-                <span  color="red" tal:repeat="error request.session.pop_flash('message_to_user')">
-                    ${error}
-                </span>
-            </p>
+        <div class="card my-3">
+            <div class="card-body">
+                <h2>Ooops, es ist ein Fehler aufgetreten!</h2>
+                <p class="lead alert alert-danger">
+                    <span  color="red" tal:repeat="error request.session.pop_flash('message_to_user')">
+                        ${error}
+                    </span>
+                </p>
+            </div>
         </div>
     </tal:block>
 </html>

@@ -1,93 +1,95 @@
-<div metal:define-macro="paging_bar_top" class="pagination-bar row">
-    <div class="col">
-        <a id="navigate_first"
-                tal:condition="not pagination.paging.is_first_page"
-                href="${pagination.url.first_page}"
-                class="fas fa-fast-backward"
-                title="go to first page">
-        </a>
-        <i class="fas fa-fast-backward inactive"
-                tal:condition="pagination.paging.is_first_page">
-        </i>
-        <a id="navigate_previous"
-                tal:condition="not pagination.paging.is_first_page"
-                href="${pagination.url.previous_page}"
-                class="fas fa-backward"
-                title="go to previous page">
-        </a>
-        <i class="fas fa-backward inactive"
-                tal:condition="pagination.paging.is_first_page">
-        </i>
-        Page ${pagination.paging.page_number} of ${pagination.paging.page_count}
-        <a id="navigate_next"
-                tal:condition="not pagination.paging.is_last_page"
-                href="${pagination.url.next_page}"
-                class="fas fa-forward"
-                title="go to next page">
-        </a>
-        <i class="fas fa-forward inactive"
-                tal:condition="pagination.paging.is_last_page">
-        </i>
-        <a id="navigate_last"
-                tal:condition="not pagination.paging.is_last_page"
-                href="${pagination.url.last_page}"
-                class="fas fa-fast-forward"
-                title="go to last page">
-        </a>
-        <i class="fas fa-fast-forward inactive"
-                tal:condition="pagination.paging.is_last_page">
-        </i>
+<div>
+    <div metal:define-macro="paging_bar_top" class="pagination-bar row">
+        <div class="col">
+            <a id="navigate_first"
+                    tal:condition="not pagination.paging.is_first_page"
+                    href="${pagination.url.first_page}"
+                    class="fas fa-fast-backward"
+                    title="go to first page">
+            </a>
+            <i class="fas fa-fast-backward inactive"
+                    tal:condition="pagination.paging.is_first_page">
+            </i>
+            <a id="navigate_previous"
+                    tal:condition="not pagination.paging.is_first_page"
+                    href="${pagination.url.previous_page}"
+                    class="fas fa-backward"
+                    title="go to previous page">
+            </a>
+            <i class="fas fa-backward inactive"
+                    tal:condition="pagination.paging.is_first_page">
+            </i>
+            Page ${pagination.paging.page_number} of ${pagination.paging.page_count}
+            <a id="navigate_next"
+                    tal:condition="not pagination.paging.is_last_page"
+                    href="${pagination.url.next_page}"
+                    class="fas fa-forward"
+                    title="go to next page">
+            </a>
+            <i class="fas fa-forward inactive"
+                    tal:condition="pagination.paging.is_last_page">
+            </i>
+            <a id="navigate_last"
+                    tal:condition="not pagination.paging.is_last_page"
+                    href="${pagination.url.last_page}"
+                    class="fas fa-fast-forward"
+                    title="go to last page">
+            </a>
+            <i class="fas fa-fast-forward inactive"
+                    tal:condition="pagination.paging.is_last_page">
+            </i>
+        </div>
+        <div class="col text-right">
+            <a href="#" data-toggle="modal" data-target="#page-size-modal">
+                ${pagination.paging.page_size}
+            </a>
+            <span tal:condition="not pagination.paging.page_size > 1">element</span>
+            <span tal:condition="pagination.paging.page_size > 1">elements</span>
+            per page
+        </div>
     </div>
-    <div class="col text-right">
-        <a href="#" data-toggle="modal" data-target="#page-size-modal">
-            ${pagination.paging.page_size}
-        </a>
-        <span tal:condition="not pagination.paging.page_size > 1">element</span>
-        <span tal:condition="pagination.paging.page_size > 1">elements</span>
-        per page
-    </div>
-</div>
 
 
-<!--! Modal dialog -->
-<div class="modal fade" id="page-size-modal" tabindex="-1" role="dialog" aria-labelledby="set_page_size" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="set_page_size">Number of elements per page</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="${pagination.url.first_page}"
-                    method="post"
-                    class="form">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="page_size">Elements per page</label>
-                            <!--!
-                                TODO: Get post name for page size from
-                                pagination object instead of using hard-coded
-                                page_size.
-                            -->
-                            <input id="page-size"
-                                    name="page_size"
-                                    type="text"
-                                    value="${pagination.paging.page_size}"
-                                    class="form-control"/>
+    <!--! Modal dialog -->
+    <div class="modal fade" id="page-size-modal" tabindex="-1" role="dialog" aria-labelledby="set_page_size" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="set_page_size">Number of elements per page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="${pagination.url.first_page}"
+                        method="post"
+                        class="form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="page_size">Elements per page</label>
+                                <!--!
+                                    TODO: Get post name for page size from
+                                    pagination object instead of using hard-coded
+                                    page_size.
+                                -->
+                                <input id="page-size"
+                                        name="page_size"
+                                        type="text"
+                                        value="${pagination.paging.page_size}"
+                                        class="form-control"/>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="reset"
-                            class="btn btn-secondary"
-                            data-dismiss="modal">
-                        Abort
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Save
-                    </button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="reset"
+                                class="btn btn-secondary"
+                                data-dismiss="modal">
+                            Abort
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
