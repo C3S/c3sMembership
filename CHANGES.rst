@@ -1,5 +1,5 @@
-Next Release
-============
+1.23.1
+======
 
 
 - Restrict dues invoice access. Dues invoices can only be downloaded if they
