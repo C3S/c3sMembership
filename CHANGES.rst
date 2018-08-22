@@ -1,3 +1,17 @@
+1.24
+====
+
+
+- Migrate frontend to new design.
+
+- Cleanup templates and view and move them to the presentation layer.
+
+- Cleanup data model and move it to data layer.
+
+- Simplify pagination page size change.
+
+
+
 1.23.1
 ======
 
@@ -7,7 +21,7 @@
 
 - Use email address from settings instead of hard-coded.
 
-- Unify descriptions and field names for signature and payment reception date
+- Unify descriptions and field names for signature and payment reception date.
 
 
 
