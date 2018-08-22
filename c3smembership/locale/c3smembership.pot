@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: c3smembership 1.22\n"
+"Project-Id-Version: c3smembership 1.24\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-07-23 16:59+0200\n"
+"POT-Creation-Date: 2018-08-22 07:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -522,8 +522,7 @@ msgstr ""
 msgid "check-email-headline"
 msgstr ""
 
-#. Default: You will receive an email from yes@c3s.cc with a link. Please check
-#. your email!
+#. Default: You will receive an email from us with a link. Please check your email!
 #: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:42
 msgid "check-email-paragraph-check-email"
 msgstr ""
@@ -861,21 +860,21 @@ msgid ""
 "cached and therefore needs to be re-entered in case of validation issues."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:582
+#: c3smembership/presentation/views/join.py:584
 msgid ""
 "Not found. Check verification URL. If all seems right, please use the form "
 "again."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:597
+#: c3smembership/presentation/views/join.py:599
 msgid "Wrong Password!"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:642
+#: c3smembership/presentation/views/join.py:644
 msgid "Success. Load your PDF!"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:645
+#: c3smembership/presentation/views/join.py:647
 msgid "Please enter your password."
 msgstr ""
 
@@ -960,7 +959,7 @@ msgid "Signature Received"
 msgstr ""
 
 #: c3smembership/presentation/views/membership_member_edit.py:265
-msgid "Signature Receipt Date"
+msgid "Signature reception date"
 msgstr ""
 
 #: c3smembership/presentation/views/membership_member_edit.py:276
@@ -968,7 +967,7 @@ msgid "Payment Received"
 msgstr ""
 
 #: c3smembership/presentation/views/membership_member_edit.py:280
-msgid "Payment Receipt Date"
+msgid "Payment reception date"
 msgstr ""
 
 #: c3smembership/presentation/views/membership_member_edit.py:293

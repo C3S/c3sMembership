@@ -358,7 +358,7 @@ class JoinFormTests(SeleniumTestBase):
         self.assertTrue('Christoph Scheid!' in page)
 
         self.assertTrue(
-            u'You will receive an email from yes@c3s.cc with ' in page)
+            u'You will receive an email from us with ' in page)
         self.assertTrue(
             u'a link. Please check your email!' in page)
 

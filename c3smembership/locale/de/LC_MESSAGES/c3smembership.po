@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-07-23 16:59+0200\n"
+"POT-Creation-Date: 2018-08-22 07:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -542,13 +542,13 @@ msgstr "C3S Mitgliedsantrag: Bitte E-Mails abrufen."
 msgid "check-email-headline"
 msgstr "Eine E-Mail wurde verschickt,"
 
-#. Default: You will receive an email from yes@c3s.cc with a link. Please check
-#. your email!
+#. Default: You will receive an email from us with a link. Please check your
+#. email!
 #: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:42
 msgid "check-email-paragraph-check-email"
 msgstr ""
-"Du wirst eine E-Mail von yes@c3s.cc mit einem Bestätigungslink erhalten. "
-"Bitte rufe Deine E-Mails ab."
+"Du wirst eine E-Mail von uns mit einem Bestätigungslink erhalten. Bitte "
+"rufe Deine E-Mails ab."
 
 #. Default: The email subject line will read:
 #: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:47
@@ -955,7 +955,7 @@ msgstr ""
 "Passwort nicht zwischengespeichert und muss daher bei "
 "Validierungsproblemen erneut eingegeben werden."
 
-#: c3smembership/presentation/views/join.py:582
+#: c3smembership/presentation/views/join.py:584
 msgid ""
 "Not found. Check verification URL. If all seems right, please use the "
 "form again."
@@ -963,15 +963,15 @@ msgstr ""
 "Nicht gefunden. Bitte Bestätigungs-URL überprüfen. Wenn alles richtig "
 "sein müsste, bitte das Formular nochmals benutzen."
 
-#: c3smembership/presentation/views/join.py:597
+#: c3smembership/presentation/views/join.py:599
 msgid "Wrong Password!"
 msgstr "Falsches Passwort"
 
-#: c3smembership/presentation/views/join.py:642
+#: c3smembership/presentation/views/join.py:644
 msgid "Success. Load your PDF!"
 msgstr "Erfolg. Lade Dein PDF!"
 
-#: c3smembership/presentation/views/join.py:645
+#: c3smembership/presentation/views/join.py:647
 msgid "Please enter your password."
 msgstr "Bitte das Passwort eingeben."
 
@@ -1056,7 +1056,7 @@ msgid "Signature Received"
 msgstr "Unterschrift erhalten"
 
 #: c3smembership/presentation/views/membership_member_edit.py:265
-msgid "Signature Receipt Date"
+msgid "Signature reception date"
 msgstr "Unterschriftsdatum"
 
 #: c3smembership/presentation/views/membership_member_edit.py:276
@@ -1064,7 +1064,7 @@ msgid "Payment Received"
 msgstr "Zahlung erhalten"
 
 #: c3smembership/presentation/views/membership_member_edit.py:280
-msgid "Payment Receipt Date"
+msgid "Payment reception date"
 msgstr "Zahlungsdatum"
 
 #: c3smembership/presentation/views/membership_member_edit.py:293
