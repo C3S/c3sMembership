@@ -40,7 +40,7 @@ from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
 )
-from c3smembership.views.membership_dues_texts import (
+from c3smembership.presentation.views.dues_texts import (
     make_dues18_invoice_email,
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,
