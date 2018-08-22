@@ -216,7 +216,7 @@ that's it.. bye!""". \
     return unencrypted
 
 
-def create_accountant_mail(member, recipients):
+def create_accountant_mail(member, sender, recipients):
     """
     Create an email message information the accountant about the new
     membership application.
@@ -226,7 +226,7 @@ def create_accountant_mail(member, recipients):
 
     message = Message(
         subject="[C3S] Yes! a new member",
-        sender="yes@c3s.cc",
+        sender=sender,
         recipients=recipients,
         body=encrypted
     )
@@ -249,6 +249,7 @@ def send_accountant_mail(request, member):
     try:
         the_mail = create_accountant_mail(
             member,
+            request.registry.settings['c3smembership.mailaddr'],
             [request.registry.settings['c3smembership.mailaddr']])
         if 'true' in request.registry.settings['testing.mail_to_console']:
             print(the_mail.body)

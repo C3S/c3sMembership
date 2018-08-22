@@ -56,7 +56,7 @@ class AwaitingApprovalTests(unittest.TestCase):
             staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
-                email=u"noreply@c3s.cc",
+                email=u"noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             try:

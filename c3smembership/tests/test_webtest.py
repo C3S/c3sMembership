@@ -78,7 +78,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
             staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
-                email=u"noreply@c3s.cc",
+                email=u"noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             try:
@@ -616,7 +616,7 @@ class FunctionalTests(unittest.TestCase):
             # 'sqlalchemy.url': 'sqlite:///test_webtest_functional.db',
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
-            'c3smembership.mailaddr': 'c@c3s.cc',
+            'c3smembership.mailaddr': 'c@example.com',
             'testing.mail_to_console': 'false'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
@@ -754,7 +754,7 @@ class FunctionalTests(unittest.TestCase):
     #             'Accept-Language': 'fr'})
     #     #print(res.body) #  if you want to see the pages source
     #     self.failUnless(
-    #         'En envoyant un courriel à data@c3s.cc vous pouvez' in res.body)
+    #         'En envoyant un courriel à data@example.com vous pouvez' in res.body)
 
     def test_no_cookies(self):
         """load the front page, check default english string exists"""

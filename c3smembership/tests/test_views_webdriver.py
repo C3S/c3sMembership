@@ -123,7 +123,7 @@ class JoinFormTests(SeleniumTestBase):
         # fill out the form
         self.driver.find_element_by_name("firstname").send_keys("Christoph")
         self.driver.find_element_by_name('lastname').send_keys('Scheid')
-        self.driver.find_element_by_name('email').send_keys('c@c3s.cc')
+        self.driver.find_element_by_name('email').send_keys('c@example.com')
         self.driver.find_element_by_name('password').send_keys('foobar')
         self.driver.find_element_by_name('password-confirm').send_keys(
             'foobar')
@@ -167,7 +167,7 @@ class JoinFormTests(SeleniumTestBase):
         self.assertEqual(self.driver.find_element_by_name(
             'firstname').get_attribute('value'), 'Christoph')
         self.assertEqual(self.driver.find_element_by_name(
-            'email').get_attribute('value'), 'c@c3s.cc')
+            'email').get_attribute('value'), 'c@example.com')
         self.assertEqual(self.driver.find_element_by_name(
             'address1').get_attribute('value'), 'addr one')
         self.assertEqual(self.driver.find_element_by_name(
@@ -252,7 +252,7 @@ class JoinFormTests(SeleniumTestBase):
         # fill out the form
         self.driver.find_element_by_name("firstname").send_keys("Christoph")
         self.driver.find_element_by_name('lastname').send_keys('Scheid')
-        self.driver.find_element_by_name('email').send_keys('c@c3s.cc')
+        self.driver.find_element_by_name('email').send_keys('c@example.com')
         self.driver.find_element_by_name('password').send_keys('foobar')
         self.driver.find_element_by_name('password-confirm').send_keys(
             'foobar')
@@ -300,7 +300,7 @@ class JoinFormTests(SeleniumTestBase):
         self.assertEqual(self.driver.find_element_by_name(
             'firstname').get_attribute('value'), 'Christoph')
         self.assertEqual(self.driver.find_element_by_name(
-            'email').get_attribute('value'), 'c@c3s.cc')
+            'email').get_attribute('value'), 'c@example.com')
         self.assertEqual(self.driver.find_element_by_name(
             'address1').get_attribute('value'), 'addr one')
         self.assertEqual(self.driver.find_element_by_name(
@@ -388,7 +388,7 @@ class EmailVerificationTests(SeleniumTestBase):
         If the password matches the email address, a link to a PDF is given.
         Thus, an half-ready application must be present in the DB.
         """
-        url = "http://0.0.0.0:6544/verify/uat.yes@c3s.cc/ABCDEFGHIJ?de"
+        url = "http://0.0.0.0:6544/verify/uat.yes@example.com/ABCDEFGHIJ?de"
         self.driver.get(url)
 
         self.assertTrue(
@@ -431,7 +431,7 @@ class EmailVerificationTests(SeleniumTestBase):
         If the password matches the email address, a link to a PDF is given.
         Thus, an half-ready application must be present in the DB.
         """
-        url = "http://0.0.0.0:6544/verify/uat.yes@c3s.cc/ABCDEFGHIJ?en"
+        url = "http://0.0.0.0:6544/verify/uat.yes@example.com/ABCDEFGHIJ?en"
         self.driver.get(url)
 
         # check text on page

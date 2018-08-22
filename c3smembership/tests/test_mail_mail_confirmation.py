@@ -76,7 +76,8 @@ class TestMailMailConfirmationViews(unittest.TestCase):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
         self.config.registry.settings['c3smembership.url'] = 'http://foo.com'
-        self.config.registry.settings['c3smembership.mailaddr'] = 'c@c3s.cc'
+        self.config.registry.settings['c3smembership.mailaddr'] = \
+            'test@example.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
         self.config.registry.get_mailer = get_mailer
         DBSession.remove()

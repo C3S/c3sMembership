@@ -82,7 +82,7 @@ class TestUtilities(unittest.TestCase):
         mock_appstruct = {
             'firstname': u'Anne',
             'lastname': u'Gilles',
-            'email': u'devnull@c3s.cc',
+            'email': u'devnull@example.com',
             'email_confirm_code': u'1234567890',
             'date_of_birth': '1987-06-05',
             'address1': 'addr one',
@@ -131,7 +131,7 @@ class TestUtilities(unittest.TestCase):
             'address2': u'addr two',
             'postcode': u'54321',
             'city': u'Müsterstädt',
-            'email': u'devnull@c3s.cc',
+            'email': u'devnull@example.com',
             'email_confirm_code': u'1234567890',
             'date_of_birth': u'1987-06-05',
             'country': u'my country',
@@ -167,7 +167,7 @@ class TestUtilities(unittest.TestCase):
         member = C3sMember(
             firstname=u'Jöhn test_mail_body',
             lastname=u'Döe',
-            email=u'devnull@c3s.cc',
+            email=u'devnull@example.com',
             password=u'very_unsecure_password',
             address1=u'addr one',
             address2=u'addr two',
@@ -191,7 +191,7 @@ class TestUtilities(unittest.TestCase):
         self.failUnless(u'Döe' in result)
         self.failUnless(u'postcode:                       12345 xyz' in result)
         self.failUnless(u'Town' in result)
-        self.failUnless(u'devnull@c3s.cc' in result)
+        self.failUnless(u'devnull@example.com' in result)
         self.failUnless(u'af' in result)
         self.failUnless(u'number of shares                23' in result)
         self.failUnless(
@@ -225,12 +225,13 @@ class TestUtilities(unittest.TestCase):
             name_of_colsoc=u'Foo Colsoc',
             privacy_consent=datetime.datetime.now(),
         )
-        result = create_accountant_mail(member, ['yes@c3s.cc'])
+        result = create_accountant_mail(
+            member, 'yes@example.com', ['yes@example.com'])
 
         from pyramid_mailer.message import Message
 
         self.assertTrue(isinstance(result, Message))
-        self.assertTrue('yes@c3s.cc' in result.recipients)
+        self.assertTrue('yes@example.com' in result.recipients)
         self.failUnless('-BEGIN PGP MESSAGE-' in result.body,
                         'something missing in the mail body!')
         self.failUnless('-END PGP MESSAGE-' in result.body,
@@ -238,5 +239,5 @@ class TestUtilities(unittest.TestCase):
         self.failUnless(
             '[C3S] Yes! a new member' in result.subject,
             'something missing in the mail subject!')
-        self.failUnless('yes@c3s.cc' == result.sender,
+        self.failUnless('yes@example.com' == result.sender,
                         'something missing in the mail body!')

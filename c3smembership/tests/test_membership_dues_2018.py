@@ -45,7 +45,7 @@ def _initTestingDB():
         normal_de = C3sMember(  # german normal
             firstname=u'Ada Musiziert',
             lastname=u'Traumhaft ÄÖÜ',
-            email=u'devNull@c3s.cc',
+            email=u'devNull@example.com',
             address1=u"ada addr one",
             address2=u"ada addr two",
             postcode=u"12345",
@@ -65,7 +65,7 @@ def _initTestingDB():
         normal_en = C3sMember(  # english normal
             firstname=u'James',
             lastname=u'Musician',
-            email=u'dummy@c3s.cc',
+            email=u'dummy@example.com',
             address1=u"james addr 1",
             address2=u"james appartment 2",
             postcode=u"12345",
@@ -85,7 +85,7 @@ def _initTestingDB():
         investing_de = C3sMember(  # german investing
             firstname=u'Herman',
             lastname=u'Investorius',
-            email=u'dummy@c3s.cc',
+            email=u'dummy@example.com',
             address1=u"addr one4",
             address2=u"addr two4",
             postcode=u"12344",
@@ -105,7 +105,7 @@ def _initTestingDB():
         investing_en = C3sMember(  # english investing
             firstname=u'Britany',
             lastname=u'Investing',
-            email=u'dummy@c3s.cc',
+            email=u'dummy@example.com',
             address1=u"aone5",
             address2=u"atwo5",
             postcode=u"12355",
@@ -183,7 +183,7 @@ class TestDues18Views(unittest.TestCase):
         self.config.include('pyramid_mailer.testing')
         self.config.registry.settings[
             'c3smembership.url'] = 'https://yes.c3s.cc'
-        self.config.registry.settings['c3smembership.mailaddr'] = 'c@c3s.cc'
+        self.config.registry.settings['c3smembership.mailaddr'] = 'c@example.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
 
         DBSession.remove()

@@ -1043,7 +1043,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues1)
@@ -1055,7 +1055,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('17.25'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'fa4wfjlasjfd',
             )
             dues2.is_reversal = True
@@ -1068,7 +1068,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('74.58'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'Jleifjsw9e',
             )
             DBSession.add(dues3)
@@ -1080,7 +1080,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('23.85'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'f348h98sdf',
             )
             dues4.is_reversal = True
@@ -1093,7 +1093,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('12.89'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'sgdfoiddfg',
             )
             DBSession.add(dues5)
@@ -1105,7 +1105,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('77.79'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'3o948n',
             )
             dues6.is_reversal = True
@@ -1191,7 +1191,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1212,7 +1212,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1234,7 +1234,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50.20').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1256,7 +1256,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,
-            email=u'uat.yes@c3s.cc',
+            email=u'test@example.com',
             token=u'ABCDEFGH',
         )
         DBSession.add(dues3)
@@ -1357,7 +1357,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues1)
@@ -1369,7 +1369,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('17.25'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'fa4wfjlasjfd',
             )
             dues2.is_reversal = True
@@ -1382,7 +1382,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('74.58'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'Jleifjsw9e',
             )
             DBSession.add(dues3)
@@ -1394,7 +1394,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('23.85'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'f348h98sdf',
             )
             dues4.is_reversal = True
@@ -1407,7 +1407,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('12.89'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'sgdfoiddfg',
             )
             DBSession.add(dues5)
@@ -1419,7 +1419,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('77.79'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'3o948n',
             )
             dues6.is_reversal = True
@@ -1505,7 +1505,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1526,7 +1526,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1548,7 +1548,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50.20').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1570,7 +1570,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,
-            email=u'uat.yes@c3s.cc',
+            email=u'test@example.com',
             token=u'ABCDEFGH',
         )
         DBSession.add(dues3)
@@ -1672,7 +1672,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues1)
@@ -1684,7 +1684,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('16.25'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'fa4wfjlasjfd',
             )
             dues2.is_reversal = True
@@ -1697,7 +1697,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('74.58'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'Jleifjsw9e',
             )
             DBSession.add(dues3)
@@ -1709,7 +1709,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('23.85'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'f348h98sdf',
             )
             dues4.is_reversal = True
@@ -1722,7 +1722,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('12.89'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'sgdfoiddfg',
             )
             DBSession.add(dues5)
@@ -1734,7 +1734,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('77.79'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'3o948n',
             )
             dues6.is_reversal = True
@@ -1820,7 +1820,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1841,7 +1841,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1863,7 +1863,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50.20').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -1885,7 +1885,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,
-            email=u'uat.yes@c3s.cc',
+            email=u'test@example.com',
             token=u'ABCDEFGH',
         )
         DBSession.add(dues3)
@@ -1987,7 +1987,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues1)
@@ -1999,7 +1999,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('16.25'),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'fa4wfjlasjfd',
             )
             dues2.is_reversal = True
@@ -2012,7 +2012,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('74.58'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'Jleifjsw9e',
             )
             DBSession.add(dues3)
@@ -2024,7 +2024,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('23.85'),
                 member_id=1,
                 membership_no=2,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'f348h98sdf',
             )
             dues4.is_reversal = True
@@ -2037,7 +2037,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('12.89'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'sgdfoiddfg',
             )
             DBSession.add(dues5)
@@ -2049,7 +2049,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=D('77.79'),
                 member_id=1,
                 membership_no=3,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'3o948n',
             )
             dues6.is_reversal = True
@@ -2135,7 +2135,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -2156,7 +2156,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -2178,7 +2178,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_amount=unicode(D('-37.50.20').to_eng_string()),
                 member_id=1,
                 membership_no=1,
-                email=u'uat.yes@c3s.cc',
+                email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
             DBSession.add(dues2)
@@ -2200,7 +2200,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,
-            email=u'uat.yes@c3s.cc',
+            email=u'test@example.com',
             token=u'ABCDEFGH',
         )
         DBSession.add(dues3)

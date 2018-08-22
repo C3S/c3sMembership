@@ -58,7 +58,7 @@ class EditMemberTests(unittest.TestCase):
             staffer1 = Staff(
                 login=u"rut",
                 password=u"berries",
-                email=u"noreply@c3s.cc",
+                email=u"noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             DBSession.add(accountants_group)
@@ -169,7 +169,7 @@ class EditMemberTests(unittest.TestCase):
             {
                 'firstname': u'EinVörname',
                 'lastname': u'EinNachname',
-                'email': u'info@c3s.cc',
+                'email': u'info@example.com',
                 'address1': u'adressteil 1',
                 'address2': u'adressteil 2',
                 'postcode': u'12346',
@@ -186,7 +186,7 @@ class EditMemberTests(unittest.TestCase):
             },
             [
                 u'EinNachname',
-                u'info@c3s.cc',
+                u'info@example.com',
                 u'adressteil 1',
                 u'adressteil 2',
                 u'12346',
