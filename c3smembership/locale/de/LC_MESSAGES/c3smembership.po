@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-08-22 07:44+0200\n"
+"POT-Creation-Date: 2018-08-22 08:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -153,7 +153,7 @@ msgstr "Englisch"
 msgid "Français"
 msgstr "Französisch"
 
-#: c3smembership/utils.py:259
+#: c3smembership/utils.py:260
 msgid "[yes][ALERT] check the logs!"
 msgstr "[yes][ALERT] Prüfe die Log-Dateien."
 
@@ -542,21 +542,26 @@ msgstr "C3S Mitgliedsantrag: Bitte E-Mails abrufen."
 msgid "check-email-headline"
 msgstr "Eine E-Mail wurde verschickt,"
 
-#. Default: You will receive an email from us with a link. Please check your
-#. email!
+#. Default: You will receive an email from us with a link. In case you should
+#. not
+#. receive this email within the next few minutes and it also is not put to
+#. your
+#. SPAM folder then please contact office@c3s.cc.
 #: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:42
 msgid "check-email-paragraph-check-email"
 msgstr ""
-"Du wirst eine E-Mail von uns mit einem Bestätigungslink erhalten. Bitte "
-"rufe Deine E-Mails ab."
+"Du wirst eine E-Mail mit einem Bestätigungslink von uns erhalten. "
+"Solltest Du diese E-Mail nicht innerhalb einiger Minuten erhalten und sie"
+" auch nicht in deinem SPAM-Ordner liegen, wende Dich bitte an "
+"office@c3s.cc."
 
 #. Default: The email subject line will read:
-#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:47
+#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:49
 msgid "check-email-paragraph-check-email-hint"
 msgstr "Der Betreff der E-Mail lautet: "
 
 #. Default: C3S: confirm your email address and load your PDF
-#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:50
+#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:52
 msgid "check-email-paragraph-check-email-subject"
 msgstr "C3S: E-Mail-Adresse bestätigen und Formular abrufen"
 

@@ -40,8 +40,10 @@
                     ${firstname} ${lastname}!
                 </h3>
                 <p i18n:translate="check-email-paragraph-check-email">
-                    You will receive an email from us with a link. Please check
-                    your email!
+                    You will receive an email from us with a link. In case you
+                    should not receive this email within the next few minutes
+                    and it also is not put to your SPAM folder then please
+                    contact office@c3s.cc.
                 </p>
                 <p>
                     <span i18n:translate="check-email-paragraph-check-email-hint">

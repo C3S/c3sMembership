@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: c3smembership 1.24\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-08-22 07:44+0200\n"
+"POT-Creation-Date: 2018-08-22 08:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -153,7 +153,7 @@ msgstr ""
 msgid "Français"
 msgstr ""
 
-#: c3smembership/utils.py:259
+#: c3smembership/utils.py:260
 msgid "[yes][ALERT] check the logs!"
 msgstr ""
 
@@ -522,18 +522,20 @@ msgstr ""
 msgid "check-email-headline"
 msgstr ""
 
-#. Default: You will receive an email from us with a link. Please check your email!
+#. Default: You will receive an email from us with a link. In case you should not
+#. receive this email within the next few minutes and it also is not put to your
+#. SPAM folder then please contact office@c3s.cc.
 #: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:42
 msgid "check-email-paragraph-check-email"
 msgstr ""
 
 #. Default: The email subject line will read:
-#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:47
+#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:49
 msgid "check-email-paragraph-check-email-hint"
 msgstr ""
 
 #. Default: C3S: confirm your email address and load your PDF
-#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:50
+#: c3smembership/presentation/templates/pages/join_verification_email_sent.pt:52
 msgid "check-email-paragraph-check-email-subject"
 msgstr ""
 

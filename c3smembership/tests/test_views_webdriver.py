@@ -226,10 +226,8 @@ class JoinFormTests(SeleniumTestBase):
         self.assertTrue('Eine E-Mail wurde verschickt,' in page)
         self.assertTrue('Christoph Scheid!' in page)
 
-        self.assertTrue(
-            u'Du wirst eine E-Mail von uns mit einem ' in page)
-        self.assertTrue(
-            u'Bestätigungslink erhalten. Bitte rufe Deine E-Mails ab.' in page)
+        self.assertTrue(u'Du wirst eine E-Mail' in page)
+        self.assertTrue(u'Bestätigungslink' in page)
 
         self.assertTrue(u'Der Betreff der E-Mail lautet:' in page)
         self.assertTrue(u'C3S: E-Mail-Adresse' in page)
@@ -359,8 +357,6 @@ class JoinFormTests(SeleniumTestBase):
 
         self.assertTrue(
             u'You will receive an email from us with ' in page)
-        self.assertTrue(
-            u'a link. Please check your email!' in page)
 
         self.assertTrue(u'The email subject line will read:' in page)
         self.assertTrue(u'C3S: confirm your email address ' in page)
