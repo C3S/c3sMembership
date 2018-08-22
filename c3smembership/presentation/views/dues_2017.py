@@ -672,8 +672,8 @@ def dues17_reduction(request):
             request.route_url('detail', memberid=member.id) + '#dues17')
 
     # check the reduction amount: same as default calculated amount?
-    if ((member.dues17_reduced is False) and (
-            member.dues17_amount == reduced_amount)):
+    if (not member.dues17_reduced and
+            member.dues17_amount == reduced_amount):
         request.session.flash(
             u"Dieser Beitrag ist der default-Beitrag!",
             'dues17_message_to_staff'  # message queue for staff
@@ -681,7 +681,8 @@ def dues17_reduction(request):
         return HTTPFound(
             request.route_url('detail', memberid=member.id) + '#dues17')
 
-    if reduced_amount == member.dues17_amount_reduced:
+    if (member.dues17_reduced and
+            reduced_amount == member.dues17_amount_reduced):
         request.session.flash(
             u"Auf diesen Beitrag wurde schon reduziert!",
             'dues17_message_to_staff'  # message queue for staff
@@ -689,9 +690,9 @@ def dues17_reduction(request):
         return HTTPFound(
             request.route_url('detail', memberid=member.id) + '#dues17')
 
-    if member.dues17_reduced \
-            and reduced_amount > member.dues17_amount_reduced \
-            or reduced_amount > member.dues17_amount:
+    if (member.dues17_reduced and
+            reduced_amount > member.dues17_amount_reduced or
+            reduced_amount > member.dues17_amount):
         request.session.flash(
             u'Beitrag darf nicht über den berechneten oder bereits'
             u'reduzierten Wert gesetzt werden.',
