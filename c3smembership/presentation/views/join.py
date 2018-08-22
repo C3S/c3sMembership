@@ -427,8 +427,9 @@ def show_success(request):
     return HTTPFound(location=request.route_url('join'))
 
 
-def send_mail_confirmation_mail(member, base_url, mailer, localizer,
-                                testing_mail_to_console):
+def send_mail_confirmation_mail(
+        member, base_url, email_sender_address, mailer, localizer,
+        testing_mail_to_console):
     if 'de' in member.locale.lower():
         email_subject = u'C3S: E-Mail-Adresse bestätigen und Formular abrufen'
         email_body = u'''
@@ -459,7 +460,7 @@ Your C3S team
         '''
     message = Message(
         subject=email_subject,
-        sender='yes@c3s.cc',
+        sender=email_sender_address,
         recipients=[member.email],
         body=email_body.format(
             member.firstname,
@@ -536,6 +537,7 @@ def success_check_email(request):
         send_mail_confirmation_mail(
             member,
             request.registry.settings['c3smembership.url'],
+            request.registry.settings['c3smembership.mailaddr'],
             request.registry.get_mailer(request),
             request.localizer,
             request.registry.settings['testing.mail_to_console'])

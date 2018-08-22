@@ -420,6 +420,7 @@ def mail_mail_conf(request):
     send_mail_confirmation_mail(
         member,
         request.registry.settings['c3smembership.url'],
+        request.registry.settings['c3smembership.mailaddr'],
         request.registry.get_mailer(request),
         request.localizer,
         request.registry.settings['testing.mail_to_console'])

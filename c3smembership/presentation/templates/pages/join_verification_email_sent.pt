@@ -40,8 +40,8 @@
                     ${firstname} ${lastname}!
                 </h3>
                 <p i18n:translate="check-email-paragraph-check-email">
-                    You will receive an email from yes@c3s.cc with a link. Please
-                    check your email!
+                    You will receive an email from us with a link. Please check
+                    your email!
                 </p>
                 <p>
                     <span i18n:translate="check-email-paragraph-check-email-hint">
