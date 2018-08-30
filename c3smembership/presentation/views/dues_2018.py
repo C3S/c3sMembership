@@ -60,7 +60,7 @@ if LOGGING:  # pragma: no cover
 PDFLATEX_DIR = os.path.abspath(
     os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        '../../certificate/'
+        '../../../certificate/'
     ))
 
 PDF_BACKGROUNDS = {
