@@ -1,3 +1,13 @@
+1.24.1
+======
+
+
+- Fix email sender.
+
+- Fix dues reduction.
+
+
+
 1.24
 ====
 
