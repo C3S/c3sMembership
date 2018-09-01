@@ -30,6 +30,8 @@ from types import NoneType
 from webob.exc import HTTPUnauthorized
 
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.repository.general_assembly_repository import \
+    GeneralAssemblyRepository
 
 
 api_ver = '0.1dev'
@@ -76,7 +78,8 @@ def api_userinfo(request):
     if DEBUG:  # pragma: no cover
         print(u"the refcode received: {}".format(request.validated['refcode']))
 
-    _m = C3sMember.get_by_bcgvtoken(request.validated['refcode'])
+    _m = GeneralAssemblyRepository.get_member_by_token(
+        request.validated['refcode'])
     if isinstance(_m, NoneType):
         return {
             'firstname': 'None',

@@ -54,6 +54,8 @@ from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.repository.general_assembly_repository import \
+    GeneralAssemblyRepository
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
 )
@@ -180,7 +182,7 @@ def batch_invite(request):
         except ValueError:
             batch_count = 5
 
-    invitees = C3sMember.get_invitees(batch_count)
+    invitees = GeneralAssemblyRepository.get_invitees(batch_count)
 
     if len(invitees) == 0:
         request.session.flash('no invitees left. all done!',

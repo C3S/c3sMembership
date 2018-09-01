@@ -189,20 +189,6 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
         self.assertEqual(instance.firstname, u'SomeFirstnäme')
         self.assertEqual(instance_from_db.email, u'some@shri.de')
 
-    def test_get_by_bcgvtoken(self):
-        """
-        test: get one entry by bcgv18 token
-        """
-        instance = self._make_one()
-        self.session.add(instance)
-        instance.email_invite_token_bcgv18 = u'SHINY_TOKEN'
-        instance_from_db = self._get_target_class().get_by_bcgvtoken(
-            u'SHINY_TOKEN')
-        self.assertEqual(instance_from_db.firstname, u'SomeFirstnäme')
-        self.assertEqual(instance_from_db.email, u'some@shri.de')
-        self.assertEqual(
-            instance_from_db.email_invite_token_bcgv18, u'SHINY_TOKEN')
-
     def test_get_by_dues15_token(self):
         """
         test: get one entry by token

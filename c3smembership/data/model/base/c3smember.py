@@ -628,21 +628,6 @@ class C3sMember(Base):
         return DBSession.query(cls).filter(
             cls.email_confirm_code == email_confirm_code).first()
 
-    # used got barcamp & general assembly invitations
-    @classmethod
-    def get_by_bcgvtoken(cls, token):
-        """
-        Find a member by token used for GA and BarCamp.
-
-        This is needed when a user returns from reading her email
-        and clicking on a link containing the token.
-
-        Returns:
-            object: C3sMember object
-        """
-        return DBSession.query(cls).filter(
-            cls.email_invite_token_bcgv18 == token).first()
-
     @classmethod
     def check_for_existing_confirm_code(cls, email_confirm_code):
         """
@@ -692,35 +677,6 @@ class C3sMember(Base):
     def get_all(cls):
         """return all afms and members"""
         return DBSession.query(cls).all()
-
-    # needed for invitation to barcam & general assembly
-    @classmethod
-    def get_invitees(cls, num):
-        """
-        Get a given number *n* of members to invite for barcamp and GV.
-
-        Queries the database for members, where
-
-        * members are accepted
-        * members have not received their invitation email yet
-
-        Args:
-          num is the number *n* of invitees to return
-
-        Returns:
-          a list of *n* member objects
-        """
-        return DBSession.query(cls).filter(
-            and_(
-                cls.is_member_filter(),
-                or_(
-                    (cls.email_invite_flag_bcgv18 == 0),
-                    (cls.email_invite_flag_bcgv18 == ''),
-                    # pylint: disable=singleton-comparison
-                    (cls.email_invite_flag_bcgv18 == None),
-                )
-            )
-        ).slice(0, num).all()
 
     @classmethod
     def get_dues15_invoicees(cls, num):
