@@ -24,6 +24,16 @@ from c3smembership.presentation.views.membership_listing import (
     membership_content_size_provider
 )
 
+# Import for SqlAlchemy metadata detection. Currently, the metadata detection
+# only covers some of the tables probably because they are imported here.
+# Others are not covered maybe because they are not directly imported but only
+# through view discovery. There might be a better and cleaner solution to this
+# problem but hasn't been discovered yet.
+from c3smembership.data.model.base.dues15invoice import Dues15Invoice
+from c3smembership.data.model.base.dues16invoice import Dues16Invoice
+from c3smembership.data.model.base.dues17invoice import Dues17Invoice
+from c3smembership.data.model.base.dues18invoice import Dues18Invoice
+
 
 __version__ = open(os.path.join(os.path.abspath(
     os.path.dirname(__file__)), '../VERSION')).read()
