@@ -15,7 +15,6 @@
                 tal:condition="not member.membership_accepted">
             delete
         </a>
-
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active"
@@ -48,6 +47,17 @@
                         aria-controls="membership"
                         aria-selected="false">
                     Membership
+                </a>
+            </li>
+            <li class="nav-item" tal:condition="member.is_member()">
+                <a class="nav-link"
+                        id="general-assembly-tab"
+                        data-toggle="tab"
+                        href="#general-assembly"
+                        role="tab"
+                        aria-controls="general-assembly"
+                        aria-selected="false">
+                    General Assembly
                 </a>
             </li>
             <li class="nav-item" tal:condition="member.membership_accepted">
@@ -394,6 +404,39 @@
                             </a>
                         </td>
                     </tr>
+                </table>
+            </div>
+            <div class="tab-pane fade"
+                    id="general-assembly"
+                    role="tabpanel"
+                    aria-labelledby="general-assembly-tab"
+                    tal:condition="member.is_member()">
+                <h2>General Assembly Invitations</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Sent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr tal:repeat="general_assembly_invitation general_assembly_invitations">
+                            <td>${general_assembly_invitation['number']}</td>
+                            <td>${general_assembly_invitation['name']}</td>
+                            <td>${general_assembly_invitation['date'].strftime('%d.%m.%Y')}</td>
+                            <span tal:omit-tag="" tal:condition="general_assembly_invitation['flag']">
+                                <td class="alert-success">
+                                    ${general_assembly_invitation['sent'].strftime('%d.%m.%Y %H:%M:%S')}
+                                </td>
+                            </span>
+                            <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
+                                <td class="alert-danger">
+                                </td>
+                            </span>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div class="tab-pane fade"
@@ -962,8 +1005,6 @@
                             </tr>
                         </table>
                     </div>
-
-
                     <div tal:omit-tag="" tal:condition="not member.membership_date > date(2018,12,31) and (member.membership_loss_date is None or member.membership_loss_date >= date(2018,1,1))">
                         <a name="dues18"></a>
                         <h2 id="certificate">Membership Dues 2018</h2>

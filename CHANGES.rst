@@ -22,6 +22,8 @@ Next Release
 
 - Show member delete button only if membership has not been accepted.
 
+- Start generalising general assembly invitations.
+
 
 
 1.24.1

@@ -146,20 +146,6 @@
                             title="${member.email}"
                             class="fas fa-at"></a>
                 </td>
-                <!--!
-                <td class="icons">
-                    <div tal:condition="member.is_member()" tal:omit-tag="">
-                        <a tal:condition="member.email_invite_flag_bcgv18 is not True"
-                                href="${request.route_url('invite_member', m_id=member.id)}"
-                                title="invitation not sent yet. Click to send!"
-                                class="fas fa-envelope text-danger"></a>
-                        <a tal:condition="member.email_invite_flag_bcgv18 is True"
-                                href="${request.route_url('invite_member', m_id=member.id)}"
-                                title="gesendet ${member.email_invite_date_bcgv18.strftime('am %d.%m.%Y um %H:%M')}"
-                                class="fas fa-envelope text-success"></a>
-                    </div>
-                </td>
-                -->
                 <td class="icons">
                     <div tal:omit-tag="" tal:condition="not member.membership_date > date(2018, 12, 13) and (member.membership_loss_date is None or member.membership_loss_date > date(2018, 12, 31))">
                         <a tal:condition="member.dues18_invoice is False"
