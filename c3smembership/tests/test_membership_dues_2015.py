@@ -183,7 +183,7 @@ class TestDues15Views(unittest.TestCase):
         self.config.include('pyramid_mailer.testing')
         self.config.registry.settings[
             'c3smembership.url'] = 'https://yes.c3s.cc'
-        self.config.registry.settings['c3smembership.mailaddr'] = \
+        self.config.registry.settings['c3smembership.notification_sender'] = \
             'c@example.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
 

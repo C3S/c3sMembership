@@ -249,8 +249,8 @@ def send_accountant_mail(request, member):
     try:
         the_mail = create_accountant_mail(
             member,
-            request.registry.settings['c3smembership.mailaddr'],
-            [request.registry.settings['c3smembership.mailaddr']])
+            request.registry.settings['c3smembership.notification_sender'],
+            [request.registry.settings['c3smembership.status_receiver']])
         if 'true' in request.registry.settings['testing.mail_to_console']:
             print(the_mail.body)
         else:
@@ -258,8 +258,10 @@ def send_accountant_mail(request, member):
     except:
         mail = Message(
             subject=_("[yes][ALERT] check the logs!"),
-            sender=request.registry.settings['c3smembership.mailaddr'],
-            recipients=[request.registry.settings['c3smembership.mailaddr']],
+            sender=request.registry.settings[
+                'c3smembership.notification_sender'],
+            recipients=[request.registry.settings[
+                'c3smembership.status_receiver']],
             body="""
 A failure occurred at {}. A notification email could not be sent.
 Maybe gnupg failed and a key might be expired.

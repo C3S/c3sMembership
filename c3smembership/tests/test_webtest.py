@@ -616,7 +616,7 @@ class FunctionalTests(unittest.TestCase):
             # 'sqlalchemy.url': 'sqlite:///test_webtest_functional.db',
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
-            'c3smembership.mailaddr': 'c@example.com',
+            'c3smembership.notification_sender': 'c@example.com',
             'testing.mail_to_console': 'false'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)

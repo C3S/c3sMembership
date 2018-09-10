@@ -158,7 +158,7 @@ class MemberApplicationTest(TestCase):
 
         pyramid_request_mock = mock.Mock()
         pyramid_request_mock.registry.settings = {
-            'c3smembership.mailaddr': 'test@example.com'}
+            'c3smembership.notification_sender': 'test@example.com'}
 
         membership_application.mail_signature_confirmation(
             'member id',

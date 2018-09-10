@@ -60,7 +60,8 @@ class MembershipApplicationTest(unittest.TestCase):
             'sqlalchemy.url': 'sqlite:///:memory:',
             'api_auth_token': u"SECRETAUTHTOKEN",
             'c3smembership.url': u'localhost',
-            'c3smembership.mailaddr': u'test@example.com',
+            'c3smembership.notification_sender': u'test@example.com',
+            'c3smembership.status_receiver': u'test@example.com',
             'testing.mail_to_console': u'false',
         }
         self.config = testing.setUp()

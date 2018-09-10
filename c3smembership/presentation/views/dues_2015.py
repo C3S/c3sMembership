@@ -257,7 +257,8 @@ def send_dues15_invoice_email(request, m_id=None):
             start_quarter)
         message = Message(
             subject=email_subject,
-            sender=request.registry.settings['c3smembership.mailaddr'],
+            sender=request.registry.settings[
+                'c3smembership.notification_sender'],
             recipients=[member.email],
             body=email_body,
         )
@@ -270,7 +271,8 @@ def send_dues15_invoice_email(request, m_id=None):
                 make_dues_invoice_investing_email(member)
         message = Message(
             subject=email_subject,
-            sender=request.registry.settings['c3smembership.mailaddr'],
+            sender=request.registry.settings[
+                'c3smembership.notification_sender'],
             recipients=[member.email],
             body=email_body,
         )
@@ -734,7 +736,8 @@ def dues15_reduction(request):
 
     message = Message(
         subject=email_subject,
-        sender=request.registry.settings['c3smembership.mailaddr'],
+        sender=request.registry.settings[
+            'c3smembership.notification_sender'],
         recipients=[member.email],
         body=email_body,
     )

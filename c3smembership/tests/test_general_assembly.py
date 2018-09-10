@@ -154,7 +154,7 @@ class TestInvitation(unittest.TestCase):
         self.config.registry.settings['c3smembership.url'] = 'http://foo.com'
         self.config.registry.settings['ticketing.url'] = 'http://bar.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
-        self.config.registry.settings['c3smembership.mailaddr'] = \
+        self.config.registry.settings['c3smembership.notification_sender'] = \
             'test@example.com'
         self.session = init_testing_db()
 

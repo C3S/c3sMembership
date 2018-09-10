@@ -143,7 +143,7 @@ def invite_member_bcgv(request):
     email_subject, email_body = make_bcga18_invitation_email(member, url)
     message = Message(
         subject=email_subject,
-        sender=request.registry.settings['c3smembership.mailaddr'],
+        sender=request.registry.settings['c3smembership.notification_sender'],
         recipients=[member.email],
         body=email_body,
     )
@@ -204,7 +204,8 @@ def batch_invite(request):
         email_subject, email_body = make_bcga18_invitation_email(member, url)
         message = Message(
             subject=email_subject,
-            sender=request.registry.settings['c3smembership.mailaddr'],
+            sender=request.registry.settings[
+                'c3smembership.notification_sender'],
             recipients=[member.email],
             body=email_body,
         )

@@ -77,9 +77,10 @@ your membership tool''' % (_staffer.login,
                            authenticated_userid(request)))
             message = Message(
                 subject='[C3S Yes] staff was deleted.',
-                sender=request.registry.settings['c3smembership.mailaddr'],
-                recipients=[
-                    request.registry.settings['c3smembership.mailaddr']],
+                sender=request.registry.settings[
+                    'c3smembership.notification_sender'],
+                recipients=[request.registry.settings[
+                    'c3smembership.status_receiver']],
                 body=encrypted
             )
             mailer = get_mailer(request)
@@ -115,9 +116,10 @@ your membership tool''' % (existing.login,
                            authenticated_userid(request)))
             message = Message(
                 subject='[C3S Yes] staff password changed.',
-                sender=request.registry.settings['c3smembership.mailaddr'],
-                recipients=[
-                    request.registry.settings['c3smembership.mailaddr']],
+                sender=request.registry.settings[
+                    'c3smembership.notification_sender'],
+                recipients=[request.registry.settings[
+                    'c3smembership.status_receiver']],
                 body=encrypted
             )
 
@@ -139,9 +141,10 @@ your membership tool''' % (staffer.login,
                            authenticated_userid(request)))
             message = Message(
                 subject='[C3S Yes] staff was added.',
-                sender=request.registry.settings['c3smembership.mailaddr'],
-                recipients=[
-                    request.registry.settings['c3smembership.mailaddr']],
+                sender=request.registry.settings[
+                    'c3smembership.notification_sender'],
+                recipients=[request.registry.settings[
+                    'c3smembership.status_receiver']],
                 body=encrypted
             )
             mailer = get_mailer(request)

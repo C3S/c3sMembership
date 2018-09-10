@@ -537,7 +537,7 @@ def success_check_email(request):
         send_mail_confirmation_mail(
             member,
             request.registry.settings['c3smembership.url'],
-            request.registry.settings['c3smembership.mailaddr'],
+            request.registry.settings['c3smembership.notification_sender'],
             request.registry.get_mailer(request),
             request.localizer,
             request.registry.settings['testing.mail_to_console'])

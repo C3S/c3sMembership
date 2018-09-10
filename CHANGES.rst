@@ -1,3 +1,21 @@
+Next Release
+============
+
+
+Introduce configuration value for status email recipient.
+
+- The previously existing configuation option c3smembership.mailaddr is
+  renamed to c3smembership.notification_sender. The notification sender email
+  address is used for sending emails like the email address confirmation
+  link, the membership certificate and dues invoices.
+
+- The status receiver email address option c3smembership.status_receiver is
+  used as a recipient for status emails send by the membership application
+  like the new application email which informs the staff that a new
+  application was submitted.
+
+
+
 1.24.1
 ======
 

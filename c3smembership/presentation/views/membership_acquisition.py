@@ -296,7 +296,7 @@ def mail_payment_confirmation(request):
     email_subject, email_body = make_payment_confirmation_email(member)
     message = Message(
         subject=email_subject,
-        sender=request.registry.settings['c3smembership.mailaddr'],
+        sender=request.registry.settings['c3smembership.notification_sender'],
         recipients=[member.email],
         body=email_body,
     )
@@ -339,7 +339,7 @@ def mail_signature_reminder(request):
     email_subject, email_body = make_signature_reminder_email(member)
     message = Message(
         subject=email_subject,
-        sender=request.registry.settings['c3smembership.mailaddr'],
+        sender=request.registry.settings['c3smembership.notification_sender'],
         recipients=[member.email],
         body=email_body
     )
@@ -380,7 +380,7 @@ def mail_payment_reminder(request):
     email_subject, email_body = make_payment_reminder_email(member)
     message = Message(
         subject=email_subject,
-        sender=request.registry.settings['c3smembership.mailaddr'],
+        sender=request.registry.settings['c3smembership.notification_sender'],
         recipients=[member.email],
         body=email_body
     )
@@ -420,7 +420,7 @@ def mail_mail_conf(request):
     send_mail_confirmation_mail(
         member,
         request.registry.settings['c3smembership.url'],
-        request.registry.settings['c3smembership.mailaddr'],
+        request.registry.settings['c3smembership.notification_sender'],
         request.registry.get_mailer(request),
         request.localizer,
         request.registry.settings['testing.mail_to_console'])
