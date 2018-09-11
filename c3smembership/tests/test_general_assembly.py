@@ -18,7 +18,7 @@ from c3smembership.data.model.base import (
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.presentation.views.general_assembly import (
     batch_invite,
-    invite_member_bcgv,
+    invite_member,
 )
 
 
@@ -129,12 +129,16 @@ def init_testing_db():
             num_shares=u'2',
         )
         member1.membership_accepted = True
+        member1.membership_number = u'member1'
         DBSession.add(member1)
         member2.membership_accepted = True
+        member2.membership_number = u'member2'
         DBSession.add(member2)
         member3.membership_accepted = True
+        member3.membership_number = u'member3'
         DBSession.add(member3)
         member4.membership_accepted = True
+        member4.membership_number = u'member4'
         DBSession.add(member4)
         DBSession.flush()
     return DBSession
@@ -185,45 +189,46 @@ class TestInvitation(unittest.TestCase):
 
         # try with non-existing id
         req.matchdict = {'m_id': 10000}
-        res = invite_member_bcgv(req)
+        res = invite_member(req)
         self.assertEquals(302, res.status_code)
 
         req.matchdict = {'m_id': member1.id}
-        res = invite_member_bcgv(req)
+
+        mailer = get_mailer(req)
+        self.assertEqual(len(mailer.outbox), 0)
+
+        res = invite_member(req)
 
         self.assertEqual(member1.email_invite_flag_bcgv18, True)
         self.assertTrue(member1.email_invite_token_bcgv18 is not None)
+        self.assertEqual(len(mailer.outbox), 1)
 
         # send email
-        self.config.registry.settings['testing.mail_to_console'] = 'false'
-        mailer = get_mailer(req)
-        res = invite_member_bcgv(req)
+        res = invite_member(req)
+        self.assertEqual(len(mailer.outbox), 1)
 
-        self.assertEqual(len(mailer.outbox), 2)
         self.assertTrue(u'[C3S] Einladung zu Barcamp und Generalversammlung'
                         in mailer.outbox[0].subject)
-        self.assertTrue(u'[C3S] Einladung zu Barcamp und Generalversammlung'
-                        in mailer.outbox[1].subject)
         self.assertTrue(member1.firstname
-                        in mailer.outbox[1].body)
+                        in mailer.outbox[0].body)
         self.assertTrue(member1.email_invite_token_bcgv18
-                        in mailer.outbox[1].body)
+                        in mailer.outbox[0].body)
 
         # send invitation to English member
         member2 = C3sMember.get_by_id(2)
         self.assertEqual(member2.email_invite_flag_bcgv18, False)
         self.assertTrue(member2.email_invite_token_bcgv18 is None)
         req.matchdict = {'m_id': member2.id}
-        res = invite_member_bcgv(req)
+        res = invite_member(req)
         self.assertEqual(member2.email_invite_flag_bcgv18, True)
         self.assertTrue(member2.email_invite_token_bcgv18 is not None)
-        self.assertEqual(len(mailer.outbox), 3)
+        self.assertEqual(len(mailer.outbox), 2)
         self.assertTrue(u'[C3S] Invitation to Barcamp and General Assembly'
-                        in mailer.outbox[2].subject)
+                        in mailer.outbox[1].subject)
         self.assertTrue(member2.firstname
-                        in mailer.outbox[2].body)
+                        in mailer.outbox[1].body)
         self.assertTrue(member2.email_invite_token_bcgv18
-                        in mailer.outbox[2].body)
+                        in mailer.outbox[1].body)
 
     def test_invitation_batch(self):
         """

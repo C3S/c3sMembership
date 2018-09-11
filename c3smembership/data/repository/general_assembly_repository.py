@@ -3,7 +3,10 @@
 Repository for accessing and operating with member data.
 """
 
-from datetime import date
+from datetime import (
+    date,
+    datetime,
+)
 
 from sqlalchemy import (
     and_,
@@ -12,6 +15,7 @@ from sqlalchemy import (
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.repository.member_repository import MemberRepository
 
 
 GENERAL_ASSEMBLIES = [
@@ -107,10 +111,7 @@ class GeneralAssemblyRepository(object):
             their membership status.
         """
         result = []
-        # pylint: disable=no-member
-        member = DBSession.query(C3sMember) \
-            .filter(C3sMember.membership_number == membership_number) \
-            .first()
+        member = MemberRepository.get_member(membership_number)
         flags = [
             member.email_invite_flag_bcgv14,
             member.email_invite_flag_bcgv15,
@@ -136,3 +137,33 @@ class GeneralAssemblyRepository(object):
                     'sent': sent[i],
                     })
         return result
+
+    @classmethod
+    def get_member_invitation(cls, membership_number, general_assembly_number):
+        invitations = cls.get_member_invitations(membership_number)
+        for invitation in invitations:
+            if invitation['number'] == general_assembly_number:
+                return invitation
+
+    @classmethod
+    def invite_member(cls, membership_number, general_assembly_number, token):
+        member = MemberRepository.get_member(membership_number)
+        if general_assembly_number == '1':
+            member.email_invite_date_bcgv14 = datetime.now()
+            member.email_invite_flag_bcgv14 = True
+        if general_assembly_number == '2':
+            member.email_invite_date_bcgv15 = datetime.now()
+            member.email_invite_flag_bcgv15 = True
+            member.email_invite_token_bcgv15 = token
+        if general_assembly_number == '3':
+            member.email_invite_date_bcgv16 = datetime.now()
+            member.email_invite_flag_bcgv16 = True
+            member.email_invite_token_bcgv16 = token
+        if general_assembly_number == '4':
+            member.email_invite_date_bcgv17 = datetime.now()
+            member.email_invite_flag_bcgv17 = True
+            member.email_invite_token_bcgv17 = token
+        if general_assembly_number == '5':
+            member.email_invite_date_bcgv18 = datetime.now()
+            member.email_invite_flag_bcgv18 = True
+            member.email_invite_token_bcgv18 = token

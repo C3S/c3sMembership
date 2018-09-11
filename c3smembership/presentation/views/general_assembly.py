@@ -64,6 +64,7 @@ from c3smembership.presentation.views.membership_listing import (
 DEBUG = False
 LOG = logging.getLogger(__name__)
 URL_PATTERN = '{ticketing_url}/lu/{token}/{email}'
+CURRENT_GENERAL_ASSEMBLY = '5'
 
 
 @view_config(
@@ -108,9 +109,51 @@ def make_bcga18_invitation_email(member, url):
     )
 
 
+def send_invitation(request, member):
+    """
+    Sends an invitation email to the member and records the invitation.
+
+    Args:
+        request: The Pyramid request used to access configuration, get the
+            mailer and return notifications.
+        member: The member to which the invitation is sent.
+    """
+    if not member.is_member():
+        request.session.flash(
+            'Invitations can only be sent to members.',
+            'messages')
+        return get_memberhip_listing_redirect(request, member.id)
+
+    invitation = GeneralAssemblyRepository.get_member_invitation(
+        member.membership_number,
+        CURRENT_GENERAL_ASSEMBLY)
+    if invitation is None or not invitation['flag']:
+        token = make_random_token()
+        url = URL_PATTERN.format(
+            ticketing_url=request.registry.settings['ticketing.url'],
+            token=token,
+            email=member.email)
+        LOG.info("mailing event invitation to to member id %s", member.id)
+
+        email_subject, email_body = make_bcga18_invitation_email(member, url)
+        message = Message(
+            subject=email_subject,
+            sender=request.registry.settings[
+                'c3smembership.notification_sender'],
+            recipients=[member.email],
+            body=email_body,
+        )
+        send_message(request, message)
+
+        GeneralAssemblyRepository.invite_member(
+            member.membership_number,
+            CURRENT_GENERAL_ASSEMBLY,
+            token)
+
+
 @view_config(permission='manage',
              route_name='invite_member')
-def invite_member_bcgv(request):
+def invite_member(request):
     """
     Send email to member with link to ticketing.
 
@@ -126,34 +169,7 @@ def invite_member_bcgv(request):
             'messages')
         return get_memberhip_listing_redirect(request)
 
-    if not member.is_member():
-        request.session.flash(
-            'Invitations can only be sent to members.',
-            'messages')
-        return get_memberhip_listing_redirect(request, member_id)
-
-    # prepare a random token iff none is set
-    if member.email_invite_token_bcgv18 is None:
-        member.email_invite_token_bcgv18 = make_random_token()
-    url = URL_PATTERN.format(
-        ticketing_url=request.registry.settings['ticketing.url'],
-        token=member.email_invite_token_bcgv18,
-        email=member.email)
-
-    LOG.info("mailing event invitation to to member id %s", member.id)
-
-    email_subject, email_body = make_bcga18_invitation_email(member, url)
-    message = Message(
-        subject=email_subject,
-        sender=request.registry.settings['c3smembership.notification_sender'],
-        recipients=[member.email],
-        body=email_body,
-    )
-    send_message(request, message)
-
-    # member._token = _looong_token
-    member.email_invite_flag_bcgv18 = True
-    member.email_invite_date_bcgv18 = datetime.now()
+    send_invitation(request, member)
     return get_memberhip_listing_redirect(request, member.id)
 
 
@@ -193,28 +209,7 @@ def batch_invite(request):
     ids_sent = []
 
     for member in invitees:
-        # prepare a random token iff none is set
-        if member.email_invite_token_bcgv18 is None:
-            member.email_invite_token_bcgv18 = make_random_token()
-        url = URL_PATTERN.format(
-            ticketing_url=request.registry.settings['ticketing.url'],
-            token=member.email_invite_token_bcgv18,
-            email=member.email)
-
-        LOG.info("mailing event invitation to to member id %s", member.id)
-
-        email_subject, email_body = make_bcga18_invitation_email(member, url)
-        message = Message(
-            subject=email_subject,
-            sender=request.registry.settings[
-                'c3smembership.notification_sender'],
-            recipients=[member.email],
-            body=email_body,
-        )
-        send_message(request, message)
-
-        member.email_invite_flag_bcgv18 = True
-        member.email_invite_date_bcgv18 = datetime.now()
+        send_invitation(request, member)
         num_sent += 1
         ids_sent.append(member.id)
 
