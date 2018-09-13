@@ -1,9 +1,16 @@
 Hello {salutation},
 
-Your membership application form to sign {num_shares} with value of
-{sum_shares} Euro safely arrived at our homebase.
+your membership application form to sign {num_shares} share(s) 
+safely arrived at our homebase.
 
-In case of any problems please don't hesitate to contact us (yes@c3s.cc).
+When we have received both your form and your payment of {sum_shares} Euro
+the administative board decides at their next meeting on your 
+membership.
+After that you will receive an e-mail with your membership 
+certificate. 
+
+In case of any issues please don't hesitate to contact us at 
+office@c3s.cc.
 
 Great that you want to become a part of the C3S!
 
