@@ -209,7 +209,7 @@ def edit_member(request):
         membership_accepted within the keywords.
         """
         if keywords.get('membership_accepted'):
-            return deform.widget.TextInputWidget()
+            return deform.widget.DateInputWidget()
         else:
             return deform.widget.HiddenWidget()
 
@@ -520,7 +520,7 @@ def edit_member(request):
         try:
             appstruct = form.validate(controls)
         except ValidationFailure as validationfailure:
-            clean_error_messages(validationfailure.error)
+            # clean_error_messages(validationfailure.error)
             request.session.flash(
                 _(u'Please note: There were errors, '
                   u'please check the form below.'),

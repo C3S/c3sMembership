@@ -413,7 +413,7 @@ class EditMemberTests(unittest.TestCase):
         res = self.__get_edit_member(member.id)
         self.assertTrue(res.form['membership_accepted'].checked)
         self.assertTrue(
-            type(res.form['membership_loss_date']) == webtest.forms.Text)
+            type(res.form['membership_loss_date']) == webtest.forms.Field)
         self.assertTrue(res.form['membership_loss_date'].value == '')
         self.assertTrue(
             type(res.form['membership_loss_type']) == webtest.forms.Select)

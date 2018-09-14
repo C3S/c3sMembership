@@ -16,6 +16,12 @@ Next Release
 
 - Update GnuPG key. This must still be moved to configuration!
 
+- Show member details in tabs.
+
+- Display membership loss date as date picker instead of text field.
+
+- Show member delete button only if membership has not been accepted.
+
 
 
 1.24.1
