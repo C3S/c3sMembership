@@ -4,7 +4,6 @@ Repository for accessing and operating with member data.
 """
 
 from datetime import (
-    date,
     datetime,
 )
 
@@ -15,36 +14,8 @@ from sqlalchemy import (
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.general_assembly import GeneralAssembly
 from c3smembership.data.repository.member_repository import MemberRepository
-
-
-GENERAL_ASSEMBLIES = [
-    {
-        'number': '1',
-        'name': '1. ordentliche Generalversammlung',
-        'date': date(2014, 8, 23),
-    },
-    {
-        'number': '2',
-        'name': '2. ordentliche Generalversammlung',
-        'date': date(2015, 6, 13),
-    },
-    {
-        'number': '3',
-        'name': '3. ordentliche Generalversammlung',
-        'date': date(2016, 4, 17),
-    },
-    {
-        'number': '4',
-        'name': '4. ordentliche Generalversammlung',
-        'date': date(2017, 4, 2),
-    },
-    {
-        'number': '5',
-        'name': '5. ordentliche Generalversammlung',
-        'date': date(2018, 6, 3),
-    },
-]
 
 
 class GeneralAssemblyRepository(object):
@@ -52,12 +23,10 @@ class GeneralAssemblyRepository(object):
     Repository for general assemblies.
     """
 
-    general_assemblies = GENERAL_ASSEMBLIES
-
     @classmethod
     def get_invitees(cls, num):
         """
-        Get a given number *n* of members to invite for barcamp and GV.
+        Get a given number *n* of members to invite for barcamp and GV
 
         Queries the database for members, where
 
@@ -86,7 +55,7 @@ class GeneralAssemblyRepository(object):
     @classmethod
     def get_member_by_token(cls, token):
         """
-        Find a member by token used for GA and BarCamp.
+        Find a member by token used for GA and BarCamp
 
         This is needed when a user returns from reading her email
         and clicking on a link containing the token.
@@ -102,7 +71,7 @@ class GeneralAssemblyRepository(object):
     def get_member_invitations(
             cls, membership_number, earliest=None, latest=None):
         """
-        Get all general assembly invitations of the member.
+        Get all general assembly invitations of the member
 
         Args:
             membership_number: The membership number of the member of which
@@ -132,29 +101,47 @@ class GeneralAssemblyRepository(object):
             member.email_invite_date_bcgv17,
             member.email_invite_date_bcgv18,
         ]
-        # pylint: disable=consider-using-enumerate
-        for i in range(len(cls.general_assemblies)):
+        # pylint: disable=no-member
+        general_assemblies = DBSession \
+            .query(GeneralAssembly) \
+            .order_by(GeneralAssembly.number) \
+            .all()
+        # pylint: disable=consider-using-enumerate,invalid-name
+        for i in range(len(general_assemblies)):
             is_later_than_or_equal_to_earliest = \
                 earliest is None \
                 or \
-                earliest <= cls.general_assemblies[i]['date']
+                earliest <= general_assemblies[i].date
             is_earlier_than_or_equal_to_latest = \
                 latest is None \
                 or \
-                latest >= cls.general_assemblies[i]['date']
+                latest >= general_assemblies[i].date
             if is_later_than_or_equal_to_earliest and \
                     is_earlier_than_or_equal_to_latest:
                 result.append({
-                    'number': cls.general_assemblies[i]['number'],
-                    'name': cls.general_assemblies[i]['name'],
-                    'date': cls.general_assemblies[i]['date'],
+                    'number': general_assemblies[i].number,
+                    'name': general_assemblies[i].name,
+                    'date': general_assemblies[i].date,
                     'flag': flags[i],
                     'sent': sent[i],
-                    })
+                })
         return result
 
     @classmethod
     def get_member_invitation(cls, membership_number, general_assembly_number):
+        """
+        Get the invitation of the member for the general assembly
+
+        Args:
+            membership_number: String. The membership number of the member for
+                which the invitation is returned.
+            general_assembly_number: Integer. The number of the general
+                assembly for which the member's invitation is returned.
+
+        Returns:
+            A general assembly invitation as a dictionary with properties
+            number, name, date, flag and sent.
+        """
         invitations = cls.get_member_invitations(membership_number)
         for invitation in invitations:
             if invitation['number'] == general_assembly_number:
@@ -162,23 +149,34 @@ class GeneralAssemblyRepository(object):
 
     @classmethod
     def invite_member(cls, membership_number, general_assembly_number, token):
+        """
+        Store the member invitation for the general assembly
+
+        Args:
+            membership_number: Integer. The membership number of the member for
+                which the general assembly invitation is stored.
+            general_assembly_number: Integer. The number of the general
+                assembly for which the invitation is stored for the member.
+            token: String. The token set to verify the member for API access by
+                the ticketing application.
+        """
         member = MemberRepository.get_member(membership_number)
-        if general_assembly_number == '1':
+        if general_assembly_number == 1:
             member.email_invite_date_bcgv14 = datetime.now()
             member.email_invite_flag_bcgv14 = True
-        if general_assembly_number == '2':
+        if general_assembly_number == 2:
             member.email_invite_date_bcgv15 = datetime.now()
             member.email_invite_flag_bcgv15 = True
             member.email_invite_token_bcgv15 = token
-        if general_assembly_number == '3':
+        if general_assembly_number == 3:
             member.email_invite_date_bcgv16 = datetime.now()
             member.email_invite_flag_bcgv16 = True
             member.email_invite_token_bcgv16 = token
-        if general_assembly_number == '4':
+        if general_assembly_number == 4:
             member.email_invite_date_bcgv17 = datetime.now()
             member.email_invite_flag_bcgv17 = True
             member.email_invite_token_bcgv17 = token
-        if general_assembly_number == '5':
+        if general_assembly_number == 5:
             member.email_invite_date_bcgv18 = datetime.now()
             member.email_invite_flag_bcgv18 = True
             member.email_invite_token_bcgv18 = token

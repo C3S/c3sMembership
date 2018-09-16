@@ -16,6 +16,7 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.general_assembly import GeneralAssembly
 from c3smembership.presentation.views.general_assembly import (
     batch_invite,
     invite_member,
@@ -140,6 +141,28 @@ def init_testing_db():
         member4.membership_accepted = True
         member4.membership_number = u'member4'
         DBSession.add(member4)
+
+        DBSession.add(GeneralAssembly(
+            1,
+            u'1. ordentliche Generalversammlung',
+            date(2014, 8, 23)))
+        DBSession.add(GeneralAssembly(
+            2,
+            u'2. ordentliche Generalversammlung',
+            date(2015, 6, 13)))
+        DBSession.add(GeneralAssembly(
+            3,
+            u'3. ordentliche Generalversammlung',
+            date(2016, 4, 17)))
+        DBSession.add(GeneralAssembly(
+            4,
+            u'4. ordentliche Generalversammlung',
+            date(2017, 4, 2)))
+        DBSession.add(GeneralAssembly(
+            5,
+            u'5. ordentliche Generalversammlung',
+            date(2018, 6, 3)))
+
         DBSession.flush()
     return DBSession
 
@@ -203,7 +226,7 @@ class TestInvitation(unittest.TestCase):
         self.assertTrue(member1.email_invite_token_bcgv18 is not None)
         self.assertEqual(len(mailer.outbox), 1)
 
-        # send email
+        # Try to invite again which should not cause another email to be sent
         res = invite_member(req)
         self.assertEqual(len(mailer.outbox), 1)
 

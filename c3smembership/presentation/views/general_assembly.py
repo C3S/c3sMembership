@@ -64,7 +64,7 @@ from c3smembership.presentation.views.membership_listing import (
 DEBUG = False
 LOG = logging.getLogger(__name__)
 URL_PATTERN = '{ticketing_url}/lu/{token}/{email}'
-CURRENT_GENERAL_ASSEMBLY = '5'
+CURRENT_GENERAL_ASSEMBLY = 5
 
 
 @view_config(
