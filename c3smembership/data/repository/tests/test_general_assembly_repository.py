@@ -196,9 +196,9 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         GeneralAssemblyRepository.invite_member(
             'member_3',
             '2',  # 2015
-            'token15')
+            u'token15')
         self.assertEquals(member.email_invite_flag_bcgv15, True)
-        self.assertEquals(member.email_invite_token_bcgv15, 'token15')
+        self.assertEquals(member.email_invite_token_bcgv15, u'token15')
         self.assertTrue(
             member.email_invite_date_bcgv15 > datetime(1970, 1, 1, 0, 0))
 
@@ -211,9 +211,9 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         GeneralAssemblyRepository.invite_member(
             'member_3',
             '3',  # 2016
-            'token16')
+            u'token16')
         self.assertEquals(member.email_invite_flag_bcgv16, True)
-        self.assertEquals(member.email_invite_token_bcgv16, 'token16')
+        self.assertEquals(member.email_invite_token_bcgv16, u'token16')
         self.assertTrue(
             member.email_invite_date_bcgv16 > datetime(1970, 1, 1, 0, 0))
 
@@ -226,9 +226,9 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         GeneralAssemblyRepository.invite_member(
             'member_3',
             '4',  # 2017
-            'token17')
+            u'token17')
         self.assertEquals(member.email_invite_flag_bcgv17, True)
-        self.assertEquals(member.email_invite_token_bcgv17, 'token17')
+        self.assertEquals(member.email_invite_token_bcgv17, u'token17')
         self.assertTrue(
             member.email_invite_date_bcgv17 > datetime(1970, 1, 1, 0, 0))
 
@@ -241,8 +241,8 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         GeneralAssemblyRepository.invite_member(
             'member_3',
             '5',  # 2018
-            'token18')
+            u'token18')
         self.assertEquals(member.email_invite_flag_bcgv18, True)
-        self.assertEquals(member.email_invite_token_bcgv18, 'token18')
+        self.assertEquals(member.email_invite_token_bcgv18, u'token18')
         self.assertTrue(
             member.email_invite_date_bcgv18 > datetime(1970, 1, 1, 0, 0))
