@@ -1,0 +1,40 @@
+<h2>General Assembly Invitations</h2>
+<span tal:condition="len(general_assembly_invitations) > 0" tal:omit-tag="">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Sent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr tal:repeat="general_assembly_invitation general_assembly_invitations">
+                <td>${general_assembly_invitation['number']}</td>
+                <td>${general_assembly_invitation['name']}</td>
+                <td>${general_assembly_invitation['date'].strftime('%d.%m.%Y')}</td>
+                <td class="icons">
+                    <span tal:omit-tag="" tal:condition="general_assembly_invitation['flag']">
+                        <i class="fas fa-envelope text-success"></i>
+                        ${general_assembly_invitation['sent'].strftime('%d.%m.%Y %H:%M:%S')}
+                    </span>
+                    <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
+                        <span tal:omit-tag="" tal:condition="general_assembly_invitation['date'] >= date.today()">
+                            <a href="${request.route_url('invite_member', m_id=member.id)}"
+                                    title="Invitation not sent yet. Click to send!"
+                                    class="fas fa-envelope text-warning"></a>
+                        </span>
+                        <span tal:omit-tag="" tal:condition="not general_assembly_invitation['date'] >= date.today()">
+                            <i title="Invitation was not sent. It cannot be sent anymore because the general assembly was hold in the past."
+                                    class="fas fa-envelope text-danger"></i>
+                        </span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</span>
+<span tal:condition="len(general_assembly_invitations) == 0" tal:omit-tag="">
+    There are no general assemblies relevant for this member.
+</span>
