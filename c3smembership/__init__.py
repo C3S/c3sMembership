@@ -300,6 +300,12 @@ def main(global_config, **settings):
         page_size_default=30)
 
     # Dues
+    from c3smembership.data.repository.general_assembly_repository import \
+        GeneralAssemblyRepository
+    from c3smembership.business.general_assembly_invitation import \
+        GeneralAssemblyInvitation
+    config.registry.general_assembly_invitation = GeneralAssemblyInvitation(
+        GeneralAssemblyRepository())
     config.add_route('general_assembly', '/general-assembly')
 
     # utilities & wizardry

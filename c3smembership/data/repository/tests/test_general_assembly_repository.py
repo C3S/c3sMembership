@@ -134,8 +134,9 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         self.assertEqual(member.membership_number, u'member_2')
 
     def test_get_member_invitations(self):
+        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_1')
         invitations = GeneralAssemblyRepository \
-            .get_member_invitations(u'member_1')
+            .get_member_invitations(u'member_1', member.membership_date)
         self.assertEqual(len(invitations), 1)
         self.assertEqual(invitations[0]['number'], '5')
         self.assertEqual(
@@ -145,9 +146,23 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
             invitations[0]['sent'],
             datetime(2018, 9, 1, 23, 5, 15))
 
+        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_2')
         invitations = GeneralAssemblyRepository \
-            .get_member_invitations(u'member_2')
+            .get_member_invitations(u'member_2', member.membership_date)
         self.assertEqual(len(invitations), 2)
+        self.assertEqual(invitations[0]['number'], '4')
+        self.assertEqual(
+            invitations[0]['flag'],
+            False)
+
+        # Test membership loss
+        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_2')
+        invitations = GeneralAssemblyRepository \
+            .get_member_invitations(
+                u'member_2',
+                member.membership_date,
+                date(2017, 12, 31))
+        self.assertEqual(len(invitations), 1)
         self.assertEqual(invitations[0]['number'], '4')
         self.assertEqual(
             invitations[0]['flag'],

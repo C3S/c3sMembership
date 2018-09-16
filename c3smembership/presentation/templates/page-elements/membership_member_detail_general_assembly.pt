@@ -20,12 +20,12 @@
                         ${general_assembly_invitation['sent'].strftime('%d.%m.%Y %H:%M:%S')}
                     </span>
                     <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
-                        <span tal:omit-tag="" tal:condition="general_assembly_invitation['date'] >= date.today()">
+                        <span tal:omit-tag="" tal:condition="general_assembly_invitation['can_invite']">
                             <a href="${request.route_url('invite_member', m_id=member.id)}"
                                     title="Invitation not sent yet. Click to send!"
                                     class="fas fa-envelope text-warning"></a>
                         </span>
-                        <span tal:omit-tag="" tal:condition="not general_assembly_invitation['date'] >= date.today()">
+                        <span tal:omit-tag="" tal:condition="not general_assembly_invitation['can_invite']">
                             <i title="Invitation was not sent. It cannot be sent anymore because the general assembly was hold in the past."
                                     class="fas fa-envelope text-danger"></i>
                         </span>

@@ -52,6 +52,8 @@ class GeneralAssemblyRepository(object):
     Repository for general assemblies.
     """
 
+    general_assemblies = GENERAL_ASSEMBLIES
+
     @classmethod
     def get_invitees(cls, num):
         """
@@ -97,18 +99,22 @@ class GeneralAssemblyRepository(object):
             C3sMember.email_invite_token_bcgv18 == token).first()
 
     @classmethod
-    def get_member_invitations(cls, membership_number):
+    def get_member_invitations(
+            cls, membership_number, earliest=None, latest=None):
         """
         Get all general assembly invitations of the member.
 
         Args:
             membership_number: The membership number of the member of which
                 the general assembly invitations are returned.
+            earliest: Optional. The earliest date for which general assemblies
+                are returned.
+            latest: Optional. The latest date for which general assemblies
+                are returned.
 
         Returns:
-            All general assemblies with number, name, date, invited flag and
-            sent date to which the member could have been invited according to
-            their membership status.
+            All general assemblies not earlier than earliest and not later than
+            latest with number, name, date, invited flag and sent date.
         """
         result = []
         member = MemberRepository.get_member(membership_number)
@@ -127,12 +133,21 @@ class GeneralAssemblyRepository(object):
             member.email_invite_date_bcgv18,
         ]
         # pylint: disable=consider-using-enumerate
-        for i in range(len(GENERAL_ASSEMBLIES)):
-            if member.is_member(GENERAL_ASSEMBLIES[i]['date']):
+        for i in range(len(cls.general_assemblies)):
+            is_later_than_or_equal_to_earliest = \
+                earliest is None \
+                or \
+                earliest <= cls.general_assemblies[i]['date']
+            is_earlier_than_or_equal_to_latest = \
+                latest is None \
+                or \
+                latest >= cls.general_assemblies[i]['date']
+            if is_later_than_or_equal_to_earliest and \
+                    is_earlier_than_or_equal_to_latest:
                 result.append({
-                    'number': GENERAL_ASSEMBLIES[i]['number'],
-                    'name': GENERAL_ASSEMBLIES[i]['name'],
-                    'date': GENERAL_ASSEMBLIES[i]['date'],
+                    'number': cls.general_assemblies[i]['number'],
+                    'name': cls.general_assemblies[i]['name'],
+                    'date': cls.general_assemblies[i]['date'],
                     'flag': flags[i],
                     'sent': sent[i],
                     })

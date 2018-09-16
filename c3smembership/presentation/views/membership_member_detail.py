@@ -17,8 +17,6 @@ from c3smembership.data.model.base.dues15invoice import Dues15Invoice
 from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
-from c3smembership.data.repository.general_assembly_repository import \
-    GeneralAssemblyRepository
 
 LOG = logging.getLogger(__name__)
 
@@ -34,8 +32,8 @@ def get_member_details(request, member):
     invoices17 = Dues17Invoice.get_by_membership_no(member.membership_number)
     invoices18 = Dues18Invoice.get_by_membership_no(member.membership_number)
     general_assembly_invitations = sorted(
-        GeneralAssemblyRepository.get_member_invitations(
-            member.membership_number),
+        request.registry.general_assembly_invitation.get_member_invitations(
+            member),
         key=lambda ga: ga['date'],
         reverse=True)
 

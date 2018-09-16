@@ -69,11 +69,10 @@ class TestMembershipMemberDetail(unittest.TestCase):
 
         Test cases:
 
-        1. Show invitation link when assembly later than today
-        2. Show invitation link when assembly today
-        3. Do not show invitation link when assembly earlier than today
-        4. Show sent timestamp
-        5. Show multiple assemblies
+        1. Show invitation link when indicated
+        2. Do not show invitation link when not indicated
+        3. Show sent timestamp
+        4. Show multiple assemblies
         """
         # 1. Show invitation link when assembly later than today
         html = self.render(
@@ -85,38 +84,18 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'date': date(2018, 9, 16),
                         'flag': False,
                         'sent': None,
+                        'can_invite': True,
                     },
                 ],
-                'date': DateDummy(date(2018, 9, 15)),
                 'member': DummyMember(1234),
             })
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)
         self.assertTrue('16.09.2018' in html)
-        self.assertTrue('href="http://example.com/invite_member/1234"' in html)
-
-        # 2. Show invitation link when assembly today
-        html = self.render(
-            {
-                'general_assembly_invitations': [
-                    {
-                        'number': 'GA1',
-                        'name': 'assembly one',
-                        'date': date(2018, 9, 16),
-                        'flag': False,
-                        'sent': None,
-                    },
-                ],
-                'date': DateDummy(date(2018, 9, 16)),
-                'member': DummyMember(1234),
-            })
         self.assertTrue('text-warning' in html)
-        self.assertTrue('GA1' in html)
-        self.assertTrue('assembly one' in html)
-        self.assertTrue('16.09.2018' in html)
         self.assertTrue('href="http://example.com/invite_member/1234"' in html)
 
-        # 3. Do not show invitation link when assembly earlier than today
+        # 2. Do not show invitation link when assembly earlier than today
         html = self.render(
             {
                 'general_assembly_invitations': [
@@ -126,19 +105,19 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'date': date(2018, 9, 16),
                         'flag': False,
                         'sent': None,
+                        'can_invite': False,
                     },
                 ],
-                'date': DateDummy(date(2018, 9, 17)),
                 'member': DummyMember(1234),
             })
-        self.assertTrue('text-danger' in html)
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)
         self.assertTrue('16.09.2018' in html)
+        self.assertTrue('text-danger' in html)
         self.assertTrue(
             'href="http://example.com/invite_member/1234"' not in html)
 
-        # 4. Show sent timestamp
+        # 3. Show sent timestamp
         html = self.render(
             {
                 'general_assembly_invitations': [
@@ -148,18 +127,20 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'date': date(2018, 9, 16),
                         'flag': True,
                         'sent': datetime(2018, 9, 14, 10, 11, 12),
+                        'can_invite': False,
                     },
                 ],
-                'date': DateDummy(date(2018, 9, 15)),
                 'member': DummyMember(1234),
             })
-        self.assertTrue('text-success' in html)
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)
         self.assertTrue('16.09.2018' in html)
+        self.assertTrue('text-success' in html)
         self.assertTrue('14.09.2018 10:11:12' in html)
+        self.assertTrue(
+            'href="http://example.com/invite_member/1234"' not in html)
 
-        # 5. Show multiple assemblies
+        # 4. Show multiple assemblies
         html = self.render(
             {
                 'general_assembly_invitations': [
@@ -169,6 +150,7 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'date': date(2019, 1, 11),
                         'flag': False,
                         'sent': None,
+                        'can_invite': True,
                     },
                     {
                         'number': 'GA1',
@@ -176,17 +158,19 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'date': date(2018, 9, 16),
                         'flag': True,
                         'sent': datetime(2018, 9, 14, 10, 11, 12),
+                        'can_invite': False,
                     },
                 ],
-                'date': DateDummy(date(2018, 9, 15)),
                 'member': DummyMember(1234),
             })
         self.assertTrue('GA2' in html)
         self.assertTrue('assembly two' in html)
         self.assertTrue('11.01.2019' in html)
+        self.assertTrue('text-warning' in html)
         self.assertTrue('href="http://example.com/invite_member/1234"' in html)
 
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)
         self.assertTrue('16.09.2018' in html)
+        self.assertTrue('text-success' in html)
         self.assertTrue('14.09.2018 10:11:12' in html)
