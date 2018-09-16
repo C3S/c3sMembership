@@ -40,7 +40,7 @@ def get_member_details(request, member):
         reverse=True)
 
     return {
-        'today': date.today().strftime('%Y-%m-%d'),
+        'date': date,
         'D': Decimal,
         'member': member,
         'shares': shares,

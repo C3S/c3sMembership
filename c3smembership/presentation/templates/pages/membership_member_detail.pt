@@ -1,6 +1,3 @@
-<?python
-      from datetime import date
-?>
 <html xmlns="http://www.w3.org/1999/xhtml"
         xml:lang="en"
         xmlns:tal="http://xml.zope.org/namespaces/tal"
@@ -427,15 +424,23 @@
                                 <td>${general_assembly_invitation['number']}</td>
                                 <td>${general_assembly_invitation['name']}</td>
                                 <td>${general_assembly_invitation['date'].strftime('%d.%m.%Y')}</td>
-                                <span tal:omit-tag="" tal:condition="general_assembly_invitation['flag']">
-                                    <td class="alert-success">
+                                <td class="icons">
+                                    <span tal:omit-tag="" tal:condition="general_assembly_invitation['flag']">
+                                        <i class="fas fa-envelope text-success"></i>
                                         ${general_assembly_invitation['sent'].strftime('%d.%m.%Y %H:%M:%S')}
-                                    </td>
-                                </span>
-                                <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
-                                    <td class="alert-danger">
-                                    </td>
-                                </span>
+                                    </span>
+                                    <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
+                                        <span tal:omit-tag="" tal:condition="general_assembly_invitation['date'] >= date.today()">
+                                            <a href="${request.route_url('invite_member', m_id=member.id)}"
+                                                    title="Invitation not sent yet. Click to send!"
+                                                    class="fas fa-envelope text-warning"></a>
+                                        </span>
+                                        <span tal:omit-tag="" tal:condition="not general_assembly_invitation['date'] >= date.today()">
+                                            <i title="Invitation was not sent. It cannot be sent anymore because the general assembly was hold in the past."
+                                                    class="fas fa-envelope text-danger"></i>
+                                        </span>
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -480,7 +485,7 @@
                                             <input name="payment_date"
                                                     class="form-control"
                                                     type="text"
-                                                    value="${today}" />
+                                                    value="${date.today().strftime('%Y-%m-%d')}" />
                                             <br />
                                             <input name="submit" type="submit"
                                                     class="btn btn-primary"
@@ -632,7 +637,7 @@
                                             <input name="payment_date"
                                                     class="form-control"
                                                     type="text"
-                                                    value="${today}" />
+                                                    value="${date.today().strftime('%Y-%m-%d')}" />
                                             <br />
                                             <input name="submit" type="submit"
                                                     class="btn btn-primary"
@@ -891,7 +896,7 @@
                                             <input name="payment_date"
                                                     class="form-control"
                                                     type="text"
-                                                    value="${today}" />
+                                                    value="${date.today().strftime('%Y-%m-%d')}" />
                                             <br />
                                             <input name="submit" type="submit"
                                                     class="btn btn-primary"
@@ -1153,7 +1158,7 @@
                                             <input name="payment_date"
                                                     class="form-control"
                                                     type="text"
-                                                    value="${today}" />
+                                                    value="${date.today().strftime('%Y-%m-%d')}" />
                                             <br />
                                             <input name="submit" type="submit"
                                                     class="btn btn-primary"
