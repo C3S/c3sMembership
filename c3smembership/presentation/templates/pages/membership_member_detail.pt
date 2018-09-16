@@ -412,32 +412,37 @@
                     aria-labelledby="general-assembly-tab"
                     tal:condition="member.is_member()">
                 <h2>General Assembly Invitations</h2>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>Sent</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr tal:repeat="general_assembly_invitation general_assembly_invitations">
-                            <td>${general_assembly_invitation['number']}</td>
-                            <td>${general_assembly_invitation['name']}</td>
-                            <td>${general_assembly_invitation['date'].strftime('%d.%m.%Y')}</td>
-                            <span tal:omit-tag="" tal:condition="general_assembly_invitation['flag']">
-                                <td class="alert-success">
-                                    ${general_assembly_invitation['sent'].strftime('%d.%m.%Y %H:%M:%S')}
-                                </td>
-                            </span>
-                            <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
-                                <td class="alert-danger">
-                                </td>
-                            </span>
-                        </tr>
-                    </tbody>
-                </table>
+                <span tal:condition="len(general_assembly_invitations) > 0" tal:omit-tag="">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Sent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr tal:repeat="general_assembly_invitation general_assembly_invitations">
+                                <td>${general_assembly_invitation['number']}</td>
+                                <td>${general_assembly_invitation['name']}</td>
+                                <td>${general_assembly_invitation['date'].strftime('%d.%m.%Y')}</td>
+                                <span tal:omit-tag="" tal:condition="general_assembly_invitation['flag']">
+                                    <td class="alert-success">
+                                        ${general_assembly_invitation['sent'].strftime('%d.%m.%Y %H:%M:%S')}
+                                    </td>
+                                </span>
+                                <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
+                                    <td class="alert-danger">
+                                    </td>
+                                </span>
+                            </tr>
+                        </tbody>
+                    </table>
+                </span>
+                <span tal:condition="len(general_assembly_invitations) == 0" tal:omit-tag="">
+                    There are no general assemblies relevant for this member.
+                </span>
             </div>
             <div class="tab-pane fade"
                     id="dues"
