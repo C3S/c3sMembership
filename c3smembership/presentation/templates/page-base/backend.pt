@@ -172,15 +172,12 @@
                     <main role="main">
                         <tal:block metal:define-slot="content"></tal:block>
                     </main>
-                    <p>
-                        <small>
-                            c3sMembership ${version_information}
-                            <span tal:omit-tag="" tal:condition="version_location_url is not None and version_location_name is not None">
-                                &ndash; <a href="${version_location_url}">${version_location_name}</a>
-                            </span>
-                        </small>
-                    </p>
-
+                    <div class="version-information">
+                        c3sMembership ${version_information}
+                        <span tal:omit-tag="" tal:condition="version_location_url is not None and version_location_name is not None">
+                            &ndash; <a href="${version_location_url}">${version_location_name}</a>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

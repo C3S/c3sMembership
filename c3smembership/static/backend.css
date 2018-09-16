@@ -59,6 +59,13 @@
     text-decoration: none
 }
 
+.version-information {
+    margin-top: 3em;
+    margin-bottom: 1em;
+    text-align: center;
+    font-size: 0.7em;
+}
+
 .pagination-bar .inactive {
     color: #A0A0A0;
 }
