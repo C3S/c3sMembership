@@ -1,34 +1,26 @@
 # -*- coding: utf-8 -*-
+"""
+Test the c3smembership.business.general_assembly_invitation module
+"""
 
 from datetime import date
-import mock
 from unittest import TestCase
+
+import mock
 
 from c3smembership.business.general_assembly_invitation import \
     GeneralAssemblyInvitation
 
 
-class DateDummy(object):
-
-    def __init__(self, today):
-        self._today = today
-
-    def today(self):
-        return self._today
-
-
-class MemberDummy(object):
-
-    def __init__(
-            self, membership_number, membership_date, membership_loss_date):
-        self.membership_number = membership_number
-        self.membership_date = membership_date
-        self.membership_loss_date = membership_loss_date
-
-
 class GeneralAssemblyInvitationTest(TestCase):
+    """
+    Test the GeneralAssemblyInvitation class
+    """
 
     def test_get_member_invitations(self):
+        """
+        Test the get_member_invitations method
+        """
         date_dummy = mock.Mock()
         date_dummy.today.side_effect = [
             date(2018, 9, 16),
