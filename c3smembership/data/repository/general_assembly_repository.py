@@ -180,3 +180,12 @@ class GeneralAssemblyRepository(object):
             member.email_invite_date_bcgv18 = datetime.now()
             member.email_invite_flag_bcgv18 = True
             member.email_invite_token_bcgv18 = token
+
+    @classmethod
+    def get_general_assemblies(cls):
+        """
+        Get general assemblies
+        """
+        return DBSession \
+            .query(GeneralAssembly) \
+            .all()

@@ -36,7 +36,6 @@ about the relevant C3S member from this app via API call, see the relevant
 module.
 """
 
-from datetime import datetime
 import logging
 from types import NoneType
 
@@ -68,14 +67,19 @@ CURRENT_GENERAL_ASSEMBLY = 5
 
 
 @view_config(
-    renderer='c3smembership.presentation:templates/pages/general_assembly.pt',
+    renderer='c3smembership.presentation:templates/pages/'
+             'general_assemblies.pt',
     permission='manage',
-    route_name='general_assembly')
-def general_assembly(request):
+    route_name='general_assemblies')
+def general_assemblies(request):
     """
-    General assembly page.
+    List general assemblies
     """
-    return {}
+    general_assemblies = sorted(
+        GeneralAssemblyRepository.get_general_assemblies(),
+        key=lambda ga: ga.number,
+        reverse=True)
+    return {'general_assemblies': general_assemblies}
 
 
 def make_bcga18_invitation_email(member, url):

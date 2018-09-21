@@ -284,3 +284,16 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         self.assertEquals(member.email_invite_token_bcgv18, u'token18')
         self.assertTrue(
             member.email_invite_date_bcgv18 > datetime(1970, 1, 1, 0, 0))
+
+    def test_get_general_assemblies(self):
+        general_assemblies = GeneralAssemblyRepository.get_general_assemblies()
+
+        # Test count
+        self.assertEquals(len(general_assemblies), 5)
+
+        # Test properties
+        self.assertEquals(
+            general_assemblies[4].name,
+            u'5. ordentliche Generalversammlung')
+        self.assertEquals(general_assemblies[4].date, date(2018, 6, 3))
+        self.assertEquals(general_assemblies[4].number, 5)

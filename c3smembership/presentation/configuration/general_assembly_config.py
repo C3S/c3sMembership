@@ -36,7 +36,7 @@ class GeneralAssemblyConfig(Configuration):
         Configure the general assembly invitation routes.
         """
         routes = [
-            ('general_assembly', '/general-assembly'),
+            ('general_assemblies', '/general-assemblies'),
             ('invite_member', '/invite_member/{m_id}'),
             ('invite_batch', '/invite_batch/{number}'),
         ]

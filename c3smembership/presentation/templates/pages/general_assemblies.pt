@@ -8,7 +8,30 @@
         <strong class="text-danger" tal:repeat="message request.session.pop_flash('message_to_staff')">
             ${message}
         </strong>
-        <h1>Invitations for general assembly</h1>
+        <h1>General assemblies</h1>
+        <span tal:condition="len(general_assemblies) > 0" tal:omit-tag="">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr tal:repeat="general_assembly general_assemblies">
+                        <td>${general_assembly.number}</td>
+                        <td>${general_assembly.name}</td>
+                        <td>${general_assembly.date.strftime('%d.%m.%Y')}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </span>
+        <span tal:condition="len(general_assemblies) == 0" tal:omit-tag="">
+            There are no general assemblies relevant for this member.
+        </span>
+
+        <h1>Invitations</h1>
         <p>
             <a href="${request.route_url('invite_batch', number=5)}"
                     title="Note: change number in URL as appropriate! Default is 5."

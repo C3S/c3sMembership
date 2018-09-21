@@ -95,7 +95,7 @@
         {
             'caption': 'General Assembly',
             'class': 'fas fa-hand-point-up',
-            'route': 'general_assembly',
+            'route': 'general_assemblies',
         }
     ]
 ?>
