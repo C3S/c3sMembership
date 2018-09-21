@@ -179,9 +179,11 @@ def send_invitation(request, member):
         )
         send_message(request, message)
 
-        GeneralAssemblyRepository.invite_member(
-            member.membership_number,
-            CURRENT_GENERAL_ASSEMBLY,
+        assembly = GeneralAssemblyRepository.get_general_assembly(
+            CURRENT_GENERAL_ASSEMBLY)
+        request.registry.general_assembly_invitation.invite_member(
+            member,
+            assembly,
             token)
 
 

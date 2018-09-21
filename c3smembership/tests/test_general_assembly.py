@@ -6,9 +6,11 @@ Tests the invite_members package.
 
 from datetime import date
 import unittest
-from sqlalchemy import engine_from_config
+
+import mock
 from pyramid import testing
 from pyramid_mailer import get_mailer
+from sqlalchemy import engine_from_config
 import transaction
 
 from c3smembership.data.model.base import (
@@ -17,6 +19,10 @@ from c3smembership.data.model.base import (
 )
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.general_assembly import GeneralAssembly
+from c3smembership.data.repository.general_assembly_repository import \
+    GeneralAssemblyRepository
+from c3smembership.business.general_assembly_invitation import \
+    GeneralAssemblyInvitation
 from c3smembership.presentation.views.general_assembly import (
     batch_invite,
     invite_member,
@@ -183,6 +189,10 @@ class TestInvitation(unittest.TestCase):
         self.config.registry.settings['testing.mail_to_console'] = 'false'
         self.config.registry.settings['c3smembership.notification_sender'] = \
             'test@example.com'
+
+        self.config.registry.general_assembly_invitation = \
+            GeneralAssemblyInvitation(GeneralAssemblyRepository())
+        self.config.registry.general_assembly_invitation.date = mock.Mock()
         self.session = init_testing_db()
 
     def tearDown(self):
@@ -220,6 +230,8 @@ class TestInvitation(unittest.TestCase):
         mailer = get_mailer(req)
         self.assertEqual(len(mailer.outbox), 0)
 
+        self.config.registry.general_assembly_invitation.date \
+            .today.side_effect = [date(2018, 1, 1)]
         res = invite_member(req)
 
         self.assertEqual(member1.email_invite_flag_bcgv18, True)
@@ -242,6 +254,9 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(member2.email_invite_flag_bcgv18, False)
         self.assertTrue(member2.email_invite_token_bcgv18 is None)
         req.matchdict = {'m_id': member2.id}
+
+        self.config.registry.general_assembly_invitation.date \
+            .today.side_effect = [date(2018, 1, 1)]
         res = invite_member(req)
         self.assertEqual(member2.email_invite_flag_bcgv18, True)
         self.assertTrue(member2.email_invite_token_bcgv18 is not None)
