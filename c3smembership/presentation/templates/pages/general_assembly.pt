@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend"
+        i18n:domain="c3smembership">
+    <tal:block metal:fill-slot="content">
+        <h1>General assembly</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Number</td>
+                    <td>${number}</td>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>${name}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>${date.strftime('%d.%m.%Y')}</td>
+                </tr>
+            </tbody>
+        </table>
+    </tal:block>
+</html>

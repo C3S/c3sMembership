@@ -186,6 +186,20 @@ class GeneralAssemblyRepository(object):
         """
         Get general assemblies
         """
+        # pylint: disable=no-member
         return DBSession \
             .query(GeneralAssembly) \
             .all()
+
+    @classmethod
+    def get_general_assembly(cls, number):
+        """
+        Get general assembly details
+        """
+        if not isinstance(number, int):
+            raise ValueError('Number must be an integer.')
+        # pylint: disable=no-member
+        return DBSession \
+            .query(GeneralAssembly) \
+            .filter(GeneralAssembly.number == number) \
+            .first()

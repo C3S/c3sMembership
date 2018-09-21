@@ -26,7 +26,7 @@ class Configuration(object):
         for route in routes:
             self.config.add_route(route[0], route[1])
 
-    def configure(self, config):
+    def configure(self):
         """
         Add the configuration of the module to the Pyramid configuration.
 

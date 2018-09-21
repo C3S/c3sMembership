@@ -37,6 +37,7 @@ class GeneralAssemblyConfig(Configuration):
         """
         routes = [
             ('general_assemblies', '/general-assemblies'),
+            ('general_assembly', '/general-assemblies/{number}'),
             ('invite_member', '/invite_member/{m_id}'),
             ('invite_batch', '/invite_batch/{number}'),
         ]

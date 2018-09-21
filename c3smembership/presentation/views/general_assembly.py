@@ -35,6 +35,7 @@ Invitation emails are usually prepped with links to the C3S ticketing system
 about the relevant C3S member from this app via API call, see the relevant
 module.
 """
+# pylint: disable=superfluous-parens
 
 import logging
 from types import NoneType
@@ -75,11 +76,40 @@ def general_assemblies(request):
     """
     List general assemblies
     """
-    general_assemblies = sorted(
+    # pylint: disable=unused-argument
+    assemblies = sorted(
         GeneralAssemblyRepository.get_general_assemblies(),
         key=lambda ga: ga.number,
         reverse=True)
-    return {'general_assemblies': general_assemblies}
+    return {'general_assemblies': assemblies}
+
+
+@view_config(
+    renderer='c3smembership.presentation:templates/pages/'
+             'general_assembly.pt',
+    permission='manage',
+    route_name='general_assembly')
+def general_assembly(request):
+    """
+    Show general assembly
+    """
+    result = {
+        'number': None,
+        'name': None,
+        'date': None,
+    }
+    number_str = request.matchdict.get('number')
+    number = None
+    try:
+        number = int(number_str)
+    except ValueError:
+        number = None
+    assembly = GeneralAssemblyRepository.get_general_assembly(number)
+    if assembly is not None:
+        result['number'] = assembly.number
+        result['name'] = assembly.name
+        result['date'] = assembly.date
+    return result
 
 
 def make_bcga18_invitation_email(member, url):
