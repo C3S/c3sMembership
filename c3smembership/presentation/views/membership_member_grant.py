@@ -64,11 +64,11 @@ def make_member_view(request):
         return HTTPFound(
             location=request.route_url('dashboard'))
     if member.membership_accepted:
-        # request.session.flash('id {} is already accepted member!')
+        request.session.flash('id {} is already accepted member!', 'danger')
         return HTTPFound(request.route_url('detail', memberid=member.id))
 
     if not (member.signature_received and member.payment_received):
-        request.session.flash('signature or payment missing!', 'messages')
+        request.session.flash('signature or payment missing!', 'danger')
         return HTTPFound(request.route_url('dashboard'))
 
     if 'make_member' in request.POST:
@@ -77,7 +77,7 @@ def make_member_view(request):
             member.membership_date = datetime.strptime(
                 request.POST['membership_date'], '%Y-%m-%d').date()
         except ValueError, value_error:
-            request.session.flash(value_error.message, 'merge_message')
+            request.session.flash(value_error.message, 'danger')
             return HTTPFound(
                 request.route_url('make_member', afm_id=member.id))
 

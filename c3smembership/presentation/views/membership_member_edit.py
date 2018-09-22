@@ -524,7 +524,7 @@ def edit_member(request):
             request.session.flash(
                 _(u'Please note: There were errors, '
                   u'please check the form below.'),
-                'message_above_form',
+                'warning',
                 allow_duplicate=False)
             return{'form': validationfailure.render()}
 

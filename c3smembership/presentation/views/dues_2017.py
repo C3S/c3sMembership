@@ -157,7 +157,7 @@ def send_dues17_invoice_email(request, m_id=None):
         if not batch:
             request.session.flash(
                 "member with id {} not found in DB!".format(member_id),
-                'message_to_staff')
+                'warning')
             return HTTPFound(request.route_url('toolbox'))
 
     # sanity check:is this a member?
@@ -166,7 +166,7 @@ def send_dues17_invoice_email(request, m_id=None):
     except AssertionError:
         request.session.flash(
             "member {} not accepted by the board!".format(member_id),
-            'message_to_staff')
+            'warning')
         return HTTPFound(request.route_url('toolbox'))
 
     if 'normal' not in member.membership_type and \
@@ -175,7 +175,7 @@ def send_dues17_invoice_email(request, m_id=None):
             'The membership type of member {0} is not specified! The '
             'membership type must either be "normal" or "investing" in order '
             'to be able to send an invoice email.'.format(member.id),
-            'message_to_staff')
+            'warning')
         return get_memberhip_listing_redirect(request)
     if member.membership_date >= date(2018,1,1) or ( \
                 member.membership_loss_date is not None
@@ -185,7 +185,7 @@ def send_dues17_invoice_email(request, m_id=None):
         request.session.flash(
             'Member {0} was not a member in 2017. Therefore, you cannot send '
             'an invoice for 2017.'.format(member.id),
-            'message_to_staff')
+            'warning')
         return get_memberhip_listing_redirect(request)
 
     # check if invoice no already exists.
@@ -330,7 +330,7 @@ def send_dues17_invoice_batch(request):
 
     if len(invoicees) == 0:
         request.session.flash('no invoicees left. all done!',
-                              'message_to_staff')
+                              'success')
         return HTTPFound(request.route_url('toolbox'))
 
     emails_sent = 0
@@ -345,7 +345,7 @@ def send_dues17_invoice_batch(request):
     request.session.flash(
         "sent out {} mails (to members with ids {})".format(
             emails_sent, ids_sent),
-        'message_to_staff')
+        'success')
 
     return HTTPFound(request.route_url('toolbox'))
 

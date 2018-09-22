@@ -9,12 +9,6 @@
         metal:use-macro="backend"
         i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
-        <div>
-            <strong tal:repeat="message request.session.pop_flash('message_to_staff')"
-                    class="text-danger">
-                ${message}
-            </strong>
-        </div>
         <h1>Members</h1>
         <h2 tal:condition="message" class="message" id="message">
             ${message}

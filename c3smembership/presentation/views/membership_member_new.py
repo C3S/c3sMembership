@@ -254,7 +254,7 @@ def new_member(request):
             request.session.flash(
                 _(u"Please note: There were errors, "
                   "please check the form below."),
-                'message_above_form',
+                'danger',
                 allow_duplicate=False)
             return{'form': e.render()}
 

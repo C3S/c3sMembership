@@ -288,7 +288,7 @@ class TestInvitation(unittest.TestCase):
         req.matchdict = {'number': 1}  # this will trigger 1 invitation
         res = batch_invite(req)
 
-        _messages = req.session.peek_flash('message_to_staff')
+        _messages = req.session.peek_flash('success')
         # pylint: disable=superfluous-parens
         self.assertTrue(
             'sent out 1 mails (to members with ids [1])' in _messages)
@@ -297,7 +297,7 @@ class TestInvitation(unittest.TestCase):
         req.matchdict = {'number': ''}  # this triggers remaining 3
         res = batch_invite(req)
         self.assertEqual(res.status_code, 302)
-        _messages = req.session.peek_flash('message_to_staff')
+        _messages = req.session.peek_flash('success')
 
         self.assertTrue(
             'sent out 3 mails (to members with ids [2, 3, 4])' in _messages)
@@ -316,7 +316,7 @@ class TestInvitation(unittest.TestCase):
             })
         res = batch_invite(req)
 
-        _messages = req.session.peek_flash('message_to_staff')
+        _messages = req.session.peek_flash('success')
         self.assertTrue(
             'no invitees left. all done!' in _messages)
 

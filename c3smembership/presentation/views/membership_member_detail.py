@@ -80,7 +80,7 @@ def member_details(request):
             "A Member with id "
             "{} could not be found in the DB. run for the backups!".format(
                 membership_number),
-            'message_to_staff'
+            'danger'
         )
         return HTTPFound(  # back to base
             request.route_url('toolbox'))
@@ -114,7 +114,7 @@ def member_detail(request):
             "A Member with id "
             "{} could not be found in the DB. run for the backups!".format(
                 memberid),
-            'message_to_staff'
+            'danger'
         )
         return HTTPFound(  # back to base
             request.route_url('toolbox'))

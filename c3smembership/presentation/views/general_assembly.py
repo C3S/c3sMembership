@@ -155,7 +155,7 @@ def send_invitation(request, member):
     if not member.is_member():
         request.session.flash(
             'Invitations can only be sent to members.',
-            'messages')
+            'danger')
         return get_memberhip_listing_redirect(request, member.id)
 
     invitation = GeneralAssemblyRepository.get_member_invitation(
@@ -202,7 +202,7 @@ def invite_member(request):
     if isinstance(member, NoneType):
         request.session.flash(
             'id not found. no mail sent.',
-            'messages')
+            'warning')
         return get_memberhip_listing_redirect(request)
 
     send_invitation(request, member)
@@ -238,7 +238,7 @@ def batch_invite(request):
 
     if len(invitees) == 0:
         request.session.flash('no invitees left. all done!',
-                              'message_to_staff')
+                              'success')
         return HTTPFound(request.route_url('toolbox'))
 
     num_sent = 0
@@ -252,6 +252,6 @@ def batch_invite(request):
     request.session.flash(
         "sent out {} mails (to members with ids {})".format(
             num_sent, ids_sent),
-        'message_to_staff')
+        'success')
 
     return HTTPFound(request.route_url('toolbox'))

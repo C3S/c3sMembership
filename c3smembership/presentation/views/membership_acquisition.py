@@ -332,9 +332,9 @@ def mail_signature_reminder(request):
     if isinstance(member, NoneType):
         request.session.flash(
             'that member was not found! (id: {})'.format(member_id),
-            'messages'
+            'danger'
         )
-        return get_dashboard_redirect(request, member.id)
+        return get_dashboard_redirect(request)
 
     email_subject, email_body = make_signature_reminder_email(member)
     message = Message(
@@ -414,7 +414,7 @@ def mail_mail_conf(request):
     if isinstance(member, NoneType):
         request.session.flash(
             'id not found. no mail sent.',
-            'messages')
+            'danger')
         return get_dashboard_redirect(request)
 
     send_mail_confirmation_mail(

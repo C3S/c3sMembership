@@ -32,7 +32,7 @@ def shares_detail(request):
         # entry was not found in database
         request.session.flash(
             'This shares id was not found in the database!',
-            'message_to_staff'
+            'danger'
         )
         return HTTPFound(
             request.route_url('toolbox'))
@@ -106,7 +106,7 @@ def shares_edit(request):
             request.session.flash(
                 _(u'Please note: There were errors, '
                   'please check the form below.'),
-                'message_above_form',
+                'danger',
                 allow_duplicate=False)
             return{'form': validation_failure.render()}
 
@@ -159,7 +159,7 @@ def shares_delete(request):
         # entry was not found in database
         request.session.flash(
             'This shares package {} was not found in the DB.'.format(shares_id),
-            'message_to_staff'
+            'danger'
         )
         return HTTPFound(request.route_url('toolbox'))
 
@@ -169,13 +169,13 @@ def shares_delete(request):
             'DID NOT DELETE! '
             'This shares package {} still has a member owning it.'.format(
                 shares_id),
-            'message_to_staff'
+            'danger'
         )
         return HTTPFound(request.route_url('toolbox'))
     else:
         request.registry.share_information.delete(shares_id)
         request.session.flash(
             'the shares package {} was deleted.'.format(shares_id),
-            'message_to_staff'
+            'success'
         )
         return HTTPFound(request.route_url('toolbox'))

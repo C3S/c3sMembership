@@ -531,7 +531,7 @@ class TestDues17Views(unittest.TestCase):
 
         assert(
             'sent out 5 mails (to members with ids [1, 2, 3, 4, 5])' in
-            req.session.pop_flash('message_to_staff'))
+            req.session.pop_flash('success'))
 
         # try to batch-send once more:
         # this will respond with a redirect and tell
@@ -542,7 +542,7 @@ class TestDues17Views(unittest.TestCase):
         self.assertEquals(res2.status_code, 302)
         assert(
             'no invoicees left. all done!' in
-            req.session.pop_flash('message_to_staff'))
+            req.session.pop_flash('success'))
 
         """
         and now some tests for make_dues17_invoice_no_pdf

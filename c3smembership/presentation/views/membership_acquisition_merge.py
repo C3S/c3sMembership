@@ -53,13 +53,13 @@ def merge_member_view(request):
     if not orig.membership_accepted:
         request.session.flash(
             'you can only merge to accepted members!',
-            'merge_message')
+            'danger')
         HTTPFound(request.route_url('make_member', afm_id=afm_id))
     exceeds_60 = int(orig.num_shares) + int(merg.num_shares) > 60
     if exceeds_60:
         request.session.flash(
             'merger would exceed 60 shares!',
-            'merge_message')
+            'danger')
         return HTTPFound(request.route_url('make_member', afm_id=afm_id))
 
     # TODO: this needs fixing!!!

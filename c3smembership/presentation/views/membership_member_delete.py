@@ -42,7 +42,7 @@ def delete_entry(request):
             request.user.login,
         )
         message = "member.id %s was deleted" % member.id
-        request.session.flash(message, 'messages')
+        request.session.flash(message, 'success')
 
         msgstr = u'Member with id {0} \"{1}, {2}\" was deleted.'
         return HTTPFound(

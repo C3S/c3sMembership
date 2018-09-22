@@ -170,6 +170,21 @@
                                 title="Log out"></a>
                     </div>
                     <main role="main">
+                        <div role="alert"
+                                class="alert alert-danger"
+                                tal:repeat="message request.session.pop_flash('danger')">
+                            ${message}
+                        </div>
+                        <div role="alert"
+                                class="alert alert-warning"
+                                tal:repeat="message request.session.pop_flash('warning')">
+                            ${message}
+                        </div>
+                        <div role="alert"
+                                class="alert alert-success"
+                                tal:repeat="message request.session.pop_flash('success')">
+                            ${message}
+                        </div>
                         <tal:block metal:define-slot="content"></tal:block>
                     </main>
                     <div class="version-information">

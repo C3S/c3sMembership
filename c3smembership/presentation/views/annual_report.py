@@ -86,7 +86,7 @@ def annual_report(request):  # pragma: no cover
             request.session.flash(
                 _(u'Please note: There were errors, please check the form '
                   u'below.'),
-                'message_above_form',
+                'warning',
                 allow_duplicate=False)
             return {
                 'form': validation_failure.render(),

@@ -194,7 +194,7 @@ def member_list_date_pdf_view(request):
             "Invalid date! '{}' does not compute! "
             "try again, please! (YYYY-MM-DD)".format(
                 effective_date_string),
-            'message_to_user'
+            'danger'
         )
         return HTTPFound(request.route_url('error'))
 
