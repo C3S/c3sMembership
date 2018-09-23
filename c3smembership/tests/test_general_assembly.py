@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Tests the invite_members package.
+Test the general assembly module
 """
 
 from datetime import date
@@ -21,11 +21,13 @@ from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.general_assembly import GeneralAssembly
 from c3smembership.data.repository.general_assembly_repository import \
     GeneralAssemblyRepository
+from c3smembership.data.repository.member_repository import MemberRepository
+from c3smembership.business.member_information import MemberInformation
 from c3smembership.business.general_assembly_invitation import \
     GeneralAssemblyInvitation
 from c3smembership.presentation.views.general_assembly import (
     batch_invite,
-    invite_member,
+    general_assembly_invitation,
 )
 
 
@@ -41,8 +43,8 @@ def init_testing_db():
     Base.metadata.create_all(engine)
 
     with transaction.manager:
-        # There is a side effect of test_initialization.py after which there are
-        # still records in the database although it is setup from scratch.
+        # There is a side effect of test_initialization.py after which there
+        # are still records in the database although it is setup from scratch.
         # Therefore, remove all members to have an empty table.
 
         # pylint: disable=no-member
@@ -136,16 +138,16 @@ def init_testing_db():
             num_shares=u'2',
         )
         member1.membership_accepted = True
-        member1.membership_number = u'member1'
+        member1.membership_number = u'11'
         DBSession.add(member1)
         member2.membership_accepted = True
-        member2.membership_number = u'member2'
+        member2.membership_number = u'22'
         DBSession.add(member2)
         member3.membership_accepted = True
-        member3.membership_number = u'member3'
+        member3.membership_number = u'33'
         DBSession.add(member3)
         member4.membership_accepted = True
-        member4.membership_number = u'member4'
+        member4.membership_number = u'44'
         DBSession.add(member4)
 
         DBSession.add(GeneralAssembly(
@@ -184,6 +186,8 @@ class TestInvitation(unittest.TestCase):
         self.config.add_route('membership_listing_backend', '/')
         self.config.add_route('toolbox', '/toolbox')
         self.config.add_route('dashboard', '/dashboard')
+        self.config.add_route('general_assembly', '/general_assembly')
+        self.config.add_route('general_assemblies', '/general_assemblies')
         self.config.registry.settings['c3smembership.url'] = 'http://foo.com'
         self.config.registry.settings['ticketing.url'] = 'http://bar.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
@@ -193,6 +197,8 @@ class TestInvitation(unittest.TestCase):
         self.config.registry.general_assembly_invitation = \
             GeneralAssemblyInvitation(GeneralAssemblyRepository())
         self.config.registry.general_assembly_invitation.date = mock.Mock()
+        self.config.registry.member_information = MemberInformation(
+            MemberRepository)
         self.session = init_testing_db()
 
     def tearDown(self):
@@ -221,25 +227,29 @@ class TestInvitation(unittest.TestCase):
         req.cookies['orderby'] = 'id'
 
         # try with non-existing id
-        req.matchdict = {'m_id': 10000}
-        res = invite_member(req)
+        req.matchdict = {'membership_number': 10000}
+        res = general_assembly_invitation(req)
         self.assertEquals(302, res.status_code)
 
-        req.matchdict = {'m_id': member1.id}
+        req.matchdict = {
+            'number': '5',
+            'membership_number': str(member1.membership_number),
+        }
 
         mailer = get_mailer(req)
         self.assertEqual(len(mailer.outbox), 0)
 
         self.config.registry.general_assembly_invitation.date \
             .today.side_effect = [date(2018, 1, 1)]
-        res = invite_member(req)
+        res = general_assembly_invitation(req)
 
+        self.assertEquals(res.status_code, 302)
         self.assertEqual(member1.email_invite_flag_bcgv18, True)
         self.assertTrue(member1.email_invite_token_bcgv18 is not None)
         self.assertEqual(len(mailer.outbox), 1)
 
         # Try to invite again which should not cause another email to be sent
-        res = invite_member(req)
+        res = general_assembly_invitation(req)
         self.assertEqual(len(mailer.outbox), 1)
 
         self.assertTrue(u'[C3S] Einladung zu Barcamp und Generalversammlung'
@@ -253,11 +263,14 @@ class TestInvitation(unittest.TestCase):
         member2 = C3sMember.get_by_id(2)
         self.assertEqual(member2.email_invite_flag_bcgv18, False)
         self.assertTrue(member2.email_invite_token_bcgv18 is None)
-        req.matchdict = {'m_id': member2.id}
+        req.matchdict = {
+            'number': '5',
+            'membership_number': str(member2.membership_number),
+        }
 
         self.config.registry.general_assembly_invitation.date \
             .today.side_effect = [date(2018, 1, 1)]
-        res = invite_member(req)
+        res = general_assembly_invitation(req)
         self.assertEqual(member2.email_invite_flag_bcgv18, True)
         self.assertTrue(member2.email_invite_token_bcgv18 is not None)
         self.assertEqual(len(mailer.outbox), 2)

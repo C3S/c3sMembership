@@ -10,32 +10,27 @@ from datetime import (
 )
 import unittest
 
+import mock
+
 from pyramid import renderers
 from pyramid.testing import DummyRequest
 import pyramid.testing
 
 
-class DateDummy(object):
-
-    def __init__(self, today):
-        self.__today = today
-
-    def today(self):
-        return self.__today
-
-
-class DummyMember(object):
-
-    def __init__(self, id):
-        self.id = id
-
-
 class TestMembershipMemberDetail(unittest.TestCase):
+    """
+    Test the membership member detail template
+    """
 
     def setUp(self):
+        """
+        Set up the test configuration
+        """
         self.config = pyramid.testing.setUp()
         self.config.include('pyramid_chameleon')
-        self.config.add_route('invite_member', 'invite_member/{m_id}')
+        self.config.add_route(
+            'general_assembly_invitation',
+            'general-assemblies/{number}/invite/{membership_number}')
 
     @classmethod
     def render(cls, values):
@@ -74,6 +69,9 @@ class TestMembershipMemberDetail(unittest.TestCase):
         3. Show sent timestamp
         4. Show multiple assemblies
         """
+        member = mock.Mock()
+        member.membership_number = 1234
+
         # 1. Show invitation link when assembly later than today
         html = self.render(
             {
@@ -87,13 +85,15 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'can_invite': True,
                     },
                 ],
-                'member': DummyMember(1234),
+                'member': member,
             })
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)
         self.assertTrue('16.09.2018' in html)
         self.assertTrue('text-warning' in html)
-        self.assertTrue('href="http://example.com/invite_member/1234"' in html)
+        self.assertTrue(
+            'href="http://example.com/general-assemblies/GA1/invite/1234"'
+            in html)
 
         # 2. Do not show invitation link when assembly earlier than today
         html = self.render(
@@ -108,7 +108,7 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'can_invite': False,
                     },
                 ],
-                'member': DummyMember(1234),
+                'member': member,
             })
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)
@@ -130,7 +130,7 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'can_invite': False,
                     },
                 ],
-                'member': DummyMember(1234),
+                'member': member,
             })
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)
@@ -161,13 +161,15 @@ class TestMembershipMemberDetail(unittest.TestCase):
                         'can_invite': False,
                     },
                 ],
-                'member': DummyMember(1234),
+                'member': member,
             })
         self.assertTrue('GA2' in html)
         self.assertTrue('assembly two' in html)
         self.assertTrue('11.01.2019' in html)
         self.assertTrue('text-warning' in html)
-        self.assertTrue('href="http://example.com/invite_member/1234"' in html)
+        self.assertTrue(
+            'href="http://example.com/general-assemblies/GA2/invite/1234"'
+            in html)
 
         self.assertTrue('GA1' in html)
         self.assertTrue('assembly one' in html)

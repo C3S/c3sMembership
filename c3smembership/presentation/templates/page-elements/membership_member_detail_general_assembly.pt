@@ -21,7 +21,10 @@
                     </span>
                     <span tal:omit-tag="" tal:condition="not general_assembly_invitation['flag']">
                         <span tal:omit-tag="" tal:condition="general_assembly_invitation['can_invite']">
-                            <a href="${request.route_url('invite_member', m_id=member.id)}"
+                            <a href="${request.route_url(
+                                        'general_assembly_invitation',
+                                        number=general_assembly_invitation['number'],
+                                        membership_number=member.membership_number)}"
                                     title="Invitation not sent yet. Click to send!"
                                     class="fas fa-envelope text-warning"></a>
                         </span>

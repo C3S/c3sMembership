@@ -38,7 +38,6 @@ module.
 # pylint: disable=superfluous-parens
 
 import logging
-from types import NoneType
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
@@ -53,7 +52,7 @@ from c3smembership.mail_utils import (
 from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
-from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.repository.member_repository import MemberRepository
 from c3smembership.data.repository.general_assembly_repository import \
     GeneralAssemblyRepository
 from c3smembership.presentation.views.membership_listing import (
@@ -112,6 +111,44 @@ def general_assembly(request):
     return result
 
 
+@view_config(
+    permission='manage',
+    route_name='general_assembly_invitation')
+def general_assembly_invitation(request):
+    """
+    Invite member to general assembly
+    """
+    general_assembly_number = None
+    try:
+        general_assembly_number = int(request.matchdict.get('number'))
+    except (ValueError, TypeError):
+        request.session.flash(
+            'Invalid general assembly number',
+            'message_to_staff')
+        return HTTPFound(request.route_url('general_assemblies'))
+
+    membership_number = None
+    try:
+        membership_number = int(request.matchdict.get('membership_number'))
+    except (ValueError, TypeError):
+        request.session.flash(
+            'Invalid membership number',
+            'message_to_staff')
+        return HTTPFound(request.route_url(
+            'general_assembly', number=general_assembly_number))
+    member = request.registry.member_information.get_member(membership_number)
+    if member is None:
+        request.session.flash(
+            'Invalid membership number',
+            'message_to_staff')
+        return HTTPFound(request.route_url(
+            'general_assembly', number=general_assembly_number))
+
+    send_invitation(request, member, general_assembly_number)
+    return HTTPFound(
+        request.route_url('general_assembly', number=general_assembly_number))
+
+
 def make_bcga18_invitation_email(member, url):
     """
     Create email subject and body for an invitation email for members.
@@ -143,7 +180,7 @@ def make_bcga18_invitation_email(member, url):
     )
 
 
-def send_invitation(request, member):
+def send_invitation(request, member, general_assembly_number):
     """
     Sends an invitation email to the member and records the invitation.
 
@@ -160,7 +197,7 @@ def send_invitation(request, member):
 
     invitation = GeneralAssemblyRepository.get_member_invitation(
         member.membership_number,
-        CURRENT_GENERAL_ASSEMBLY)
+        general_assembly_number)
     if invitation is None or not invitation['flag']:
         token = make_random_token()
         url = URL_PATTERN.format(
@@ -180,33 +217,11 @@ def send_invitation(request, member):
         send_message(request, message)
 
         assembly = GeneralAssemblyRepository.get_general_assembly(
-            CURRENT_GENERAL_ASSEMBLY)
+            general_assembly_number)
         request.registry.general_assembly_invitation.invite_member(
             member,
             assembly,
             token)
-
-
-@view_config(permission='manage',
-             route_name='invite_member')
-def invite_member(request):
-    """
-    Send email to member with link to ticketing.
-
-    === ====================================
-    URL http://app:port/invite_member/{m_id}
-    === ====================================
-    """
-    member_id = request.matchdict['m_id']
-    member = C3sMember.get_by_id(member_id)
-    if isinstance(member, NoneType):
-        request.session.flash(
-            'id not found. no mail sent.',
-            'warning')
-        return get_memberhip_listing_redirect(request)
-
-    send_invitation(request, member)
-    return get_memberhip_listing_redirect(request, member.id)
 
 
 @view_config(
@@ -245,7 +260,7 @@ def batch_invite(request):
     ids_sent = []
 
     for member in invitees:
-        send_invitation(request, member)
+        send_invitation(request, member, CURRENT_GENERAL_ASSEMBLY)
         num_sent += 1
         ids_sent.append(member.id)
 
