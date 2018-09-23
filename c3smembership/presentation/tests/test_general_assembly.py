@@ -10,6 +10,7 @@ import mock
 import c3smembership.presentation.views.general_assembly as \
     general_assembly_module
 from c3smembership.presentation.views.general_assembly import (
+    general_assemblies,
     general_assembly_invitation,
 )
 
@@ -18,6 +19,23 @@ class TestGeneralAssembly(unittest.TestCase):
     """
     Test the general assembly module
     """
+
+    def test_general_assemblies(self):
+        request = mock.Mock()
+        ga1 = mock.Mock()
+        ga1.number = 1
+        ga2 = mock.Mock()
+        ga2.number = 2
+        request.registry.general_assembly_invitation \
+            .get_general_assemblies.side_effect = [[ga1, ga2]]
+        result = general_assemblies(request)
+
+        # Verify assemblies count
+        self.assertEquals(len(result['general_assemblies']), 2)
+
+        # Verify decending order by number
+        self.assertEquals(result['general_assemblies'][0].number, 2)
+        self.assertEquals(result['general_assemblies'][1].number, 1)
 
     # pylint: disable=invalid-name
     @mock.patch.object(

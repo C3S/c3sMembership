@@ -52,7 +52,6 @@ from c3smembership.mail_utils import (
 from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
-from c3smembership.data.repository.member_repository import MemberRepository
 from c3smembership.data.repository.general_assembly_repository import \
     GeneralAssemblyRepository
 from c3smembership.presentation.views.membership_listing import (
@@ -77,7 +76,7 @@ def general_assemblies(request):
     """
     # pylint: disable=unused-argument
     assemblies = sorted(
-        GeneralAssemblyRepository.get_general_assemblies(),
+        request.registry.general_assembly_invitation.get_general_assemblies(),
         key=lambda ga: ga.number,
         reverse=True)
     return {'general_assemblies': assemblies}

@@ -97,3 +97,9 @@ class GeneralAssemblyInvitation(object):
             general_assembly.number,
             token,
         )
+
+    def get_general_assemblies(self):
+        """
+        Get all general assemblies
+        """
+        return self._general_assembly_repository.get_general_assemblies()
