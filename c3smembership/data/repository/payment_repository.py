@@ -89,6 +89,24 @@ class PaymentRepository(object):
         return payments
 
     @classmethod
+    def _get_dues18_payments(cls, members):
+        """
+        Gets the dues payments for 2017 from the members.
+        """
+        payments = []
+        for member in members:
+            if member.dues18_paid:
+                payments.append(cls._create_payment(
+                    date=member.dues18_paid_date.date(),
+                    account=u'Membership dues 2018',
+                    reference=member.dues18_token,
+                    membership_number=member.membership_number,
+                    firstname=member.firstname,
+                    lastname=member.lastname,
+                    amount=Decimal(member.dues18_amount_paid)))
+        return payments
+
+    @classmethod
     def _get_first_index(cls, page_number, page_size):
         """
         Gets the first index for slicing on indices from page number and page
@@ -225,6 +243,7 @@ class PaymentRepository(object):
         payments = payments + cls._get_dues15_payments(members)
         payments = payments + cls._get_dues16_payments(members)
         payments = payments + cls._get_dues17_payments(members)
+        payments = payments + cls._get_dues18_payments(members)
 
         # Arrange payments
         payments = cls._filter_payments(payments, from_date, to_date)
