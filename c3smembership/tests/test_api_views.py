@@ -20,6 +20,11 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.repository.general_assembly_repository import \
+    GeneralAssemblyRepository
+
+
+GENERAL_ASSEMBLY = 5
 
 
 class TestApiViews(unittest.TestCase):
@@ -59,9 +64,11 @@ class TestApiViews(unittest.TestCase):
                 name_of_colsoc=u"GEMA",
                 num_shares=u'23',
             )
+        member1.membership_number = 'M1'
         # pylint: disable=no-member
         DBSession.add(member1)
-        member1.email_invite_token_bcgv18 = u'MEMBERS_TOKEN'
+        GeneralAssemblyRepository.invite_member(
+            member1.membership_number, GENERAL_ASSEMBLY, u'MEMBERS_TOKEN')
         # pylint: disable=no-member
         DBSession.flush()
 
@@ -112,7 +119,7 @@ class TestApiViews(unittest.TestCase):
         # now use the correct auth token
         _auth_info = {'X-messaging-token': 'SECRETAUTHTOKEN'}
 
-        # ..but a non-existing refcode (email_invite_token_bcgv18)
+        # ..but a non-existing refcode
         # returns no user (None)
         res = self.testapp.put_json(
             '/lm', dict(token='foo'), headers=_auth_info, status=200)
@@ -124,11 +131,12 @@ class TestApiViews(unittest.TestCase):
 
         member1 = C3sMember.get_by_id(1)  # load member from DB for crosscheck
 
-        # now try a valid refcode (email_invite_token_bcgv18)
+        # now try a valid refcode
         res2 = self.testapp.put_json(
-            '/lm', dict(token=member1.email_invite_token_bcgv18),
+            '/lm', dict(token='MEMBERS_TOKEN'),
             headers=_auth_info, status=200)
         self.assertTrue(json.loads(res2.body)['firstname'], member1.firstname)
         self.assertTrue(json.loads(res2.body)['lastname'], member1.lastname)
         self.assertTrue(json.loads(res2.body)['email'], member1.email)
-        self.assertTrue(json.loads(res2.body)['mtype'], member1.membership_type)
+        self.assertTrue(
+            json.loads(res2.body)['mtype'], member1.membership_type)

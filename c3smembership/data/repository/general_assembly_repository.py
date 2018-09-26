@@ -83,7 +83,7 @@ class GeneralAssemblyRepository(object):
 
         Returns:
             All general assemblies not earlier than earliest and not later than
-            latest with number, name, date, invited flag and sent date.
+            latest with number, name, date, invited flag, sent date and token.
         """
         result = []
         member = MemberRepository.get_member(membership_number)
@@ -102,6 +102,13 @@ class GeneralAssemblyRepository(object):
             member.email_invite_date_bcgv18,
         ]
         # pylint: disable=no-member
+        tokens = [
+            None,
+            member.email_invite_token_bcgv15,
+            member.email_invite_token_bcgv16,
+            member.email_invite_token_bcgv17,
+            member.email_invite_token_bcgv18,
+        ]
         general_assemblies = DBSession \
             .query(GeneralAssembly) \
             .order_by(GeneralAssembly.number) \
@@ -124,6 +131,7 @@ class GeneralAssemblyRepository(object):
                     'date': general_assemblies[i].date,
                     'flag': flags[i],
                     'sent': sent[i],
+                    'token': tokens[i],
                 })
         return result
 

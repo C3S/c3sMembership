@@ -212,13 +212,15 @@ class TestInvitation(unittest.TestCase):
         Test the invitation procedure for one single member at a time.
 
         Load this member from the DB,
-        assure the email_invite_flag_bcgv18 and token are not set,
+        assure the flag and token are not set,
         prepare cookies, invite this member,
-        assure the email_invite_flag_bcgv18 and token are now set,
+        assure the flag and token are now set,
         """
         member1 = C3sMember.get_by_id(1)
-        self.assertEqual(member1.email_invite_flag_bcgv18, False)
-        self.assertTrue(member1.email_invite_token_bcgv18 is None)
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member1.membership_number, 5)
+        self.assertEqual(invitation['flag'], False)
+        self.assertTrue(invitation['token'] is None)
 
         req = testing.DummyRequest()
         # have some cookies
@@ -244,25 +246,31 @@ class TestInvitation(unittest.TestCase):
         res = general_assembly_invitation(req)
 
         self.assertEquals(res.status_code, 302)
-        self.assertEqual(member1.email_invite_flag_bcgv18, True)
-        self.assertTrue(member1.email_invite_token_bcgv18 is not None)
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member1.membership_number, 5)
+        self.assertEqual(invitation['flag'], True)
+        self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 1)
 
         # Try to invite again which should not cause another email to be sent
         res = general_assembly_invitation(req)
         self.assertEqual(len(mailer.outbox), 1)
 
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member1.membership_number, 5)
         self.assertTrue(u'[C3S] Einladung zu Barcamp und Generalversammlung'
                         in mailer.outbox[0].subject)
         self.assertTrue(member1.firstname
                         in mailer.outbox[0].body)
-        self.assertTrue(member1.email_invite_token_bcgv18
+        self.assertTrue(invitation['token']
                         in mailer.outbox[0].body)
 
         # send invitation to English member
         member2 = C3sMember.get_by_id(2)
-        self.assertEqual(member2.email_invite_flag_bcgv18, False)
-        self.assertTrue(member2.email_invite_token_bcgv18 is None)
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member2.membership_number, 5)
+        self.assertEqual(invitation['flag'], False)
+        self.assertTrue(invitation['token'] is None)
         req.matchdict = {
             'number': '5',
             'membership_number': str(member2.membership_number),
@@ -271,14 +279,16 @@ class TestInvitation(unittest.TestCase):
         self.config.registry.general_assembly_invitation.date \
             .today.side_effect = [date(2018, 1, 1)]
         res = general_assembly_invitation(req)
-        self.assertEqual(member2.email_invite_flag_bcgv18, True)
-        self.assertTrue(member2.email_invite_token_bcgv18 is not None)
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member2.membership_number, 5)
+        self.assertEqual(invitation['flag'], True)
+        self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 2)
         self.assertTrue(u'[C3S] Invitation to Barcamp and General Assembly'
                         in mailer.outbox[1].subject)
         self.assertTrue(member2.firstname
                         in mailer.outbox[1].body)
-        self.assertTrue(member2.email_invite_token_bcgv18
+        self.assertTrue(invitation['token']
                         in mailer.outbox[1].body)
 
     def test_invitation_batch(self):
@@ -287,8 +297,10 @@ class TestInvitation(unittest.TestCase):
         """
         members = C3sMember.get_all()
         for member in members:
-            self.assertEqual(member.email_invite_flag_bcgv18, False)
-            self.assertTrue(member.email_invite_token_bcgv18 is None)
+            invitation = GeneralAssemblyRepository.get_member_invitation(
+                member.membership_number, 5)
+            self.assertEqual(invitation['flag'], False)
+            self.assertTrue(invitation['token'] is None)
             self.assertTrue(member.membership_accepted is True)
 
         req = testing.DummyRequest()
@@ -342,14 +354,17 @@ class TestInvitation(unittest.TestCase):
         self.assertTrue('[C3S] Einladung' in mailer.outbox[2].subject)  # de
         self.assertTrue('[C3S] Invitation' in mailer.outbox[3].subject)  # en
 
+        i = 0
         for member in members:
+            invitation = GeneralAssemblyRepository.get_member_invitation(
+                member.membership_number, 5)
             # has been invited
-            self.assertEqual(member.email_invite_flag_bcgv18, True)
+            self.assertEqual(invitation['flag'], True)
             # has a token
-            self.assertTrue(member.email_invite_token_bcgv18 is not None)
+            self.assertTrue(invitation['token'] is not None)
             # firstname and token are in email body
             self.assertTrue(
-                members[member.id - 1].firstname in mailer.outbox[member.id - 1].body)
+                members[i].firstname in mailer.outbox[i].body)
             self.assertTrue(
-                members[member.id - 1].email_invite_token_bcgv18 in mailer.outbox[
-                    member.id - 1].body)
+                invitation['token'] in mailer.outbox[i].body)
+            i += 1
