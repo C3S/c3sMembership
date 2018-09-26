@@ -177,7 +177,7 @@ def send_dues18_invoice_email(request, m_id=None):
             request.session.flash(
                 "member with id {} not found in DB!".format(member_id),
                 'warning')
-            return HTTPFound(request.route_url('toolbox'))
+            return HTTPFound(request.route_url('dues'))
 
     # sanity check:is this a member?
     try:
@@ -186,7 +186,7 @@ def send_dues18_invoice_email(request, m_id=None):
         request.session.flash(
             "member {} not accepted by the board!".format(member_id),
             'warning')
-        return HTTPFound(request.route_url('toolbox'))
+        return HTTPFound(request.route_url('dues'))
 
     if 'normal' not in member.membership_type and \
             'investing' not in member.membership_type:
@@ -318,8 +318,8 @@ def send_dues18_invoice_email(request, m_id=None):
                 'detail',
                 memberid=member.id) +
             '#dues18')
-    if 'toolbox' in request.referrer:
-        return HTTPFound(request.route_url('toolbox'))
+    if 'dues' in request.referrer:
+        return HTTPFound(request.route_url('dues'))
     else:
         return get_memberhip_listing_redirect(request, member.id)
 
@@ -349,11 +349,11 @@ def send_dues18_invoice_batch(request):
     if len(invoicees) == 0:
         request.session.flash('no invoicees left. all done!',
                               'success')
-        return HTTPFound(request.route_url('toolbox'))
+        return HTTPFound(request.route_url('dues'))
 
     emails_sent = 0
     ids_sent = []
-    request.referrer = 'toolbox'
+    request.referrer = 'dues'
 
     for member in invoicees:
         send_dues18_invoice_email(request=request, m_id=member.id)
@@ -365,7 +365,7 @@ def send_dues18_invoice_batch(request):
             emails_sent, ids_sent),
         'success')
 
-    return HTTPFound(request.route_url('toolbox'))
+    return HTTPFound(request.route_url('dues'))
 
 
 def get_dues18_invoice(invoice, request):

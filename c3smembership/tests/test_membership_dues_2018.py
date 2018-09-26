@@ -291,7 +291,7 @@ class TestDues18Views(unittest.TestCase):
 
         _number_of_invoices = len(Dues18Invoice.get_all())
 
-        self.config.add_route('toolbox', '/')
+        self.config.add_route('dues', '/')
         self.config.add_route('detail', '/')
         self.config.add_route('make_dues18_invoice_no_pdf', '/')
 
@@ -456,7 +456,7 @@ class TestDues18Views(unittest.TestCase):
         self.config.add_route('make_dues18_reversal_invoice_pdf', '/')
         self.config.add_route('detail', '/detail/')
         self.config.add_route('error', '/error')
-        self.config.add_route('toolbox', '/toolbox')
+        self.config.add_route('dues', '/dues')
 
         # have to accept their membersip first
         m1 = C3sMember.get_by_id(1)  # german normal member
@@ -628,9 +628,9 @@ class TestDues18Views(unittest.TestCase):
         self.config.add_route('make_dues18_reversal_invoice_pdf', '/')
         self.config.add_route('detail', '/detail/')
         self.config.add_route('error', '/error')
-        self.config.add_route('toolbox', '/toolbox')
+        self.config.add_route('dues', '/dues')
         req = testing.DummyRequest()
-        req.referrer = 'toolbox'
+        req.referrer = 'dues'
         from c3smembership.presentation.views.dues_2018 import (
             send_dues18_invoice_batch,
         )
