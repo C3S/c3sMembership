@@ -1,20 +1,16 @@
 Hello {salutation},
 
-Your transfer of {sum_shares} Euro for {num_shares} share(s) has 
-been credited to our account.
+Your transfer of {sum_shares} Euro for {num_shares} share(s) has been credited
+to our account.
 
-When we have received both your application form and your payment 
-the administative board decides at their next meeting on your 
-membership.
-After that you will receive an e-mail with your membership 
-certificate. 
+Once we have received both your form and your payment of {sum_shares} Euro the
+administative board decides on your membership at their next meeting. After
+that you will receive an email with your membership certificate.
 
-In case of any issues please don't hesitate to contact us at 
-office@c3s.cc.
+In case of any issues please don't hesitate to contact us at office@c3s.cc.
 
 Thank you for your contribution to the C3S!
 
-Best wishes,
-The C3S Team
+Best wishes, The C3S Team
 
 {footer}

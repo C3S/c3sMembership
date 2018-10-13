@@ -1,12 +1,11 @@
 Hallo {salutation},
 
-Dein Beitrittsformular zur Zeichnung von {num_shares} Anteil(en) 
-ist sicher bei uns gelandet.
+Dein Beitrittsformular zur Zeichnung von {num_shares} Anteil(en) ist sicher
+bei uns gelandet.
 
-Wenn wir sowohl dein Formular, als auch deine Zahlung in Höhe von
-{sum_shares} Euro erhalten haben, wird bei der nächsten 
-Verwaltungsratssitzung über deine Aufnahme entschieden.
-Danach erhältst du eine Mitgliedsbescheinigung per E-mail.
+Wenn wir sowohl deine Beitrittserklärung, als auch deine Zahlung erhalten
+haben, wird bei der nächsten Verwaltungsratssitzung über deine Aufnahme
+entschieden. Danach erhältst du eine Mitgliedsbescheinigung per E-mail.
 
 Falls Probleme aufgetreten sind, melde Dich bitte unter office@c3s.cc.
 

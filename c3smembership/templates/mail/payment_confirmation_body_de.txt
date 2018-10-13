@@ -1,12 +1,11 @@
 Hallo {salutation},
 
-Deine Überweisung für {num_shares} Anteil(e) im Wert von {sum_shares} Euro
-ist auf unserem Konto eingegangen.
+Deine Überweisung für {num_shares} Anteil(e) im Wert von {sum_shares} Euro ist
+auf unserem Konto eingegangen.
 
-Wenn wir sowohl deine Beitrittserklärung, als auch deine Zahlung 
-erhalten haben, wird bei der nächsten Verwaltungsratssitzung über 
-deine Aufnahme entschieden.
-Danach erhältst du eine Mitgliedsbescheinigung per E-mail.
+Wenn wir sowohl deine Beitrittserklärung, als auch deine Zahlung erhalten
+haben, wird bei der nächsten Verwaltungsratssitzung über deine Aufnahme
+entschieden. Danach erhältst du eine Mitgliedsbescheinigung per E-mail.
 
 Falls Probleme aufgetreten sind, melde Dich bitte unter office@c3s.cc.
 
