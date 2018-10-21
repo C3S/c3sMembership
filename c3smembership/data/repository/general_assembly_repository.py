@@ -5,6 +5,7 @@ Repository for accessing and operating with member data.
 
 from datetime import (
     datetime,
+    date,
 )
 
 from sqlalchemy import (
@@ -44,10 +45,10 @@ class GeneralAssemblyRepository(object):
             and_(
                 C3sMember.is_member_filter(),
                 or_(
-                    (C3sMember.email_invite_flag_bcgv18 == 0),
-                    (C3sMember.email_invite_flag_bcgv18 == ''),
+                    (C3sMember.email_invite_flag_bcgv18_2 == 0),
+                    (C3sMember.email_invite_flag_bcgv18_2 == ''),
                     # pylint: disable=singleton-comparison
-                    (C3sMember.email_invite_flag_bcgv18 == None),
+                    (C3sMember.email_invite_flag_bcgv18_2 == None),
                 )
             )
         ).slice(0, num).all()
@@ -65,7 +66,7 @@ class GeneralAssemblyRepository(object):
         """
         # pylint: disable=no-member
         return DBSession.query(C3sMember).filter(
-            C3sMember.email_invite_token_bcgv18 == token).first()
+            C3sMember.email_invite_token_bcgv18_2 == token).first()
 
     @classmethod
     def get_member_invitations(
@@ -87,28 +88,46 @@ class GeneralAssemblyRepository(object):
         """
         result = []
         member = MemberRepository.get_member(membership_number)
+        email_invite_flag_bcgv15_2 = (
+                member.membership_date < date(2015, 6, 14)
+                and
+                (
+                    member.membership_loss_date is None
+                    or
+                    member.membership_loss_date > date(2015, 6, 14)
+                )
+            )
         flags = [
             member.email_invite_flag_bcgv14,
             member.email_invite_flag_bcgv15,
+            email_invite_flag_bcgv15_2,
             member.email_invite_flag_bcgv16,
             member.email_invite_flag_bcgv17,
             member.email_invite_flag_bcgv18,
+            member.email_invite_flag_bcgv18_2,
         ]
+        email_invite_date_bcgv15_2 = None
+        if email_invite_flag_bcgv15_2:
+            email_invite_date_bcgv15_2 = datetime(2015, 6, 14, 21, 30)
         sent = [
             member.email_invite_date_bcgv14,
             member.email_invite_date_bcgv15,
+            email_invite_date_bcgv15_2,
             member.email_invite_date_bcgv16,
             member.email_invite_date_bcgv17,
             member.email_invite_date_bcgv18,
+            member.email_invite_date_bcgv18_2,
         ]
-        # pylint: disable=no-member
         tokens = [
             None,
             member.email_invite_token_bcgv15,
+            None,
             member.email_invite_token_bcgv16,
             member.email_invite_token_bcgv17,
             member.email_invite_token_bcgv18,
+            member.email_invite_token_bcgv18_2,
         ]
+        # pylint: disable=no-member
         general_assemblies = DBSession \
             .query(GeneralAssembly) \
             .order_by(GeneralAssembly.number) \
@@ -177,17 +196,25 @@ class GeneralAssemblyRepository(object):
             member.email_invite_flag_bcgv15 = True
             member.email_invite_token_bcgv15 = token
         if general_assembly_number == 3:
+            raise NotImplemented(
+                'Invitations for extraordinary general assembly of 2015 are '
+                'not implemented.')
+        if general_assembly_number == 4:
             member.email_invite_date_bcgv16 = datetime.now()
             member.email_invite_flag_bcgv16 = True
             member.email_invite_token_bcgv16 = token
-        if general_assembly_number == 4:
+        if general_assembly_number == 5:
             member.email_invite_date_bcgv17 = datetime.now()
             member.email_invite_flag_bcgv17 = True
             member.email_invite_token_bcgv17 = token
-        if general_assembly_number == 5:
+        if general_assembly_number == 6:
             member.email_invite_date_bcgv18 = datetime.now()
             member.email_invite_flag_bcgv18 = True
             member.email_invite_token_bcgv18 = token
+        if general_assembly_number == 7:
+            member.email_invite_date_bcgv18_2 = datetime.now()
+            member.email_invite_flag_bcgv18_2 = True
+            member.email_invite_token_bcgv18_2 = token
 
     @classmethod
     def get_general_assemblies(cls):

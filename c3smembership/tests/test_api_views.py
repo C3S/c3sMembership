@@ -24,7 +24,7 @@ from c3smembership.data.repository.general_assembly_repository import \
     GeneralAssemblyRepository
 
 
-GENERAL_ASSEMBLY = 5
+GENERAL_ASSEMBLY = 7
 
 
 class TestApiViews(unittest.TestCase):

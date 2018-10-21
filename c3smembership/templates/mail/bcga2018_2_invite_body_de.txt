@@ -1,0 +1,14 @@
+Hallo {salutation},
+
+***************************  W I C H T I G  ***************************
+Dies ist Dein individueller Link zur Anmeldung:
+
+  {invitation_url}
+
+Bitte teile uns dort frühzeitig mit, ob Du teilnimmst oder nicht oder
+ob du dich vertreten lassen möchtest.
+Auch Absagen sind erwünscht. Auf der verlinkten Seite kannst Du separat
+die Teilnahme für die Generalversammlung und das Barcamp bestätigen.
+***************************
+
+{footer}

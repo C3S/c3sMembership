@@ -62,7 +62,7 @@ from c3smembership.presentation.views.membership_listing import (
 DEBUG = False
 LOG = logging.getLogger(__name__)
 URL_PATTERN = '{ticketing_url}/lu/{token}/{email}'
-CURRENT_GENERAL_ASSEMBLY = 5
+CURRENT_GENERAL_ASSEMBLY = 7
 
 
 @view_config(
@@ -148,7 +148,7 @@ def general_assembly_invitation(request):
         request.route_url('general_assembly', number=general_assembly_number))
 
 
-def make_bcga18_invitation_email(member, url):
+def make_bcga18_2_invitation_email(member, url):
     """
     Create email subject and body for an invitation email for members.
 
@@ -169,9 +169,9 @@ def make_bcga18_invitation_email(member, url):
                 invitation_url=url,
                 footer=get_email_footer(member.locale))))
     return (
-        get_template_text('bcga2018_invite_subject', member.locale).rstrip(
+        get_template_text('bcga2018_2_invite_subject', member.locale).rstrip(
             '\n'),  # remove newline (\n) from mail subject
-        get_template_text('bcga2018_invite_body', member.locale).format(
+        get_template_text('bcga2018_2_invite_body', member.locale).format(
             salutation=get_salutation(member),
             invitation_url=url,
             footer=get_email_footer(member.locale)
@@ -205,7 +205,7 @@ def send_invitation(request, member, general_assembly_number):
             email=member.email)
         LOG.info("mailing event invitation to to member id %s", member.id)
 
-        email_subject, email_body = make_bcga18_invitation_email(member, url)
+        email_subject, email_body = make_bcga18_2_invitation_email(member, url)
         message = Message(
             subject=email_subject,
             sender=request.registry.settings[

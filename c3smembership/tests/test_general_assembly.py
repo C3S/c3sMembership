@@ -31,6 +31,17 @@ from c3smembership.presentation.views.general_assembly import (
 )
 
 
+GENERAL_ASSEMBLY_NUMBER_2014 = 1
+GENERAL_ASSEMBLY_NUMBER_2015 = 2
+GENERAL_ASSEMBLY_NUMBER_2015_2 = 3
+GENERAL_ASSEMBLY_NUMBER_2016 = 4
+GENERAL_ASSEMBLY_NUMBER_2017 = 5
+GENERAL_ASSEMBLY_NUMBER_2018 = 6
+GENERAL_ASSEMBLY_NUMBER_2018_2 = 7
+
+CURRENT_GENERAL_ASSEMBLY = 7
+
+
 def init_testing_db():
     """
     Initializes the memory database with test samples.
@@ -151,25 +162,33 @@ def init_testing_db():
         DBSession.add(member4)
 
         DBSession.add(GeneralAssembly(
-            1,
+            GENERAL_ASSEMBLY_NUMBER_2014,
             u'1. ordentliche Generalversammlung',
             date(2014, 8, 23)))
         DBSession.add(GeneralAssembly(
-            2,
+            GENERAL_ASSEMBLY_NUMBER_2015,
             u'2. ordentliche Generalversammlung',
             date(2015, 6, 13)))
         DBSession.add(GeneralAssembly(
-            3,
+            GENERAL_ASSEMBLY_NUMBER_2015_2,
+            u'Außerordentliche Generalversammlung',
+            date(2015, 7, 16)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2016,
             u'3. ordentliche Generalversammlung',
             date(2016, 4, 17)))
         DBSession.add(GeneralAssembly(
-            4,
+            GENERAL_ASSEMBLY_NUMBER_2017,
             u'4. ordentliche Generalversammlung',
             date(2017, 4, 2)))
         DBSession.add(GeneralAssembly(
-            5,
+            GENERAL_ASSEMBLY_NUMBER_2018,
             u'5. ordentliche Generalversammlung',
             date(2018, 6, 3)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2018_2,
+            u'Außerordentliche Generalversammlung',
+            date(2018, 12, 1)))
 
         DBSession.flush()
     return DBSession
@@ -218,7 +237,7 @@ class TestInvitation(unittest.TestCase):
         """
         member1 = C3sMember.get_by_id(1)
         invitation = GeneralAssemblyRepository.get_member_invitation(
-            member1.membership_number, 5)
+            member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], False)
         self.assertTrue(invitation['token'] is None)
 
@@ -234,7 +253,7 @@ class TestInvitation(unittest.TestCase):
         self.assertEquals(302, res.status_code)
 
         req.matchdict = {
-            'number': '5',
+            'number': str(CURRENT_GENERAL_ASSEMBLY),
             'membership_number': str(member1.membership_number),
         }
 
@@ -247,7 +266,7 @@ class TestInvitation(unittest.TestCase):
 
         self.assertEquals(res.status_code, 302)
         invitation = GeneralAssemblyRepository.get_member_invitation(
-            member1.membership_number, 5)
+            member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 1)
@@ -257,9 +276,10 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(len(mailer.outbox), 1)
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
-            member1.membership_number, 5)
-        self.assertTrue(u'[C3S] Einladung zu Barcamp und Generalversammlung'
-                        in mailer.outbox[0].subject)
+            member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
+        self.assertEquals(
+            u'[C3S] Einladung zur außerordentlichen Generalversammlung',
+            mailer.outbox[0].subject)
         self.assertTrue(member1.firstname
                         in mailer.outbox[0].body)
         self.assertTrue(invitation['token']
@@ -268,11 +288,11 @@ class TestInvitation(unittest.TestCase):
         # send invitation to English member
         member2 = C3sMember.get_by_id(2)
         invitation = GeneralAssemblyRepository.get_member_invitation(
-            member2.membership_number, 5)
+            member2.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], False)
         self.assertTrue(invitation['token'] is None)
         req.matchdict = {
-            'number': '5',
+            'number': str(CURRENT_GENERAL_ASSEMBLY),
             'membership_number': str(member2.membership_number),
         }
 
@@ -280,12 +300,13 @@ class TestInvitation(unittest.TestCase):
             .today.side_effect = [date(2018, 1, 1)]
         res = general_assembly_invitation(req)
         invitation = GeneralAssemblyRepository.get_member_invitation(
-            member2.membership_number, 5)
+            member2.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 2)
-        self.assertTrue(u'[C3S] Invitation to Barcamp and General Assembly'
-                        in mailer.outbox[1].subject)
+        self.assertEquals(
+            u'[C3S] Invitation to extraordinary general assembly',
+            mailer.outbox[1].subject)
         self.assertTrue(member2.firstname
                         in mailer.outbox[1].body)
         self.assertTrue(invitation['token']
@@ -298,7 +319,7 @@ class TestInvitation(unittest.TestCase):
         members = C3sMember.get_all()
         for member in members:
             invitation = GeneralAssemblyRepository.get_member_invitation(
-                member.membership_number, 5)
+                member.membership_number, CURRENT_GENERAL_ASSEMBLY)
             self.assertEqual(invitation['flag'], False)
             self.assertTrue(invitation['token'] is None)
             self.assertTrue(member.membership_accepted is True)
@@ -357,7 +378,7 @@ class TestInvitation(unittest.TestCase):
         i = 0
         for member in members:
             invitation = GeneralAssemblyRepository.get_member_invitation(
-                member.membership_number, 5)
+                member.membership_number, CURRENT_GENERAL_ASSEMBLY)
             # has been invited
             self.assertEqual(invitation['flag'], True)
             # has a token

@@ -320,6 +320,9 @@ class C3sMember(Base):
     email_invite_flag_bcgv18 = Column(Boolean, default=False)
     email_invite_date_bcgv18 = Column(DateTime(), default=datetime(1970, 1, 1))
     email_invite_token_bcgv18 = Column(Unicode(255))
+    email_invite_flag_bcgv18_2 = Column(Boolean, default=False)
+    email_invite_date_bcgv18_2 = Column(DateTime(), default=datetime(1970, 1, 1))
+    email_invite_token_bcgv18_2 = Column(Unicode(255))
     # legal entities
     is_legalentity = Column(Boolean, default=False)
     court_of_law = Column(Unicode(255))

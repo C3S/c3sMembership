@@ -1,0 +1,14 @@
+Hello {salutation},
+
+*************************** Important ***************************
+This is your individual registration link:
+
+  {invitation_url}
+
+Please use it to inform us early on about whether or not you would
+like to participate or if you want to be represented by somebody.
+Cancellations are requested as well. You can separately confirm your
+participation in the general assembly and the barcamp.
+***************************
+
+{footer}
