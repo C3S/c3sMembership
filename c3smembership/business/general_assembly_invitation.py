@@ -55,7 +55,7 @@ class GeneralAssemblyInvitation(object):
             general_assembly_invitation['can_invite'] = (
                 # not invited yet and
                 not general_assembly_invitation['flag'] and
-                # assembly in the future
+                # assembly is not in the past
                 general_assembly_invitation['date'] >= self.date.today())
 
         return general_assembly_invitations

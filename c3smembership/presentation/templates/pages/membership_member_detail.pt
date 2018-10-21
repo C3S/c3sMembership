@@ -46,7 +46,9 @@
                     Membership
                 </a>
             </li>
-            <li class="nav-item" tal:condition="member.is_member()">
+            <li class="nav-item"
+                    tal:condition="member.membership_date is not None
+                        and member.membership_accepted">
                 <a class="nav-link"
                         id="general-assembly-tab"
                         data-toggle="tab"
@@ -407,7 +409,8 @@
                     id="general-assembly"
                     role="tabpanel"
                     aria-labelledby="general-assembly-tab"
-                    tal:condition="member.is_member()">
+                    tal:condition="member.membership_date is not None
+                        and member.membership_accepted">
                 <div metal:use-macro="load: c3smembership.presentation:templates/page-elements/membership_member_detail_general_assembly.pt"></div>
             </div>
             <div class="tab-pane fade"
