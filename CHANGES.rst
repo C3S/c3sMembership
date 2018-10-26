@@ -1,5 +1,5 @@
-Next Release
-============
+1.25
+====
 
 
 - Introduce configuration value for status email recipient.
