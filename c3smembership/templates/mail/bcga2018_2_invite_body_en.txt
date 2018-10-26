@@ -1,14 +1,161 @@
 Hello {salutation},
 
-*************************** Important ***************************
-This is your individual registration link:
+the administrative board of the
 
-  {invitation_url}
+Cultural Commons Collecting Society SCE
+mit beschränkter Haftung
+- C3S SCE -
+Rochusstr. 44
+40479 Düsseldorf
 
-Please use it to inform us early on about whether or not you would
-like to participate or if you want to be represented by somebody.
-Cancellations are requested as well. You can separately confirm your
-participation in the general assembly and the barcamp.
-***************************
+invites you
+
+to the 2nd exceptional general assembly of the C3S SCE on December 1,
+2018.
+
+Location:         Rochusstr. 44
+                  40479 Düsseldorf [2]
+Time:             1.00 pm - 4.00 pm
+                  Accreditation from 12.00 pm
+
+Please confirm your participation by mailing back to office@c3s.cc.
+
+
+Background for having this extraordinary general assembly is that we
+need to make up for the postponed topics of the general assembly in
+June.
+
+Adding to that, we'd like to present the latest draft of changes to
+our statutes. It includes all the feedback we got from the DPMA
+regarding our approval as a collecting society. Some rather critical
+details, like the inclusion of derivative reightowners, yet need to be
+discussed.
+
+Because of organizational reasons, we want to extend the contribution
+rules so that we could charge for them already in January rather than
+in July.  This will make budget planning much more easier for us.
+
+
+Agenda of the General Assembly 2018 of the C3S SCE
+==================================================
+
+Welcoming address
+
+# 1 Appointment of the chairperson of the assembly
+    and the minute taker
+
+# 2 Approval of the agenda
+
+# 3 Postponed topics of the 5th general assembly on 03.06.2018
+
+## 3.1 Approval of the annual financial statement
+## 3.2 Resolution on the appropriation
+       of the net income and the offsetting ofthe annual net loss
+## 3.3 Discharge of the executive directors and the members of the
+       adminstrative board
+
+# 4 Discussion and, if applicable, resolution on the determination of
+    temporary contribution rules
+    http://url.c3s.cc/ga2018abven
+
+# 5 State of the approval procedure/statutes
+    http://url.c3s.cc/ga2018astaten
+
+# 6 State of the repertoire portal
+
+# 7 Discussion / other issues
+
+
+You may contribute written proposals for resolutions and for alterations
+of the agenda until 30th of November, 2018 (midnight MEZ/CET, i.e. UTC +1)
+to agenda@c3s.cc.
+
+
+Organizational Issues
+=====================
+
+Participation
+-------------
+Participation in the general assembly is limited to members of the C3S
+SCE or authorized representatives of absent members.
+
+Authorized representatives
+--------------------------------
+If you are an active member and therefore entitled to vote, but unable
+to participate, you may grant a power of attorney. Further information
+on that will be included in the registration e-mail.
+
+Please note that every representative may only represent two members.
+If in doubt, please ask the representative for other persons already
+represented by the representative. Powers of attorney have to be
+presented as written original; fax or scan copies are not admissible.
+
+According to § 13 (6) 3 of our statute, representatives may be only
+members of the cooperative, spouse, parents, children, or siblings of
+a member.  Registered partners are treated like spouses.
+
+Please remember that the representative has to take the power of
+attorney to the meeting and to present it to the chairman of the
+meeting.
+
+A form for the power of attorney can be found here:
+
+Individuals:
+    for regular members: https://url.c3s.cc/auprivater
+    for investing members: https://url.c3s.cc/auprivatei
+Organizations: https://url.c3s.cc/aucorporate
+
+
+Audio Recording
+---------------
+During the general assembly, an audio recording will be made in order
+to ensure error-free minutes. The recording will not be published but
+archived internally as an appendix to the minutes.
+
+Those who do not wish their speech contributions to be recorded, may
+veto before commencing to speak.
+
+
+Why is it Important that You Participate?
+=========================================
+
+The general assembly is the body that takes the fundamental decisions
+for the C3S. (You are the general assembly, together with the other
+members.)
+
+That's all! Please let us know your proposals for topics, plan your
+trip - and we'll meet in Düsseldorf in December! If you have
+questions, you can get in touch, as always, via info@c3s.cc.
+
+We look forward to you and your ideas!
+
+For and on behalf of the administrative board of the C3S SCE
+Veit Winkler - Chairperson
+
+===============
+The administrative board of the C3S SCE consists of:
+
+Chairpersons:
+Veit Winkler, chairperson of the administrative board
+Stephan Fritzsche, deputy chairperson of the administrative board
+
+Other members:
+* Johanna Breuckmann
+* Oliver Dietle
+* Regina Fischer
+* m.eik michalke
+* Thomas Mielke
+* Christoph Scheid
+* Elmar Schuck
+* Julian Tillmann
+
+======================
+
+Links:
+
+[1] Articles of association of the C3S SCE: https://url.c3s.cc/statutes
+[2] Map of location:
+https://www.openstreetmap.org/node/2679106873#map=19/51.23274/6.78834
 
 {footer}
+
