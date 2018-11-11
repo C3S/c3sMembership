@@ -248,7 +248,8 @@ def batch_invite(request):
         except ValueError:
             batch_count = 5
 
-    invitees = GeneralAssemblyRepository.get_invitees(batch_count)
+    invitees = GeneralAssemblyRepository.get_invitees(
+        CURRENT_GENERAL_ASSEMBLY, batch_count)
 
     if len(invitees) == 0:
         request.session.flash('no invitees left. all done!',

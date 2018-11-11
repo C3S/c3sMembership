@@ -169,11 +169,13 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         """
         Test the get_invitees method
         """
-        invitees = GeneralAssemblyRepository.get_invitees(1)
+        invitees = GeneralAssemblyRepository.get_invitees(
+            GENERAL_ASSEMBLY_NUMBER_2018_2, 1)
         self.assertEqual(len(invitees), 1)
         self.assertEqual(invitees[0].membership_number, 'member_3')
 
-        invitees = GeneralAssemblyRepository.get_invitees(10)
+        invitees = GeneralAssemblyRepository.get_invitees(
+            GENERAL_ASSEMBLY_NUMBER_2018_2, 10)
         self.assertEqual(len(invitees), 1)
 
     def test_get_member_by_token(self):

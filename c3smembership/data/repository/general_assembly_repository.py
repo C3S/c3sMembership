@@ -25,33 +25,100 @@ class GeneralAssemblyRepository(object):
     """
 
     @classmethod
-    def get_invitees(cls, num):
+    def get_invitees(cls, general_assembly_number, invitees_count):
         """
-        Get a given number *n* of members to invite for barcamp and GV
+        Gets a number of members which have not yet been invited to the general
+        assembly.
 
-        Queries the database for members, where
+        Queries the database for members, where:
 
-        * members are accepted
-        * members have not received their invitation email yet
+        - members are members
+        - members have not received their invitation email yet
 
         Args:
-          num is the number *n* of invitees to return
+            general_assembly_number: Integer. The number of the general
+                assembly for which the invitees are returned.
+            invitees_count: Integer. Number of invitees returned at maximum.
 
         Returns:
-          a list of *n* member objects
+            A list member objects.
         """
         # pylint: disable=no-member
-        return DBSession.query(C3sMember).filter(
-            and_(
-                C3sMember.is_member_filter(),
-                or_(
-                    (C3sMember.email_invite_flag_bcgv18_2 == 0),
-                    (C3sMember.email_invite_flag_bcgv18_2 == ''),
-                    # pylint: disable=singleton-comparison
-                    (C3sMember.email_invite_flag_bcgv18_2 == None),
+        if general_assembly_number == 1:
+            return DBSession.query(C3sMember).filter(
+                and_(
+                    C3sMember.is_member_filter(),
+                    or_(
+                        (C3sMember.email_invite_flag_bcgv14 == 0),
+                        (C3sMember.email_invite_flag_bcgv14 == ''),
+                        # pylint: disable=singleton-comparison
+                        (C3sMember.email_invite_flag_bcgv14 == None),
+                    )
                 )
-            )
-        ).slice(0, num).all()
+            ).slice(0, invitees_count).all()
+        elif general_assembly_number == 2:
+            return DBSession.query(C3sMember).filter(
+                and_(
+                    C3sMember.is_member_filter(),
+                    or_(
+                        (C3sMember.email_invite_flag_bcgv15 == 0),
+                        (C3sMember.email_invite_flag_bcgv15 == ''),
+                        # pylint: disable=singleton-comparison
+                        (C3sMember.email_invite_flag_bcgv15 == None),
+                    )
+                )
+            ).slice(0, invitees_count).all()
+        elif general_assembly_number == 4:
+            return DBSession.query(C3sMember).filter(
+                and_(
+                    C3sMember.is_member_filter(),
+                    or_(
+                        (C3sMember.email_invite_flag_bcgv16 == 0),
+                        (C3sMember.email_invite_flag_bcgv16 == ''),
+                        # pylint: disable=singleton-comparison
+                        (C3sMember.email_invite_flag_bcgv16 == None),
+                    )
+                )
+            ).slice(0, invitees_count).all()
+        elif general_assembly_number == 5:
+            return DBSession.query(C3sMember).filter(
+                and_(
+                    C3sMember.is_member_filter(),
+                    or_(
+                        (C3sMember.email_invite_flag_bcgv17 == 0),
+                        (C3sMember.email_invite_flag_bcgv17 == ''),
+                        # pylint: disable=singleton-comparison
+                        (C3sMember.email_invite_flag_bcgv17 == None),
+                    )
+                )
+            ).slice(0, invitees_count).all()
+        elif general_assembly_number == 6:
+            return DBSession.query(C3sMember).filter(
+                and_(
+                    C3sMember.is_member_filter(),
+                    or_(
+                        (C3sMember.email_invite_flag_bcgv18 == 0),
+                        (C3sMember.email_invite_flag_bcgv18 == ''),
+                        # pylint: disable=singleton-comparison
+                        (C3sMember.email_invite_flag_bcgv18 == None),
+                    )
+                )
+            ).slice(0, invitees_count).all()
+        elif general_assembly_number == 7:
+            return DBSession.query(C3sMember).filter(
+                and_(
+                    C3sMember.is_member_filter(),
+                    or_(
+                        (C3sMember.email_invite_flag_bcgv18_2 == 0),
+                        (C3sMember.email_invite_flag_bcgv18_2 == ''),
+                        # pylint: disable=singleton-comparison
+                        (C3sMember.email_invite_flag_bcgv18_2 == None),
+                    )
+                )
+            ).slice(0, invitees_count).all()
+        else:
+            raise NotImplementedError()
+
 
     @classmethod
     def get_member_by_token(cls, token):
@@ -89,14 +156,14 @@ class GeneralAssemblyRepository(object):
         result = []
         member = MemberRepository.get_member(membership_number)
         email_invite_flag_bcgv15_2 = (
-                member.membership_date < date(2015, 6, 14)
-                and
-                (
-                    member.membership_loss_date is None
-                    or
-                    member.membership_loss_date > date(2015, 6, 14)
-                )
+            member.membership_date < date(2015, 6, 14)
+            and
+            (
+                member.membership_loss_date is None
+                or
+                member.membership_loss_date > date(2015, 6, 14)
             )
+        )
         flags = [
             member.email_invite_flag_bcgv14,
             member.email_invite_flag_bcgv15,
@@ -196,7 +263,7 @@ class GeneralAssemblyRepository(object):
             member.email_invite_flag_bcgv15 = True
             member.email_invite_token_bcgv15 = token
         if general_assembly_number == 3:
-            raise NotImplemented(
+            raise NotImplementedError(
                 'Invitations for extraordinary general assembly of 2015 are '
                 'not implemented.')
         if general_assembly_number == 4:
