@@ -282,8 +282,10 @@ class TestInvitation(unittest.TestCase):
             mailer.outbox[0].subject)
         self.assertTrue(member1.firstname
                         in mailer.outbox[0].body)
-        self.assertTrue(invitation['token']
-                        in mailer.outbox[0].body)
+        # Token not in email template for current general assembly of
+        # 2018-12-01. Testing needs to be performed with dummy templates.
+        # self.assertTrue(invitation['token']
+        #                 in mailer.outbox[0].body)
 
         # send invitation to English member
         member2 = C3sMember.get_by_id(2)
@@ -309,8 +311,10 @@ class TestInvitation(unittest.TestCase):
             mailer.outbox[1].subject)
         self.assertTrue(member2.firstname
                         in mailer.outbox[1].body)
-        self.assertTrue(invitation['token']
-                        in mailer.outbox[1].body)
+        # Token not in email template for current general assembly of
+        # 2018-12-01. Testing needs to be performed with dummy templates.
+        # self.assertTrue(invitation['token']
+        #                 in mailer.outbox[1].body)
 
     def test_invitation_batch(self):
         """
@@ -386,6 +390,8 @@ class TestInvitation(unittest.TestCase):
             # firstname and token are in email body
             self.assertTrue(
                 members[i].firstname in mailer.outbox[i].body)
-            self.assertTrue(
-                invitation['token'] in mailer.outbox[i].body)
+            # Token not in email template for current general assembly of
+            # 2018-12-01. Testing needs to be performed with dummy templates.
+            # self.assertTrue(
+            #     invitation['token'] in mailer.outbox[i].body)
             i += 1
