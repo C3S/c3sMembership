@@ -27,6 +27,7 @@ from c3smembership.business.general_assembly_invitation import \
     GeneralAssemblyInvitation
 from c3smembership.presentation.views.general_assembly import (
     batch_invite,
+    CURRENT_GENERAL_ASSEMBLY,
     general_assembly_invitation,
 )
 
@@ -38,8 +39,6 @@ GENERAL_ASSEMBLY_NUMBER_2016 = 4
 GENERAL_ASSEMBLY_NUMBER_2017 = 5
 GENERAL_ASSEMBLY_NUMBER_2018 = 6
 GENERAL_ASSEMBLY_NUMBER_2018_2 = 7
-
-CURRENT_GENERAL_ASSEMBLY = 7
 
 
 def init_testing_db():
@@ -63,6 +62,35 @@ def init_testing_db():
         for member in members:
             DBSession.delete(member)
         DBSession.flush()
+
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2014,
+            u'1. ordentliche Generalversammlung',
+            date(2014, 8, 23)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2015,
+            u'2. ordentliche Generalversammlung',
+            date(2015, 6, 13)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2015_2,
+            u'Außerordentliche Generalversammlung',
+            date(2015, 7, 16)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2016,
+            u'3. ordentliche Generalversammlung',
+            date(2016, 4, 17)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2017,
+            u'4. ordentliche Generalversammlung',
+            date(2017, 4, 2)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2018,
+            u'5. ordentliche Generalversammlung',
+            date(2018, 6, 3)))
+        DBSession.add(GeneralAssembly(
+            GENERAL_ASSEMBLY_NUMBER_2018_2,
+            u'Außerordentliche Generalversammlung',
+            date(2018, 12, 1)))
 
         # German person
         member1 = C3sMember(
@@ -160,35 +188,6 @@ def init_testing_db():
         member4.membership_accepted = True
         member4.membership_number = u'44'
         DBSession.add(member4)
-
-        DBSession.add(GeneralAssembly(
-            GENERAL_ASSEMBLY_NUMBER_2014,
-            u'1. ordentliche Generalversammlung',
-            date(2014, 8, 23)))
-        DBSession.add(GeneralAssembly(
-            GENERAL_ASSEMBLY_NUMBER_2015,
-            u'2. ordentliche Generalversammlung',
-            date(2015, 6, 13)))
-        DBSession.add(GeneralAssembly(
-            GENERAL_ASSEMBLY_NUMBER_2015_2,
-            u'Außerordentliche Generalversammlung',
-            date(2015, 7, 16)))
-        DBSession.add(GeneralAssembly(
-            GENERAL_ASSEMBLY_NUMBER_2016,
-            u'3. ordentliche Generalversammlung',
-            date(2016, 4, 17)))
-        DBSession.add(GeneralAssembly(
-            GENERAL_ASSEMBLY_NUMBER_2017,
-            u'4. ordentliche Generalversammlung',
-            date(2017, 4, 2)))
-        DBSession.add(GeneralAssembly(
-            GENERAL_ASSEMBLY_NUMBER_2018,
-            u'5. ordentliche Generalversammlung',
-            date(2018, 6, 3)))
-        DBSession.add(GeneralAssembly(
-            GENERAL_ASSEMBLY_NUMBER_2018_2,
-            u'Außerordentliche Generalversammlung',
-            date(2018, 12, 1)))
 
         DBSession.flush()
     return DBSession
@@ -335,22 +334,30 @@ class TestInvitation(unittest.TestCase):
         req.cookies['orderby'] = 'id'
 
         # with matchdict
-        req.matchdict = {'number': 1}  # this will trigger 1 invitation
+        req.matchdict = {'number': 1}
+
+        invitees = GeneralAssemblyRepository.get_invitees(
+            CURRENT_GENERAL_ASSEMBLY, 1000)
+        self.assertEquals(len(invitees), 4)
         res = batch_invite(req)
 
         _messages = req.session.peek_flash('success')
-        # pylint: disable=superfluous-parens
         self.assertTrue(
-            'sent out 1 mails (to members with ids [1])' in _messages)
+            'sent out 1 mails (to members with ids' in _messages[0])
+        invitees = GeneralAssemblyRepository.get_invitees(
+            CURRENT_GENERAL_ASSEMBLY, 1000)
+        self.assertEquals(len(invitees), 3)
 
         # without matchdict
         req.matchdict = {'number': ''}  # this triggers remaining 3
         res = batch_invite(req)
+        invitees = GeneralAssemblyRepository.get_invitees(
+            CURRENT_GENERAL_ASSEMBLY, 1000)
+        self.assertEquals(len(invitees), 0)
         self.assertEqual(res.status_code, 302)
         _messages = req.session.peek_flash('success')
-
         self.assertTrue(
-            'sent out 3 mails (to members with ids [2, 3, 4])' in _messages)
+            'sent out 3 mails (to members with ids' in _messages[1])
         # send more request with POST['number']
         req = testing.DummyRequest(
             POST={
@@ -372,26 +379,3 @@ class TestInvitation(unittest.TestCase):
 
         mailer = get_mailer(req)
         self.assertEqual(len(mailer.outbox), 4)
-
-        # assumptions about those members and emails sent
-        self.assertTrue('[C3S] Einladung' in mailer.outbox[0].subject)  # de
-        self.assertTrue('[C3S] Invitation' in mailer.outbox[1].subject)  # en
-        self.assertTrue('[C3S] Einladung' in mailer.outbox[2].subject)  # de
-        self.assertTrue('[C3S] Invitation' in mailer.outbox[3].subject)  # en
-
-        i = 0
-        for member in members:
-            invitation = GeneralAssemblyRepository.get_member_invitation(
-                member.membership_number, CURRENT_GENERAL_ASSEMBLY)
-            # has been invited
-            self.assertEqual(invitation['flag'], True)
-            # has a token
-            self.assertTrue(invitation['token'] is not None)
-            # firstname and token are in email body
-            self.assertTrue(
-                members[i].firstname in mailer.outbox[i].body)
-            # Token not in email template for current general assembly of
-            # 2018-12-01. Testing needs to be performed with dummy templates.
-            # self.assertTrue(
-            #     invitation['token'] in mailer.outbox[i].body)
-            i += 1

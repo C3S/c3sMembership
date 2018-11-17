@@ -9,6 +9,7 @@ from datetime import (
 )
 import unittest
 
+import mock
 from sqlalchemy import engine_from_config
 import transaction
 
@@ -40,12 +41,44 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         """
         Set up tests
         """
+        datetime_mock = mock.Mock()
+        GeneralAssemblyRepository.datetime = datetime_mock
+
         # pylint: disable=no-member
         my_settings = {'sqlalchemy.url': 'sqlite:///:memory:', }
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
         with transaction.manager:
+            DBSession.add(GeneralAssembly(
+                GENERAL_ASSEMBLY_NUMBER_2014,
+                u'1. ordentliche Generalversammlung',
+                date(2014, 8, 23)))
+            DBSession.add(GeneralAssembly(
+                GENERAL_ASSEMBLY_NUMBER_2015,
+                u'2. ordentliche Generalversammlung',
+                date(2015, 6, 13)))
+            DBSession.add(GeneralAssembly(
+                GENERAL_ASSEMBLY_NUMBER_2015_2,
+                u'Außerordentliche Generalversammlung',
+                date(2015, 7, 16)))
+            DBSession.add(GeneralAssembly(
+                GENERAL_ASSEMBLY_NUMBER_2016,
+                u'3. ordentliche Generalversammlung',
+                date(2016, 4, 17)))
+            DBSession.add(GeneralAssembly(
+                GENERAL_ASSEMBLY_NUMBER_2017,
+                u'4. ordentliche Generalversammlung',
+                date(2017, 4, 2)))
+            DBSession.add(GeneralAssembly(
+                GENERAL_ASSEMBLY_NUMBER_2018,
+                u'5. ordentliche Generalversammlung',
+                date(2018, 6, 3)))
+            DBSession.add(GeneralAssembly(
+                GENERAL_ASSEMBLY_NUMBER_2018_2,
+                u'Außerordentliche Generalversammlung',
+                date(2018, 12, 1)))
+
             member1 = C3sMember(
                 firstname=u'SomeFirstnäme',
                 lastname=u'SomeLastnäme',
@@ -109,50 +142,25 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
             member1.membership_number = u'member_1'
             member1.membership_date = date(2018, 1, 1)
             member1.membership_accepted = True
-            member1.email_invite_date_bcgv18_2 = datetime(2018, 9, 1, 23, 5, 15)
-            member1.email_invite_flag_bcgv18_2 = True
-            member1.email_invite_token_bcgv18_2 = u'test_token_1'
             DBSession.add(member1)
+
+            datetime_mock.now.side_effect = [datetime(2018, 9, 1, 23, 5, 15)]
+            GeneralAssemblyRepository.invite_member(
+                'member_1', GENERAL_ASSEMBLY_NUMBER_2018_2, u'test_token_1')
+
             member2.membership_number = u'member_2'
             member2.membership_date = date(2017, 1, 1)
             member2.membership_accepted = True
-            member2.email_invite_date_bcgv18_2 = datetime(2018, 9, 2, 22, 3, 10)
-            member2.email_invite_flag_bcgv18_2 = True
-            member2.email_invite_token_bcgv18_2 = u'test_token_2'
             DBSession.add(member2)
+
+            datetime_mock.now.side_effect = [datetime(2018, 9, 2, 22, 3, 10)]
+            GeneralAssemblyRepository.invite_member(
+                'member_2', GENERAL_ASSEMBLY_NUMBER_2018_2, u'test_token_2')
+
             member3.membership_number = u'member_3'
             member3.membership_date = date(2016, 1, 1)
             member3.membership_accepted = True
             DBSession.add(member3)
-
-            DBSession.add(GeneralAssembly(
-                GENERAL_ASSEMBLY_NUMBER_2014,
-                u'1. ordentliche Generalversammlung',
-                date(2014, 8, 23)))
-            DBSession.add(GeneralAssembly(
-                GENERAL_ASSEMBLY_NUMBER_2015,
-                u'2. ordentliche Generalversammlung',
-                date(2015, 6, 13)))
-            DBSession.add(GeneralAssembly(
-                GENERAL_ASSEMBLY_NUMBER_2015_2,
-                u'Außerordentliche Generalversammlung',
-                date(2015, 7, 16)))
-            DBSession.add(GeneralAssembly(
-                GENERAL_ASSEMBLY_NUMBER_2016,
-                u'3. ordentliche Generalversammlung',
-                date(2016, 4, 17)))
-            DBSession.add(GeneralAssembly(
-                GENERAL_ASSEMBLY_NUMBER_2017,
-                u'4. ordentliche Generalversammlung',
-                date(2017, 4, 2)))
-            DBSession.add(GeneralAssembly(
-                GENERAL_ASSEMBLY_NUMBER_2018,
-                u'5. ordentliche Generalversammlung',
-                date(2018, 6, 3)))
-            DBSession.add(GeneralAssembly(
-                GENERAL_ASSEMBLY_NUMBER_2018_2,
-                u'Außerordentliche Generalversammlung',
-                date(2018, 12, 1)))
 
             DBSession.flush()
 
@@ -164,6 +172,7 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         DBSession.close()
         # pylint: disable=no-member
         DBSession.remove()
+        GeneralAssemblyRepository.datetime = datetime
 
     def test_get_invitees(self):
         """
@@ -206,9 +215,7 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         self.assertEqual(
             invitations[0]['flag'],
             False)
-        self.assertEqual(
-            invitations[0]['sent'],
-            datetime(1970, 1, 1, 0, 0))
+        self.assertEqual(invitations[0]['sent'], None)
         self.assertEqual(
             invitations[1]['number'], GENERAL_ASSEMBLY_NUMBER_2018_2)
         self.assertEqual(
@@ -277,77 +284,107 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         member = C3sMember.get_by_id(3)
 
         # 1. Invitation for 2014
-        self.assertEquals(member.email_invite_flag_bcgv14, False)
-        self.assertEquals(
-            member.email_invite_date_bcgv14,
-            datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2014)
+        self.assertEquals(invitation['flag'], False)
+        self.assertEquals(invitation['sent'], None)
+
+        GeneralAssemblyRepository.datetime.now.side_effect = [
+            datetime(2018, 11, 17, 13, 30)]
         GeneralAssemblyRepository.invite_member(
             'member_3',
             GENERAL_ASSEMBLY_NUMBER_2014,
             None)
-        self.assertEquals(member.email_invite_flag_bcgv14, True)
-        self.assertTrue(
-            member.email_invite_date_bcgv14 > datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2014)
+        self.assertEquals(invitation['flag'], True)
+        self.assertEquals(invitation['sent'], datetime(2018, 11, 17, 13, 30))
 
         # 2. Invitation for 2015
-        self.assertEquals(member.email_invite_flag_bcgv15, False)
-        self.assertEquals(member.email_invite_token_bcgv15, None)
-        self.assertEquals(
-            member.email_invite_date_bcgv15,
-            datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2015)
+        self.assertEquals(invitation['flag'], False)
+        self.assertEquals(invitation['token'], None)
+        self.assertEquals(invitation['sent'], None)
+
+        GeneralAssemblyRepository.datetime.now.side_effect = [
+            datetime(2018, 11, 17, 13, 31)]
         GeneralAssemblyRepository.invite_member(
             'member_3',
             GENERAL_ASSEMBLY_NUMBER_2015,
             u'token15')
-        self.assertEquals(member.email_invite_flag_bcgv15, True)
-        self.assertEquals(member.email_invite_token_bcgv15, u'token15')
-        self.assertTrue(
-            member.email_invite_date_bcgv15 > datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2015)
+        self.assertEquals(invitation['flag'], True)
+        self.assertEquals(invitation['token'], u'token15')
+        self.assertEquals(invitation['sent'], datetime(2018, 11, 17, 13, 31))
 
         # 3. Invitation for 2016
-        self.assertEquals(member.email_invite_flag_bcgv16, False)
-        self.assertEquals(member.email_invite_token_bcgv16, None)
-        self.assertEquals(
-            member.email_invite_date_bcgv16,
-            datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2016)
+        self.assertEquals(invitation['flag'], False)
+        self.assertEquals(invitation['token'], None)
+        self.assertEquals(invitation['sent'], None)
+
+        GeneralAssemblyRepository.datetime.now.side_effect = [
+            datetime(2018, 11, 17, 13, 32)]
         GeneralAssemblyRepository.invite_member(
             'member_3',
             GENERAL_ASSEMBLY_NUMBER_2016,
             u'token16')
-        self.assertEquals(member.email_invite_flag_bcgv16, True)
-        self.assertEquals(member.email_invite_token_bcgv16, u'token16')
-        self.assertTrue(
-            member.email_invite_date_bcgv16 > datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2016)
+        self.assertEquals(invitation['flag'], True)
+        self.assertEquals(invitation['token'], u'token16')
+        self.assertEquals(invitation['sent'], datetime(2018, 11, 17, 13, 32))
 
         # 4. Invitation for 2017
-        self.assertEquals(member.email_invite_flag_bcgv17, False)
-        self.assertEquals(member.email_invite_token_bcgv17, None)
-        self.assertEquals(
-            member.email_invite_date_bcgv17,
-            datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2017)
+        self.assertEquals(invitation['flag'], False)
+        self.assertEquals(invitation['token'], None)
+        self.assertEquals(invitation['sent'], None)
+
+        GeneralAssemblyRepository.datetime.now.side_effect = [
+            datetime(2018, 11, 17, 13, 33)]
         GeneralAssemblyRepository.invite_member(
             'member_3',
             GENERAL_ASSEMBLY_NUMBER_2017,
             u'token17')
-        self.assertEquals(member.email_invite_flag_bcgv17, True)
-        self.assertEquals(member.email_invite_token_bcgv17, u'token17')
-        self.assertTrue(
-            member.email_invite_date_bcgv17 > datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2017)
+        self.assertEquals(invitation['flag'], True)
+        self.assertEquals(invitation['token'], u'token17')
+        self.assertEquals(invitation['sent'], datetime(2018, 11, 17, 13, 33))
 
         # 5. Invitation for 2018
-        self.assertEquals(member.email_invite_flag_bcgv18, False)
-        self.assertEquals(member.email_invite_token_bcgv18, None)
-        self.assertEquals(
-            member.email_invite_date_bcgv18,
-            datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2018)
+        self.assertEquals(invitation['flag'], False)
+        self.assertEquals(invitation['token'], None)
+        self.assertEquals(invitation['sent'], None)
+
+        GeneralAssemblyRepository.datetime.now.side_effect = [
+            datetime(2018, 11, 17, 13, 34)]
         GeneralAssemblyRepository.invite_member(
             'member_3',
             GENERAL_ASSEMBLY_NUMBER_2018,
             u'token18')
-        self.assertEquals(member.email_invite_flag_bcgv18, True)
-        self.assertEquals(member.email_invite_token_bcgv18, u'token18')
-        self.assertTrue(
-            member.email_invite_date_bcgv18 > datetime(1970, 1, 1, 0, 0))
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member.membership_number,
+            GENERAL_ASSEMBLY_NUMBER_2018)
+        self.assertEquals(invitation['flag'], True)
+        self.assertEquals(invitation['token'], u'token18')
+        self.assertEquals(invitation['sent'], datetime(2018, 11, 17, 13, 34))
 
     def test_get_general_assemblies(self):
         """

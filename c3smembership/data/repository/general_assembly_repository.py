@@ -5,17 +5,17 @@ Repository for accessing and operating with member data.
 
 from datetime import (
     datetime,
-    date,
 )
 
 from sqlalchemy import (
     and_,
-    or_,
 )
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.general_assembly import GeneralAssembly
+from c3smembership.data.model.base.general_assembly_invitation import \
+    GeneralAssemblyInvitation
 from c3smembership.data.repository.member_repository import MemberRepository
 
 
@@ -23,6 +23,8 @@ class GeneralAssemblyRepository(object):
     """
     Repository for general assemblies.
     """
+
+    datetime = datetime
 
     @classmethod
     def get_invitees(cls, general_assembly_number, invitees_count):
@@ -44,81 +46,41 @@ class GeneralAssemblyRepository(object):
             A list member objects.
         """
         # pylint: disable=no-member
-        if general_assembly_number == 1:
-            return DBSession.query(C3sMember).filter(
+        # In SqlAlchemy the True comparison must be done as "a == True" and not
+        # in the python default way "a is True". Therefore:
+        # pylint: disable=singleton-comparison
+        return (
+            # Get members
+            DBSession.query(C3sMember)
+            # combine with the general assembly requested as a cross join with
+            # the one general assembly row
+            .join(
+                GeneralAssembly,
+                GeneralAssembly.number == general_assembly_number)
+            # combine them with invitations for this member to this general
+            # assembly if any
+            .outerjoin(
+                GeneralAssemblyInvitation,
                 and_(
-                    C3sMember.is_member_filter(),
-                    or_(
-                        (C3sMember.email_invite_flag_bcgv14 == 0),
-                        (C3sMember.email_invite_flag_bcgv14 == ''),
-                        # pylint: disable=singleton-comparison
-                        (C3sMember.email_invite_flag_bcgv14 == None),
-                    )
+                    C3sMember.id == GeneralAssemblyInvitation.member_id,
+                    GeneralAssemblyInvitation.general_assembly_id ==
+                    GeneralAssembly.id
                 )
-            ).slice(0, invitees_count).all()
-        elif general_assembly_number == 2:
-            return DBSession.query(C3sMember).filter(
+            )
+            # but only
+            .filter(
                 and_(
-                    C3sMember.is_member_filter(),
-                    or_(
-                        (C3sMember.email_invite_flag_bcgv15 == 0),
-                        (C3sMember.email_invite_flag_bcgv15 == ''),
-                        # pylint: disable=singleton-comparison
-                        (C3sMember.email_invite_flag_bcgv15 == None),
-                    )
+                    # if no invitation has been sent
+                    GeneralAssemblyInvitation.id == None,
+                    # and the member has membership at the assmebly date
+                    C3sMember.is_member_filter(GeneralAssembly.date),
                 )
-            ).slice(0, invitees_count).all()
-        elif general_assembly_number == 4:
-            return DBSession.query(C3sMember).filter(
-                and_(
-                    C3sMember.is_member_filter(),
-                    or_(
-                        (C3sMember.email_invite_flag_bcgv16 == 0),
-                        (C3sMember.email_invite_flag_bcgv16 == ''),
-                        # pylint: disable=singleton-comparison
-                        (C3sMember.email_invite_flag_bcgv16 == None),
-                    )
-                )
-            ).slice(0, invitees_count).all()
-        elif general_assembly_number == 5:
-            return DBSession.query(C3sMember).filter(
-                and_(
-                    C3sMember.is_member_filter(),
-                    or_(
-                        (C3sMember.email_invite_flag_bcgv17 == 0),
-                        (C3sMember.email_invite_flag_bcgv17 == ''),
-                        # pylint: disable=singleton-comparison
-                        (C3sMember.email_invite_flag_bcgv17 == None),
-                    )
-                )
-            ).slice(0, invitees_count).all()
-        elif general_assembly_number == 6:
-            return DBSession.query(C3sMember).filter(
-                and_(
-                    C3sMember.is_member_filter(),
-                    or_(
-                        (C3sMember.email_invite_flag_bcgv18 == 0),
-                        (C3sMember.email_invite_flag_bcgv18 == ''),
-                        # pylint: disable=singleton-comparison
-                        (C3sMember.email_invite_flag_bcgv18 == None),
-                    )
-                )
-            ).slice(0, invitees_count).all()
-        elif general_assembly_number == 7:
-            return DBSession.query(C3sMember).filter(
-                and_(
-                    C3sMember.is_member_filter(),
-                    or_(
-                        (C3sMember.email_invite_flag_bcgv18_2 == 0),
-                        (C3sMember.email_invite_flag_bcgv18_2 == ''),
-                        # pylint: disable=singleton-comparison
-                        (C3sMember.email_invite_flag_bcgv18_2 == None),
-                    )
-                )
-            ).slice(0, invitees_count).all()
-        else:
-            raise NotImplementedError()
-
+            )
+            # get as many as requested
+            .slice(0, invitees_count)
+            # and get all of the actual records
+            .all()
+        )
 
     @classmethod
     def get_member_by_token(cls, token):
@@ -132,8 +94,12 @@ class GeneralAssemblyRepository(object):
             object: C3sMember object
         """
         # pylint: disable=no-member
-        return DBSession.query(C3sMember).filter(
-            C3sMember.email_invite_token_bcgv18_2 == token).first()
+        return (
+            DBSession.query(C3sMember)
+            .join(GeneralAssemblyInvitation)
+            .filter(GeneralAssemblyInvitation.token == token)
+            .first()
+        )
 
     @classmethod
     def get_member_invitations(
@@ -153,72 +119,60 @@ class GeneralAssemblyRepository(object):
             All general assemblies not earlier than earliest and not later than
             latest with number, name, date, invited flag, sent date and token.
         """
-        result = []
-        member = MemberRepository.get_member(membership_number)
-        email_invite_flag_bcgv15_2 = (
-            member.membership_date < date(2015, 6, 14)
-            and
-            (
-                member.membership_loss_date is None
-                or
-                member.membership_loss_date > date(2015, 6, 14)
-            )
-        )
-        flags = [
-            member.email_invite_flag_bcgv14,
-            member.email_invite_flag_bcgv15,
-            email_invite_flag_bcgv15_2,
-            member.email_invite_flag_bcgv16,
-            member.email_invite_flag_bcgv17,
-            member.email_invite_flag_bcgv18,
-            member.email_invite_flag_bcgv18_2,
-        ]
-        email_invite_date_bcgv15_2 = None
-        if email_invite_flag_bcgv15_2:
-            email_invite_date_bcgv15_2 = datetime(2015, 6, 14, 21, 30)
-        sent = [
-            member.email_invite_date_bcgv14,
-            member.email_invite_date_bcgv15,
-            email_invite_date_bcgv15_2,
-            member.email_invite_date_bcgv16,
-            member.email_invite_date_bcgv17,
-            member.email_invite_date_bcgv18,
-            member.email_invite_date_bcgv18_2,
-        ]
-        tokens = [
-            None,
-            member.email_invite_token_bcgv15,
-            None,
-            member.email_invite_token_bcgv16,
-            member.email_invite_token_bcgv17,
-            member.email_invite_token_bcgv18,
-            member.email_invite_token_bcgv18_2,
-        ]
         # pylint: disable=no-member
-        general_assemblies = DBSession \
-            .query(GeneralAssembly) \
-            .order_by(GeneralAssembly.number) \
+        assembly_date_filter = True
+        if earliest is not None:
+            assembly_date_filter = and_(
+                assembly_date_filter,
+                GeneralAssembly.date >= earliest
+            )
+        if latest is not None:
+            assembly_date_filter = and_(
+                assembly_date_filter,
+                GeneralAssembly.date <= latest
+            )
+
+        result = []
+        assemblies = (
+            # Get number, name and date of general assembly with invitation
+            # sent date and token
+            DBSession.query(
+                GeneralAssembly.number,
+                GeneralAssembly.name,
+                GeneralAssembly.date,
+                GeneralAssemblyInvitation.sent,
+                GeneralAssemblyInvitation.token)
+            # combine with the member as a cross join with the one member
+            # requested
+            .outerjoin(
+                C3sMember,
+                C3sMember.membership_number == membership_number
+            )
+            # combine with the invitations to for this member to the general
+            # assemblies
+            .outerjoin(
+                GeneralAssemblyInvitation,
+                and_(
+                    GeneralAssemblyInvitation.member_id == C3sMember.id,
+                    GeneralAssemblyInvitation.general_assembly_id ==
+                    GeneralAssembly.id
+                )
+            )
+            # filter for earliest and latest
+            .filter(assembly_date_filter)
+            # and get all of the actual records
             .all()
-        # pylint: disable=consider-using-enumerate,invalid-name
-        for i in range(len(general_assemblies)):
-            is_later_than_or_equal_to_earliest = \
-                earliest is None \
-                or \
-                earliest <= general_assemblies[i].date
-            is_earlier_than_or_equal_to_latest = \
-                latest is None \
-                or \
-                latest >= general_assemblies[i].date
-            if is_later_than_or_equal_to_earliest and \
-                    is_earlier_than_or_equal_to_latest:
-                result.append({
-                    'number': general_assemblies[i].number,
-                    'name': general_assemblies[i].name,
-                    'date': general_assemblies[i].date,
-                    'flag': flags[i],
-                    'sent': sent[i],
-                    'token': tokens[i],
-                })
+        )
+
+        for assembly in assemblies:
+            result.append({
+                'number': assembly.number,
+                'name': assembly.name,
+                'date': assembly.date,
+                'flag': (assembly.sent is not None),
+                'sent': assembly.sent,
+                'token': assembly.token,
+            })
         return result
 
     @classmethod
@@ -254,34 +208,13 @@ class GeneralAssemblyRepository(object):
             token: String. The token set to verify the member for API access by
                 the ticketing application.
         """
+        # pylint: disable=no-member
         member = MemberRepository.get_member(membership_number)
-        if general_assembly_number == 1:
-            member.email_invite_date_bcgv14 = datetime.now()
-            member.email_invite_flag_bcgv14 = True
-        if general_assembly_number == 2:
-            member.email_invite_date_bcgv15 = datetime.now()
-            member.email_invite_flag_bcgv15 = True
-            member.email_invite_token_bcgv15 = token
-        if general_assembly_number == 3:
-            raise NotImplementedError(
-                'Invitations for extraordinary general assembly of 2015 are '
-                'not implemented.')
-        if general_assembly_number == 4:
-            member.email_invite_date_bcgv16 = datetime.now()
-            member.email_invite_flag_bcgv16 = True
-            member.email_invite_token_bcgv16 = token
-        if general_assembly_number == 5:
-            member.email_invite_date_bcgv17 = datetime.now()
-            member.email_invite_flag_bcgv17 = True
-            member.email_invite_token_bcgv17 = token
-        if general_assembly_number == 6:
-            member.email_invite_date_bcgv18 = datetime.now()
-            member.email_invite_flag_bcgv18 = True
-            member.email_invite_token_bcgv18 = token
-        if general_assembly_number == 7:
-            member.email_invite_date_bcgv18_2 = datetime.now()
-            member.email_invite_flag_bcgv18_2 = True
-            member.email_invite_token_bcgv18_2 = token
+        assembly = cls.get_general_assembly(general_assembly_number)
+        invitation = GeneralAssemblyInvitation(
+            assembly, member, cls.datetime.now(), token)
+        DBSession.add(invitation)
+        DBSession.flush()
 
     @classmethod
     def get_general_assemblies(cls):

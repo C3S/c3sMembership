@@ -44,6 +44,8 @@ from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 from c3smembership.data.model.base.general_assembly import GeneralAssembly
+from c3smembership.data.model.base.general_assembly_invitation import \
+    GeneralAssemblyInvitation
 
 
 __version__ = open(os.path.join(os.path.abspath(

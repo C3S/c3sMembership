@@ -305,24 +305,7 @@ class C3sMember(Base):
     # startnex repair operations
     mtype_confirm_token = Column(Unicode(255))
     mtype_email_date = Column(DateTime(), default=datetime(1970, 1, 1))
-    # invitations
-    email_invite_flag_bcgv14 = Column(Boolean, default=False)
-    email_invite_date_bcgv14 = Column(DateTime(), default=datetime(1970, 1, 1))
-    email_invite_flag_bcgv15 = Column(Boolean, default=False)
-    email_invite_date_bcgv15 = Column(DateTime(), default=datetime(1970, 1, 1))
-    email_invite_token_bcgv15 = Column(Unicode(255))
-    email_invite_flag_bcgv16 = Column(Boolean, default=False)
-    email_invite_date_bcgv16 = Column(DateTime(), default=datetime(1970, 1, 1))
-    email_invite_token_bcgv16 = Column(Unicode(255))
-    email_invite_flag_bcgv17 = Column(Boolean, default=False)
-    email_invite_date_bcgv17 = Column(DateTime(), default=datetime(1970, 1, 1))
-    email_invite_token_bcgv17 = Column(Unicode(255))
-    email_invite_flag_bcgv18 = Column(Boolean, default=False)
-    email_invite_date_bcgv18 = Column(DateTime(), default=datetime(1970, 1, 1))
-    email_invite_token_bcgv18 = Column(Unicode(255))
-    email_invite_flag_bcgv18_2 = Column(Boolean, default=False)
-    email_invite_date_bcgv18_2 = Column(DateTime(), default=datetime(1970, 1, 1))
-    email_invite_token_bcgv18_2 = Column(Unicode(255))
+
     # legal entities
     is_legalentity = Column(Boolean, default=False)
     court_of_law = Column(Unicode(255))
