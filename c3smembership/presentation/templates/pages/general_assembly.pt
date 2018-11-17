@@ -4,6 +4,9 @@
         xmlns:metal="http://xml.zope.org/namespaces/metal"
         metal:use-macro="backend"
         i18n:domain="c3smembership">
+    <?python
+        from datetime import date
+    ?>
     <tal:block metal:fill-slot="content">
         <h1>General assembly</h1>
         <table class="table table-striped">
@@ -30,7 +33,7 @@
         </table>
 
         <h1>Invitations</h1>
-        <p>
+        <p tal:condition="date >= date.today()">
             <a href="${request.route_url('general_assembly_batch_invite', count=5, number=number)}"
                     title="Note: change number in URL as appropriate! Default is 5."
                     class="btn btn-success">
@@ -43,6 +46,9 @@
                 <input type="hidden" name="number" value="${number}"></input>
                 <input type="submit" name="submit"></input>
             </form>
+        </p>
+        <p tal:condition="not date >= date.today()">
+            Invitations cannot be sent as the general assembly took place in the past.
         </p>
     </tal:block>
 </html>

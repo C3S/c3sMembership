@@ -199,6 +199,12 @@ def send_invitation(request, member, general_assembly_number):
         general_assembly_number)
     if invitation is None or not invitation['flag']:
         token = make_random_token()
+        assembly = GeneralAssemblyRepository.get_general_assembly(
+            general_assembly_number)
+        request.registry.general_assembly_invitation.invite_member(
+            member,
+            assembly,
+            token)
         url = URL_PATTERN.format(
             ticketing_url=request.registry.settings['ticketing.url'],
             token=token,
@@ -214,13 +220,6 @@ def send_invitation(request, member, general_assembly_number):
             body=email_body,
         )
         send_message(request, message)
-
-        assembly = GeneralAssemblyRepository.get_general_assembly(
-            general_assembly_number)
-        request.registry.general_assembly_invitation.invite_member(
-            member,
-            assembly,
-            token)
 
 
 @view_config(
@@ -262,7 +261,15 @@ def batch_invite(request):
     ids_sent = []
 
     for member in invitees:
-        send_invitation(request, member, general_assembly_number)
+        try:
+            send_invitation(request, member, general_assembly_number)
+        except ValueError as value_error:
+            request.session.flash(
+                unicode(value_error.message),
+                'danger')
+            return HTTPFound(request.route_url(
+                'general_assembly', number=general_assembly_number))
+
         num_sent += 1
         ids_sent.append(member.id)
 
