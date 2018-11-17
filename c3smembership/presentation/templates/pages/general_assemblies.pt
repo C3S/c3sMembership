@@ -25,22 +25,7 @@
             </table>
         </span>
         <span tal:condition="len(general_assemblies) == 0" tal:omit-tag="">
-            There are no general assemblies relevant for this member.
+            There are no general assemblies.
         </span>
-
-        <h1>Invitations</h1>
-        <p>
-            <a href="${request.route_url('invite_batch', number=5)}"
-                    title="Note: change number in URL as appropriate! Default is 5."
-                    class="btn btn-success">
-                Send 5 invitations
-            </a>
-            <br />
-            You may send more than 5 invitations at once by using another number:
-            <form method="POST" action="${request.route_url('invite_batch', number='foo')}">
-                <input type="text" name="number" placeholder="5"></input>
-                <input type="submit" name="submit"></input>
-            </form>
-        </p>
     </tal:block>
 </html>

@@ -334,7 +334,10 @@ class TestInvitation(unittest.TestCase):
         req.cookies['orderby'] = 'id'
 
         # with matchdict
-        req.matchdict = {'number': 1}
+        req.matchdict = {
+            'count': 1,
+            'number': CURRENT_GENERAL_ASSEMBLY,
+        }
 
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
@@ -349,7 +352,10 @@ class TestInvitation(unittest.TestCase):
         self.assertEquals(len(invitees), 3)
 
         # without matchdict
-        req.matchdict = {'number': ''}  # this triggers remaining 3
+        req.matchdict = {
+            'count': '',
+            'number': CURRENT_GENERAL_ASSEMBLY,
+        }
         res = batch_invite(req)
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
@@ -361,14 +367,16 @@ class TestInvitation(unittest.TestCase):
         # send more request with POST['number']
         req = testing.DummyRequest(
             POST={
-                'number': 'foo',
+                'number': CURRENT_GENERAL_ASSEMBLY,
+                'count': 'foo',
                 'submit': True,
             })
         res = batch_invite(req)
 
         req = testing.DummyRequest(
             POST={
-                'number': 1,
+                'count': 1,
+                'number': CURRENT_GENERAL_ASSEMBLY,
                 'submit': True,
             })
         res = batch_invite(req)

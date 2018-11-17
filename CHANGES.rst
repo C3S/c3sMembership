@@ -2,8 +2,10 @@ Next Release
 ============
 
 
-Move general assembly invitations to a separate table for a clean and
-normalised data model.
+- Move general assembly invitations to a separate table for a clean and
+  normalised data model.
+
+- Send invitations form general assembly detail page.
 
 
 

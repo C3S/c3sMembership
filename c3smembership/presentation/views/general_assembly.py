@@ -224,43 +224,45 @@ def send_invitation(request, member, general_assembly_number):
 
 
 @view_config(
-    route_name="invite_batch",
+    route_name='general_assembly_batch_invite',
     permission='manage')
 def batch_invite(request):
     """
     Batch invite n members at the same time.
-
-    The number (n) is configurable, defaults to 5.
-    The number can either be supplied in the URL
-    or by posting a form with 'number' and 'submit to this view.
-
-    === =====================================
-    URL http://app:port/invite_batch/{number}
-    === =====================================
     """
-    try:  # how many to process?
-        batch_count = int(request.matchdict['number'])
+    number = None
+    try:
+        if 'submit' in request.POST:
+            count = request.POST['count']
+            number = request.POST['number']
+        else:
+            count = request.matchdict.get('count')
+            number = request.matchdict.get('number')
+        batch_count = int(count)
     except (ValueError, KeyError):
         batch_count = 5
-    if 'submit' in request.POST:
-        try:
-            batch_count = int(request.POST['number'])
-        except ValueError:
-            batch_count = 5
+    try:
+        general_assembly_number = int(number)
+    except (ValueError, TypeError):
+        request.session.flash(
+            'Invalid general assembly number',
+            'message_to_staff')
+        return HTTPFound(request.route_url('general_assemblies'))
 
     invitees = GeneralAssemblyRepository.get_invitees(
-        CURRENT_GENERAL_ASSEMBLY, batch_count)
+        general_assembly_number, batch_count)
 
     if len(invitees) == 0:
         request.session.flash('no invitees left. all done!',
                               'success')
-        return HTTPFound(request.route_url('toolbox'))
+        return HTTPFound(request.route_url(
+            'general_assembly', number=general_assembly_number))
 
     num_sent = 0
     ids_sent = []
 
     for member in invitees:
-        send_invitation(request, member, CURRENT_GENERAL_ASSEMBLY)
+        send_invitation(request, member, general_assembly_number)
         num_sent += 1
         ids_sent.append(member.id)
 
@@ -269,4 +271,5 @@ def batch_invite(request):
             num_sent, ids_sent),
         'success')
 
-    return HTTPFound(request.route_url('toolbox'))
+    return HTTPFound(request.route_url(
+        'general_assembly', number=general_assembly_number))
