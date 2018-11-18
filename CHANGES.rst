@@ -9,6 +9,8 @@ Next Release
 
 - Show member details page after member general assembly invitation.
 
+- Add general assembly creation.
+
 
 
 1.25

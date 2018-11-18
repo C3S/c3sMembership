@@ -10,6 +10,7 @@ from datetime import (
 from sqlalchemy import (
     and_,
 )
+from sqlalchemy.sql import func
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
@@ -238,3 +239,28 @@ class GeneralAssemblyRepository(object):
             .query(GeneralAssembly) \
             .filter(GeneralAssembly.number == number) \
             .first()
+
+    @classmethod
+    def create_general_assembly(cls, number, name, date):
+        """
+        Create a general assembly
+
+        Args:
+            number: Integer. The number of the general assembly as a unique
+                identifier.
+            name: String. The name of the general assembly.
+            date: `datetime.date`. The date at which the general assembly takes
+                place.
+        """
+        assembly = GeneralAssembly(number, name, date)
+        # pylint: disable=no-member
+        DBSession.add(assembly)
+        DBSession.flush()
+
+    @classmethod
+    def general_assembly_max_number(cls):
+        """
+        Get the maximum number assigned to a general assembly.
+        """
+        # pylint: disable=no-member
+        return DBSession.query(func.max(GeneralAssembly.number)).scalar()

@@ -447,3 +447,33 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         # 4. Test invalid number type
         with self.assertRaises(ValueError):
             GeneralAssemblyRepository.get_general_assembly('not an integer')
+
+    def test_create_general_assembly(self):
+        """
+        Test the create_general_assembly method
+
+        Ensure that the general assembly with number 100 does not exist, create
+        it and verify that all properties are correctly set.
+        """
+        assembly = GeneralAssemblyRepository.get_general_assembly(100)
+        self.assertTrue(assembly is None)
+        GeneralAssemblyRepository.create_general_assembly(
+            100, u'New general assembly', date(2018, 11, 18))
+        assembly = GeneralAssemblyRepository.get_general_assembly(100)
+        self.assertEquals(assembly.number, 100)
+        self.assertEquals(assembly.name, u'New general assembly')
+        self.assertEquals(assembly.date, date(2018, 11, 18))
+
+    def test_assembly_max_number(self):
+        """
+        Test the general_assembly_max_number method
+
+        Verify that the maximum number is 7 as per the setup. Then create a
+        general assembly with number 100 and verify that the maximum is 100.
+        """
+        max_number = GeneralAssemblyRepository.general_assembly_max_number()
+        self.assertEquals(max_number, 7)
+        GeneralAssemblyRepository.create_general_assembly(
+            100, u'New general assembly', date(2018, 11, 18))
+        max_number = GeneralAssemblyRepository.general_assembly_max_number()
+        self.assertEquals(max_number, 100)

@@ -39,6 +39,7 @@ module.
 
 import logging
 
+import deform
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from pyramid_mailer.message import Message
@@ -49,6 +50,11 @@ from c3smembership.mail_utils import (
     get_salutation,
     send_message,
 )
+from c3smembership.presentation.i18n import (
+    ZPT_RENDERER,
+)
+from c3smembership.presentation.schemas.general_assembly import \
+    GeneralAssemblyForm
 from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
@@ -283,3 +289,40 @@ def batch_invite(request):
 
     return HTTPFound(request.route_url(
         'general_assembly', number=general_assembly_number))
+
+
+@view_config(
+    renderer='c3smembership.presentation:templates/pages/'
+             'general_assembly_create.pt',
+    route_name='general_assembly_create',
+    permission='manage')
+def general_assembly_create(request):
+    """
+    Create a general assembly
+    """
+    schema = GeneralAssemblyForm()
+    form = deform.Form(
+        schema,
+        buttons=[
+            deform.Button('submit', u'Submit'),
+            deform.Button('reset', u'Reset'),
+        ],
+        renderer=ZPT_RENDERER,
+        use_ajax=True,
+    )
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = form.validate(controls)
+            request.registry.general_assembly_invitation \
+                .create_general_assembly(
+                    appstruct['general_assembly']['name'],
+                    appstruct['general_assembly']['date'])
+            return HTTPFound(request.route_url('general_assemblies'))
+        except deform.ValidationFailure as validationfailure:
+            return {'form': validationfailure.render()}
+    else:
+        number = request.registry.general_assembly_invitation \
+            .get_next_number()
+        form.set_appstruct({'general_assembly': {'number': number}})
+        return {'form': form.render()}

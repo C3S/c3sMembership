@@ -103,3 +103,35 @@ class GeneralAssemblyInvitation(object):
         Get all general assemblies
         """
         return self._general_assembly_repository.get_general_assemblies()
+
+    def create_general_assembly(self, name, assembly_date):
+        """
+        Create a general assembly
+
+        The general assembly must not be in the past. It can take place today
+        or in the future
+
+        Args:
+            name: String. The name of the general assembly.
+            assembly_date: `datetime.date`. The date at which the general
+                assembly takes place.
+
+        Raises:
+            ValueError: In case date is in the past
+        """
+        if assembly_date < self.date.today():
+            raise ValueError(
+                'The general assembly must take place in the future.')
+        self._general_assembly_repository.create_general_assembly(
+            self.get_next_number(), name, assembly_date)
+
+    def get_next_number(self):
+        """
+        Get the next general assembly number
+
+        The general assembly number uniquely identifies the general assembly.
+        This method gets the number which is assigned to the next general
+        assembly created.
+        """
+        return self._general_assembly_repository \
+            .general_assembly_max_number() + 1

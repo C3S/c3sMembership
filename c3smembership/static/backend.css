@@ -92,3 +92,17 @@
     /* Increase space between icons */
     margin: .3em;
 }
+
+/* Fix Bootstrap 4 issues which only shows .invalid-feedback in restricted
+   scenarios*/
+.is-invalid~.invalid-feedback,
+.has-error > .invalid-feedback
+{
+    display: block;
+}
+.has-error,
+.has-error > .text-muted
+{
+    color: #dc3545 !important;
+}
+/* End of Bootstrap 4 fixes */

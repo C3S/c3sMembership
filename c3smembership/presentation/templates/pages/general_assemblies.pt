@@ -6,6 +6,9 @@
         i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
         <h1>General assemblies</h1>
+        <p>
+            <a href="${request.route_url('general_assembly_create')}" class="btn btn-primary">Create</a>
+        </p>
         <span tal:condition="len(general_assemblies) > 0" tal:omit-tag="">
             <table class="table table-striped">
                 <thead>

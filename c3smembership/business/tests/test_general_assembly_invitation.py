@@ -145,3 +145,52 @@ class GeneralAssemblyInvitationTest(TestCase):
         gai = GeneralAssemblyInvitation(general_assembly_repository)
         result = gai.get_general_assemblies()
         self.assertEqual(result, 'get_general_assemblies result')
+
+    def test_create_general_assembly(self):
+        """
+        Test the create_general_assembly method
+
+        1. Create a general assembly in the future and verify the calls
+        2. Create a general assembly for today
+        3. Try creating a general assembly in the past
+        """
+        general_assembly_repository = mock.Mock()
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+        gai.date = mock.Mock()
+
+        # 1. Create a general assembly in the future and verify the calls
+        general_assembly_repository.general_assembly_max_number.side_effect = [
+            10]
+        gai.date.today.side_effect = [date(2018, 11, 17)]
+
+        gai.create_general_assembly(
+            u'New general assembly', date(2018, 11, 18))
+
+        gai.date.today.assert_called_with()
+        general_assembly_repository.general_assembly_max_number \
+            .assert_called_with()
+        general_assembly_repository.create_general_assembly.assert_called_with(
+            11, u'New general assembly', date(2018, 11, 18))
+
+        # 2. Create a general assembly for today
+        general_assembly_repository.general_assembly_max_number.side_effect = [
+            21]
+        gai.date.today.side_effect = [date(2018, 11, 20)]
+
+        gai.create_general_assembly(
+            u'Another general assembly', date(2018, 11, 20))
+
+        gai.date.today.assert_called_with()
+        general_assembly_repository.general_assembly_max_number \
+            .assert_called_with()
+        general_assembly_repository.create_general_assembly.assert_called_with(
+            22, u'Another general assembly', date(2018, 11, 20))
+
+        # 3. Try creating a general assembly in the past
+        gai.date.today.side_effect = [date(2018, 11, 19)]
+        with self.assertRaises(ValueError) as raise_context:
+            gai.create_general_assembly(
+                u'New general assembly', date(2018, 11, 18))
+        self.assertEqual(
+            str(raise_context.exception),
+            'The general assembly must take place in the future.')

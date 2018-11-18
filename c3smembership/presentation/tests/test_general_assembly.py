@@ -2,16 +2,18 @@
 """
 Test the c3smembership.presentation.views.general_assembly module
 """
-
+import datetime
 import unittest
 
 import mock
+from pyramid import testing
 
 import c3smembership.presentation.views.general_assembly as \
     general_assembly_module
 from c3smembership.presentation.views.general_assembly import (
     general_assemblies,
     general_assembly_invitation,
+    general_assembly_create,
 )
 
 
@@ -21,6 +23,9 @@ class TestGeneralAssembly(unittest.TestCase):
     """
 
     def test_general_assemblies(self):
+        """
+        Test the general_assemblies method
+        """
         request = mock.Mock()
         ga1 = mock.Mock()
         ga1.number = 1
@@ -72,3 +77,83 @@ class TestGeneralAssembly(unittest.TestCase):
         #    general assembly number
         send_invitation_mock.assert_called_with(
             request, member, 1)
+
+    def test_general_assembly_create(self):
+        """
+        Test the general_assembly_create method
+
+        1. Call to render the empty form
+        2. Submit without error
+        3. Submit with date in the past
+        4. Submit without assembly name
+        """
+        # 1. Call to render the empty form
+        request = testing.DummyRequest(post='')
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .get_next_number.side_effect = [12345]
+        result = general_assembly_create(request)
+        self.assertTrue('12345' in result['form'])
+
+        # 2. Submit without error
+        test_config = testing.setUp()
+        test_config.add_route('general_assemblies', 'general_assemblies')
+        assembly_date = datetime.date.today() + datetime.timedelta(days=1)
+        request = testing.DummyRequest(post={
+            'submit': 'submit',
+            'general_assembly': {
+                'name': u'New general assembly',
+                'date': assembly_date.strftime('%Y-%m-%d')}})
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .get_next_number.side_effect = [12345]
+
+        result = general_assembly_create(request)
+
+        self.assertEqual(result.status_code, 302)
+        request.registry.general_assembly_invitation \
+            .create_general_assembly.assert_called_with(
+                u'New general assembly',
+                assembly_date)
+        testing.tearDown()
+
+        # 3. Submit with date in the past
+        assembly_date = datetime.date.today() - datetime.timedelta(days=1)
+        request = testing.DummyRequest(post={
+            'submit': 'submit',
+            'general_assembly': {
+                'name': u'New general assembly',
+                'date': assembly_date.strftime('%Y-%m-%d')}})
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .get_next_number.side_effect = [12345]
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assemblies', 'general_assemblies')
+
+        result = general_assembly_create(request)
+
+        self.assertTrue(
+            'There was a problem with your submission' in result['form'])
+        self.assertTrue(
+            'is in the past. The general assembly must take place in the '
+            'future.' in result['form'])
+        testing.tearDown()
+
+        # 4. Submit without assembly name
+        assembly_date = datetime.date.today() + datetime.timedelta(days=1)
+        request = testing.DummyRequest(post={
+            'submit': 'submit',
+            'general_assembly': {
+                'name': u'',
+                'date': assembly_date.strftime('%Y-%m-%d')}})
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .get_next_number.side_effect = [12345]
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assemblies', 'general_assemblies')
+
+        result = general_assembly_create(request)
+
+        self.assertTrue(
+            'There was a problem with your submission' in result['form'])
+        testing.tearDown()
