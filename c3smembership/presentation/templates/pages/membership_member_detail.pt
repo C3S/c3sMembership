@@ -1299,6 +1299,12 @@
     <tal:block metal:fill-slot="javascript">
         <script type="text/javascript">
             $().ready(function() {
+                // Activate tab if specified in URL like
+                // /member_details/123#general-assembly
+                if (window.location.hash != "") {
+                    $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
+                }
+
                 $("#dues15_reduce_submit").click(function(event) {
                         reduction_amount = $("#dues15_form input[name='amount']").val();
                         answer = confirm("Are you sure you want to reduce the dues for ${member.firstname} ${member.lastname} to " + reduction_amount + "?");

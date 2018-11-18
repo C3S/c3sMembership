@@ -7,6 +7,8 @@ Next Release
 
 - Send invitations form general assembly detail page.
 
+- Show member details page after member general assembly invitation.
+
 
 
 1.25

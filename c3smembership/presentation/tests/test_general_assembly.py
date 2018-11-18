@@ -46,8 +46,9 @@ class TestGeneralAssembly(unittest.TestCase):
         """
         # pylint: disable=no-self-use
         member_information = mock.Mock()
-        member_information.get_member.side_effect = [
-            'member']
+        member = mock.Mock()
+        member.membership_number.side_effect = ['membership_number']
+        member_information.get_member.side_effect = [member]
 
         request = mock.Mock()
         request.registry.member_information = member_information
@@ -70,4 +71,4 @@ class TestGeneralAssembly(unittest.TestCase):
         # 3. call the send_invitation method passing, request, member and
         #    general assembly number
         send_invitation_mock.assert_called_with(
-            request, 'member', 1)
+            request, member, 1)

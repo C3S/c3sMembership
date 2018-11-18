@@ -145,7 +145,10 @@ def general_assembly_invitation(request):
 
     send_invitation(request, member, general_assembly_number)
     return HTTPFound(
-        request.route_url('general_assembly', number=general_assembly_number))
+        request.route_url(
+            'member_details',
+            membership_number=member.membership_number,
+            _anchor='general-assembly'))
 
 
 def make_bcga18_2_invitation_email(member, url):

@@ -206,6 +206,7 @@ class TestInvitation(unittest.TestCase):
         self.config.add_route('dashboard', '/dashboard')
         self.config.add_route('general_assembly', '/general_assembly')
         self.config.add_route('general_assemblies', '/general_assemblies')
+        self.config.add_route('member_details', '/members/{membership_number}')
         self.config.registry.settings['c3smembership.url'] = 'http://foo.com'
         self.config.registry.settings['ticketing.url'] = 'http://bar.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
