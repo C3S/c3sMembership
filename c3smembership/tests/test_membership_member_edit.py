@@ -206,7 +206,9 @@ class EditMemberTests(unittest.TestCase):
         """
         Validate that the resource in res is the details page
         """
-        self.assertTrue('<h1>Details for' in res.body)
+        self.assertTrue(
+            'Member details' in res.body or
+            'Membership application details' in res.body)
 
     def __validate_successful_submit(self, res):
         """

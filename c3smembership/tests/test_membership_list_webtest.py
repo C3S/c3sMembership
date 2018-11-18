@@ -331,7 +331,7 @@ class MakeMergeMemberTests(MemberTestsBase):
         # we are redirected to members details page
         res3 = res2.follow()
         # this now is a member!
-        self.failUnless('Details for Member Application #1' in res3.body)
+        self.failUnless('Member details' in res3.body)
         self.failUnless('Membership accepted  Yes' in \
             self._response_to_bare_text(res3))
 

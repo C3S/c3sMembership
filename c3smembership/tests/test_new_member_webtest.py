@@ -141,7 +141,7 @@ class NewMemberTests(unittest.TestCase):
         res = form.submit(u'submit', status=302)
         res4 = res.follow()
 
-        self.assertTrue('Details for Member Application #1' in res4.body)
+        self.assertTrue('Membership application details' in res4.body)
         self.assertTrue('SomeFirstname' in res4.body)
         self.assertTrue('SomeLastname' in res4.body)
         self.assertTrue('some@shri.de' in res4.body)
@@ -164,7 +164,7 @@ class NewMemberTests(unittest.TestCase):
         res = form.submit(u'submit', status=302)
         res4 = res.follow()
 
-        self.assertTrue('Details for Member Application #2' in res4.body)
+        self.assertTrue('Membership application details' in res4.body)
         self.assertTrue('SomeLegalentity' in res4.body)
         self.assertTrue('SomeLegalName' in res4.body)
         self.assertTrue('legal@example.de' in res4.body)

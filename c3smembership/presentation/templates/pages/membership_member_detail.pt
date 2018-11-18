@@ -5,7 +5,12 @@
         metal:use-macro="backend"
         i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
-        <h1>Details for Member Application #${member.id}</h1>
+        <h1 tal:condition="not member.membership_accepted">
+            Membership application details
+        </h1>
+        <h1 tal:condition="member.membership_accepted">
+            Member details
+        </h1>
         <a href="${request.route_url('edit', _id=member.id)}" class="btn btn-warning">edit</a>
         <a href="${request.route_url('delete_entry', memberid=member.id)}"
                 class="btn btn-danger"

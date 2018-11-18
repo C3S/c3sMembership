@@ -489,7 +489,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res2 = form.submit()
         # print res2.body
         res = res2.follow()
-        self.failUnless('Details for Member Application' in res.body)
+        self.failUnless('Membership application details' in res.body)
         self.failUnless('ABCDEFGBAZ' in res.body)
 
     def test_search_people(self):
