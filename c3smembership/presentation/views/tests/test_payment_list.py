@@ -257,7 +257,6 @@ class TestPaymentList(unittest.TestCase):
         self.assertEqual(filter_form, mock_field.widget.serialize())
         self.assertEqual(filtering, 'validation result')
 
-
     def test_set_filters_to_cookies(self):
         # pylint: disable=no-self-use
         """
