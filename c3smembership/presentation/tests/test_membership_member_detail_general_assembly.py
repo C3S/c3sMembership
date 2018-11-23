@@ -8,43 +8,27 @@ from datetime import (
     date,
     datetime,
 )
-import unittest
 
 import mock
 
-from pyramid import renderers
-from pyramid.testing import DummyRequest
-import pyramid.testing
+from template_test_case import TemplateTestCase
 
 
-class TestMembershipMemberDetail(unittest.TestCase):
+class TestMembershipMemberDetail(TemplateTestCase):
     """
     Test the membership member detail template
     """
 
-    def setUp(self):
-        """
-        Set up the test configuration
-        """
-        self.config = pyramid.testing.setUp()
-        self.config.include('pyramid_chameleon')
-        self.config.add_route(
-            'general_assembly_invitation',
-            'general-assemblies/{number}/invite/{membership_number}')
-
-    @classmethod
-    def render(cls, values):
-        """
-        Render the values and return the rendered HTML.
-        """
-        request = DummyRequest()
-        return renderers.render(
+    def __init__(self, methodName='runTest'):
+        super(TestMembershipMemberDetail, self).__init__(
+            methodName,
             (
                 '../templates/page-elements/'
                 'membership_member_detail_general_assembly.pt'
             ),
-            values,
-            request)
+            [(
+                'general_assembly_invitation',
+                'general-assemblies/{number}/invite/{membership_number}')])
 
     def test_no_general_assemblies(self):
         """
