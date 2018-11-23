@@ -1,0 +1,75 @@
+<h2>Entity</h2>
+<table class="table table-striped">
+    <tr>
+        <td>Firstname</td>
+        <td>${member.firstname}</td>
+    </tr>
+    <tr>
+        <td>Lastname</td>
+        <td>${member.lastname}</td>
+    </tr>
+    <tr>
+        <td>Email address</td>
+        <td><a href="mailto:${member.email}">${member.email}</a></td>
+    </tr>
+    <tr>
+        <td>Email address confirmed</td>
+        <td>${python: u'Yes' if member.email_is_confirmed else u'No.'}</td>
+    </tr>
+    <tr>
+        <td>Address line 1</td>
+        <td>${member.address1}</td>
+    </tr>
+    <tr>
+        <td>Address line 2</td>
+        <td>${member.address2}</td>
+    </tr>
+    <tr>
+        <td>Postcode</td>
+        <td>${member.postcode}</td>
+    </tr>
+    <tr>
+        <td>City</td>
+        <td>${member.city}</td>
+    </tr>
+    <tr>
+        <td>Country</td>
+        <td>${member.country}</td>
+    </tr>
+    <tr>
+        <td>Locale</td>
+        <td>${member.locale}</td>
+    </tr>
+    <tr>
+        <td>Date of birth</td>
+        <td>${member.date_of_birth}</td>
+    </tr>
+    <tr>
+        <td>Entity type</td>
+        <td>${u'Legal entity' if member.is_legalentity else 'Natural person'}</td>
+    </tr>
+    <tr>
+        <td>Code</td>
+        <td>${member.email_confirm_code}</td>
+    </tr>
+    <tr>
+        <td>Duplicate</td>
+        <td>${'Yes' if member.is_duplicate else 'No/Unknown'}</td>
+    </tr>
+    <tr tal:condition="member.is_duplicate">
+        <td>Duplicate of</td>
+        <td>
+            <a href="${request.route_url('detail', memberid=member.is_duplicate_of)}">
+                ${member.is_duplicate_of}
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Privacy consent</td>
+        <td>${member.privacy_consent.strftime('%Y-%m-%d %H:%M:%S') if member.privacy_consent is not None else ''}</td>
+    </tr>
+    <tr>
+        <td><a name="comment"></a>Staff comment</td>
+        <td>${member.accountant_comment}</td>
+    </tr>
+</table>

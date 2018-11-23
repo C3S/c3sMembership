@@ -1,0 +1,42 @@
+<h2 id="certificate">Account Balance</h2>
+<table class="table table-striped">
+    <?python
+        balance = 0
+    ?>
+    <tr>
+        <th>Position</th>
+        <th>Amount</th>
+    </tr>
+    <tr>
+        <?python balance += member.dues15_balance ?>
+        <td>Membership dues 2015</td>
+        <td>${-member.dues15_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues16_balance ?>
+        <td>Membership dues 2016</td>
+        <td>${-member.dues16_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues17_balance ?>
+        <td>Membership dues 2017</td>
+        <td>${-member.dues17_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues18_balance ?>
+        <td>Membership dues 2018</td>
+        <td>${-member.dues18_balance}</td>
+    </tr>
+    <tr>
+        <?python
+            balanced = (balance == 0.0)
+        ?>
+        <th>Account balance</th>
+        <th tal:condition="not balanced" class="alert alert-danger">
+            ${-balance}
+        </th>
+        <th tal:condition="balanced" class="alert alert-success">
+            ${-balance}
+        </th>
+    </tr>
+</table>

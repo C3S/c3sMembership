@@ -1,0 +1,93 @@
+<h2>Membership</h2>
+<table class="table table-striped">
+    <tr>
+        <td>Membership type</td>
+        <td>${member.membership_type}</td>
+    </tr>
+    <tr>
+        <td>Membership accepted</td>
+        <td>
+            ${'Yes' if member.membership_accepted else 'No'}
+        </td>
+    </tr>
+    <tr tal:condition="member.membership_accepted">
+        <td>Membership number</td>
+        <td>
+            ${member.membership_number}
+        </td>
+    </tr>
+    <tr tal:condition="member.membership_accepted">
+        <td>Membership date</td>
+        <td>${member.membership_date.strftime('%Y-%m-%d') if member.membership_date is not None else ''}</td>
+    </tr>
+    <tr>
+        <td>Membership loss date</td>
+        <td>${member.membership_loss_date.strftime('%Y-%m-%d') if member.membership_loss_date is not None else ''}</td>
+    </tr>
+    <tr>
+        <td>Membership loss type</td>
+        <td>${member.membership_loss_type}</td>
+    </tr>
+    <tr>
+        <td>Member of collecting societies</td>
+        <td>${'Yes' if member.member_of_colsoc else 'No'} ${member.name_of_colsoc if member.member_of_colsoc else ''}</td>
+    </tr>
+    <tr>
+        <td>Shares</td>
+        <td>
+            Total: ${member.num_shares}<br />
+            ${len(shares)} package(s):
+            <div>
+                <table>
+                    <tr tal:repeat="s shares">
+                        <td>${s.number} shares</td>
+                        <td style="white-space:nowrap;">
+                            <a href="${request.route_url('shares_detail', id=s.id)}">
+                                (<small>${s.date_of_acquisition.strftime('%Y-%m-%d')}</small>)
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+    <tr tal:condition="member.is_member()">
+        <td>
+            Send membership certificate email
+            <small>
+                Ein Klick hier setzt ein (neues) Token und versendet eine Email mit Link.<br />
+                Der Link enthält auch das Token, ohne welches KEIN pdf generiert wird.<br />
+                Ausserdem wird überprüft, ob das Token älter ist als 14 Tage; in dem fall gibt es KEIN PDF.
+            </small>
+        </td>
+        <td>
+            <a tal:condition="not member.certificate_email"
+                    href="${request.route_url('certificate_mail', id=member.id)}"
+                    title="certificate not sent yet"
+                    class="btn btn-warning">
+                Never
+            </a>
+            <a tal:condition="member.certificate_email"
+                    href="${request.route_url('certificate_mail', id=member.id)}"
+                    title="gesendet ${member.certificate_email_date.strftime('am %d.%m.%Y um %H:%M')}"
+                    class="btn btn-success">
+                Sent ${member.certificate_email_date.strftime('on %Y-%m-%d at %H:%M')}
+            </a>
+            <small>
+                Ein Klick hier setzt ein (neues) Token und versendet eine E-Mail mit Link.<br />
+                Der Link enthält auch das Token, ohne welches KEIN pdf generiert wird.<br />
+                Ausserdem wird überprüft, ob das Token älter ist als 14 Tage; in dem fall gibt es KEIN PDF.
+            </small>
+        </td>
+    </tr>
+    <tr tal:condition="member.is_member()">
+        <td>PDF download</td>
+        <td>
+            <a href="${request.route_url('certificate_pdf_staff', id=member.id, name=member.get_url_safe_name())}"
+                    title="View membership certificate"
+                    class="btn btn-success">
+                Generate and download PDF
+            </a>
+        </td>
+    </tr>
+</table>
