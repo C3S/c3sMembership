@@ -37,15 +37,122 @@ def get_member_details(request, member):
         key=lambda ga: ga['date'],
         reverse=True)
 
+    dues = []
+    if (member.membership_date < date(2015, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2015, 1, 1))):
+        dues.append({
+            'year': '2015',
+            'year_short': '15',
+            'invoices': invoices15,
+            'email_sent': member.dues15_invoice,
+            'email_sent_timestamp': member.dues15_invoice_date,
+            'has_invoice': len(invoices15) > 0,
+            'dues_start': member.dues15_start,
+            'dues_amount': member.dues15_amount,
+            'is_reduced': member.dues15_reduced,
+            'reduced_amount': member.dues15_amount_reduced,
+            'is_balanced': member.dues15_balanced,
+            'amount_paid': member.dues15_amount_paid,
+            'payment_received': member.dues15_paid,
+            'paid_date': member.dues15_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues15_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues15_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues15_listing'),
+            'dues_notice_route': request.route_url(
+                'dues15_notice', member_id=member.id),
+        })
+    if (member.membership_date < date(2016, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2016, 1, 1))):
+        dues.append({
+            'year': '2016',
+            'year_short': '16',
+            'invoices': invoices16,
+            'email_sent': member.dues16_invoice,
+            'email_sent_timestamp': member.dues16_invoice_date,
+            'has_invoice': len(invoices16) > 0,
+            'dues_start': member.dues16_start,
+            'dues_amount': member.dues16_amount,
+            'is_reduced': member.dues16_reduced,
+            'reduced_amount': member.dues16_amount_reduced,
+            'is_balanced': member.dues16_balanced,
+            'amount_paid': member.dues16_amount_paid,
+            'payment_received': member.dues16_paid,
+            'paid_date': member.dues16_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues16_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues16_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues16_listing'),
+            'dues_notice_route': request.route_url(
+                'dues16_notice', member_id=member.id),
+        })
+    if (member.membership_date < date(2017, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2017, 1, 1))):
+        dues.append({
+            'year': '2017',
+            'year_short': '17',
+            'invoices': invoices17,
+            'email_sent': member.dues17_invoice,
+            'email_sent_timestamp': member.dues17_invoice_date,
+            'has_invoice': len(invoices17) > 0,
+            'dues_start': member.dues17_start,
+            'dues_amount': member.dues17_amount,
+            'is_reduced': member.dues17_reduced,
+            'reduced_amount': member.dues17_amount_reduced,
+            'is_balanced': member.dues17_balanced,
+            'amount_paid': member.dues17_amount_paid,
+            'payment_received': member.dues17_paid,
+            'paid_date': member.dues17_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues17_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues17_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues17_listing'),
+            'dues_notice_route': request.route_url(
+                'dues17_notice', member_id=member.id),
+        })
+    if (member.membership_date < date(2018, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2018, 1, 1))):
+        dues.append({
+            'year': '2018',
+            'year_short': '18',
+            'invoices': invoices18,
+            'email_sent': member.dues18_invoice,
+            'email_sent_timestamp': member.dues18_invoice_date,
+            'has_invoice': len(invoices18) > 0,
+            'dues_start': member.dues18_start,
+            'dues_amount': member.dues18_amount,
+            'is_reduced': member.dues18_reduced,
+            'reduced_amount': member.dues18_amount_reduced,
+            'is_balanced': member.dues18_balanced,
+            'amount_paid': member.dues18_amount_paid,
+            'payment_received': member.dues18_paid,
+            'paid_date': member.dues18_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues18_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues18_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues18_listing'),
+            'dues_notice_route': request.route_url(
+                'dues18_notice', member_id=member.id),
+        })
+
     return {
+        'dues': dues,
         'date': date,
         'D': Decimal,
         'member': member,
         'shares': shares,
-        'invoices15': invoices15,
-        'invoices16': invoices16,
-        'invoices17': invoices17,
-        'invoices18': invoices18,
         'general_assembly_invitations': general_assembly_invitations,
     }
 
