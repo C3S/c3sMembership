@@ -135,6 +135,19 @@ class GeneralAssemblyInvitationTest(TestCase):
         general_assembly_repository.invite_member.assert_called_with(
             'M1', 'GA1', token)
 
+    def test_get_general_assembly(self):
+        """
+        Test the get_general_assembly method
+        """
+        general_assembly_repository = mock.Mock()
+        general_assembly_repository.get_general_assembly.side_effect = [
+            'get_general_assembly result']
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+        result = gai.get_general_assembly(123)
+        self.assertEqual(result, 'get_general_assembly result')
+        general_assembly_repository.get_general_assembly.assert_called_with(
+            123)
+
     def test_get_general_assemblies(self):
         """
         Test the get_general_assemblies method

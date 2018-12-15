@@ -12,6 +12,7 @@ import c3smembership.presentation.views.general_assembly as \
     general_assembly_module
 from c3smembership.presentation.views.general_assembly import (
     general_assemblies,
+    general_assembly,
     general_assembly_invitation,
     general_assembly_create,
 )
@@ -42,13 +43,49 @@ class TestGeneralAssembly(unittest.TestCase):
         self.assertEquals(result['general_assemblies'][0].number, 2)
         self.assertEquals(result['general_assemblies'][1].number, 1)
 
+    def test_general_assembly(self):
+        """
+        Test the general assembly method
+
+        1. No number given
+        2. Return general assembly
+        """
+        # 1. No number given
+        request = testing.DummyRequest()
+        test_config = testing.setUp(request=request)
+        result = general_assembly(request)
+        self.assertIsNone(result['date'])
+        self.assertIsNone(result['number'])
+        self.assertIsNone(result['name'])
+
+        # 2. Return general assembly
+        request = testing.DummyRequest(matchdict={'number': '1'})
+        test_config = testing.setUp(request=request)
+        result_mock = mock.Mock()
+        result_mock.number = 123
+        result_mock.name = 'my first general assembly'
+        result_mock.date = datetime.date(2018, 12, 15)
+        gai = mock.Mock()
+        gai.get_general_assembly.side_effect = [result_mock]
+        request.registry.general_assembly_invitation = gai
+        result = general_assembly(request)
+        self.assertEquals(result['date'], datetime.date(2018, 12, 15))
+        self.assertEquals(result['number'], 123)
+        self.assertEquals(result['name'], 'my first general assembly')
+
     # pylint: disable=invalid-name
     @mock.patch.object(
         general_assembly_module, 'send_invitation')
     def test_general_assembly_invitation(self, send_invitation_mock):
         """
         Test the general_assembly_invitation method
+
+        1. Invite
+        2. Invalid general assembly number
+        3. Invalid membership number
+        4. Member not found
         """
+        # 1. Invite
         # pylint: disable=no-self-use
         member_information = mock.Mock()
         member = mock.Mock()
@@ -61,22 +98,61 @@ class TestGeneralAssembly(unittest.TestCase):
             '1',  # general assembly
             '2',  # member
         ]
-
         general_assembly_invitation(request)
 
         # In order to send an invitation the method has to
-        # 1. get the general assembly number and membership_number from the
+        # i. get the general assembly number and membership_number from the
         #    matchdict
         request.matchdict.get.assert_has_calls([
             mock.call('number'),
             mock.call('membership_number'),
         ])
-        # 2. get the member for the membership_number converted to an integer
+        # ii. get the member for the membership_number converted to an integer
         member_information.get_member.assert_called_with(2)
-        # 3. call the send_invitation method passing, request, member and
-        #    general assembly number
+        # iii. call the send_invitation method passing, request, member and
+        #      general assembly number
         send_invitation_mock.assert_called_with(
             request, member, 1)
+
+        # 2. Invalid general assembly number
+        request = testing.DummyRequest(matchdict={
+            'number': 'a',
+        })
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assemblies', 'general_assemblies')
+        result = general_assembly_invitation(request)
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            request.session.pop_flash('message_to_staff')[0],
+            'Invalid general assembly number')
+
+        # 3. Invalid membership number
+        request = testing.DummyRequest(matchdict={
+            'number': '1',
+            'membership_number': 'a',
+        })
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assembly', 'general_assembly')
+        result = general_assembly_invitation(request)
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            request.session.pop_flash('message_to_staff')[0],
+            'Invalid membership number')
+
+        # 4. Member not found
+        request = testing.DummyRequest(matchdict={
+            'number': '1',
+            'membership_number': '1',
+        })
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assembly', 'general_assembly')
+        request.registry.member_information = mock.Mock()
+        request.registry.member_information.get_member.side_effect = [None]
+        result = general_assembly_invitation(request)
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            request.session.pop_flash('message_to_staff')[0],
+            'Invalid membership number')
 
     def test_general_assembly_create(self):
         """

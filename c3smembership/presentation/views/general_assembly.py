@@ -106,13 +106,14 @@ def general_assembly(request):
     number = None
     try:
         number = int(number_str)
-    except ValueError:
-        number = None
-    assembly = GeneralAssemblyRepository.get_general_assembly(number)
-    if assembly is not None:
-        result['number'] = assembly.number
-        result['name'] = assembly.name
-        result['date'] = assembly.date
+        assembly = request.registry.general_assembly_invitation \
+            .get_general_assembly(number)
+        if assembly is not None:
+            result['number'] = assembly.number
+            result['name'] = assembly.name
+            result['date'] = assembly.date
+    except (ValueError, TypeError):
+        pass
     return result
 
 
