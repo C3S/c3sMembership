@@ -4,7 +4,7 @@ Your transfer of {sum_shares} Euro for {num_shares} share(s) has been credited
 to our account.
 
 Once we have received both your form and your payment of {sum_shares} Euro the
-administative board decides on your membership at their next meeting. After
+administrative board decides on your membership at their next meeting. After
 that you will receive an email with your membership certificate.
 
 In case of any issues please don't hesitate to contact us at office@c3s.cc.
