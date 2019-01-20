@@ -508,7 +508,7 @@ Legal requirements:
   its decision-making process (§ 7 I c [C3S_Statute]_).
 - Each non-user member has the right to attend the general assembly as an
   observer (§ 7 II a [C3S_Statute]_).
-- The notice must contains (Art. 56(2) [EU_CR_1435_2003_SCE]_):
+- The notice must contain (Art. 56(2) [EU_CR_1435_2003_SCE]_):
 
   - the name and registered office of the SCE,
   - the venue, date and time of the meeing,
@@ -528,6 +528,14 @@ Business requirements:
 - The application must keep track about which email is sent to which member.
 - There can be more than one general assembly per year.
 - The application must handle email bounces and report them.
+- Invitation text
+
+
+  - The invitation text must be specified in the language of the SCE.
+  - The invitation text can be specified in additional language.
+  - If the invitation text is specified in additional languages then a default
+    language must be set determining the language chosen for members for which
+    a matching language is not present.
 
 **TODO:** *Are members informed about the general assembly which gain membership
 after the invitations are sent out but before the assembly is held? How?*
