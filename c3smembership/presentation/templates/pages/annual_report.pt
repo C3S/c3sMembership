@@ -11,10 +11,6 @@
             in einem bestimmten Zeitraum zu Mitgliedern "aufgenommen" wurden
             und wie viele Anteile gezeichnet wurden.
         </p>
-        <p>
-            Bitte Start- und Enddatum in der form YYYY-MM-YY eingeben.
-            Für einen bestimmten Tag zweimal das selbe Datum eingeben.
-        </p>
         <div id="form" tal:content="structure form"/>
         <h2>Summary</h2>
         <table class="table table-striped">
