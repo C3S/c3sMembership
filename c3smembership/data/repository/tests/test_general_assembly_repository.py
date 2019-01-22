@@ -464,6 +464,38 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         self.assertEquals(assembly.name, u'New general assembly')
         self.assertEquals(assembly.date, date(2018, 11, 18))
 
+    def test_edit_general_assembly(self):
+        """
+        Test the edit_general_assembly method
+
+        1. Edit the GENERAL_ASSEMBLY_NUMBER_2018_2 general assembly
+        2. Try editing a non-existing general assembly
+        """
+        # 1. Edit the GENERAL_ASSEMBLY_NUMBER_2018_2 general assembly
+        assembly = GeneralAssemblyRepository.get_general_assembly(
+            GENERAL_ASSEMBLY_NUMBER_2018_2)
+        self.assertTrue(assembly is not None)
+        GeneralAssemblyRepository.edit_general_assembly(
+            GENERAL_ASSEMBLY_NUMBER_2018_2,
+            u'New general assembly name',
+            date(2019, 1, 21))
+
+        assembly = GeneralAssemblyRepository.get_general_assembly(
+            GENERAL_ASSEMBLY_NUMBER_2018_2)
+        self.assertEquals(assembly.number, GENERAL_ASSEMBLY_NUMBER_2018_2)
+        self.assertEquals(assembly.name, u'New general assembly name')
+        self.assertEquals(assembly.date, date(2019, 1, 21))
+
+        # 2. Try editing a non-existing general assembly
+        with self.assertRaises(ValueError) as raise_context:
+            GeneralAssemblyRepository.edit_general_assembly(
+                123456789,
+                u'New general assembly name',
+                date(2019, 1, 21))
+        self.assertEqual(
+            str(raise_context.exception),
+            'A general assembly with this number does not exist.')
+
     def test_assembly_max_number(self):
         """
         Test the general_assembly_max_number method

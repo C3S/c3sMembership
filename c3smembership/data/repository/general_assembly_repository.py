@@ -264,3 +264,27 @@ class GeneralAssemblyRepository(object):
         """
         # pylint: disable=no-member
         return DBSession.query(func.max(GeneralAssembly.number)).scalar()
+
+    @classmethod
+    def edit_general_assembly(cls, number, name, date):
+        """
+        Edit a general assembly
+
+        Args:
+            number: Integer. The number of the general assembly to be edited.
+            name: String. The edited name of the general assembly.
+            date: `datetime.date`. The edited date at which the general
+                assembly takes place.
+
+        Raises:
+            ValueError: In case the a general assembly with the number given
+                does not exist.
+        """
+        assembly = cls.get_general_assembly(number)
+        if assembly is None:
+            raise ValueError(
+                'A general assembly with this number does not exist.')
+        assembly.name = name
+        assembly.date = date
+        # pylint: disable=no-member
+        DBSession.flush()

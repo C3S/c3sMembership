@@ -8,7 +8,7 @@ import colander
 import deform
 
 
-class GeneralAssemblySchema(colander.Schema):
+class GeneralAssemblySchemaGroup(colander.Schema):
     """
     General assembly creation and editing schema.
     """
@@ -32,9 +32,9 @@ class GeneralAssemblySchema(colander.Schema):
         default=datetime.date.today())
 
 
-class GeneralAssemblyForm(colander.Schema):
+class GeneralAssemblySchema(colander.Schema):
     """
     General assembly creation and editing form.
     """
-    general_assembly = GeneralAssemblySchema(
+    general_assembly = GeneralAssemblySchemaGroup(
         title='General assembly')

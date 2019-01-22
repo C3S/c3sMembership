@@ -15,7 +15,23 @@ from c3smembership.presentation.views.general_assembly import (
     general_assembly,
     general_assembly_invitation,
     general_assembly_create,
+    general_assembly_edit,
 )
+
+
+class GeneralAssemblyDummy(object):
+    """
+    General assembly dummy class
+    """
+    # pylint: disable=too-few-public-methods
+
+    def __init__(self, number, name, date):
+        """
+        Initialize the GeneralAssemblyDummy instance
+        """
+        self.number = number
+        self.name = name
+        self.date = date
 
 
 class TestGeneralAssembly(unittest.TestCase):
@@ -52,7 +68,6 @@ class TestGeneralAssembly(unittest.TestCase):
         """
         # 1. No number given
         request = testing.DummyRequest()
-        test_config = testing.setUp(request=request)
         result = general_assembly(request)
         self.assertIsNone(result['date'])
         self.assertIsNone(result['number'])
@@ -60,7 +75,6 @@ class TestGeneralAssembly(unittest.TestCase):
 
         # 2. Return general assembly
         request = testing.DummyRequest(matchdict={'number': '1'})
-        test_config = testing.setUp(request=request)
         result_mock = mock.Mock()
         result_mock.number = 123
         result_mock.name = 'my first general assembly'
@@ -86,30 +100,31 @@ class TestGeneralAssembly(unittest.TestCase):
         4. Member not found
         """
         # 1. Invite
-        # pylint: disable=no-self-use
         member_information = mock.Mock()
         member = mock.Mock()
         member.membership_number.side_effect = ['membership_number']
         member_information.get_member.side_effect = [member]
 
-        request = mock.Mock()
+        # request = mock.Mock()
+        # request.registry.member_information = member_information
+        # request.matchdict.get.side_effect = [
+        #     '1',  # general assembly
+        #     '2',  # member
+        # ]
+        # general_assembly_invitation(request)
+        request = testing.DummyRequest(matchdict={
+            'number': '1',
+            'membership_number': '2',
+        })
+        test_config = testing.setUp(request=request)
+        test_config.add_route('member_details', 'member_details')
         request.registry.member_information = member_information
-        request.matchdict.get.side_effect = [
-            '1',  # general assembly
-            '2',  # member
-        ]
         general_assembly_invitation(request)
 
         # In order to send an invitation the method has to
-        # i. get the general assembly number and membership_number from the
-        #    matchdict
-        request.matchdict.get.assert_has_calls([
-            mock.call('number'),
-            mock.call('membership_number'),
-        ])
-        # ii. get the member for the membership_number converted to an integer
+        # i. get the member for the membership_number converted to an integer
         member_information.get_member.assert_called_with(2)
-        # iii. call the send_invitation method passing, request, member and
+        # ii. call the send_invitation method passing, request, member and
         #      general assembly number
         send_invitation_mock.assert_called_with(
             request, member, 1)
@@ -233,3 +248,114 @@ class TestGeneralAssembly(unittest.TestCase):
         self.assertTrue(
             'There was a problem with your submission' in result['form'])
         testing.tearDown()
+
+    def test_general_assembly_edit(self):
+        """
+        Test the general_assembly_create method
+
+        1. Call for exiting general assembly
+        2. Call for cancel
+        3. Call for submit
+        4. Call for non-exiting general assembly
+        5. Call for submit with validation failure
+        6. Call for invalid general assembly nunmber
+        """
+        # 1. Call for exiting general assembly
+        request = testing.DummyRequest(matchdict={'number': '2398457932'})
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .get_general_assembly.side_effect = [
+                GeneralAssemblyDummy(
+                    2398457932,
+                    'some assmembly',
+                    datetime.date.today())]
+        result = general_assembly_edit(request)
+
+        request.registry.general_assembly_invitation \
+            .get_general_assembly.assert_called_with(2398457932)
+        self.assertTrue('2398457932' in result['form'])
+        self.assertTrue('value="some assmembly"' in result['form'])
+        self.assertTrue(
+            'value="{0}"'.format(
+                datetime.date.today().strftime('%Y-%m-%d'))
+            in
+            result['form'])
+
+        # 2. Call for cancel
+        request = testing.DummyRequest(
+            matchdict={'number': '1'},
+            POST={'cancel': 'cancel'})
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assembly', 'general_assembly')
+        result = general_assembly_edit(request)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            result.location, 'http://example.com/general_assembly')
+
+        # 3. Call for submit
+        request = testing.DummyRequest(
+            matchdict={'number': '1'},
+            POST={
+                'submit': 'submit',
+                'general_assembly': {
+                    'date': datetime.date.today().strftime('%Y-%m-%d'),
+                    'name': 'assembly name'}})
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assembly', 'general_assembly')
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .edit_general_assembly.side_effect = [None]
+        result = general_assembly_edit(request)
+
+        request.registry.general_assembly_invitation \
+            .edit_general_assembly.assert_called_with(
+                1, u'assembly name', datetime.date.today())
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            result.location, 'http://example.com/general_assembly')
+
+        # 4. Call for non-exiting general assembly
+        request = testing.DummyRequest(matchdict={'number': '2398457932'})
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assemblies', 'general_assemblies')
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .get_general_assembly.side_effect = [None]
+        result = general_assembly_edit(request)
+
+        request.registry.general_assembly_invitation \
+            .get_general_assembly.assert_called_with(2398457932)
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            result.location, 'http://example.com/general_assemblies')
+
+        # 5. Call for submit with validation failure
+        request = testing.DummyRequest(
+            matchdict={'number': '1'},
+            POST={
+                'submit': 'submit',
+                'general_assembly': {
+                    'date': (
+                        datetime.date.today() - datetime.timedelta(days=1)
+                    ).strftime('%Y-%m-%d'),
+                    'name': 'assembly name'}})
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assembly', 'general_assembly')
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .edit_general_assembly.side_effect = [None]
+        result = general_assembly_edit(request)
+
+        self.assertTrue('form' in result)
+        self.assertTrue('invalid-feedback' in result['form'])
+
+        # 6. Call for invalid general assembly nunmber
+        request = testing.DummyRequest(matchdict={'number': 'NaN'})
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assemblies', 'general_assemblies')
+        result = general_assembly_edit(request)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            result.location, 'http://example.com/general_assemblies')

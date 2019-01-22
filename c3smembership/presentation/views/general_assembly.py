@@ -54,7 +54,7 @@ from c3smembership.presentation.i18n import (
     ZPT_RENDERER,
 )
 from c3smembership.presentation.schemas.general_assembly import \
-    GeneralAssemblyForm
+    GeneralAssemblySchema
 from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
@@ -301,7 +301,7 @@ def general_assembly_create(request):
     """
     Create a general assembly
     """
-    schema = GeneralAssemblyForm()
+    schema = GeneralAssemblySchema()
     form = deform.Form(
         schema,
         buttons=[
@@ -326,4 +326,55 @@ def general_assembly_create(request):
         number = request.registry.general_assembly_invitation \
             .get_next_number()
         form.set_appstruct({'general_assembly': {'number': number}})
+        return {'form': form.render()}
+
+
+@view_config(
+    renderer='c3smembership.presentation:templates/pages/'
+             'general_assembly_edit.pt',
+    route_name='general_assembly_edit',
+    permission='manage')
+def general_assembly_edit(request):
+    """
+    Edit a general assembly
+    """
+    try:
+        number = int(request.matchdict.get('number'))
+    except (TypeError, ValueError):
+        return HTTPFound(request.route_url('general_assemblies'))
+    schema = GeneralAssemblySchema()
+    form = deform.Form(
+        schema,
+        buttons=[
+            deform.Button('submit', u'Submit'),
+            deform.Button('reset', u'Reset'),
+            deform.Button('cancel', u'Cancel'),
+        ],
+        renderer=ZPT_RENDERER,
+        use_ajax=True,
+    )
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = form.validate(controls)
+            request.registry.general_assembly_invitation \
+                .edit_general_assembly(
+                    number,
+                    appstruct['general_assembly']['name'],
+                    appstruct['general_assembly']['date'])
+            return HTTPFound(request.route_url(
+                'general_assembly', number=number))
+        except deform.ValidationFailure as validationfailure:
+            return {'form': validationfailure.render()}
+    elif 'cancel' in request.POST:
+        return HTTPFound(request.route_url('general_assembly', number=number))
+    else:
+        assembly = request.registry.general_assembly_invitation \
+            .get_general_assembly(number)
+        if assembly is None:
+            return HTTPFound(request.route_url('general_assemblies'))
+        form.set_appstruct({'general_assembly': {
+            'number': assembly.number,
+            'name': assembly.name,
+            'date': assembly.date}})
         return {'form': form.render()}

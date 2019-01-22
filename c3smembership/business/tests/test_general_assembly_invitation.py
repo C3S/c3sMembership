@@ -10,6 +10,7 @@ import mock
 
 from c3smembership.business.general_assembly_invitation import \
     GeneralAssemblyInvitation
+from c3smembership.data.model.base.general_assembly import GeneralAssembly
 
 
 class GeneralAssemblyInvitationTest(TestCase):
@@ -207,3 +208,58 @@ class GeneralAssemblyInvitationTest(TestCase):
         self.assertEqual(
             str(raise_context.exception),
             'The general assembly must take place in the future.')
+
+    def test_edit_general_assembly(self):
+        """
+        Test the edit_general_assembly method
+
+        1. Edit a general assembly in the future and verify the calls
+        2. Edit a general assembly for today
+        3. Try editing a general assembly in the past
+        4. Try editing a general assembly that does not exist
+        """
+        general_assembly_repository = mock.Mock()
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+        gai.date = mock.Mock()
+
+        # 1. Edit a general assembly in the future and verify the calls
+        general_assembly_repository.get_general_assembly.side_effect = [
+            GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22))]
+        gai.date.today.side_effect = [date(2019, 1, 21)]
+        gai.edit_general_assembly(
+            1, u'New general assembly name', date(2019, 1, 23))
+
+        gai.date.today.assert_called_with()
+        general_assembly_repository.edit_general_assembly.assert_called_with(
+            1, u'New general assembly name', date(2019, 1, 23))
+
+        # 2. Edit a general assembly for today
+        general_assembly_repository.get_general_assembly.side_effect = [
+            GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22))]
+        gai.date.today.side_effect = [date(2019, 1, 21)]
+        gai.edit_general_assembly(
+            1, u'New general assembly name', date(2019, 1, 21))
+
+        gai.date.today.assert_called_with()
+        general_assembly_repository.edit_general_assembly.assert_called_with(
+            1, u'New general assembly name', date(2019, 1, 21))
+
+        # 3. Try editing a general assembly in the past
+        gai.date.today.side_effect = [date(2019, 1, 21)]
+        with self.assertRaises(ValueError) as raise_context:
+            gai.edit_general_assembly(
+                1, u'New general assembly name', date(2019, 1, 20))
+        self.assertEqual(
+            str(raise_context.exception),
+            'The general assembly must take place in the future.')
+
+        # 4. Try editing a general assembly that does not exist
+        general_assembly_repository.get_general_assembly.side_effect = [None]
+        gai.date.today.side_effect = [date(2019, 1, 21)]
+
+        with self.assertRaises(ValueError) as raise_context:
+            gai.edit_general_assembly(
+                1, u'New general assembly name', date(2019, 1, 22))
+        self.assertEqual(
+            str(raise_context.exception),
+            'The general assembly does not exist.')

@@ -141,3 +141,30 @@ class GeneralAssemblyInvitation(object):
         """
         return self._general_assembly_repository \
             .general_assembly_max_number() + 1
+
+    def edit_general_assembly(self, number, name, assembly_date):
+        """
+        Edit a general assembly
+
+        The general assembly must not be in the past. It can take place today
+        or in the future.
+
+        Args:
+            number: Integer. The number of the general assembly to be edited.
+            name: String. The edited name of the general assembly.
+            assembly_date: `datetime.date`. The edited date at which the general
+                assembly takes place.
+
+        Raises:
+            ValueError: In case date is in the past
+        """
+        if assembly_date < self.date.today():
+            raise ValueError(
+                'The general assembly must take place in the future.')
+        assembly = self._general_assembly_repository.get_general_assembly(
+            number)
+        if assembly is None:
+            raise ValueError(
+                'The general assembly does not exist.')
+        self._general_assembly_repository.edit_general_assembly(
+            number, name, assembly_date)
