@@ -106,7 +106,7 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
         pass
 
     if DEBUG:  # pragma: no cover
-        print "list_keys(): " + str(gpg.list_keys())
+        print("list_keys(): " + str(gpg.list_keys()))
 
     # prepare
     to_encode = data
@@ -129,7 +129,7 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
     #    print("type is neither str nor unicode: %s") % type(to_encode)
 
     if DEBUG:  # pragma: no cover
-        print "len(to_encrypt): " + str(len(str(to_encrypt)))
+        print("len(to_encrypt): " + str(len(str(to_encrypt))))
         # print("encrypt_with_gnupg: to_encrypt: %s") % to_encrypt
         print("encrypt_with_gnupg: type(to_encrypt): %s") % type(to_encrypt)
 
@@ -147,9 +147,9 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
             "encrypt_with_gnupg: type(encrypted.data): %s"
         ) % type(
             encrypted.data)
-        # print "encrypted: " + str(encrypted)
-        # print "len(encrypted): " + str(len(str(encrypted)))
-        print ("========================================== GNUPG END")
+        # print("encrypted: " + str(encrypted))
+        # print("len(encrypted): " + str(len(str(encrypted))))
+        print("========================================== GNUPG END")
     shutil.rmtree(keyfolder)
 
     return encrypted.data
@@ -166,7 +166,7 @@ if __name__ == '__main__':  # pragma: no coverage
     --                                      --
     """
     result = encrypt_with_gnupg(my_unicode_text)
-    print result
+    print(result)
 
     my_string = """
     --                                      --
@@ -177,4 +177,4 @@ if __name__ == '__main__':  # pragma: no coverage
     --                                      --
     """
     result = encrypt_with_gnupg(my_string)
-    print result
+    print(result)

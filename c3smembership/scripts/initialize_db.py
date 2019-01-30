@@ -80,7 +80,7 @@ def main(argv=sys.argv):
     # add some content
     with transaction.manager:
         # a group for accountants/staff
-        accountants_group = Group(name=u"staff")
+        accountants_group = Group(name="staff")
         try:
             DBSession.add(accountants_group)
             DBSession.flush()
@@ -90,9 +90,9 @@ def main(argv=sys.argv):
     with transaction.manager:
         # staff personnel
         staffer1 = Staff(
-            login=u"rut",
-            password=u"berries",
-            email=u"noreply@example.com",
+            login="rut",
+            password="berries",
+            email="noreply@example.com",
         )
         staffer1.groups = [accountants_group]
         try:
@@ -103,9 +103,9 @@ def main(argv=sys.argv):
     # one more staffer
     with transaction.manager:
         staffer2 = Staff(
-            login=u"reel",
-            password=u"boo",
-            email=u"noreply@example.com",
+            login="reel",
+            password="boo",
+            email="noreply@example.com",
         )
         staffer2.groups = [accountants_group]
         try:
@@ -116,24 +116,24 @@ def main(argv=sys.argv):
     # a member, actually a membership form submission
     with transaction.manager:
         member1 = C3sMember(
-            firstname=u"Firstnäme",  # includes umlaut
-            lastname=u"Lastname",
-            email=u"uat.yes@example.com",
-            password=u"berries",
-            address1=u"address one",
-            address2=u"address two",
-            postcode=u"12345 foo",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"en",
-            date_of_birth=date(1971, 02, 03),
+            firstname="Firstnäme",  # includes umlaut
+            lastname="Lastname",
+            email="uat.yes@example.com",
+            password="berries",
+            address1="address one",
+            address2="address two",
+            postcode="12345 foo",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="en",
+            date_of_birth=date(1971, 2, 3),
             email_is_confirmed=False,
-            email_confirm_code=u"ABCDEFGHIJ",
+            email_confirm_code="ABCDEFGHIJ",
             num_shares=u'10',
             date_of_submission=datetime.now(),
             membership_type=u'normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
+            name_of_colsoc="GEMA",
         )
         try:
             DBSession.add(member1)
@@ -145,12 +145,12 @@ def main(argv=sys.argv):
             firstname=u'Ada Traumhaft',
             lastname=u'Musiziert',
             email=u'uat.yes@example.com',
-            address1=u"Musikergasse 34",
-            address2=u"Hinterhaus",
-            postcode=u"12345",
-            city=u"Foostadt Ada",
-            country=u"Germany",
-            locale=u"de",
+            address1="Musikergasse 34",
+            address2="Hinterhaus",
+            postcode="12345",
+            city="Foostadt Ada",
+            country="Germany",
+            locale="de",
             date_of_birth=date(1971, 3, 4),
             email_is_confirmed=False,
             email_confirm_code=u'NORMAL_DE1',
@@ -158,19 +158,19 @@ def main(argv=sys.argv):
             date_of_submission=date.today(),
             membership_type=u'normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
+            name_of_colsoc="GEMA",
             num_shares=u'23',
         )
         normal_en = C3sMember(  # english normal
             firstname=u'James',
             lastname=u'Musician',
             email=u'uat.yes@example.com',
-            address1=u"james addr 1",
-            address2=u"james appartment 2",
-            postcode=u"12345",
-            city=u"Jamestown",
-            country=u"Jamescountry",
-            locale=u"en",
+            address1="james addr 1",
+            address2="james appartment 2",
+            postcode="12345",
+            city="Jamestown",
+            country="Jamescountry",
+            locale="en",
             date_of_birth=date(1972, 4, 5),
             email_is_confirmed=False,
             email_confirm_code=u'NORMAL_DE',
@@ -178,19 +178,19 @@ def main(argv=sys.argv):
             date_of_submission=date.today(),
             membership_type=u'normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"",
+            name_of_colsoc="",
             num_shares=u'2',
         )
         investing_de = C3sMember(  # german investing
             firstname=u'Herman',
             lastname=u'Investor',
             email=u'uat.yes@example.com',
-            address1=u"c/o Mutti",
-            address2=u"addr two4",
-            postcode=u"12344",
-            city=u"Footown M44",
-            country=u"Austria",
-            locale=u"de",
+            address1="c/o Mutti",
+            address2="addr two4",
+            postcode="12344",
+            city="Footown M44",
+            country="Austria",
+            locale="de",
             date_of_birth=date(1974, 9, 8),
             email_is_confirmed=False,
             email_confirm_code=u'INVESTING_DE',
@@ -198,19 +198,19 @@ def main(argv=sys.argv):
             date_of_submission=date.today(),
             membership_type=u'investing',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
+            name_of_colsoc="",
             num_shares=u'6',
         )
         investing_en = C3sMember(  # english investing
             firstname=u'Britany',
             lastname=u'Investing',
             email=u'uat.yes@example.com',
-            address1=u"aone5",
-            address2=u"atwo5",
-            postcode=u"12355",
-            city=u"London",
-            country=u"United Kingdom",
-            locale=u"en",
+            address1="aone5",
+            address2="atwo5",
+            postcode="12355",
+            city="London",
+            country="United Kingdom",
+            locale="en",
             date_of_birth=date(1978, 4, 1),
             email_is_confirmed=False,
             email_confirm_code=u'INVESTING_EN',
@@ -218,19 +218,19 @@ def main(argv=sys.argv):
             date_of_submission=date.today(),
             membership_type=u'investing',
             member_of_colsoc=True,
-            name_of_colsoc=u"",
+            name_of_colsoc="",
             num_shares=u'60',
         )
         legal_entity_de = C3sMember(  # german investing legal entity
             firstname=u'Günther Vorstand',
             lastname=u'Deutscher Musikverlag',
             email=u'uat.yes@example.com',
-            address1=u"Ährenweg 1",
-            address2=u"",
-            postcode=u"98765",
-            city=u"Teststadt",
-            country=u"Germany",
-            locale=u"de",
+            address1="Ährenweg 1",
+            address2="",
+            postcode="98765",
+            city="Teststadt",
+            country="Germany",
+            locale="de",
             date_of_birth=date(1987, 3, 6),
             email_is_confirmed=False,
             email_confirm_code=u'VERLAG_DE',
@@ -238,19 +238,19 @@ def main(argv=sys.argv):
             date_of_submission=date.today(),
             membership_type=u'investing',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
+            name_of_colsoc="",
             num_shares=u'60',
         )
         legal_entity_en = C3sMember(  # english investing legal entity
             firstname=u'John BigBoss',
             lastname=u'Some Company',
             email=u'uat.yes@example.com',
-            address1=u"foo boulevard",
-            address2=u"123-345",
-            postcode=u"98765",
-            city=u"London",
-            country=u"United Kingdom",
-            locale=u"en",
+            address1="foo boulevard",
+            address2="123-345",
+            postcode="98765",
+            city="London",
+            country="United Kingdom",
+            locale="en",
             date_of_birth=date(1982, 4, 2),
             email_is_confirmed=False,
             email_confirm_code=u'COMPANY_EN',
@@ -258,7 +258,7 @@ def main(argv=sys.argv):
             date_of_submission=date.today(),
             membership_type=u'investing',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
+            name_of_colsoc="",
             num_shares=u'60',
         )
         DBSession.add(normal_de)

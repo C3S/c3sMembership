@@ -14,7 +14,7 @@ Membership acquisition
 
 from datetime import datetime
 import logging
-from types import NoneType
+# from types import NoneType  # py2 is gone
 
 import colander
 import deform
@@ -48,8 +48,9 @@ LOG = logging.getLogger(__name__)
 
 
 @view_config(
-    renderer=\
-    'c3smembership.presentation:templates/pages/membership_acquisition.pt',
+    renderer=(
+        'c3smembership.presentation:'
+        'templates/pages/membership_acquisition.pt'),
     permission='manage',
     route_name='dashboard')
 def dashboard(request):
@@ -112,7 +113,7 @@ def get_dashboard_redirect(request, member_id=''):
         A HTTPFound for redirection to the dashboard.
     """
     kwargs = {}
-    if type(member_id) == str or type(member_id) == unicode:
+    if type(member_id) == str or type(member_id) == str:
         member_id_str = member_id
     else:
         member_id_str = str(member_id)
@@ -151,7 +152,7 @@ def make_payment_reminder_email(member):
                 member.locale),
             shares_value=int(member.num_shares) * 50,
             shares_count=member.num_shares,
-            transfer_purpose=u'C3Shares ' + member.email_confirm_code,
+            transfer_purpose='C3Shares ' + member.email_confirm_code,
             footer=get_email_footer(member.locale)))
 
 
@@ -329,7 +330,7 @@ def mail_signature_reminder(request):
     """
     member_id = request.matchdict['memberid']
     member = C3sMember.get_by_id(member_id)
-    if isinstance(member, NoneType):
+    if isinstance(member, type(None)):
         request.session.flash(
             'that member was not found! (id: {})'.format(member_id),
             'danger'
@@ -411,7 +412,7 @@ def mail_mail_conf(request):
     '''
     member_id = request.matchdict['member_id']
     member = C3sMember.get_by_id(member_id)
-    if isinstance(member, NoneType):
+    if isinstance(member, type(None)):
         request.session.flash(
             'id not found. no mail sent.',
             'danger')
@@ -457,14 +458,14 @@ def delete_afms(request):
         buttons=[deform.Button('delete_them', 'DELETE')]
     )
     if 'first' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = delete_range_form.validate(controls)
             _first = appstruct['first']
             _last = appstruct['last']
             # pylint: disable=superfluous-parens
             assert(_first < _last)
-        except ValidationFailure, error:
+        except ValidationFailure as error:
             return {
                 'resetform': error.render()
             }
@@ -497,28 +498,28 @@ def afms_awaiting_approval(request):
 
     # print("there are {} afms ready for approval".format(len(afms)))
 
-    output_string = u"""\n"""
+    output_string = """\n"""
     # output_string = u"""there are {} afms ready for approval \n""".format(
     #    len(afms))
 
     if len(afms) > 0:
-        output_string += u"""Neue Genossenschaftsmitglieder\n"""
-        output_string += u"""------------------------------\n\n"""
-        output_string += u"""Vorname      | Name       | Anteile | Typ \n"""
-        output_string += u"""-----------  | ---------- | ------- | ----- \n"""
+        output_string += """Neue Genossenschaftsmitglieder\n"""
+        output_string += """------------------------------\n\n"""
+        output_string += """Vorname      | Name       | Anteile | Typ \n"""
+        output_string += """-----------  | ---------- | ------- | ----- \n"""
 
     for afm in afms:
-        output_string += u"""{}      | {}     |   {}    | {} \n""".format(
-            unicode(afm.firstname),
-            unicode(afm.lastname),
+        output_string += """{}      | {}     |   {}    | {} \n""".format(
+            str(afm.firstname),
+            str(afm.lastname),
             afm.num_shares,
             'legal entity/inv.' if afm.is_legalentity else afm.membership_type
         )
 
     # we can not see aufstockers as of now, or?
-    output_string += u"""\nAufstocker\n"""
-    output_string += u"""------------------------------\n\n"""
-    output_string += u"""Vorname      | Name        | Anteile | Typ \n"""
-    output_string += u"""-----------  | ----------  | ------- | ----- \n"""
-    output_string += u"""\n TODO: check! \n"""
+    output_string += """\nAufstocker\n"""
+    output_string += """------------------------------\n\n"""
+    output_string += """Vorname      | Name        | Anteile | Typ \n"""
+    output_string += """-----------  | ----------  | ------- | ----- \n"""
+    output_string += """\n TODO: check! \n"""
     return output_string

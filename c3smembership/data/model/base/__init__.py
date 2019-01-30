@@ -36,7 +36,7 @@ def hash_password(password):
     """
     Calculates the password hash.
     """
-    return unicode(CRYPT.encode(password))
+    return CRYPT.encode(password)
 
 
 def check_password(hashed_password, plain_password):

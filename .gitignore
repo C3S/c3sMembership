@@ -1,6 +1,7 @@
 *.db
 *.db*
 *.egg-info
+*.eggs
 *.idea
 *.log
 *.pyc
@@ -15,6 +16,7 @@ cover/
 dist/
 docs/_build/
 env/
+env3/
 invoices/
 utils/
 off/
