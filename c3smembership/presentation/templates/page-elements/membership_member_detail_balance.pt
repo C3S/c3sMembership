@@ -28,6 +28,11 @@
         <td>${-member.dues18_balance}</td>
     </tr>
     <tr>
+        <?python balance += member.dues19_balance ?>
+        <td>Membership dues 2019</td>
+        <td>${-member.dues19_balance}</td>
+    </tr>
+    <tr>
         <?python
             balanced = (balance == 0.0)
         ?>

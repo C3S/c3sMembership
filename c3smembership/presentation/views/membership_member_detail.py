@@ -17,6 +17,7 @@ from c3smembership.data.model.base.dues15invoice import Dues15Invoice
 from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
+from c3smembership.data.model.base.dues19invoice import Dues19Invoice
 
 LOG = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ def get_member_details(request, member):
     invoices16 = Dues16Invoice.get_by_membership_no(member.membership_number)
     invoices17 = Dues17Invoice.get_by_membership_no(member.membership_number)
     invoices18 = Dues18Invoice.get_by_membership_no(member.membership_number)
+    invoices19 = Dues19Invoice.get_by_membership_no(member.membership_number)
     general_assembly_invitations = sorted(
         request.registry.general_assembly_invitation.get_member_invitations(
             member),
@@ -145,6 +147,33 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues18_listing'),
             'dues_notice_route': request.route_url(
                 'dues18_notice', member_id=member.id),
+        })
+    if (member.membership_date < date(2019, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2019, 1, 1))):
+        dues.append({
+            'year': '2019',
+            'year_short': '19',
+            'invoices': invoices19,
+            'email_sent': member.dues19_invoice,
+            'email_sent_timestamp': member.dues19_invoice_date,
+            'has_invoice': len(invoices19) > 0,
+            'dues_start': member.dues19_start,
+            'dues_amount': member.dues19_amount,
+            'is_reduced': member.dues19_reduced,
+            'reduced_amount': member.dues19_amount_reduced,
+            'is_balanced': member.dues19_balanced,
+            'amount_paid': member.dues19_amount_paid,
+            'payment_received': member.dues19_paid,
+            'paid_date': member.dues19_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues19_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues19_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues19_listing'),
+            'dues_notice_route': request.route_url(
+                'dues19_notice', member_id=member.id),
         })
 
     return {

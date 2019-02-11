@@ -5,7 +5,7 @@
         metal:use-macro="backend"
         i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
-        <h1>Mitgliedsbeitragsrechnungen 2016</h1>
+        <h1>Mitgliedsbeitragsrechnungen 2019</h1>
         <p>
             ${count} Rechnungen
         </p>
@@ -28,19 +28,15 @@
                 <td>
                     <!-- if this invoice is a normal invoice -->
                     <a tal:condition="not i.is_reversal"
-                            href="${request.route_url('make_dues16_invoice_no_pdf',
-                                i=str(i.invoice_no).zfill(4),
-                                email=i.email,
-                                code=i.token)}"
+                            href="${request.route_url('dues19_invoice_pdf_backend',
+                                i=str(i.invoice_no).zfill(4))}"
                             title="download ${i.invoice_no_string}.pdf">
                         ${i.invoice_no_string}
                     </a>
                     <!-- if this invoice is a REVERSAL INVOICE -->
                     <a  tal:condition="i.is_reversal"
-                            href="${request.route_url('make_dues16_reversal_invoice_pdf',
-                                no=str(i.invoice_no).zfill(4),
-                                email=i.email,
-                                code=i.token)}"
+                            href="${request.route_url('dues19_reversal_pdf_backend',
+                                i=str(i.invoice_no).zfill(4))}"
                             title="download ${i.invoice_no_string}-S.pdf">
                         ${i.invoice_no_string}
                     </a>

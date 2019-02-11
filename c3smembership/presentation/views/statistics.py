@@ -10,6 +10,7 @@ from c3smembership.data.model.base.dues15invoice import Dues15Invoice
 from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
+from c3smembership.data.model.base.dues19invoice import Dues19Invoice
 from c3smembership.data.model.base.staff import Staff
 from c3smembership.data.repository.share_repository import ShareRepository
 
@@ -71,6 +72,7 @@ def stats_view(request):
         'dues16_stats': Dues16Invoice.get_monthly_stats(),
         'dues17_stats': Dues17Invoice.get_monthly_stats(),
         'dues18_stats': Dues18Invoice.get_monthly_stats(),
+        'dues19_stats': Dues19Invoice.get_monthly_stats(),
 
         # staff figures
         'num_staff': len(Staff.get_all())

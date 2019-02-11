@@ -407,6 +407,30 @@ class C3sMember(Base):
         DatabaseDecimal(12, 2), default=Decimal('0'))
     dues18_paid_date = Column(DateTime())
 
+    # membership dues for 2019
+    dues19_invoice = Column(Boolean, default=False)
+    dues19_invoice_date = Column(DateTime())
+    dues19_invoice_no = Column(Integer())
+    dues19_token = Column(Unicode(10))
+    dues19_start = Column(Unicode(255))
+    dues19_amount = Column(
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    dues19_reduced = Column(Boolean, default=False)
+    _dues19_amount_reduced = Column(
+        'dues19_amount_reduced',
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    # balance
+    _dues19_balance = Column(
+        'dues19_balance',
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues19_balanced = Column(Boolean, default=True)
+    # payment
+    dues19_paid = Column(Boolean, default=False)
+    dues19_amount_paid = Column(
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues19_paid_date = Column(DateTime())
+
+    # privacy
     privacy_consent = Column(DateTime(), nullable=True)
 
     def __init__(self, firstname, lastname, email, password,
@@ -454,16 +478,16 @@ class C3sMember(Base):
     @hybrid_property
     def dues15_balance(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the 2015 dues balance, i.e. amount due subtracted by amount paid.
         """
         return self._dues15_balance
 
     @dues15_balance.setter
     def dues15_balance(self, dues15_balance):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the 2015 dues balance.
+
+        If balance is set to 0 the balanced flag is set to True.
         """
         self._dues15_balance = dues15_balance
         self.dues15_balanced = self._dues15_balance == Decimal('0')
@@ -471,16 +495,20 @@ class C3sMember(Base):
     @hybrid_property
     def dues15_amount_reduced(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the reduced amount for 2015 dues.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This gets the amount the dues was reduced to.
         """
         return self._dues15_amount_reduced
 
     @dues15_amount_reduced.setter
     def dues15_amount_reduced(self, dues15_amount_reduced):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the reduced 2015 dues amount.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This sets the amount the dues was reduced to.
         """
         self._dues15_amount_reduced = dues15_amount_reduced
         self.dues15_reduced = (
@@ -491,16 +519,16 @@ class C3sMember(Base):
     @hybrid_property
     def dues16_balance(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the 2016 dues balance, i.e. amount due subtracted by amount paid.
         """
         return self._dues16_balance
 
     @dues16_balance.setter
     def dues16_balance(self, dues16_balance):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the 2016 dues balance.
+
+        If balance is set to 0 the balanced flag is set to True.
         """
         self._dues16_balance = dues16_balance
         self.dues16_balanced = self._dues16_balance == Decimal('0')
@@ -508,16 +536,20 @@ class C3sMember(Base):
     @hybrid_property
     def dues16_amount_reduced(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the reduced amount for 2016 dues.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This gets the amount the dues was reduced to.
         """
         return self._dues16_amount_reduced
 
     @dues16_amount_reduced.setter
     def dues16_amount_reduced(self, dues16_amount_reduced):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the reduced 2016 dues amount.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This sets the amount the dues was reduced to.
         """
         self._dues16_amount_reduced = dues16_amount_reduced
         self.dues16_reduced = \
@@ -528,16 +560,16 @@ class C3sMember(Base):
     @hybrid_property
     def dues17_balance(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the 2017 dues balance, i.e. amount due subtracted by amount paid.
         """
         return self._dues17_balance
 
     @dues17_balance.setter
     def dues17_balance(self, dues17_balance):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the 2017 dues balance.
+
+        If balance is set to 0 the balanced flag is set to True.
         """
         self._dues17_balance = dues17_balance
         self.dues17_balanced = self._dues17_balance == Decimal('0')
@@ -545,16 +577,20 @@ class C3sMember(Base):
     @hybrid_property
     def dues17_amount_reduced(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the reduced amount for 2017 dues.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This gets the amount the dues was reduced to.
         """
         return self._dues17_amount_reduced
 
     @dues17_amount_reduced.setter
     def dues17_amount_reduced(self, dues17_amount_reduced):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the reduced 2017 dues amount.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This sets the amount the dues was reduced to.
         """
         self._dues17_amount_reduced = dues17_amount_reduced
         self.dues17_reduced = \
@@ -565,16 +601,16 @@ class C3sMember(Base):
     @hybrid_property
     def dues18_balance(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the 2018 dues balance, i.e. amount due subtracted by amount paid.
         """
         return self._dues18_balance
 
     @dues18_balance.setter
     def dues18_balance(self, dues18_balance):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the 2018 dues balance.
+
+        If balance is set to 0 the balanced flag is set to True.
         """
         self._dues18_balance = dues18_balance
         self.dues18_balanced = self._dues18_balance == Decimal('0')
@@ -582,22 +618,67 @@ class C3sMember(Base):
     @hybrid_property
     def dues18_amount_reduced(self):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Get the reduced amount for 2018 dues.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This gets the amount the dues was reduced to.
         """
         return self._dues18_amount_reduced
 
     @dues18_amount_reduced.setter
     def dues18_amount_reduced(self, dues18_amount_reduced):
         """
-        TODO: write this docstring
-        TODO: write testcase in test_models.py
+        Set the reduced 2018 dues amount.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This sets the amount the dues was reduced to.
         """
         self._dues18_amount_reduced = dues18_amount_reduced
         self.dues18_reduced = \
             not math.isnan(self.dues18_amount_reduced) \
             and \
             self.dues18_amount_reduced != self.dues18_amount
+
+    @hybrid_property
+    def dues19_balance(self):
+        """
+        Get the 2019 dues balance, i.e. amount due subtracted by amount paid.
+        """
+        return self._dues19_balance
+
+    @dues19_balance.setter
+    def dues19_balance(self, dues19_balance):
+        """
+        Set the 2019 dues balance.
+
+        If balance is set to 0 the balanced flag is set to True.
+        """
+        self._dues19_balance = dues19_balance
+        self.dues19_balanced = self._dues19_balance == Decimal('0')
+
+    @hybrid_property
+    def dues19_amount_reduced(self):
+        """
+        Get the reduced amount for 2019 dues.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This gets the amount the dues was reduced to.
+        """
+        return self._dues19_amount_reduced
+
+    @dues19_amount_reduced.setter
+    def dues19_amount_reduced(self, dues19_amount_reduced):
+        """
+        Set the reduced 2018 dues amount.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This sets the amount the dues was reduced to.
+        """
+        self._dues19_amount_reduced = dues19_amount_reduced
+        self.dues19_reduced = \
+            not math.isnan(self.dues19_amount_reduced) \
+            and \
+            self.dues19_amount_reduced != self.dues19_amount
 
     @classmethod
     def get_by_code(cls, email_confirm_code):
@@ -658,6 +739,11 @@ class C3sMember(Base):
     def get_by_dues18_token(cls, code):
         """return one member by fee token"""
         return DBSession.query(cls).filter(cls.dues18_token == code).first()
+
+    @classmethod
+    def get_by_dues19_token(cls, code):
+        """return one member by fee token"""
+        return DBSession.query(cls).filter(cls.dues19_token == code).first()
 
     @classmethod
     def get_all(cls):
@@ -771,6 +857,39 @@ class C3sMember(Base):
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(2018, 1, 1),
+                ),
+            )).slice(0, num).all()
+
+    @classmethod
+    def get_dues19_invoicees(cls, num):
+        """
+        Get a given number *n* of members to send dues invoices to.
+
+        Queries the database for members, where
+
+        * members are accepted
+        * members have not received their dues invoice email yet
+
+        Args:
+          num is the number *n* of C3sMembers to return
+
+        Returns:
+          a list of *n* member objects
+        """
+
+        # In SqlAlchemy the True comparison must be done as "a == True" and not
+        # in the python default way "a is True". Therefore:
+        # pylint: disable=singleton-comparison
+        invoice_year = 2019
+        return DBSession.query(cls).filter(
+            and_(
+                cls.membership_accepted == True,
+                cls.dues19_invoice == False,
+                cls.membership_date < date(invoice_year+1, 1, 1),
+                cls.membership_type.in_([u'normal', u'investing']),
+                or_(
+                    cls.membership_loss_date == None,
+                    cls.membership_loss_date >= date(invoice_year, 1, 1),
                 ),
             )).slice(0, num).all()
 
@@ -1460,6 +1579,40 @@ class C3sMember(Base):
             self.dues18_amount_reduced = reduced_amount
         else:
             self.dues18_amount_reduced = Decimal('NaN')
+
+    def set_dues19_payment(self, paid_amount, paid_date):
+        if math.isnan(self.dues19_amount_paid):
+            dues19_amount_paid = Decimal('0')
+        else:
+            dues19_amount_paid = self.dues19_amount_paid
+
+        self.dues19_paid = True
+        self.dues19_amount_paid = dues19_amount_paid + paid_amount
+        self.dues19_paid_date = paid_date
+        self.dues19_balance = self.dues19_balance - paid_amount
+
+    def set_dues19_amount(self, dues_amount):
+        if math.isnan(self.dues19_amount) \
+                or not isinstance(self.dues19_amount, Decimal):
+            dues19_amount = Decimal('0')
+        else:
+            dues19_amount = self.dues19_amount
+
+        self.dues19_balance = self.dues19_balance - dues19_amount + Decimal(
+            dues_amount)  # what they actually have to pay
+        self.dues19_amount = dues_amount  # what they have to pay (calc'ed)
+
+    def set_dues19_reduced_amount(self, reduced_amount):
+        if reduced_amount != self.dues19_amount:
+            previous_amount_in_balance = (
+                self.dues19_amount_reduced
+                if self.dues19_reduced
+                else self.dues19_amount)
+            self.dues19_balance = self.dues19_balance - \
+                previous_amount_in_balance + reduced_amount
+            self.dues19_amount_reduced = reduced_amount
+        else:
+            self.dues19_amount_reduced = Decimal('NaN')
 
     def get_url_safe_name(self):
         """

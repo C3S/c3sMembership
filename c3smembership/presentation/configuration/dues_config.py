@@ -160,6 +160,30 @@ class DuesConfig(Configuration):
             ('dues18_notice', '/dues18_notice/{member_id}'),
             ('dues18_listing', '/dues18_listing'),
 
+            # membership dues 2019
+            (
+                'dues19_invoice_pdf_backend',
+                '/dues19_invoice/C3S-dues19-{i}.pdf'
+            ),
+            ('send_dues19_invoice_email', '/dues19_invoice/{member_id}'),
+            ('send_dues19_invoice_batch', '/dues19_invoice_batch'),
+            (
+                'make_dues19_invoice_no_pdf',
+                '/dues19_invoice_no/{code}/C3S-dues19-{i}.pdf'
+            ),
+            ('dues19_reduction', '/dues19_reduction/{member_id}'),
+
+            (
+                'dues19_reversal_pdf_backend',
+                '/dues19_reversal/C3S-dues19-{i}-S.pdf'
+            ),
+            (
+                'make_dues19_reversal_invoice_pdf',
+                '/dues19_reversal/{code}/C3S-dues19-{no}-S.pdf'
+            ),
+            ('dues19_notice', '/dues19_notice/{member_id}'),
+            ('dues19_listing', '/dues19_listing'),
+
             # Invoices
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),
 

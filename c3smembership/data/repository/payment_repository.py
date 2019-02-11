@@ -91,7 +91,7 @@ class PaymentRepository(object):
     @classmethod
     def _get_dues18_payments(cls, members):
         """
-        Gets the dues payments for 2017 from the members.
+        Gets the dues payments for 2018 from the members.
         """
         payments = []
         for member in members:
@@ -104,6 +104,24 @@ class PaymentRepository(object):
                     firstname=member.firstname,
                     lastname=member.lastname,
                     amount=Decimal(member.dues18_amount_paid)))
+        return payments
+
+    @classmethod
+    def _get_dues19_payments(cls, members):
+        """
+        Gets the dues payments for 2019 from the members.
+        """
+        payments = []
+        for member in members:
+            if member.dues19_paid:
+                payments.append(cls._create_payment(
+                    date=member.dues19_paid_date.date(),
+                    account=u'Membership dues 2019',
+                    reference=member.dues19_token,
+                    membership_number=member.membership_number,
+                    firstname=member.firstname,
+                    lastname=member.lastname,
+                    amount=Decimal(member.dues19_amount_paid)))
         return payments
 
     @classmethod
@@ -244,6 +262,7 @@ class PaymentRepository(object):
         payments = payments + cls._get_dues16_payments(members)
         payments = payments + cls._get_dues17_payments(members)
         payments = payments + cls._get_dues18_payments(members)
+        payments = payments + cls._get_dues19_payments(members)
 
         # Arrange payments
         payments = cls._filter_payments(payments, from_date, to_date)
@@ -251,7 +270,6 @@ class PaymentRepository(object):
         payments = cls._slice_payments(payments, page_number, page_size)
 
         return payments
-
 
     def get_payment_count(self, from_date=None, to_date=None):
         """

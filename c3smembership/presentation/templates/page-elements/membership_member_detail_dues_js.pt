@@ -1,40 +1,10 @@
 <script type="text/javascript">
     $().ready(function() {
-        $("#dues15_reduce_submit").click(function(event) {
-                reduction_amount = $("#dues15_form input[name='amount']").val();
-                answer = confirm("Are you sure you want to reduce the dues for ${member.firstname} ${member.lastname} to " + reduction_amount + "?");
-                if(answer) {
-                    $("#dues15_form input[name='confirmed']").val("yes");
-                } else {
-                    event.preventDefault();
-                }
-        });
-
-        $("#dues16_reduce_submit").click(function(event) {
-            reduction_amount = $("#dues16_form input[name='amount']").val();
+        $("#dues19_reduce_submit").click(function(event) {
+            reduction_amount = $("#dues19_form input[name='amount']").val();
             answer = confirm("Are you sure you want to reduce the dues for ${member.firstname} ${member.lastname} to " + reduction_amount + "?");
             if(answer) {
-                $("#dues16_form input[name='confirmed']").val("yes");
-            } else {
-                event.preventDefault();
-            }
-        });
-
-        $("#dues17_reduce_submit").click(function(event) {
-            reduction_amount = $("#dues17_form input[name='amount']").val();
-            answer = confirm("Are you sure you want to reduce the dues for ${member.firstname} ${member.lastname} to " + reduction_amount + "?");
-            if(answer) {
-                $("#dues17_form input[name='confirmed']").val("yes");
-            } else {
-                event.preventDefault();
-            }
-        });
-
-        $("#dues18_reduce_submit").click(function(event) {
-            reduction_amount = $("#dues18_form input[name='amount']").val();
-            answer = confirm("Are you sure you want to reduce the dues for ${member.firstname} ${member.lastname} to " + reduction_amount + "?");
-            if(answer) {
-                $("#dues18_form input[name='confirmed']").val("yes");
+                $("#dues19_form input[name='confirmed']").val("yes");
             } else {
                 event.preventDefault();
             }
