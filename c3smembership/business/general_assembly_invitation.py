@@ -139,8 +139,13 @@ class GeneralAssemblyInvitation(object):
         This method gets the number which is assigned to the next general
         assembly created.
         """
-        return self._general_assembly_repository \
-            .general_assembly_max_number() + 1
+        _max = self._general_assembly_repository.general_assembly_max_number()
+
+        if _max is None:
+            # edge case: no assembly in database: next is #1
+            return 1
+        else:
+            return _max + 1
 
     def edit_general_assembly(self, number, name, assembly_date):
         """
@@ -152,8 +157,8 @@ class GeneralAssemblyInvitation(object):
         Args:
             number: Integer. The number of the general assembly to be edited.
             name: String. The edited name of the general assembly.
-            assembly_date: `datetime.date`. The edited date at which the general
-                assembly takes place.
+            assembly_date: `datetime.date`. The edited date
+                at which the general assembly takes place.
 
         Raises:
             ValueError: In case date is in the past
