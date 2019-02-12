@@ -1,6 +1,6 @@
-import StringIO
 import unicodecsv
-from gnupg_encrypt import encrypt_with_gnupg
+from c3smembership.gnupg_encrypt import encrypt_with_gnupg
+from io import StringIO
 
 
 class CSVRenderer(object):

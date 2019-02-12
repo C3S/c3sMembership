@@ -7,11 +7,6 @@ from datetime import (
     datetime,
 )
 
-import os
-import shutil
-import subprocess
-import tempfile
-
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config

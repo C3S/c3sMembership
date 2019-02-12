@@ -13,16 +13,10 @@ from c3smembership.utils import (
     country_codes,
 )
 
-import colander
-from colander import (
-    # Invalid,
-    Range,
-)
 from datetime import (
     date,
     datetime,
 )
-import deform
 from deform import ValidationFailure
 
 from pyramid.httpexceptions import HTTPFound
@@ -31,7 +25,9 @@ from sqlalchemy.exc import (
     InvalidRequestError,
     IntegrityError
 )
-from types import NoneType
+
+import colander
+import deform
 
 country_default = 'Germany'
 
