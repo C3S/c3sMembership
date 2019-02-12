@@ -26,10 +26,10 @@ There are two validators involved:
 
 from cornice import Service
 import json
-from types import NoneType
+# from types import NoneType
 from webob.exc import HTTPUnauthorized
 
-from c3smembership.data.model.base.c3smember import C3sMember
+# from c3smembership.data.model.base.c3smember import C3sMember  # unused?
 from c3smembership.data.repository.general_assembly_repository import \
     GeneralAssemblyRepository
 
@@ -80,7 +80,7 @@ def api_userinfo(request):
 
     _m = GeneralAssemblyRepository.get_member_by_token(
         request.validated['refcode'])
-    if isinstance(_m, NoneType):
+    if _m is None:
         return {
             'firstname': 'None',
             'lastname': 'None',

@@ -3,7 +3,6 @@ This module holds functionality to administer a members shares.
 """
 
 import logging
-from types import NoneType
 
 import colander
 import deform
@@ -28,7 +27,7 @@ def shares_detail(request):
     Show details about a package of shares.
     '''
     share = request.registry.share_information.get(request.matchdict['id'])
-    if isinstance(share, NoneType):
+    if share is None:
         # entry was not found in database
         request.session.flash(
             'This shares id was not found in the database!',
@@ -66,7 +65,7 @@ def shares_edit(request):
     # load info from DB -- if possible
     share = request.registry.share_information.get(request.matchdict['id'])
 
-    if isinstance(share, NoneType):
+    if share is None:
         # entry was not found in database
         return get_memberhip_listing_redirect(request)
     else:
@@ -102,7 +101,7 @@ def shares_edit(request):
         try:
             appstruct = form.validate(controls)
 
-        except ValidationFailure, validation_failure:  # pragma: no cover
+        except ValidationFailure as validation_failure:  # pragma: no cover
             request.session.flash(
                 _(u'Please note: There were errors, '
                   'please check the form below.'),
@@ -155,10 +154,11 @@ def shares_delete(request):
     # load info from DB -- if possible
     share = request.registry.share_information.get(shares_id)
 
-    if isinstance(share, NoneType):
+    if share is None:
         # entry was not found in database
         request.session.flash(
-            'This shares package {} was not found in the DB.'.format(shares_id),
+            'This shares package {} was not found in the DB.'.format(
+                shares_id),
             'danger'
         )
         return HTTPFound(request.route_url('toolbox'))

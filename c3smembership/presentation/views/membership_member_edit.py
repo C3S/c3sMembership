@@ -5,7 +5,6 @@ Views for editing member data including form generation from schema.
 
 from datetime import date
 import logging
-from types import NoneType
 
 import colander
 from colander import (
@@ -58,7 +57,7 @@ def edit_member(request):
         _id = request.matchdict['_id']
         assert(isinstance(int(_id), int))
         member = C3sMember.get_by_id(_id)
-        if isinstance(member, NoneType):
+        if member is None:
             return HTTPFound(request.route_url('dashboard'))
     except:
         return HTTPFound(request.route_url('dashboard'))
@@ -622,7 +621,7 @@ def edit_member(request):
         else:
             member.membership_accepted = appstruct[
                 'membership_meta']['membership_accepted']
-            if isinstance(member.membership_number, NoneType) \
+            if member.membership_number is None \
                     and member.membership_accepted:
                 member.membership_number = \
                     C3sMember.get_next_free_membership_number()

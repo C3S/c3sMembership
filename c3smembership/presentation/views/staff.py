@@ -97,7 +97,7 @@ your membership tool''' % (_staffer.login,
         controls = request.POST.items()
         try:
             appstruct = stafferform.validate(controls)
-        except ValidationFailure, error:
+        except ValidationFailure as error:
             return {
                 'stafferform': error.render()
             }

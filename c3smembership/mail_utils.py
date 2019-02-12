@@ -120,9 +120,9 @@ def send_message(request, message):
     In debugging mode the message will be written to the console.
     """
     if 'true' in request.registry.settings['testing.mail_to_console']:
-        print(u'Sender: ' + unicode(message.sender))
-        print(u'Receipients: ' + unicode(message.recipients))
-        print(u'Subject: ' + unicode(message.subject))
+        print('Sender: ' + message.sender)
+        print('Receipients: ' + message.recipients[0])
+        print('Subject: ' + message.subject)
         print(message.body.encode('utf-8'))
     else:
         mailer = get_mailer(request)

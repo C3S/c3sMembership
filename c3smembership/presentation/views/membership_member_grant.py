@@ -76,7 +76,7 @@ def make_member_view(request):
         try:
             member.membership_date = datetime.strptime(
                 request.POST['membership_date'], '%Y-%m-%d').date()
-        except ValueError, value_error:
+        except ValueError as value_error:
             request.session.flash(value_error.message, 'danger')
             return HTTPFound(
                 request.route_url('make_member', afm_id=member.id))

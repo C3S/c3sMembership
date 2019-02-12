@@ -117,7 +117,7 @@ class MultipleFormRenderer(object):
                     if post_formid in self.__validation_success:
                         callback = self.__validation_success[post_formid]
                         return callback(request, result, appstruct)
-                except ValidationFailure, validation_failure:
+                except ValidationFailure as validation_failure:
                     # in case of a validation failure, replace the
                     # originally rendered form with the validation result
                     result[form.formid] = validation_failure.render()
