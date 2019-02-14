@@ -90,19 +90,31 @@ def upgrade():
             nullable=True,
             default=Decimal('0.0')))
         batch_op.add_column(sa.Column(
-            'dues19_balanced', sa.Boolean(), nullable=True))
+            'dues19_balanced',
+            sa.Boolean(),
+            nullable=True,
+            default=True))
         batch_op.add_column(sa.Column(
-            'dues19_invoice', sa.Boolean(), nullable=True))
+            'dues19_invoice',
+            sa.Boolean(),
+            nullable=True,
+            default=False))
         batch_op.add_column(sa.Column(
             'dues19_invoice_date', sa.DateTime(), nullable=True))
         batch_op.add_column(sa.Column(
             'dues19_invoice_no', sa.Integer(), nullable=True))
         batch_op.add_column(sa.Column(
-            'dues19_paid', sa.Boolean(), nullable=True))
+            'dues19_paid',
+            sa.Boolean(),
+            nullable=True,
+            default=False))
         batch_op.add_column(sa.Column(
             'dues19_paid_date', sa.DateTime(), nullable=True))
         batch_op.add_column(sa.Column(
-            'dues19_reduced', sa.Boolean(), nullable=True))
+            'dues19_reduced',
+            sa.Boolean(),
+            nullable=True,
+            default=False))
         batch_op.add_column(sa.Column(
             'dues19_start', sa.Unicode(length=255), nullable=True))
         batch_op.add_column(sa.Column(
