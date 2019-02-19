@@ -34,6 +34,7 @@ from pyramid.view import view_config
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
+from c3smembership.data.repository.member_repository import MemberRepository
 
 from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
@@ -177,10 +178,9 @@ def send_dues17_invoice_email(request, m_id=None):
             'to be able to send an invoice email.'.format(member.id),
             'warning')
         return get_memberhip_listing_redirect(request)
-    if member.membership_date >= date(2018,1,1) or ( \
-                member.membership_loss_date is not None
-                and
-                member.membership_loss_date < date(2017,1,1)
+    if member.membership_date >= date(2018, 1, 1) or (
+                member.membership_loss_date is not None and
+                member.membership_loss_date < date(2017, 1, 1)
             ):
         request.session.flash(
             'Member {0} was not a member in 2017. Therefore, you cannot send '
@@ -411,6 +411,24 @@ def make_dues17_invoice_no_pdf(request):
         return HTTPFound(request.route_url('error'))
 
     # return a pdf file
+    pdf_file = make_invoice_pdf_pdflatex(member, invoice)
+    response = Response(content_type='application/pdf')
+    pdf_file.seek(0)  # rewind to beginning
+    response.app_iter = open(pdf_file.name, "r")
+    return response
+
+
+@view_config(
+    route_name='dues17_invoice_pdf_backend',
+    permission='manage')
+def make_dues15_invoice_pdf_backend(request):
+    """
+    Show the invoice to a backend user
+    """
+    invoice_number = request.matchdict['i']
+    invoice = Dues17Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
+    member = MemberRepository.get_member_by_id(invoice.member_id)
     pdf_file = make_invoice_pdf_pdflatex(member, invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning

@@ -11,6 +11,10 @@ Next Release
 
 - Add general assembly creation.
 
+- Add general assembly editing.
+
+- Add dues 2019.
+
 
 
 1.25

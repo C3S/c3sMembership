@@ -444,7 +444,6 @@ def make_dues18_invoice_no_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-
     return get_dues18_invoice(invoice, request)
 
 

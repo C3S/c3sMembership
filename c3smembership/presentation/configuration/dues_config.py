@@ -73,6 +73,10 @@ class DuesConfig(Configuration):
             ('dues', '/dues'),
 
             # membership dues 2015
+            (
+                'dues15_invoice_pdf_backend',
+                '/dues15_invoice/C3S-dues15-{i}.pdf'
+            ),
             ('send_dues15_invoice_email', '/dues15_invoice/{member_id}'),
             ('send_dues15_invoice_batch', '/dues15_invoice_batch'),
             (
@@ -97,6 +101,10 @@ class DuesConfig(Configuration):
             ('dues15_listing', '/dues15_listing'),
 
             # membership dues 2016
+            (
+                'dues16_invoice_pdf_backend',
+                '/dues16_invoice/C3S-dues16-{i}.pdf'
+            ),
             ('send_dues16_invoice_email', '/dues16_invoice/{member_id}'),
             ('send_dues16_invoice_batch', '/dues16_invoice_batch'),
             (
@@ -122,6 +130,10 @@ class DuesConfig(Configuration):
             ('dues16_listing', '/dues16_listing'),
 
             # membership dues 2017
+            (
+                'dues17_invoice_pdf_backend',
+                '/dues17_invoice/C3S-dues17-{i}.pdf'
+            ),
             ('send_dues17_invoice_email', '/dues17_invoice/{member_id}'),
             ('send_dues17_invoice_batch', '/dues17_invoice_batch'),
             (

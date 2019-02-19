@@ -65,7 +65,7 @@
                 </table>
                 <p>
                     <form tal:condition="not d['is_balanced']"
-                            id="dues19_form"
+                            id="dues${d['year_short']}_form"
                             class="form-inline"
                             action="${d['reduction_route']}"
                             method="post">
@@ -78,7 +78,7 @@
                                 title="foo"
                                 name="amount"
                                 value="" />
-                        <input id="dues19_reduce_submit"
+                        <input id="dues${d['year_short']}_reduce_submit"
                                 type="submit"
                                 name="submit"
                                 class="btn btn-primary"
@@ -98,7 +98,7 @@
                     see also
                     <a href="${d['invoice_listing_route']}"
                             class="btn btn-primary">
-                        Dues19 Invoices Listing
+                        Dues${d['year_short']} Invoices Listing
                     </a>
                 </p>
             </td>
@@ -134,7 +134,7 @@
                                 value="Zahlungseingang bestätigen." />
                     </form>
                 </p>
-                <p tal:define="messages request.session.pop_flash('dues19notice_message_to_staff')"
+                <p tal:define="messages request.session.pop_flash(d['dues_notice_message_to_staff'])"
                         tal:condition="messages"
                         tal:attributes="class 'alert alert-danger'">
                     <span color="red" tal:repeat="message messages">
@@ -195,14 +195,14 @@
                         <td>
                             <!--! if this invoice is a normal invoice -->
                             <a tal:condition="not i.is_reversal"
-                                    href="${request.route_url('dues19_invoice_pdf_backend',
+                                    href="${request.route_url(d['dues_invoice_pdf_backend'],
                                         i=str(i.invoice_no).zfill(4))}"
                                     title="download ${i.invoice_no_string}.pdf">
                                 ${i.invoice_no_string}
                             </a>
                             <!--! if this invoice is a REVERSAL INVOICE -->
                             <a  tal:condition="i.is_reversal"
-                                    href="${request.route_url('dues19_reversal_pdf_backend',
+                                    href="${request.route_url(d['dues_reversal_pdf_backend'],
                                         i=str(i.invoice_no).zfill(4))}"
                                     title="download ${i.invoice_no_string}-S.pdf">
                                 ${i.invoice_no_string}

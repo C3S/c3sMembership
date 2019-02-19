@@ -66,6 +66,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues15_listing'),
             'dues_notice_route': request.route_url(
                 'dues15_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues15_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues15_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues15notice_message_to_staff',
         })
     if (member.membership_date < date(2016, 12, 31) and
             (
@@ -93,6 +96,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues16_listing'),
             'dues_notice_route': request.route_url(
                 'dues16_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues16_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues16_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues16notice_message_to_staff',
         })
     if (member.membership_date < date(2017, 12, 31) and
             (
@@ -120,6 +126,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues17_listing'),
             'dues_notice_route': request.route_url(
                 'dues17_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues17_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues17_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues17notice_message_to_staff',
         })
     if (member.membership_date < date(2018, 12, 31) and
             (
@@ -147,6 +156,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues18_listing'),
             'dues_notice_route': request.route_url(
                 'dues18_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues18_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues18_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues18notice_message_to_staff',
         })
     if (member.membership_date < date(2019, 12, 31) and
             (
@@ -174,6 +186,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues19_listing'),
             'dues_notice_route': request.route_url(
                 'dues19_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues19_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues19_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues19notice_message_to_staff',
         })
 
     return {
