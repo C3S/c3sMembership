@@ -609,22 +609,17 @@ def dues18_reduction(request):
     * change payable amount for member
     * cancel old invoice by issuing a cancellation
     * issue a new invoice with the new amount (if new amount != 0)
-
-    this will only work for *normal* members.
     """
-    # member: sanity checks
-    try:
-        member_id = request.matchdict['member_id']
-        member = C3sMember.get_by_id(member_id)  # is in database
-        assert member.membership_accepted  # is a member
-        assert 'investing' not in member.membership_type  # is normal member
-    except (KeyError, AssertionError):  # pragma: no cover
+    member_id = request.matchdict.get('member_id')
+    member = C3sMember.get_by_id(member_id)  # is in database
+    if (member is None or
+            not member.membership_accepted or
+            not member.dues18_invoice):
         request.session.flash(
-            u"No member OR not accepted OR not normal member",
+            u"Member not found or not a member or no invoice to reduce",
             'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-
             request.route_url('detail', memberid=member.id) + '#dues18')
 
     # sanity check: the given amount is a positive decimal
@@ -912,16 +907,14 @@ def dues18_notice(request):
     """
     notice of arrival for transferral of dues
     """
-    # member: sanity checks
-    try:
-        member_id = request.matchdict['member_id']
-        member = C3sMember.get_by_id(member_id)  # is in database
-        assert member.membership_accepted  # is a member
-        assert 'investing' not in member.membership_type  # is normal member
-    except (KeyError, AssertionError):  # pragma: no cover
+    member_id = request.matchdict.get('member_id')
+    member = C3sMember.get_by_id(member_id)  # is in database
+    if (member is None or
+            not member.membership_accepted or
+            not member.dues18_invoice):
         request.session.flash(
-            u"No member OR not accepted OR not normal member",
-            'dues18notice_message_to_staff'  # message queue for staff
+            u"Member not found or not a member or no invoice to pay for",
+            'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
             request.route_url('detail', memberid=member.id) + '#dues18')

@@ -15,6 +15,9 @@ Next Release
 
 - Add dues 2019.
 
+- Let payments and reductions depend on whether there is an invoice instead of
+  the type of membership.
+
 
 
 1.25
