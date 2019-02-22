@@ -428,6 +428,24 @@ def make_dues15_invoice_pdf_backend(request):
     return response
 
 
+@view_config(
+    route_name='dues15_reversal_pdf_backend',
+    permission='manage')
+def make_dues15_reversal_pdf_backend(request):
+    """
+    Show the invoice to a backend user
+    """
+    invoice_number = request.matchdict['i']
+    invoice = Dues15Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
+    member = MemberRepository.get_member_by_id(invoice.member_id)
+    pdf_file = make_reversal_pdf_pdflatex(member, invoice)
+    response = Response(content_type='application/pdf')
+    pdf_file.seek(0)  # rewind to beginning
+    response.app_iter = open(pdf_file.name, "r")
+    return response
+
+
 def make_invoice_pdf_pdflatex(member, invoice=None):
     """
     This function uses pdflatex to create a PDF

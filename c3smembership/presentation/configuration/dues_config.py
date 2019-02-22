@@ -77,6 +77,10 @@ class DuesConfig(Configuration):
                 'dues15_invoice_pdf_backend',
                 '/dues15_invoice/C3S-dues15-{i}.pdf'
             ),
+            (
+                'dues15_reversal_pdf_backend',
+                '/dues15_reversal/C3S-dues15-{i}-S.pdf'
+            ),
             ('send_dues15_invoice_email', '/dues15_invoice/{member_id}'),
             ('send_dues15_invoice_batch', '/dues15_invoice_batch'),
             (
@@ -91,7 +95,8 @@ class DuesConfig(Configuration):
             ('dues15_reduction', '/dues15_reduction/{member_id}'),
             (
                 'make_dues15_reversal_invoice_pdf',
-                '/dues15_reversal/{code}/C3S-dues15-{no}-S.pdf'),
+                '/dues15_reversal/{code}/C3S-dues15-{no}-S.pdf'
+            ),
             # for backward compatibility
             (
                 'make_dues15_reversal_invoice_pdf_email',
@@ -104,6 +109,10 @@ class DuesConfig(Configuration):
             (
                 'dues16_invoice_pdf_backend',
                 '/dues16_invoice/C3S-dues16-{i}.pdf'
+            ),
+            (
+                'dues16_reversal_pdf_backend',
+                '/dues16_reversal/C3S-dues16-{i}-S.pdf'
             ),
             ('send_dues16_invoice_email', '/dues16_invoice/{member_id}'),
             ('send_dues16_invoice_batch', '/dues16_invoice_batch'),
@@ -133,6 +142,10 @@ class DuesConfig(Configuration):
             (
                 'dues17_invoice_pdf_backend',
                 '/dues17_invoice/C3S-dues17-{i}.pdf'
+            ),
+            (
+                'dues17_reversal_pdf_backend',
+                '/dues17_reversal/C3S-dues17-{i}-S.pdf'
             ),
             ('send_dues17_invoice_email', '/dues17_invoice/{member_id}'),
             ('send_dues17_invoice_batch', '/dues17_invoice_batch'),
