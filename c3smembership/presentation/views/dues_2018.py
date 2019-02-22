@@ -551,8 +551,8 @@ def make_invoice_pdf_pdflatex(invoice):
         is_altered_str = u'angepasst' if (
             'de' in member.locale) else u'altered'
 
-    invoice_no = str(member.dues18_invoice_no).zfill(4)
-    invoice_date = member.dues18_invoice_date.strftime('%d. %m. %Y')
+    invoice_no = str(invoice.invoice_no).zfill(4)
+    invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
 
     # set variables for tex command
     tex_vars = {

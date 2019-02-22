@@ -550,8 +550,8 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     else:  # pragma: no cover
         # this branch is deprecated, because we always supply an invoice number
         # use invoice no from member record
-        invoice_no = str(member.dues17_invoice_no).zfill(4)
-        invoice_date = member.dues17_invoice_date
+        invoice_no = str(invoice.invoice_no).zfill(4)
+        invoice_date = invoice.invoice_date
 
     dues15_balance = D('0.0')
     dues16_balance = D('0.0')
