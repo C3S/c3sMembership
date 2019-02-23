@@ -44,10 +44,3 @@ Staff can then transmogrify the application into a real membership.
       "success_check_email" -> "success_verify_email" [style=dotted,label="via link in email"];
       "success_verify_email" -> "show_success_pdf";
    }
-
-
-What follows is documentation generated from the actual code:
-
-.. automodule:: c3smembership.views.afm
-    :members:
-    :member-order: bysource

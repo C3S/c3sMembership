@@ -72,8 +72,6 @@ There is an alternative listing for complete (/approved) members.
       "dashboard (upcoming members)" -> "memberships (actual memberships)";
    }
 
-See the code docs here: :ref:`code_docs_accountants`.
-
 
 Alphabetical Membership List
 ----------------------------
@@ -83,8 +81,6 @@ but also helps to maintain the alphabetical membership list.
 
 .. image:: ../images/alphabetical_membership_list_pdf.png
    :alt: Alphabetical Membership List (PDF)
-
-See :ref:`code_docs_membership_list`
 
 
 Autodocumenting Code and Tests
