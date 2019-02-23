@@ -200,71 +200,6 @@ class TestDues19Views(unittest.TestCase):
         res = make_random_string()
         assert len(res) == 10
 
-    def test_calculate_partial_dues19(self):
-        """
-        A test to check if partial dues are calculated the right way.
-
-        "Partial dues" means you have to pay for half a year only, for example.
-        """
-        from c3smembership.presentation.views.dues_2019 import (
-            calculate_partial_dues19)
-        member = C3sMember.get_by_id(1)
-        res = calculate_partial_dues19(member)
-        assert res == (u'q1_2019', D('50'))
-
-        # english member
-        member_en = C3sMember.get_by_id(2)
-        res = calculate_partial_dues19(member_en)
-        assert res == (u'q1_2019', D('50'))
-
-        member_en.membership_date = date(2019, 6, 1)
-        res = calculate_partial_dues19(member_en)
-        assert res == (u'q2_2019', D('37.50'))
-
-        member_en.membership_date = date(2019, 9, 1)
-        res = calculate_partial_dues19(member_en)
-        assert res == (u'q3_2019', D('25'))
-
-        member_en.membership_date = date(2019, 11, 1)
-        res = calculate_partial_dues19(member_en)
-        assert res == (u'q4_2019', D('12.50'))
-
-    def test_string_start_quarter_dues19(self):
-        """
-        Tests for the strings used for partial time spans.
-        """
-        from c3smembership.presentation.views.dues_2019 import (
-            string_start_quarter_dues19,
-        )
-        member = C3sMember.get_by_id(1)
-
-        member.dues19_start = 'q1_2019'
-        res = string_start_quarter_dues19(member)
-        assert(u'für das ganze Jahr' in res)
-        member.dues19_start = 'q2_2019'
-        res = string_start_quarter_dues19(member)
-        assert('Quartal 2' in res)
-        member.dues19_start = 'q3_2019'
-        res = string_start_quarter_dues19(member)
-        assert('Quartal 3' in res)
-        member.dues19_start = 'q4_2019'
-        res = string_start_quarter_dues19(member)
-        assert('Quartal 4' in res)
-
-        member.locale = u'en'
-        member.dues19_start = 'q1_2019'
-        res = string_start_quarter_dues19(member)
-        assert('for the whole year' in res)
-        member.dues19_start = 'q2_2019'
-        res = string_start_quarter_dues19(member)
-        assert('2nd quarter' in res)
-        member.dues19_start = 'q3_2019'
-        res = string_start_quarter_dues19(member)
-        assert('3rd quarter' in res)
-        member.dues19_start = 'q4_2019'
-        res = string_start_quarter_dues19(member)
-        assert('4th quarter' in res)
-
     def test_send_dues19_invoice_email_single(self):
         """
         test the send_dues19_invoice_email view
@@ -353,10 +288,10 @@ class TestDues19Views(unittest.TestCase):
         """
         self.assertEqual(len(mailer.outbox), 2)
         self.assertTrue(
-            (u'Dein Mitgliedsbeitrag für das ganze Jahr beträgt also 50 Euro.')
+            (u'Mitgliedsbeitrag für das ganze Jahr 2019 beträgt also 50 Euro.')
             in mailer.outbox[0].body)
         self.assertTrue(
-            (u'Dein Mitgliedsbeitrag für das ganze Jahr beträgt also 50 Euro.')
+            (u'Mitgliedsbeitrag für das ganze Jahr 2019 beträgt also 50 Euro.')
             in mailer.outbox[1].body)
 
         """

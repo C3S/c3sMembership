@@ -21,7 +21,6 @@ from datetime import (
     timedelta,
 )
 from decimal import Decimal as D
-import math
 import os
 import shutil
 import subprocess
@@ -32,10 +31,10 @@ from pyramid_mailer.message import Message
 from pyramid.response import Response
 from pyramid.view import view_config
 
+from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues19invoice import Dues19Invoice
-
 from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
@@ -74,6 +73,7 @@ LATEX_TEMPLATES = {
     'storno_de': PDFLATEX_DIR + '/' + 'dues19_storno_de.tex',
     'storno_en': PDFLATEX_DIR + '/' + 'dues19_storno_en.tex',
 }
+DUES_CALCULATOR = QuarterlyDuesCalculator(D('50'), 2019)
 
 
 def make_random_string():
@@ -86,56 +86,6 @@ def make_random_string():
         random.choice(
             string.ascii_uppercase
         ) for x in range(10))
-
-
-def calculate_partial_dues19(member):
-    """
-    helper function: calculate..
-
-    * codified start quarter (q1, q2, q3, q4) and
-    * dues
-
-    depending on members entry date
-    """
-    year = 2019
-    if member.membership_date >= date(year+1, 1, 1):
-        raise ValueError('Member is not applicable for dues 2019.')
-
-    if member.membership_date < date(year, 4, 1):
-        # first quarter or earlier
-        start = u'q1_{0}'.format(year)
-        amount = D('50')
-    elif member.membership_date < date(year, 7, 1):
-        # second quarter
-        start = u'q2_{0}'.format(year)
-        amount = D('37.50')
-    elif member.membership_date < date(year, 10, 1):
-        # third quarter
-        start = u'q3_{0}'.format(year)
-        amount = D('25')
-    elif member.membership_date >= date(year, 10, 1):
-        # third quarter
-        start = u'q4_{0}'.format(year)
-        amount = D('12.50')
-    return (start, amount)
-
-
-def string_start_quarter_dues19(member):
-    """
-    helper function: produce translated string for quarter of entry date
-    depending on members locale
-    """
-    loc = member.locale
-    result = u''
-    if 'q1_2019' in member.dues19_start:  # first quarter of 2019 or earlier
-        result = u"für das ganze Jahr" if 'de' in loc else "for the whole year"
-    elif 'q2_2019' in member.dues19_start:  # second quarter of 2019
-        result = u"ab Quartal 2" if 'de' in loc else u"from 2nd quarter"
-    elif 'q3_2019' in member.dues19_start:  # third quarter of 2019
-        result = u"ab Quartal 3" if 'de' in loc else u"from 3rd quarter"
-    elif 'q4_2019' in member.dues19_start:  # third quarter of 2019
-        result = u"ab Quartal 4" if 'de' in loc else u"from 4th quarter"
-    return result
 
 
 @view_config(
@@ -198,8 +148,8 @@ def send_dues19_invoice_email(request, m_id=None):
             'warning')
         return get_memberhip_listing_redirect(request)
     if member.membership_date >= date(2019, 1, 1) or (
-                member.membership_loss_date is not None
-                and member.membership_loss_date < date(2019, 1, 1)
+                member.membership_loss_date is not None and
+                member.membership_loss_date < date(2019, 1, 1)
             ):
         request.session.flash(
             'Member {0} was not a member in 2019. Therefore, you cannot send '
@@ -236,8 +186,8 @@ def send_dues19_invoice_email(request, m_id=None):
             new_invoice_no = int(max_invoice_no) + 1
             DBSession.flush()  # save dataset to DB
 
-        # calculate dues amount (maybe partial, depending on quarter)
-        dues_start, dues_amount = calculate_partial_dues19(member)
+        dues_amount, dues_code, dues_description = DUES_CALCULATOR.calculate(
+            member)
 
         # now we have enough info to update the member info
         # and persist invoice info for bookkeeping
@@ -246,7 +196,7 @@ def send_dues19_invoice_email(request, m_id=None):
         member.dues19_invoice_no = new_invoice_no  # irrelevant for investing
         member.dues19_invoice_date = datetime.now()
         member.dues19_token = randomstring
-        member.dues19_start = dues_start
+        member.dues19_start = dues_code
 
         if 'normal' in member.membership_type:  # only for normal members
             member.set_dues19_amount(dues_amount)
@@ -270,7 +220,10 @@ def send_dues19_invoice_email(request, m_id=None):
     # only the normal members get an invoice link and PDF produced for them.
     # only investing legalentities are asked for more support.
     if 'investing' not in member.membership_type:
-        start_quarter = string_start_quarter_dues19(member)
+        dues_description = DUES_CALCULATOR.get_description(
+            DUES_CALCULATOR.calculate_quarter(member),
+            member.locale)
+        start_quarter = dues_description
         invoice_url = (
             request.route_url(
                 'make_dues19_invoice_no_pdf',
@@ -557,6 +510,10 @@ def make_invoice_pdf_pdflatex(invoice):
     invoice_date = member.dues19_invoice_date.strftime('%d. %m. %Y')
 
     # set variables for tex command
+    dues_start = DUES_CALCULATOR.get_description(
+        DUES_CALCULATOR.calculate_quarter(member),
+        member.locale)
+
     tex_vars = {
         'personalFirstname': member.firstname,
         'personalLastname': member.lastname,
@@ -570,7 +527,7 @@ def make_invoice_pdf_pdflatex(invoice):
         'account': unicode(-member.dues15_balance - member.dues16_balance
             - member.dues17_balance - member.dues19_balance),
         'duesStart':  is_altered_str if (
-            invoice.is_altered) else string_start_quarter_dues19(member),
+            invoice.is_altered) else dues_start,
         'duesAmount': unicode(invoice.invoice_amount),
         'lang': 'de',
         'pdfBackground': bg_pdf,
