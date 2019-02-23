@@ -568,7 +568,8 @@ def make_invoice_pdf_pdflatex(invoice):
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
         'account': unicode(-member.dues15_balance - member.dues16_balance
-            - member.dues17_balance - member.dues19_balance),
+            - member.dues17_balance - member.dues18_balance
+            - member.dues19_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else string_start_quarter_dues19(member),
         'duesAmount': unicode(invoice.invoice_amount),
