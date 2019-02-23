@@ -18,6 +18,7 @@ This module holds code for Membership Dues (2017 edition).
 from datetime import (
     datetime,
     date,
+    timedelta,
 )
 from decimal import Decimal as D
 import math
@@ -367,50 +368,33 @@ def make_dues17_invoice_no_pdf(request):
     """
     token = request.matchdict['code']
     invoice_number = request.matchdict['i']
+    invoice = Dues17Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
 
-    try:
-        member = C3sMember.get_by_dues17_token(token)
-        assert member is not None
-        assert member.dues17_token == token
-    except AssertionError:
-        request.session.flash(
-            u"This member and token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error'))
+    member = None
+    token_is_invalid = True
+    older_than_a_year = True
+    if invoice is not None:
+        member = C3sMember.get_by_id(invoice.member_id)
+        token_is_invalid = token != invoice.token
+        older_than_a_year = (
+            date.today() - invoice.invoice_date.date() > timedelta(days=365))
 
-    try:
-        invoice = Dues17Invoice.get_by_invoice_no(
-            invoice_number.lstrip('0'))
-        assert invoice is not None
-    except AssertionError:
+    if invoice is None or token_is_invalid or invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'message_to_user'
         )
         return HTTPFound(request.route_url('error'))
 
-    # sanity check: invoice token must match with token
-    try:
-        assert(invoice.token == token)
-    except AssertionError:
+    if older_than_a_year or member.dues18_paid:
         request.session.flash(
-            u"Token did not match!",
-            'message_to_user'  # message queue for user
+            u'This invoice cannot be downloaded anymore. '
+            u'Please contact office@c3s.cc for further information.',
+            'message_to_user'
         )
         return HTTPFound(request.route_url('error'))
 
-    # sanity check: invoice must not be reversal
-    try:
-        assert(not invoice.is_reversal)
-    except AssertionError:
-        request.session.flash(
-            u"Token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error'))
-
-    # return a pdf file
     pdf_file = make_invoice_pdf_pdflatex(member, invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
@@ -846,53 +830,28 @@ def make_dues17_reversal_invoice_pdf(request):
     - an error message or
     - a PDF
     """
-
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
+    invoice = Dues17Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
 
-    try:
-        member = C3sMember.get_by_dues17_token(token)
-        assert member is not None
-        assert member.dues17_token == token
+    member = None
+    token_is_invalid = True
+    older_than_a_year = True
+    if invoice is not None:
+        member = C3sMember.get_by_id(invoice.member_id)
+        token_is_invalid = token != invoice.token
+        older_than_a_year = (
+            date.today() - invoice.invoice_date.date() > timedelta(days=365))
 
-    except AssertionError:
-        request.session.flash(
-            u"This member and token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error'))
-
-    try:
-        invoice = Dues17Invoice.get_by_invoice_no(invoice_number)
-        assert invoice is not None
-    except AssertionError:
+    if invoice is None or token_is_invalid or not invoice.is_reversal \
+            or older_than_a_year or member.dues18_paid:
         request.session.flash(
             u"No invoice found!",
             'message_to_user'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
-    # sanity check: invoice token must match with token
-    try:
-        assert(invoice.token == token)
-    except AssertionError:
-        request.session.flash(
-            u"Token did not match!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error'))
-
-    # sanity check: reversal invoice token must be reversal
-    try:
-        assert(invoice.is_reversal)
-    except AssertionError:
-        request.session.flash(
-            u"No reversal invoice found!",
-            'message_to_user'  # message queue for user
-        )
-        return HTTPFound(request.route_url('error'))
-
-    # return a pdf file
     pdf_file = make_reversal_pdf_pdflatex(member, invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning

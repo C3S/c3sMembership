@@ -721,31 +721,6 @@ class C3sMember(Base):
         return DBSession.query(cls).filter(cls.email == email).all()
 
     @classmethod
-    def get_by_dues15_token(cls, code):
-        """return one member by fee token"""
-        return DBSession.query(cls).filter(cls.dues15_token == code).first()
-
-    @classmethod
-    def get_by_dues16_token(cls, code):
-        """return one member by fee token"""
-        return DBSession.query(cls).filter(cls.dues16_token == code).first()
-
-    @classmethod
-    def get_by_dues17_token(cls, code):
-        """return one member by fee token"""
-        return DBSession.query(cls).filter(cls.dues17_token == code).first()
-
-    @classmethod
-    def get_by_dues18_token(cls, code):
-        """return one member by fee token"""
-        return DBSession.query(cls).filter(cls.dues18_token == code).first()
-
-    @classmethod
-    def get_by_dues19_token(cls, code):
-        """return one member by fee token"""
-        return DBSession.query(cls).filter(cls.dues19_token == code).first()
-
-    @classmethod
     def get_all(cls):
         """return all afms and members"""
         return DBSession.query(cls).all()

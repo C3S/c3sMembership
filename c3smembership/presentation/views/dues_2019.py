@@ -20,16 +20,19 @@ from datetime import (
     date,
     timedelta,
 )
-from decimal import Decimal as D
+from decimal import Decimal
+import logging
 import os
+import random
 import shutil
+import string
 import subprocess
 import tempfile
 
 from pyramid.httpexceptions import HTTPFound
-from pyramid_mailer.message import Message
 from pyramid.response import Response
 from pyramid.view import view_config
+from pyramid_mailer.message import Message
 
 from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
 from c3smembership.data.model.base import DBSession
@@ -49,12 +52,7 @@ from c3smembership.presentation.views.dues_texts import (
 from c3smembership.tex_tools import TexTools
 
 
-DEBUG = False
-LOGGING = True
-
-if LOGGING:  # pragma: no cover
-    import logging
-    LOG = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 PDFLATEX_DIR = os.path.abspath(
     os.path.join(
@@ -67,21 +65,19 @@ PDF_BACKGROUNDS = {
 }
 
 LATEX_TEMPLATES = {
-    # 'generic': PDFLATEX_DIR + '/' + 'membership_dues_receipt.tex',
     'invoice_de': PDFLATEX_DIR + '/' + 'dues19_invoice_de.tex',
     'invoice_en': PDFLATEX_DIR + '/' + 'dues19_invoice_en.tex',
     'storno_de': PDFLATEX_DIR + '/' + 'dues19_storno_de.tex',
     'storno_en': PDFLATEX_DIR + '/' + 'dues19_storno_en.tex',
 }
-DUES_CALCULATOR = QuarterlyDuesCalculator(D('50'), 2019)
+
+DUES_CALCULATOR = QuarterlyDuesCalculator(Decimal('50'), 2019)
 
 
 def make_random_string():
     """
     a random string used as dues token
     """
-    import random
-    import string
     return u''.join(
         random.choice(
             string.ascii_uppercase
@@ -113,27 +109,18 @@ def send_dues19_invoice_email(request, m_id=None):
     no new invoice is produced, but the same mail sent again.
     """
     # either we are given a member id via url or function parameter
-    try:  # view was called via http/s
-        member_id = request.matchdict['member_id']
-        batch = False
-    except KeyError:  # ...or was called as function with parameter (see batch)
+    member_id = request.matchdict.get('member_id')
+    if member_id is None:
         member_id = m_id
-        batch = True
 
-    try:  # get member from DB
-        member = C3sMember.get_by_id(member_id)
-        assert(member is not None)
-    except AssertionError:
-        if not batch:
-            request.session.flash(
-                "member with id {} not found in DB!".format(member_id),
-                'warning')
-            return HTTPFound(request.route_url('dues'))
+    member = C3sMember.get_by_id(member_id)
+    if member is None:
+        request.session.flash(
+            "member with id {} not found in DB!".format(member_id),
+            'warning')
+        return HTTPFound(request.route_url('dues'))
 
-    # sanity check:is this a member?
-    try:
-        assert(member.membership_accepted)  # must be accepted member!
-    except AssertionError:
+    if not member.membership_accepted:
         request.session.flash(
             "member {} not accepted by the board!".format(member_id),
             'warning')
@@ -147,10 +134,9 @@ def send_dues19_invoice_email(request, m_id=None):
             'to be able to send an invoice email.'.format(member.id),
             'warning')
         return get_memberhip_listing_redirect(request)
-    if member.membership_date >= date(2019, 1, 1) or (
-                member.membership_loss_date is not None and
-                member.membership_loss_date < date(2019, 1, 1)
-            ):
+    if (member.membership_date >= date(2019, 1, 1) or (
+            member.membership_loss_date is not None and
+            member.membership_loss_date < date(2019, 1, 1))):
         request.session.flash(
             'Member {0} was not a member in 2019. Therefore, you cannot send '
             'an invoice for 2019.'.format(member.id),
@@ -163,28 +149,19 @@ def send_dues19_invoice_email(request, m_id=None):
 
     if member.dues19_invoice is True:
         invoice = Dues19Invoice.get_by_invoice_no(member.dues19_invoice_no)
-        member.dues19_invoice_date = datetime.now()
-
-    else:  # if no invoice already exists:
+    else:
         # make dues token and ...
         randomstring = make_random_string()
         # check if dues token is already used
-        while (Dues19Invoice.check_for_existing_dues19_token(randomstring)):
+        while Dues19Invoice.check_for_existing_dues19_token(randomstring):
             # create a new one, if the new one already exists in the database
             randomstring = make_random_string()  # pragma: no cover
 
-        # prepare invoice number
-        try:
-            # either we already have an invoice number for that client...
-            invoice_no = member.dues19_invoice_no
-            assert invoice_no is not None
-        except AssertionError:
-            # ... or we create a new one and save it
-            # get max invoice no from db
+        invoice_no = member.dues19_invoice_no
+        if invoice_no is None:
             max_invoice_no = Dues19Invoice.get_max_invoice_no()
-            # use the next free number, save it to db
             new_invoice_no = int(max_invoice_no) + 1
-            DBSession.flush()  # save dataset to DB
+            DBSession.flush()
 
         dues_amount, dues_code, dues_description = DUES_CALCULATOR.calculate(
             member)
@@ -398,11 +375,13 @@ def make_dues19_invoice_no_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-
     return get_dues19_invoice(invoice, request)
 
 
 def get_dues19_invoice_archive_path():
+    """
+    Get the invoice archive path
+    """
     invoice_archive_path = os.path.abspath(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -413,12 +392,18 @@ def get_dues19_invoice_archive_path():
 
 
 def get_dues19_archive_invoice_filename(invoice):
+    """
+    Get the archive filename of the invoice
+    """
     return os.path.join(
         get_dues19_invoice_archive_path(),
         '{0}.pdf'.format(invoice.invoice_no_string))
 
 
 def archive_dues19_invoice(pdf_file, invoice):
+    """
+    Archive the invoice if it is not yet archived
+    """
     invoice_archive_filename = get_dues19_archive_invoice_filename(
         invoice)
     if not os.path.isfile(invoice_archive_filename):
@@ -429,6 +414,9 @@ def archive_dues19_invoice(pdf_file, invoice):
 
 
 def get_dues19_archive_invoice(invoice):
+    """
+    Get the invoice from the archive
+    """
     invoice_archive_filename = get_dues19_archive_invoice_filename(
         invoice)
     if os.path.isfile(invoice_archive_filename):
@@ -438,6 +426,9 @@ def get_dues19_archive_invoice(invoice):
 
 
 def create_pdf(tex_vars, tpl_tex, invoice):
+    """
+    Create the invoice PDF
+    """
     receipt_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
 
     (path, filename) = os.path.split(receipt_pdf.name)
@@ -453,8 +444,6 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     # make latex show ß correctly in pdf:
     tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
 
-    # XXX: try to find out, why utf-8 doesn't work on debian
-    # TODO: Handle any return code not equal to zero
     subprocess.call(
         [
             'pdflatex',
@@ -499,8 +488,7 @@ def make_invoice_pdf_pdflatex(invoice):
     tpl_tex = LATEX_TEMPLATES[template_name]
 
     # on invoice, print start quarter or "reduced". prepare string:
-    if (
-            not invoice.is_reversal and
+    if (not invoice.is_reversal and
             invoice.is_altered and
             invoice.preceding_invoice_no is not None):
         is_altered_str = u'angepasst' if (
@@ -524,8 +512,10 @@ def make_invoice_pdf_pdflatex(invoice):
         'personalMShipNo': unicode(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
-        'account': unicode(-member.dues15_balance - member.dues16_balance
-            - member.dues17_balance - member.dues19_balance),
+        'account': unicode(
+            -member.dues15_balance - member.dues16_balance -
+            member.dues17_balance - member.dues18_balance -
+            member.dues19_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else dues_start,
         'duesAmount': unicode(invoice.invoice_amount),
@@ -546,7 +536,7 @@ def dues19_listing(request):
     a listing of all invoices for the 2019 dues run.
     shall show both active/valid and cancelled/invalid invoices.
     """
-    # get them all from the DB
+    # pylint: disable=unused-argument
     dues19_invoices = Dues19Invoice.get_all()
 
     return {
@@ -585,10 +575,8 @@ def dues19_reduction(request):
 
     # sanity check: the given amount is a positive decimal
     try:
-        reduced_amount = D(request.POST['amount'])
+        reduced_amount = Decimal(request.POST['amount'])
         assert not reduced_amount.is_signed()
-        if DEBUG:
-            print("DEBUG: reduction to {}".format(reduced_amount))
     except (KeyError, AssertionError):  # pragma: no cover
         request.session.flash(
             (u"Invalid amount to reduce to: '{}' "
@@ -598,18 +586,6 @@ def dues19_reduction(request):
         )
         return HTTPFound(
             request.route_url('detail', memberid=member.id) + '#dues19')
-
-    if DEBUG:
-        print("DEBUG: member.dues19_amount: {}".format(
-            member.dues19_amount))
-        print("DEBUG: type(member.dues19_amount): {}".format(
-            type(member.dues19_amount)))
-        print("DEBUG: member.dues19_reduced: {}".format(
-            member.dues19_reduced))
-        print("DEBUG: member.dues19_amount_reduced: {}".format(
-            member.dues19_amount_reduced))
-        print("DEBUG: type(member.dues19_amount_reduced): {}".format(
-            type(member.dues19_amount_reduced)))
 
     # The hidden input 'confirmed' must have the value 'yes' which is set by
     # the confirmation dialog.
@@ -667,7 +643,7 @@ def dues19_reduction(request):
     old_invoice = Dues19Invoice.get_by_invoice_no(member.dues19_invoice_no)
     old_invoice.is_cancelled = True
 
-    reversal_invoice_amount = -D(old_invoice.invoice_amount)
+    reversal_invoice_amount = -Decimal(old_invoice.invoice_amount)
 
     # prepare reversal invoice number
     new_invoice_no = max_invoice_no + 1
@@ -694,11 +670,6 @@ def dues19_reduction(request):
     # check if reduction to zero
     if reduced_amount.is_zero():
         is_exemption = True
-        if DEBUG:
-            print("this is an exemption: reduction to zero")
-    else:
-        if DEBUG:
-            print("this is a reduction to {}".format(reduced_amount))
 
     if not is_exemption:
         # create new invoice
@@ -882,10 +853,8 @@ def dues19_notice(request):
 
     # sanity check: the given amount is a positive decimal
     try:
-        paid_amount = D(request.POST['amount'])
+        paid_amount = Decimal(request.POST['amount'])
         assert not paid_amount.is_signed()
-        if DEBUG:
-            print("DEBUG: payment of {}".format(paid_amount))
     except (KeyError, AssertionError):  # pragma: no cover
         request.session.flash(
             (u"Invalid amount to pay: '{}' "
@@ -900,10 +869,7 @@ def dues19_notice(request):
     try:
         paid_date = datetime.strptime(
             request.POST['payment_date'], '%Y-%m-%d')
-
-        if DEBUG:
-            print("DEBUG: payment received on {}".format(paid_date))
-    except (KeyError, AssertionError):  # pragma: no cover
+    except (KeyError, ValueError):  # pragma: no cover
         request.session.flash(
             (u"Invalid date for payment: '{}' "
              u"Use YYYY-MM-DD, e.g. '2019-09-11'".format(

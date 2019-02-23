@@ -21,7 +21,6 @@ from datetime import (
     timedelta,
 )
 from decimal import Decimal as D
-import math
 import os
 import shutil
 import subprocess
@@ -832,7 +831,6 @@ def make_dues18_reversal_invoice_pdf(request):
     - an error message or
     - a PDF
     """
-
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
     invoice = Dues18Invoice.get_by_invoice_no(

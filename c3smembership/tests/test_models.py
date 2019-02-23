@@ -190,66 +190,6 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
         self.assertEqual(instance.firstname, u'SomeFirstnäme')
         self.assertEqual(instance_from_db.email, u'some@shri.de')
 
-    def test_get_by_dues15_token(self):
-        """
-        test: get one entry by token
-        """
-        instance = self._make_one()
-        self.session.add(instance)
-        instance.dues15_token = u'THIS_ONE'
-        instance_from_db = self._get_target_class().get_by_dues15_token(
-            u'THIS_ONE')
-        self.assertEqual(instance_from_db.firstname, u'SomeFirstnäme')
-        self.assertEqual(instance_from_db.email, u'some@shri.de')
-
-    def test_get_by_dues16_token(self):
-        """
-        test: get one entry by token
-        """
-        instance = self._make_one()
-        self.session.add(instance)
-        instance.dues16_token = u'F73sjf29g4eEf9giJ'
-        instance_from_db = self._get_target_class().get_by_dues16_token(
-            u'F73sjf29g4eEf9giJ')
-        self.assertEqual(instance_from_db.firstname, u'SomeFirstnäme')
-        self.assertEqual(instance_from_db.email, u'some@shri.de')
-
-    def test_get_by_dues17_token(self):
-        """
-        test: get one entry by token
-        """
-        instance = self._make_one()
-        self.session.add(instance)
-        instance.dues17_token = u'aa84f59a8fjf79oa83kd'
-        instance_from_db = self._get_target_class().get_by_dues17_token(
-            u'aa84f59a8fjf79oa83kd')
-        self.assertEqual(instance_from_db.firstname, u'SomeFirstnäme')
-        self.assertEqual(instance_from_db.email, u'some@shri.de')
-
-    def test_get_by_dues18_token(self):
-        """
-        test: get one entry by token
-        """
-        instance = self._make_one()
-        self.session.add(instance)
-        instance.dues18_token = u'aa84f59a8fjf79oa83kd'
-        instance_from_db = self._get_target_class().get_by_dues18_token(
-            u'aa84f59a8fjf79oa83kd')
-        self.assertEqual(instance_from_db.firstname, u'SomeFirstnäme')
-        self.assertEqual(instance_from_db.email, u'some@shri.de')
-
-    def test_get_by_dues19_token(self):
-        """
-        test: get one entry by token
-        """
-        instance = self._make_one()
-        self.session.add(instance)
-        instance.dues19_token = u'flaijlaw4jfoalwjfla8w4jfo'
-        instance_from_db = self._get_target_class().get_by_dues19_token(
-            u'flaijlaw4jfoalwjfla8w4jfo')
-        self.assertEqual(instance_from_db.firstname, u'SomeFirstnäme')
-        self.assertEqual(instance_from_db.email, u'some@shri.de')
-
     def test_get_by_email(self):
         """
         test: get one entry by email
