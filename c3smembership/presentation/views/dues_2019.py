@@ -38,6 +38,8 @@ from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues19invoice import Dues19Invoice
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
@@ -148,7 +150,8 @@ def send_dues19_invoice_email(request, m_id=None):
     #     also: offer staffers to cancel this invoice
 
     if member.dues19_invoice is True:
-        invoice = Dues19Invoice.get_by_invoice_no(member.dues19_invoice_no)
+        invoice = DuesInvoiceRepository.get_by_number(
+            2019, member.dues19_invoice_no)
     else:
         # make dues token and ...
         randomstring = make_random_string()
@@ -336,8 +339,8 @@ def make_dues19_invoice_pdf_backend(request):
     Show the invoice to a backend user
     """
     invoice_number = request.matchdict['i']
-    invoice = Dues19Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        2019, invoice_number.lstrip('0'))
     return get_dues19_invoice(invoice, request)
 
 
@@ -348,8 +351,8 @@ def make_dues19_invoice_no_pdf(request):
     """
     token = request.matchdict['code']
     invoice_number = request.matchdict['i']
-    invoice = Dues19Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        2019, invoice_number.lstrip('0'))
 
     member = None
     token_is_invalid = True
@@ -536,9 +539,7 @@ def dues19_listing(request):
     a listing of all invoices for the 2019 dues run.
     shall show both active/valid and cancelled/invalid invoices.
     """
-    # pylint: disable=unused-argument
-    dues19_invoices = Dues19Invoice.get_all()
-
+    dues19_invoices = DuesInvoiceRepository.get_all([2019])
     return {
         'count': len(dues19_invoices),
         '_today': date.today(),
@@ -640,7 +641,8 @@ def dues19_reduction(request):
     request.session.flash('reduction to {}'.format(reduced_amount),
                           'dues19_message_to_staff')
 
-    old_invoice = Dues19Invoice.get_by_invoice_no(member.dues19_invoice_no)
+    old_invoice = DuesInvoiceRepository.get_by_number(
+        2019, member.dues19_invoice_no)
     old_invoice.is_cancelled = True
 
     reversal_invoice_amount = -Decimal(old_invoice.invoice_amount)
@@ -750,8 +752,8 @@ def make_dues19_reversal_pdf_backend(request):
     Show the invoice to a backend user
     """
     invoice_number = request.matchdict['i']
-    invoice = Dues19Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        2019, invoice_number.lstrip('0'))
     return get_dues19_invoice(invoice, request)
 
 
@@ -767,8 +769,8 @@ def make_dues19_reversal_invoice_pdf(request):
 
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
-    invoice = Dues19Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        2019, invoice_number.lstrip('0'))
 
     member = None
     token_is_invalid = True

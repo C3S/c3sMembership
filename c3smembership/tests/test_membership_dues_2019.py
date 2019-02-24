@@ -31,6 +31,8 @@ from c3smembership.data.model.base import (
 )
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues19invoice import Dues19Invoice
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 
 
 def _initTestingDB():
@@ -224,7 +226,7 @@ class TestDues19Views(unittest.TestCase):
             send_dues19_invoice_email,
         )
 
-        _number_of_invoices = len(Dues19Invoice.get_all())
+        _number_of_invoices = len(DuesInvoiceRepository.get_all([2019]))
 
         self.config.add_route('dues', '/')
         self.config.add_route('detail', '/')
@@ -240,7 +242,7 @@ class TestDues19Views(unittest.TestCase):
         self.assertTrue('http://example.com/' in res.headers['Location'])
         # member 1 not accepted by the board. problem!
 
-        _number_of_invoices_2 = len(Dues19Invoice.get_all())
+        _number_of_invoices_2 = len(DuesInvoiceRepository.get_all([2019]))
         assert(_number_of_invoices == _number_of_invoices_2 == 0)
 
         m1 = C3sMember.get_by_id(1)
@@ -248,7 +250,7 @@ class TestDues19Views(unittest.TestCase):
 
         res = send_dues19_invoice_email(req)
 
-        _number_of_invoices_3 = len(Dues19Invoice.get_all())
+        _number_of_invoices_3 = len(DuesInvoiceRepository.get_all([2019]))
         assert(_number_of_invoices_3 == 1)
 
         # check for outgoing email
@@ -281,7 +283,7 @@ class TestDues19Views(unittest.TestCase):
         res3 = send_dues19_invoice_email(req3)
         self.assertTrue(res3.status_code == 302)
         self.assertTrue('http://example.com/' in res3.headers['Location'])
-        _number_of_invoices_4 = len(Dues19Invoice.get_all())
+        _number_of_invoices_4 = len(DuesInvoiceRepository.get_all([2019]))
         self.assertEqual(_number_of_invoices_3, _number_of_invoices_4)
         """
         check for email texts
@@ -408,7 +410,7 @@ class TestDues19Views(unittest.TestCase):
         m5.membership_accepted = True
 
         # check number of invoices: should be 0
-        _number_of_invoices_before_batch = len(Dues19Invoice.get_all())
+        _number_of_invoices_before_batch = len(DuesInvoiceRepository.get_all([2019]))
         assert(_number_of_invoices_before_batch == 0)
 
         req = testing.DummyRequest()
@@ -416,7 +418,7 @@ class TestDues19Views(unittest.TestCase):
         res = send_dues19_invoice_batch(req)
 
         # check number of invoices: should be 2
-        _number_of_invoices_batch = len(Dues19Invoice.get_all())
+        _number_of_invoices_batch = len(DuesInvoiceRepository.get_all([2019]))
         assert(_number_of_invoices_batch == 2)
 
         # try to post a number for batch processing
@@ -475,7 +477,7 @@ class TestDues19Views(unittest.TestCase):
         assert('error' in res.headers['Location'])  # but error
 
         # wrong invoice token: must fail!
-        i2 = Dues19Invoice.get_by_invoice_no(2)
+        i2 = DuesInvoiceRepository.get_by_number(2019, 2)
         i2.token = u'not_matching'
         req2.matchdict = {
             'email': m2.email,
@@ -490,7 +492,7 @@ class TestDues19Views(unittest.TestCase):
         # one more edge case:
         # check _inv.token must match code, or else!!!
         # first, set inv_code to something wrong:
-        i1 = Dues19Invoice.get_by_invoice_no(1)
+        i1 = DuesInvoiceRepository.get_by_number(2019, 1)
         _old_i1_token = i1.token
         i1.token = u'not_right'
         req2.matchdict = {
@@ -507,7 +509,7 @@ class TestDues19Views(unittest.TestCase):
         # one more edge case:
         # check this invoice is not a reversal, or else no PDF!!!
         # first, set is_reversal to something wrong:
-        i1 = Dues19Invoice.get_by_invoice_no(1)
+        i1 = DuesInvoiceRepository.get_by_number(2019, 1)
         _old_i1_reversal_status = i1.is_reversal  # False
         i1.is_reversal = True
         req2.matchdict = {
@@ -578,9 +580,9 @@ class TestDues19Views(unittest.TestCase):
         # pre-check
         self.assertFalse(m1.dues19_reduced)  # not reduced yet!
         _m1_amount_reduced = m1.dues19_amount_reduced  # is Decimal('0')
-        _number_of_invoices_before_reduction = len(Dues19Invoice.get_all())
+        _number_of_invoices_before_reduction = len(DuesInvoiceRepository.get_all([2019]))
         # we have 2 invoices as of now
-        self.assertEqual(len(Dues19Invoice.get_all()), 2)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2019])), 2)
         # import the function under test
         from c3smembership.presentation.views.dues_2019 import dues19_reduction
 
@@ -598,7 +600,7 @@ class TestDues19Views(unittest.TestCase):
 
         res_reduce = dues19_reduction(req_reduce)  # call reduce on her
 
-        self.assertEqual(len(Dues19Invoice.get_all()), 2)  # no new invoice
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2019])), 2)  # no new invoice
 
         #############################################################
         # try to reduce above the given calculated amount
@@ -614,7 +616,7 @@ class TestDues19Views(unittest.TestCase):
 
         res_reduce = dues19_reduction(req_reduce)  # call reduce on her
 
-        self.assertEqual(len(Dues19Invoice.get_all()), 2)  # no new invoice
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2019])), 2)  # no new invoice
 
         #############################################################
         # valid reduction but without confirmation
@@ -627,7 +629,7 @@ class TestDues19Views(unittest.TestCase):
         )
         req_reduce.matchdict['member_id'] = 1
         res_reduce = dues19_reduction(req_reduce)
-        self.assertEqual(len(Dues19Invoice.get_all()), 2)  # no new invoice
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2019])), 2)  # no new invoice
 
         #############################################################
         # valid reduction
@@ -641,7 +643,7 @@ class TestDues19Views(unittest.TestCase):
         req_reduce.matchdict['member_id'] = 1
         res_reduce = dues19_reduction(req_reduce)
 
-        _number_of_invoices_after_reduction = len(Dues19Invoice.get_all())
+        _number_of_invoices_after_reduction = len(DuesInvoiceRepository.get_all([2019]))
 
         assert(  # two new invoices must have been issued
             (_number_of_invoices_before_reduction + 2) ==
@@ -652,15 +654,15 @@ class TestDues19Views(unittest.TestCase):
         assert(m1.dues19_amount_reduced == 42)  # changed to 42!
 
         # check the invoice created
-        _rev_inv = Dues19Invoice.get_by_invoice_no(
-            _number_of_invoices_before_reduction + 1)
-        _new_inv = Dues19Invoice.get_by_invoice_no(
-            _number_of_invoices_before_reduction + 2)
+        _rev_inv = DuesInvoiceRepository.get_by_number(
+            2019, _number_of_invoices_before_reduction + 1)
+        _new_inv = DuesInvoiceRepository.get_by_number(
+            2019, _number_of_invoices_before_reduction + 2)
         assert(_rev_inv.invoice_amount == D('-50'))
         assert(_new_inv.invoice_amount == D('42'))
 
         # we have 4 invoices as of now
-        self.assertEqual(len(Dues19Invoice.get_all()), 4)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2019])), 4)
 
         #############################################################
         # now try to raise above the previous reduction
@@ -674,10 +676,10 @@ class TestDues19Views(unittest.TestCase):
         req_reduce.matchdict['member_id'] = 1
         res_reduce = dues19_reduction(req_reduce)
 
-        _number_of_invoices_after_reduction = len(Dues19Invoice.get_all())
+        _number_of_invoices_after_reduction = len(DuesInvoiceRepository.get_all([2019]))
 
         # no new invoices were created, we still have 4 invoices
-        self.assertEqual(len(Dues19Invoice.get_all()), 4)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2019])), 4)
 
         #############################################################
         # try to reduce to the same amount again (edge case coverage)
@@ -769,7 +771,7 @@ class TestDues19Views(unittest.TestCase):
         assert('error' in res.headers['Location'])  # but error
 
         # wrong invoice token: must fail!
-        i2 = Dues19Invoice.get_by_invoice_no('2')
+        i2 = DuesInvoiceRepository.get_by_number(2019, '2')
         i2.token = u'not_matching'
         req2.matchdict = {
             'email': m2.email,

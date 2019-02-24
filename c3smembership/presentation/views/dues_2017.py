@@ -36,7 +36,8 @@ from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.repository.member_repository import MemberRepository
-
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
@@ -194,7 +195,8 @@ def send_dues17_invoice_email(request, m_id=None):
     #     also: offer staffers to cancel this invoice
 
     if member.dues17_invoice is True:
-        invoice = Dues17Invoice.get_by_invoice_no(member.dues17_invoice_no)
+        invoice = DuesInvoiceRepository.get_by_number(
+            2017, member.dues17_invoice_no)
         member.dues17_invoice_date = datetime.now()
 
     else:  # if no invoice already exists:
@@ -368,8 +370,8 @@ def make_dues17_invoice_no_pdf(request):
     """
     token = request.matchdict['code']
     invoice_number = request.matchdict['i']
-    invoice = Dues17Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        2017, invoice_number.lstrip('0'))
 
     member = None
     token_is_invalid = True
@@ -410,8 +412,8 @@ def make_dues15_invoice_pdf_backend(request):
     Show the invoice to a backend user
     """
     invoice_number = request.matchdict['i']
-    invoice = Dues17Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        2017, invoice_number.lstrip('0'))
     member = MemberRepository.get_member_by_id(invoice.member_id)
     pdf_file = make_invoice_pdf_pdflatex(member, invoice)
     response = Response(content_type='application/pdf')
@@ -596,9 +598,7 @@ def dues17_listing(request):
     a listing of all invoices for the 2017 dues run.
     shall show both active/valid and cancelled/invalid invoices.
     """
-    # get them all from the DB
-    dues17_invoices = Dues17Invoice.get_all()
-
+    dues17_invoices = DuesInvoiceRepository.get_all([2017])
     return {
         'count': len(dues17_invoices),
         '_today': date.today(),
@@ -714,7 +714,8 @@ def dues17_reduction(request):
     request.session.flash('reduction to {}'.format(reduced_amount),
                           'dues17_message_to_staff')
 
-    old_invoice = Dues17Invoice.get_by_invoice_no(member.dues17_invoice_no)
+    old_invoice = DuesInvoiceRepository.get_by_number(
+        2017, member.dues17_invoice_no)
     old_invoice.is_cancelled = True
 
     reversal_invoice_amount = -D(old_invoice.invoice_amount)
@@ -832,8 +833,8 @@ def make_dues17_reversal_invoice_pdf(request):
     """
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
-    invoice = Dues17Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        2017, invoice_number.lstrip('0'))
 
     member = None
     token_is_invalid = True

@@ -108,18 +108,6 @@ class Dues15Invoice(Base):
         self.token = token
 
     @classmethod
-    def get_all(cls):
-        """
-        Return all dues15 invoices
-        """
-        return DBSession.query(cls).all()
-
-    @classmethod
-    def get_by_invoice_no(cls, number):
-        """return one invoice by invoice number"""
-        return DBSession.query(cls).filter(cls.invoice_no == number).first()
-
-    @classmethod
     def get_by_membership_no(cls, number):
         """return all invoices of one member by membership number"""
         return DBSession.query(cls).filter(cls.membership_no == number).all()

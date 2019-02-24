@@ -26,7 +26,8 @@ from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 from c3smembership.data.model.base.dues19invoice import Dues19Invoice
 from c3smembership.data.model.base.group import Group
 from c3smembership.data.model.base.staff import Staff
-
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 
 # Disable Pylint error message when using DBSession methods
 # pylint: disable=no-member
@@ -1141,14 +1142,14 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         '''
         test get_all
         '''
-        res = Dues15Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2015])
         self.assertEqual(len(res), 6)
 
     def test_get_by_invoice_no(self):
         '''
         test get_by_invoice_no
         '''
-        res = Dues15Invoice.get_by_invoice_no(1)
+        res = DuesInvoiceRepository.get_by_number(2015, 1)
         self.assertEqual(res.id, 1)
 
     def test_get_by_membership_no(self):
@@ -1216,7 +1217,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_1)
         self.session.rollback()
 
-        res = Dues15Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2015])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with the same string
@@ -1237,7 +1238,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_2)
         self.session.rollback()
 
-        res = Dues15Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2015])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with a non-decimal amount
@@ -1260,7 +1261,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         # trigger_invalid_operation()
         self.session.rollback()
 
-        res = Dues15Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2015])
         self.assertEqual(len(res), 6)
 
         # now really store a new Dues15Invoice
@@ -1278,7 +1279,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         DBSession.add(dues3)
         DBSession.flush()
 
-        res = Dues15Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2015])
         self.assertEqual(len(res), 7)
         self.assertEqual(dues3.id, 7)
 
@@ -1455,14 +1456,14 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         '''
         test get_all
         '''
-        res = Dues16Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2016])
         self.assertEqual(len(res), 6)
 
     def test_get_by_invoice_no(self):
         '''
         test get_by_invoice_no
         '''
-        res = Dues16Invoice.get_by_invoice_no(1)
+        res = DuesInvoiceRepository.get_by_number(2016, 1)
         self.assertEqual(res.id, 1)
 
     def test_get_by_membership_no(self):
@@ -1530,7 +1531,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_1)
         self.session.rollback()
 
-        res = Dues16Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2016])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with the same string
@@ -1551,7 +1552,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_2)
         self.session.rollback()
 
-        res = Dues16Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2016])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with a non-decimal amount
@@ -1574,7 +1575,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         # trigger_invalid_operation()
         self.session.rollback()
 
-        res = Dues16Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2016])
         self.assertEqual(len(res), 6)
 
         # now really store a new Dues16Invoice
@@ -1592,7 +1593,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         DBSession.add(dues3)
         DBSession.flush()
 
-        res = Dues16Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2016])
         self.assertEqual(len(res), 7)
         self.assertEqual(dues3.id, 7)
 
@@ -1770,14 +1771,14 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         '''
         test get_all
         '''
-        res = Dues17Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2017])
         self.assertEqual(len(res), 6)
 
     def test_get_by_invoice_no(self):
         '''
         test get_by_invoice_no
         '''
-        res = Dues17Invoice.get_by_invoice_no(1)
+        res = DuesInvoiceRepository.get_by_number(2017, 1)
         self.assertEqual(res.id, 1)
 
     def test_get_by_membership_no(self):
@@ -1845,7 +1846,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_1)
         self.session.rollback()
 
-        res = Dues17Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2017])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with the same string
@@ -1866,7 +1867,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_2)
         self.session.rollback()
 
-        res = Dues17Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2017])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with a non-decimal amount
@@ -1889,7 +1890,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         # trigger_invalid_operation()
         self.session.rollback()
 
-        res = Dues17Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2017])
         self.assertEqual(len(res), 6)
 
         # now really store a new Dues17Invoice
@@ -1907,7 +1908,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         DBSession.add(dues3)
         DBSession.flush()
 
-        res = Dues17Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2017])
         self.assertEqual(len(res), 7)
         self.assertEqual(dues3.id, 7)
 
@@ -2085,14 +2086,14 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         '''
         test get_all
         '''
-        res = Dues18Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2018])
         self.assertEqual(len(res), 6)
 
     def test_get_by_invoice_no(self):
         '''
         test get_by_invoice_no
         '''
-        res = Dues18Invoice.get_by_invoice_no(1)
+        res = DuesInvoiceRepository.get_by_number(2018, 1)
         self.assertEqual(res.id, 1)
 
     def test_get_by_membership_no(self):
@@ -2160,7 +2161,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_1)
         self.session.rollback()
 
-        res = Dues18Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2018])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with the same string
@@ -2181,7 +2182,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_2)
         self.session.rollback()
 
-        res = Dues18Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2018])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with a non-decimal amount
@@ -2204,7 +2205,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         # trigger_invalid_operation()
         self.session.rollback()
 
-        res = Dues18Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2018])
         self.assertEqual(len(res), 6)
 
         # now really store a new Dues18Invoice
@@ -2222,7 +2223,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         DBSession.add(dues3)
         DBSession.flush()
 
-        res = Dues18Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2018])
         self.assertEqual(len(res), 7)
         self.assertEqual(dues3.id, 7)
 
@@ -2400,14 +2401,14 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         '''
         test get_all
         '''
-        res = Dues19Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2019])
         self.assertEqual(len(res), 6)
 
     def test_get_by_invoice_no(self):
         '''
         test get_by_invoice_no
         '''
-        res = Dues19Invoice.get_by_invoice_no(1)
+        res = DuesInvoiceRepository.get_by_number(2019, 1)
         self.assertEqual(res.id, 1)
 
     def test_get_by_membership_no(self):
@@ -2475,7 +2476,7 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_1)
         self.session.rollback()
 
-        res = Dues19Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2019])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with the same string
@@ -2496,7 +2497,7 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_2)
         self.session.rollback()
 
-        res = Dues19Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2019])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with a non-decimal amount
@@ -2519,7 +2520,7 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         # trigger_invalid_operation()
         self.session.rollback()
 
-        res = Dues19Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2019])
         self.assertEqual(len(res), 6)
 
         # now really store a new Dues19Invoice
@@ -2537,6 +2538,6 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         DBSession.add(dues3)
         DBSession.flush()
 
-        res = Dues19Invoice.get_all()
+        res = DuesInvoiceRepository.get_all([2019])
         self.assertEqual(len(res), 7)
         self.assertEqual(dues3.id, 7)
