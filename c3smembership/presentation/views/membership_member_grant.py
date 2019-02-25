@@ -111,12 +111,24 @@ def make_member_view(request):
                 member.signature_received_date.year,
                 member.signature_received_date.month,
                 member.signature_received_date.day))
-        share_acquisition.set_payment_confirmation(
+        share_acquisition.set_signature_confirmation(
+            share_id,
+            date(
+                member.signature_confirmed_date.year,
+                member.signature_confirmed_date.month,
+                member.signature_confirmed_date.day))
+        share_acquisition.set_payment_reception(
             share_id,
             date(
                 member.payment_received_date.year,
                 member.payment_received_date.month,
                 member.payment_received_date.day))
+        share_acquisition.set_payment_confirmation(
+            share_id,
+            date(
+                member.payment_confirmed_date.year,
+                member.payment_confirmed_date.month,
+                member.payment_confirmed_date.day))
         share_acquisition.set_reference_code(
             share_id,
             member.email_confirm_code)
