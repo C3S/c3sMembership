@@ -371,7 +371,7 @@ def make_dues16_invoice_no_pdf(request):
     except AssertionError:
         request.session.flash(
             u"This member and token did not match!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -382,7 +382,7 @@ def make_dues16_invoice_no_pdf(request):
     except AssertionError:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -392,7 +392,7 @@ def make_dues16_invoice_no_pdf(request):
     except AssertionError:
         request.session.flash(
             u"Token did not match!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -402,7 +402,7 @@ def make_dues16_invoice_no_pdf(request):
     except AssertionError:
         request.session.flash(
             u"Token did not match!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -869,7 +869,7 @@ def make_dues16_reversal_invoice_pdf(request):
     except AssertionError:
         request.session.flash(
             u"This member and token did not match!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -879,7 +879,7 @@ def make_dues16_reversal_invoice_pdf(request):
     except AssertionError:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -889,7 +889,7 @@ def make_dues16_reversal_invoice_pdf(request):
     except AssertionError:
         request.session.flash(
             u"Token did not match!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -899,7 +899,7 @@ def make_dues16_reversal_invoice_pdf(request):
     except AssertionError:
         request.session.flash(
             u"No reversal invoice found!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 

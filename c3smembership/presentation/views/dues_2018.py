@@ -383,7 +383,7 @@ def get_dues18_invoice(invoice, request):
     if invoice is None:
         request.session.flash(
             u'No invoice found!',
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -432,7 +432,7 @@ def make_dues18_invoice_no_pdf(request):
     if invoice is None or token_is_invalid or invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -440,7 +440,7 @@ def make_dues18_invoice_no_pdf(request):
         request.session.flash(
             u'This invoice cannot be downloaded anymore. '
             u'Please contact office@c3s.cc for further information.',
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -851,7 +851,7 @@ def make_dues18_reversal_invoice_pdf(request):
             or older_than_a_year or member.dues18_paid:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 

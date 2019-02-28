@@ -197,7 +197,7 @@ def send_dues19_invoice_email(request, m_id=None):
             'to be able to send an invoice email.'.format(member.id),
             'warning')
         return get_memberhip_listing_redirect(request)
-    if member.membership_date >= date(2019, 1, 1) or (
+    if member.membership_date >= date(2020, 1, 1) or (
                 member.membership_loss_date is not None
                 and member.membership_loss_date < date(2019, 1, 1)
             ):
@@ -384,7 +384,7 @@ def get_dues19_invoice(invoice, request):
     if invoice is None:
         request.session.flash(
             u'No invoice found!',
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -433,7 +433,7 @@ def make_dues19_invoice_no_pdf(request):
     if invoice is None or token_is_invalid or invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -441,7 +441,7 @@ def make_dues19_invoice_no_pdf(request):
         request.session.flash(
             u'This invoice cannot be downloaded anymore. '
             u'Please contact office@c3s.cc for further information.',
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -856,7 +856,7 @@ def make_dues19_reversal_invoice_pdf(request):
             or older_than_a_year or member.dues19_paid:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
