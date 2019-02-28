@@ -445,7 +445,6 @@ def make_dues19_invoice_no_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-
     return get_dues19_invoice(invoice, request)
 
 
@@ -852,11 +851,18 @@ def make_dues19_reversal_invoice_pdf(request):
         older_than_a_year = (
             date.today() - invoice.invoice_date.date() > timedelta(days=365))
 
-    if invoice is None or token_is_invalid or not invoice.is_reversal \
-            or older_than_a_year or member.dues19_paid:
+    if invoice is None or token_is_invalid or not invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'danger'  # message queue for user
+            'warning'
+        )
+        return HTTPFound(request.route_url('error'))
+
+    if older_than_a_year or member.dues19_paid:
+        request.session.flash(
+            u'This invoice cannot be downloaded anymore. '
+            u'Please contact office@c3s.cc for further information.',
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
