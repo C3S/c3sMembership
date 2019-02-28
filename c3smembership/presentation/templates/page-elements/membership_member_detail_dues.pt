@@ -105,7 +105,7 @@
         </tr>
         <!--! payments for dues -->
         <!--! case one: not paid yet -->
-        <tr tal:condition="d['has_invoice'] and not d['is_balanced']">
+        <tr tal:condition="d['has_invoice'] and not d['is_balanced'] and not d['payment_received']">
             <td>Zahlungseingang<br/>
                 <small>
                     Hier kann der Zahlungseingang mit Datum vermerkt werden.
