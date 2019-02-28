@@ -595,7 +595,7 @@ class TestDues18Views(unittest.TestCase):
         }
         res = make_dues18_invoice_no_pdf(req2)
         # m1.
-        assert(60000 < len(res.body) < 80000)
+        assert(60000 < len(res.body) < 90000)
         assert('application/pdf' in res.headers['Content-Type'])
 
         """
