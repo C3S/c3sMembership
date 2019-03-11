@@ -151,7 +151,7 @@ def send_dues19_invoice_email(request, m_id=None):
 
     if member.dues19_invoice is True:
         invoice = DuesInvoiceRepository.get_by_number(
-            2019, member.dues19_invoice_no)
+            member.dues19_invoice_no, 2019)
     else:
         # make dues token and ...
         randomstring = make_random_string()
@@ -340,7 +340,7 @@ def make_dues19_invoice_pdf_backend(request):
     """
     invoice_number = request.matchdict['i']
     invoice = DuesInvoiceRepository.get_by_number(
-        2019, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2019)
     return get_dues19_invoice(invoice, request)
 
 
@@ -352,7 +352,7 @@ def make_dues19_invoice_no_pdf(request):
     token = request.matchdict['code']
     invoice_number = request.matchdict['i']
     invoice = DuesInvoiceRepository.get_by_number(
-        2019, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2019)
 
     member = None
     token_is_invalid = True
@@ -642,7 +642,7 @@ def dues19_reduction(request):
                           'dues19_message_to_staff')
 
     old_invoice = DuesInvoiceRepository.get_by_number(
-        2019, member.dues19_invoice_no)
+        member.dues19_invoice_no, 2019)
     old_invoice.is_cancelled = True
 
     reversal_invoice_amount = -Decimal(old_invoice.invoice_amount)
@@ -753,7 +753,7 @@ def make_dues19_reversal_pdf_backend(request):
     """
     invoice_number = request.matchdict['i']
     invoice = DuesInvoiceRepository.get_by_number(
-        2019, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2019)
     return get_dues19_invoice(invoice, request)
 
 
@@ -770,7 +770,7 @@ def make_dues19_reversal_invoice_pdf(request):
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
     invoice = DuesInvoiceRepository.get_by_number(
-        2019, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2019)
 
     member = None
     token_is_invalid = True

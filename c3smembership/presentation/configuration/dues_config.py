@@ -7,7 +7,8 @@ import os
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 from c3smembership.data.repository.payment_repository import \
     PaymentRepository
 
@@ -50,7 +51,7 @@ class DuesConfig(Configuration):
         self.config.registry.dues_invoice_archiving = DuesInvoiceArchiving(
             DBSession,
             C3sMember,
-            Dues15Invoice,
+            DuesInvoiceRepository,
             make_invoice_pdf_pdflatex,
             make_reversal_pdf_pdflatex,
             invoices_archive_path)

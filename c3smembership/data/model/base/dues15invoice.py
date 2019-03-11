@@ -108,11 +108,6 @@ class Dues15Invoice(Base):
         self.token = token
 
     @classmethod
-    def get_by_membership_no(cls, number):
-        """return all invoices of one member by membership number"""
-        return DBSession.query(cls).filter(cls.membership_no == number).all()
-
-    @classmethod
     def get_max_invoice_no(cls):
         """
         Get the maximum invoice number.

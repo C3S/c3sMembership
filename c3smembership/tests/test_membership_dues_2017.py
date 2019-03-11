@@ -578,7 +578,7 @@ class TestDues17Views(unittest.TestCase):
         assert('error' in res.headers['Location'])  # but error
 
         # wrong invoice token: must fail!
-        i2 = DuesInvoiceRepository.get_by_number(2017, 2)
+        i2 = DuesInvoiceRepository.get_by_number(2, 2017)
         i2.token = u'not_matching'
         req2.matchdict = {
             'email': m2.email,
@@ -593,7 +593,7 @@ class TestDues17Views(unittest.TestCase):
         # one more edge case:
         # check _inv.token must match code, or else!!!
         # first, set inv_code to something wrong:
-        i1 = DuesInvoiceRepository.get_by_number(2017, 1)
+        i1 = DuesInvoiceRepository.get_by_number(1, 2017)
         _old_i1_token = i1.token
         i1.token = u'not_right'
         req2.matchdict = {
@@ -610,7 +610,7 @@ class TestDues17Views(unittest.TestCase):
         # one more edge case:
         # check this invoice is not a reversal, or else no PDF!!!
         # first, set is_reversal to something wrong:
-        i1 = DuesInvoiceRepository.get_by_number(2017, 1)
+        i1 = DuesInvoiceRepository.get_by_number(1, 2017)
         _old_i1_reversal_status = i1.is_reversal  # False
         i1.is_reversal = True
         req2.matchdict = {
@@ -766,9 +766,9 @@ class TestDues17Views(unittest.TestCase):
 
         # check the invoice created
         _rev_inv = DuesInvoiceRepository.get_by_number(
-            2017, _number_of_invoices_before_reduction + 1)
+            _number_of_invoices_before_reduction + 1, 2017)
         _new_inv = DuesInvoiceRepository.get_by_number(
-            2017, _number_of_invoices_before_reduction + 2)
+            _number_of_invoices_before_reduction + 2, 2017)
         # print(_rev_inv.invoice_amount)
         # print(type(_rev_inv.invoice_amount))
         assert(_rev_inv.invoice_amount == D('-50'))
@@ -886,7 +886,7 @@ class TestDues17Views(unittest.TestCase):
         assert('error' in res.headers['Location'])  # but error
 
         # wrong invoice token: must fail!
-        i2 = DuesInvoiceRepository.get_by_number(2017, '2')
+        i2 = DuesInvoiceRepository.get_by_number(2, 2017)
         i2.token = u'not_matching'
         req2.matchdict = {
             'email': m2.email,

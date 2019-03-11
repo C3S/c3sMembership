@@ -212,7 +212,7 @@ def send_dues18_invoice_email(request, m_id=None):
 
     if member.dues18_invoice is True:
         invoice = DuesInvoiceRepository.get_by_number(
-            2018, member.dues18_invoice_no)
+            member.dues18_invoice_no, 2018)
         member.dues18_invoice_date = datetime.now()
 
     else:  # if no invoice already exists:
@@ -407,7 +407,7 @@ def make_dues18_invoice_pdf_backend(request):
     """
     invoice_number = request.matchdict['i']
     invoice = DuesInvoiceRepository.get_by_number(
-        2018, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2018)
     return get_dues18_invoice(invoice, request)
 
 
@@ -419,7 +419,7 @@ def make_dues18_invoice_no_pdf(request):
     token = request.matchdict['code']
     invoice_number = request.matchdict['i']
     invoice = DuesInvoiceRepository.get_by_number(
-        2018, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2018)
 
     member = None
     token_is_invalid = True
@@ -703,7 +703,7 @@ def dues18_reduction(request):
                           'dues18_message_to_staff')
 
     old_invoice = DuesInvoiceRepository.get_by_number(
-        2018, member.dues18_invoice_no)
+        member.dues18_invoice_no, 2018)
     old_invoice.is_cancelled = True
 
     reversal_invoice_amount = -D(old_invoice.invoice_amount)
@@ -819,7 +819,7 @@ def make_dues18_reversal_pdf_backend(request):
     """
     invoice_number = request.matchdict['i']
     invoice = DuesInvoiceRepository.get_by_number(
-        2018, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2018)
     return get_dues18_invoice(invoice, request)
 
 
@@ -835,7 +835,7 @@ def make_dues18_reversal_invoice_pdf(request):
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
     invoice = DuesInvoiceRepository.get_by_number(
-        2018, invoice_number.lstrip('0'))
+        invoice_number.lstrip('0'), 2018)
 
     member = None
     token_is_invalid = True

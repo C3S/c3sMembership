@@ -66,15 +66,16 @@ class DuesInvoiceArchivingTest(TestCase):
         make_invoice_mock.side_effect = files
         return make_invoice_mock
 
-    def create_dues15_invoices(self, invoices=None):
+    def create_dues_invoice_repo_invoices(self, invoices=None):
         if invoices is None:
             invoices = []
-        dues15_invoices_mock = mock.Mock()
-        dues15_invoices_mock.get_by_membership_no.side_effect = invoices
-        return dues15_invoices_mock
+        dues_invoice_repo_mock = mock.Mock()
+        dues_invoice_repo_mock.get_by_membership_number.side_effect = invoices
+        return dues_invoice_repo_mock
 
     def test_generate_missing_invoice_pdfs(self):
-        self.isfile_mock.side_effect = [False, False, False, True, False, False]
+        self.isfile_mock.side_effect = [
+            False, False, False, True, False, False]
         make_invoice_mock = self.create_make_invoice([
             self.files[0],
             self.files[2],
@@ -82,9 +83,12 @@ class DuesInvoiceArchivingTest(TestCase):
             self.files[4]])
         make_reversal_mock = self.create_make_invoice([self.files[1]])
         db_session = self.create_db_session(self.members)
-        dues15_invoices_mock = self.create_dues15_invoices([
+        dues15_invoices_mock = self.create_dues_invoice_repo_invoices([
             [self.invoices[0], self.invoices[1]],
-            [self.invoices[2], self.invoices[3], self.invoices[4], self.invoices[5]],
+            [
+                self.invoices[2], self.invoices[3], self.invoices[4],
+                self.invoices[5]
+            ],
         ])
 
         archiving = DuesInvoiceArchiving(
@@ -122,7 +126,7 @@ class DuesInvoiceArchivingTest(TestCase):
 
     def test_archive_directory_creation(self):
         db_session = self.create_db_session()
-        dues15_invoices_mock = self.create_dues15_invoices()
+        dues15_invoices_mock = self.create_dues_invoice_repo_invoices()
         make_invoice_mock = self.create_make_invoice()
         make_reversal_mock = self.create_make_invoice()
 
@@ -138,7 +142,7 @@ class DuesInvoiceArchivingTest(TestCase):
         self.makedirs_mock.assert_not_called()
 
         self.isdir_mock.side_effect = [False]
-        archiving = DuesInvoiceArchiving(
+        DuesInvoiceArchiving(
             db_session,
             'c3s_member',
             dues15_invoices_mock,

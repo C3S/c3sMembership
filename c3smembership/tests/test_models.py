@@ -1149,15 +1149,8 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         '''
         test get_by_invoice_no
         '''
-        res = DuesInvoiceRepository.get_by_number(2015, 1)
+        res = DuesInvoiceRepository.get_by_number(1, 2015)
         self.assertEqual(res.id, 1)
-
-    def test_get_by_membership_no(self):
-        '''
-        test get_by_invoice_no
-        '''
-        res = Dues15Invoice.get_by_membership_no(1)
-        self.assertEqual(res[0].id, 1)  # is a list
 
     def test_get_max_invoice_no(self):
         '''
@@ -1463,15 +1456,8 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         '''
         test get_by_invoice_no
         '''
-        res = DuesInvoiceRepository.get_by_number(2016, 1)
+        res = DuesInvoiceRepository.get_by_number(1, 2016)
         self.assertEqual(res.id, 1)
-
-    def test_get_by_membership_no(self):
-        '''
-        test get_by_invoice_no
-        '''
-        res = Dues16Invoice.get_by_membership_no(1)
-        self.assertEqual(res[0].id, 1)  # is a list
 
     def test_get_max_invoice_no(self):
         '''
@@ -1778,15 +1764,8 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         '''
         test get_by_invoice_no
         '''
-        res = DuesInvoiceRepository.get_by_number(2017, 1)
+        res = DuesInvoiceRepository.get_by_number(1, 2017)
         self.assertEqual(res.id, 1)
-
-    def test_get_by_membership_no(self):
-        '''
-        test get_by_invoice_no
-        '''
-        res = Dues17Invoice.get_by_membership_no(1)
-        self.assertEqual(res[0].id, 1)  # is a list
 
     def test_get_max_invoice_no(self):
         '''
@@ -2093,15 +2072,8 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         '''
         test get_by_invoice_no
         '''
-        res = DuesInvoiceRepository.get_by_number(2018, 1)
+        res = DuesInvoiceRepository.get_by_number(1, 2018)
         self.assertEqual(res.id, 1)
-
-    def test_get_by_membership_no(self):
-        '''
-        test get_by_invoice_no
-        '''
-        res = Dues18Invoice.get_by_membership_no(1)
-        self.assertEqual(res[0].id, 1)  # is a list
 
     def test_get_max_invoice_no(self):
         '''
@@ -2408,15 +2380,8 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         '''
         test get_by_invoice_no
         '''
-        res = DuesInvoiceRepository.get_by_number(2019, 1)
+        res = DuesInvoiceRepository.get_by_number(1, 2019)
         self.assertEqual(res.id, 1)
-
-    def test_get_by_membership_no(self):
-        '''
-        test get_by_invoice_no
-        '''
-        res = Dues19Invoice.get_by_membership_no(1)
-        self.assertEqual(res[0].id, 1)  # is a list
 
     def test_get_max_invoice_no(self):
         '''

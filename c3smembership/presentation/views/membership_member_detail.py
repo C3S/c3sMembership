@@ -13,11 +13,8 @@ from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
-from c3smembership.data.model.base.dues16invoice import Dues16Invoice
-from c3smembership.data.model.base.dues17invoice import Dues17Invoice
-from c3smembership.data.model.base.dues18invoice import Dues18Invoice
-from c3smembership.data.model.base.dues19invoice import Dues19Invoice
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 
 LOG = logging.getLogger(__name__)
 
@@ -28,11 +25,16 @@ def get_member_details(request, member):
     """
     shares = request.registry.share_information.get_member_shares(
         member.membership_number)
-    invoices15 = Dues15Invoice.get_by_membership_no(member.membership_number)
-    invoices16 = Dues16Invoice.get_by_membership_no(member.membership_number)
-    invoices17 = Dues17Invoice.get_by_membership_no(member.membership_number)
-    invoices18 = Dues18Invoice.get_by_membership_no(member.membership_number)
-    invoices19 = Dues19Invoice.get_by_membership_no(member.membership_number)
+    invoices15 = DuesInvoiceRepository.get_by_membership_number(
+         member.membership_number, [2015])
+    invoices16 = DuesInvoiceRepository.get_by_membership_number(
+         member.membership_number, [2016])
+    invoices17 = DuesInvoiceRepository.get_by_membership_number(
+         member.membership_number, [2017])
+    invoices18 = DuesInvoiceRepository.get_by_membership_number(
+         member.membership_number, [2018])
+    invoices19 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2019])
     general_assembly_invitations = sorted(
         request.registry.general_assembly_invitation.get_member_invitations(
             member),

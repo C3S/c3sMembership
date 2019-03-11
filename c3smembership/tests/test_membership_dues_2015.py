@@ -574,7 +574,7 @@ class TestDues15Views(unittest.TestCase):
         assert('error' in res.headers['Location'])  # but error
 
         # wrong invoice token: must fail!
-        i2 = DuesInvoiceRepository.get_by_number(2015, 2)
+        i2 = DuesInvoiceRepository.get_by_number(2, 2015)
         i2.token = u'not_matching'
         req2.matchdict = {
             'email': m2.email,
@@ -589,7 +589,7 @@ class TestDues15Views(unittest.TestCase):
         # one more edge case:
         # check _inv.token must match code, or else!!!
         # first, set inv_code to something wrong:
-        i1 = DuesInvoiceRepository.get_by_number(2015, 1)
+        i1 = DuesInvoiceRepository.get_by_number(1, 2015)
         _old_i1_token = i1.token
         i1.token = u'not_right'
         req2.matchdict = {
@@ -606,7 +606,7 @@ class TestDues15Views(unittest.TestCase):
         # one more edge case:
         # check this invoice is not a reversal, or else no PDF!!!
         # first, set is_reversal to something wrong:
-        i1 = DuesInvoiceRepository.get_by_number(2015, 1)
+        i1 = DuesInvoiceRepository.get_by_number(1, 2015)
         _old_i1_reversal_status = i1.is_reversal  # False
         i1.is_reversal = True
         req2.matchdict = {
@@ -760,10 +760,10 @@ class TestDues15Views(unittest.TestCase):
         assert(m1.dues15_amount_reduced == 42)  # changed to 42!
 
         # check the invoice created
-        _rev_inv = DuesInvoiceRepository.get_by_number(2015, 
-            _number_of_invoices_before_reduction + 1)
-        _new_inv = DuesInvoiceRepository.get_by_number(2015, 
-            _number_of_invoices_before_reduction + 2)
+        _rev_inv = DuesInvoiceRepository.get_by_number(
+            _number_of_invoices_before_reduction + 1, 2015)
+        _new_inv = DuesInvoiceRepository.get_by_number(
+            _number_of_invoices_before_reduction + 2, 2015)
         # print(_rev_inv.invoice_amount)
         # print(type(_rev_inv.invoice_amount))
         assert(_rev_inv.invoice_amount == D('-50'))
@@ -880,7 +880,7 @@ class TestDues15Views(unittest.TestCase):
         assert('error' in res.headers['Location'])  # but error
 
         # wrong invoice token: must fail!
-        i2 = DuesInvoiceRepository.get_by_number(2015, '2')
+        i2 = DuesInvoiceRepository.get_by_number(2, 2015)
         i2.token = u'not_matching'
         req2.matchdict = {
             'email': m2.email,

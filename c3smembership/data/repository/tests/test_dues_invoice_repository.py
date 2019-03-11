@@ -60,10 +60,11 @@ class TestDuesInvoiceRepository(unittest.TestCase):
                 name_of_colsoc=u'GEMA',
                 num_shares=35,
             )
-            member1.membership_number = u'member_1'
+            member1.membership_number = 9
             member1.membership_date = date(2018, 1, 1)
             member1.membership_accepted = True
             self.db_session.add(member1)
+            self.db_session.flush()
             self.db_session.add(Dues15Invoice(
                 invoice_no=2348,
                 invoice_no_string=u'dues15-2348',
@@ -171,20 +172,58 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         """
         Test the get_by_number method
         """
-        invoice = DuesInvoiceRepository.get_by_number(2015, 2348)
+        invoice = DuesInvoiceRepository.get_by_number(2348, 2015)
         self.assertEqual(invoice.invoice_no, 2348)
 
-        invoice = DuesInvoiceRepository.get_by_number(2016, 1276)
+        invoice = DuesInvoiceRepository.get_by_number(1276, 2016)
         self.assertEqual(invoice.invoice_no, 1276)
 
-        invoice = DuesInvoiceRepository.get_by_number(2017, 7544)
+        invoice = DuesInvoiceRepository.get_by_number(7544, 2017)
         self.assertEqual(invoice.invoice_no, 7544)
 
-        invoice = DuesInvoiceRepository.get_by_number(2018, 5678)
+        invoice = DuesInvoiceRepository.get_by_number(5678, 2018)
         self.assertEqual(invoice.invoice_no, 5678)
 
-        invoice = DuesInvoiceRepository.get_by_number(2019, 1234)
+        invoice = DuesInvoiceRepository.get_by_number(1234, 2019)
         self.assertEqual(invoice.invoice_no, 1234)
 
-        invoice = DuesInvoiceRepository.get_by_number(2000, 1234)
+        invoice = DuesInvoiceRepository.get_by_number(1234, 2000)
         self.assertIsNone(invoice)
+
+    def test_get_by_membership_number(self):
+        """
+        Test the get_by_membership_number method
+        """
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2000])
+        self.assertEqual(len(invoices), 0)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2015])
+        self.assertEqual(len(invoices), 1)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2016])
+        self.assertEqual(len(invoices), 1)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2017])
+        self.assertEqual(len(invoices), 1)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2018])
+        self.assertEqual(len(invoices), 2)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2019])
+        self.assertEqual(len(invoices), 1)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2018, 2019])
+        self.assertEqual(len(invoices), 3)
+        self.assertEqual(invoices[0].invoice_no, 9876)
+        self.assertEqual(invoices[1].invoice_no, 5678)
+        self.assertEqual(invoices[2].invoice_no, 1234)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(9)
+        self.assertEqual(len(invoices), 6)
