@@ -193,7 +193,7 @@ def send_dues15_invoice_email(request, m_id=None):
         # make dues token and ...
         randomstring = make_random_string()
         # check if dues token is already used
-        while (Dues15Invoice.check_for_existing_dues15_token(randomstring)):
+        while DuesInvoiceRepository.token_exists(randomstring, 2015):
             # create a new one, if the new one already exists in the database
             randomstring = make_random_string()  # pragma: no cover
 

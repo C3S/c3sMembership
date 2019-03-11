@@ -252,3 +252,38 @@ class TestDuesInvoiceRepository(unittest.TestCase):
 
         max_number = DuesInvoiceRepository.get_max_invoice_number(None)
         self.assertEqual(max_number, 0)
+
+    def test_token_exists(self):
+        """
+        Test the token_exists method
+
+        1. Check existing tokens
+        2. Check token for not existing year
+        3. Check existing token for different year
+        """
+        # 1. Check existing tokens
+        token_exists = DuesInvoiceRepository.token_exists(u'15KVNM9265', 2015)
+        self.assertTrue(token_exists)
+
+        token_exists = DuesInvoiceRepository.token_exists(u'16LLPW2254', 2016)
+        self.assertTrue(token_exists)
+
+        token_exists = DuesInvoiceRepository.token_exists(u'17WEDD8349', 2017)
+        self.assertTrue(token_exists)
+
+        token_exists = DuesInvoiceRepository.token_exists(u'18SNED2845', 2018)
+        self.assertTrue(token_exists)
+
+        token_exists = DuesInvoiceRepository.token_exists(u'18WDLW3874', 2018)
+        self.assertTrue(token_exists)
+
+        token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2019)
+        self.assertTrue(token_exists)
+
+        # 2. Check token for not existing year
+        token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2000)
+        self.assertFalse(token_exists)
+
+        # 3. Check existing token for different year
+        token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2015)
+        self.assertFalse(token_exists)

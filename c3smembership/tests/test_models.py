@@ -1152,17 +1152,6 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         res = DuesInvoiceRepository.get_by_number(1, 2015)
         self.assertEqual(res.id, 1)
 
-    def test_existing_dues15_token(self):
-        """
-        test check_for_existing_dues15_token
-        """
-        res = Dues15Invoice.check_for_existing_dues15_token(
-            u'ABCDEFGH')
-        self.assertEqual(res, True)
-        res2 = Dues15Invoice.check_for_existing_dues15_token(
-            u'ABCDEFGHIK0000000000')
-        self.assertEqual(res2, False)
-
     def test_get_monthly_stats(self):
         """
         Test get_monthly_stats.
@@ -1451,17 +1440,6 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         '''
         res = DuesInvoiceRepository.get_by_number(1, 2016)
         self.assertEqual(res.id, 1)
-
-    def test_existing_dues16_token(self):
-        """
-        test check_for_existing_dues16_token
-        """
-        res = Dues16Invoice.check_for_existing_dues16_token(
-            u'ABCDEFGH')
-        self.assertEqual(res, True)
-        res2 = Dues16Invoice.check_for_existing_dues16_token(
-            u'ABCDEFGHIK0000000000')
-        self.assertEqual(res2, False)
 
     def test_get_monthly_stats(self):
         """
@@ -1753,17 +1731,6 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         res = DuesInvoiceRepository.get_by_number(1, 2017)
         self.assertEqual(res.id, 1)
 
-    def test_existing_dues17_token(self):
-        """
-        test check_for_existing_dues17_token
-        """
-        res = Dues17Invoice.check_for_existing_dues17_token(
-            u'ABCDEFGH')
-        self.assertEqual(res, True)
-        res2 = Dues17Invoice.check_for_existing_dues17_token(
-            u'ABCDEFGHIK0000000000')
-        self.assertEqual(res2, False)
-
     def test_get_monthly_stats(self):
         """
         Test get_monthly_stats.
@@ -2054,17 +2021,6 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         res = DuesInvoiceRepository.get_by_number(1, 2018)
         self.assertEqual(res.id, 1)
 
-    def test_existing_dues18_token(self):
-        """
-        test check_for_existing_dues18_token
-        """
-        res = Dues18Invoice.check_for_existing_dues18_token(
-            u'ABCDEFGH')
-        self.assertEqual(res, True)
-        res2 = Dues18Invoice.check_for_existing_dues18_token(
-            u'ABCDEFGHIK0000000000')
-        self.assertEqual(res2, False)
-
     def test_get_monthly_stats(self):
         """
         Test get_monthly_stats.
@@ -2354,17 +2310,6 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         '''
         res = DuesInvoiceRepository.get_by_number(1, 2019)
         self.assertEqual(res.id, 1)
-
-    def test_existing_dues19_token(self):
-        """
-        test check_for_existing_dues19_token
-        """
-        res = Dues19Invoice.check_for_existing_dues19_token(
-            u'ABCDEFGH')
-        self.assertEqual(res, True)
-        res2 = Dues19Invoice.check_for_existing_dues19_token(
-            u'ABCDEFGHIK0000000000')
-        self.assertEqual(res2, False)
 
     def test_get_monthly_stats(self):
         """

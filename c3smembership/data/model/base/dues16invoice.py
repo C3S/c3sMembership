@@ -108,22 +108,6 @@ class Dues16Invoice(Base):
         self.token = token
 
     @classmethod
-    def check_for_existing_dues16_token(cls, dues_token):
-        """
-        Check if a dues token is already present.
-
-        Args:
-            dues_token: a given string
-
-        Returns:
-            * **True**, if token already in table
-            * **False** else
-        """
-        check = DBSession.query(cls).filter(
-            cls.token == dues_token).first()
-        return check is not None
-
-    @classmethod
     def get_monthly_stats(cls):
         """
         Gets the monthly statistics.

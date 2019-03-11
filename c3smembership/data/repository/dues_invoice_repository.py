@@ -182,3 +182,25 @@ class DuesInvoiceRepository(object):
             if max_invoice_number is not None:
                 result = max_invoice_number
         return result
+
+    @classmethod
+    def token_exists(cls, token, year):
+        """
+        Indicates whether a token exists for a specific year
+
+        Args:
+            token (str): A token string.
+            year (int): The year in which to check for the token.
+
+        Returns:
+            Boolean indicating whether the token exists for the year.
+        """
+        invoice = None
+        db_session = DBSession()
+        year_class = cls._get_year_class(year)
+        if year_class is not None:
+            invoice = db_session \
+                .query(year_class) \
+                .filter(year_class.token == token) \
+                .first()
+        return invoice is not None
