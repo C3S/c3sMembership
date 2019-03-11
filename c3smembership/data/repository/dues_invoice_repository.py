@@ -9,6 +9,8 @@ all years in one table in order to not have to alter the data model for
 following years.
 """
 
+from sqlalchemy.sql import func
+
 from c3smembership.data.model.base import (
     DBSession,
 )
@@ -63,6 +65,24 @@ class DuesInvoiceRepository(object):
         return year_classes
 
     @classmethod
+    def _get_year_class(cls, year):
+        """
+        Get the dues data model class for the year
+
+        Args:
+            year (int): The year to which the invoice number belongs, e.g.
+                2019.
+
+        Returns:
+            The dues data model class for the year.
+        """
+        result = None
+        year_classes = cls._get_year_classes([year])
+        if len(year_classes) > 0:
+            result = year_classes[0]
+        return result
+
+    @classmethod
     def get_all(cls, years=None):
         """
         Get dues invoices
@@ -102,9 +122,8 @@ class DuesInvoiceRepository(object):
         """
         result = None
         db_session = DBSession()
-        year_classes = cls._get_year_classes([year])
-        if len(year_classes) > 0:
-            year_class = year_classes[0]
+        year_class = cls._get_year_class(year)
+        if year_class is not None:
             result = db_session \
                 .query(year_class) \
                 .filter(year_class.invoice_no == invoice_number) \
@@ -136,4 +155,30 @@ class DuesInvoiceRepository(object):
                     C3sMember.id == year_class.member_id) \
                 .filter(C3sMember.membership_number == membership_number) \
                 .all()
+        return result
+
+    @classmethod
+    def get_max_invoice_number(cls, year):
+        """
+        Get the maximum invoice number for a specific year
+
+        If no invoice number has been assigned yet, the method returns 0.
+
+        Args:
+            year (int): The year to which the invoice number belongs, e.g.
+                2019.
+
+        Returns:
+            An int representing the maximum invoice numbers, 0 if no invoice
+            number has been assigned yet.
+        """
+        result = 0
+        db_session = DBSession()
+        year_class = cls._get_year_class(year)
+        if year_class is not None:
+            max_invoice_number, = db_session \
+                .query(func.max(year_class.invoice_no)) \
+                .first()
+            if max_invoice_number is not None:
+                result = max_invoice_number
         return result

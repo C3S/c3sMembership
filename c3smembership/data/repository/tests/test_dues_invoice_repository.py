@@ -227,3 +227,28 @@ class TestDuesInvoiceRepository(unittest.TestCase):
 
         invoices = DuesInvoiceRepository.get_by_membership_number(9)
         self.assertEqual(len(invoices), 6)
+
+    def test_get_max_invoice_number(self):
+        """
+        Test the get_max_invoice_number method
+        """
+        max_number = DuesInvoiceRepository.get_max_invoice_number(2000)
+        self.assertEqual(max_number, 0)
+
+        max_number = DuesInvoiceRepository.get_max_invoice_number(2015)
+        self.assertEqual(max_number, 2348)
+
+        max_number = DuesInvoiceRepository.get_max_invoice_number(2016)
+        self.assertEqual(max_number, 1276)
+
+        max_number = DuesInvoiceRepository.get_max_invoice_number(2017)
+        self.assertEqual(max_number, 7544)
+
+        max_number = DuesInvoiceRepository.get_max_invoice_number(2018)
+        self.assertEqual(max_number, 9876)
+
+        max_number = DuesInvoiceRepository.get_max_invoice_number(2019)
+        self.assertEqual(max_number, 1234)
+
+        max_number = DuesInvoiceRepository.get_max_invoice_number(None)
+        self.assertEqual(max_number, 0)

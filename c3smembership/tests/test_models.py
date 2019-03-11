@@ -1152,13 +1152,6 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         res = DuesInvoiceRepository.get_by_number(1, 2015)
         self.assertEqual(res.id, 1)
 
-    def test_get_max_invoice_no(self):
-        '''
-        test get_max_invoice_no
-        '''
-        res = Dues15Invoice.get_max_invoice_no()
-        self.assertEqual(res, 6)
-
     def test_existing_dues15_token(self):
         """
         test check_for_existing_dues15_token
@@ -1458,13 +1451,6 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         '''
         res = DuesInvoiceRepository.get_by_number(1, 2016)
         self.assertEqual(res.id, 1)
-
-    def test_get_max_invoice_no(self):
-        '''
-        test get_max_invoice_no
-        '''
-        res = Dues16Invoice.get_max_invoice_no()
-        self.assertEqual(res, 6)
 
     def test_existing_dues16_token(self):
         """
@@ -1767,13 +1753,6 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         res = DuesInvoiceRepository.get_by_number(1, 2017)
         self.assertEqual(res.id, 1)
 
-    def test_get_max_invoice_no(self):
-        '''
-        test get_max_invoice_no
-        '''
-        res = Dues17Invoice.get_max_invoice_no()
-        self.assertEqual(res, 6)
-
     def test_existing_dues17_token(self):
         """
         test check_for_existing_dues17_token
@@ -2075,13 +2054,6 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         res = DuesInvoiceRepository.get_by_number(1, 2018)
         self.assertEqual(res.id, 1)
 
-    def test_get_max_invoice_no(self):
-        '''
-        test get_max_invoice_no
-        '''
-        res = Dues18Invoice.get_max_invoice_no()
-        self.assertEqual(res, 6)
-
     def test_existing_dues18_token(self):
         """
         test check_for_existing_dues18_token
@@ -2382,13 +2354,6 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         '''
         res = DuesInvoiceRepository.get_by_number(1, 2019)
         self.assertEqual(res.id, 1)
-
-    def test_get_max_invoice_no(self):
-        '''
-        test get_max_invoice_no
-        '''
-        res = Dues19Invoice.get_max_invoice_no()
-        self.assertEqual(res, 6)
 
     def test_existing_dues19_token(self):
         """

@@ -108,19 +108,6 @@ class Dues16Invoice(Base):
         self.token = token
 
     @classmethod
-    def get_max_invoice_no(cls):
-        """
-        Get the maximum invoice number.
-
-        Returns:
-            * Integer: maximum of given invoice numbers or 0"""
-        res, = DBSession.query(func.max(cls.id)).first()
-
-        if res is None:
-            return 0
-        return res
-
-    @classmethod
     def check_for_existing_dues16_token(cls, dues_token):
         """
         Check if a dues token is already present.

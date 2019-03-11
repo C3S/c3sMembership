@@ -215,7 +215,7 @@ def send_dues17_invoice_email(request, m_id=None):
         except AssertionError:
             # ... or we create a new one and save it
             # get max invoice no from db
-            max_invoice_no = Dues17Invoice.get_max_invoice_no()
+            max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(2017)
             # use the next free number, save it to db
             new_invoice_no = int(max_invoice_no) + 1
             DBSession.flush()  # save dataset to DB
@@ -703,7 +703,7 @@ def dues17_reduction(request):
             request.route_url('detail', memberid=member.id) + '#dues17')
 
     # prepare: get highest invoice no from db
-    max_invoice_no = Dues17Invoice.get_max_invoice_no()
+    max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(2017)
 
     # things to be done:
     # * change dues amount for that member
