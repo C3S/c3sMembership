@@ -384,7 +384,7 @@ def get_dues18_invoice(invoice, request):
     if invoice is None:
         request.session.flash(
             u'No invoice found!',
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -433,7 +433,7 @@ def make_dues18_invoice_no_pdf(request):
     if invoice is None or token_is_invalid or invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -441,7 +441,7 @@ def make_dues18_invoice_no_pdf(request):
         request.session.flash(
             u'This invoice cannot be downloaded anymore. '
             u'Please contact office@c3s.cc for further information.',
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -552,8 +552,8 @@ def make_invoice_pdf_pdflatex(invoice):
         is_altered_str = u'angepasst' if (
             'de' in member.locale) else u'altered'
 
-    invoice_no = str(member.dues18_invoice_no).zfill(4)
-    invoice_date = member.dues18_invoice_date.strftime('%d. %m. %Y')
+    invoice_no = str(invoice.invoice_no).zfill(4)
+    invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
 
     # set variables for tex command
     tex_vars = {
@@ -846,11 +846,18 @@ def make_dues18_reversal_invoice_pdf(request):
         older_than_a_year = (
             date.today() - invoice.invoice_date.date() > timedelta(days=365))
 
-    if invoice is None or token_is_invalid or not invoice.is_reversal \
-            or older_than_a_year or member.dues18_paid:
+    if invoice is None or token_is_invalid or not invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'warning'
+        )
+        return HTTPFound(request.route_url('error'))
+
+    if older_than_a_year or member.dues18_paid:
+        request.session.flash(
+            u'This invoice cannot be downloaded anymore. '
+            u'Please contact office@c3s.cc for further information.',
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 

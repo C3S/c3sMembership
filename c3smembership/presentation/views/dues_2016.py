@@ -381,7 +381,7 @@ def make_dues16_invoice_no_pdf(request):
     if invoice is None or token_is_invalid or invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -389,7 +389,7 @@ def make_dues16_invoice_no_pdf(request):
         request.session.flash(
             u'This invoice cannot be downloaded anymore. '
             u'Please contact office@c3s.cc for further information.',
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -403,7 +403,25 @@ def make_dues16_invoice_no_pdf(request):
 @view_config(
     route_name='dues16_invoice_pdf_backend',
     permission='manage')
-def make_dues15_invoice_pdf_backend(request):
+def make_dues16_invoice_pdf_backend(request):
+    """
+    Show the invoice to a backend user
+    """
+    invoice_number = request.matchdict['i']
+    invoice = Dues16Invoice.get_by_invoice_no(
+        invoice_number.lstrip('0'))
+    member = MemberRepository.get_member_by_id(invoice.member_id)
+    pdf_file = make_invoice_pdf_pdflatex(member, invoice)
+    response = Response(content_type='application/pdf')
+    pdf_file.seek(0)  # rewind to beginning
+    response.app_iter = open(pdf_file.name, "r")
+    return response
+
+
+@view_config(
+    route_name='dues16_reversal_pdf_backend',
+    permission='manage')
+def make_dues16_reversal_pdf_backend(request):
     """
     Show the invoice to a backend user
     """
@@ -514,8 +532,8 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     else:  # pragma: no cover
         # this branch is deprecated, because we always supply an invoice number
         # use invoice no from member record
-        invoice_no = str(member.dues16_invoice_no).zfill(4)
-        invoice_date = member.dues16_invoice_date
+        invoice_no = str(invoice.invoice_no).zfill(4)
+        invoice_date = invoice.invoice_date
 
     dues15_balance = D('0.0')
     dues16_balance = D('0.0')
@@ -838,11 +856,18 @@ def make_dues16_reversal_invoice_pdf(request):
         older_than_a_year = (
             date.today() - invoice.invoice_date.date() > timedelta(days=365))
 
-    if invoice is None or token_is_invalid or not invoice.is_reversal \
-            or older_than_a_year or member.dues18_paid:
+    if invoice is None or token_is_invalid or not invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'warning'
+        )
+        return HTTPFound(request.route_url('error'))
+
+    if older_than_a_year or member.dues16_paid:
+        request.session.flash(
+            u'This invoice cannot be downloaded anymore. '
+            u'Please contact office@c3s.cc for further information.',
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
