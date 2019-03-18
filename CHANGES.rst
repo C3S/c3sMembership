@@ -1,5 +1,5 @@
-Next Release
-============
+1.26
+====
 
 
 - Move general assembly invitations to a separate table for a clean and
