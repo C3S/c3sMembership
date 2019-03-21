@@ -9,10 +9,17 @@ all years in one table in order to not have to alter the data model for
 following years.
 """
 
-from sqlalchemy.sql import func
+from datetime import datetime
+from decimal import Decimal
+
+from sqlalchemy.sql import (
+    expression,
+    func,
+)
 
 from c3smembership.data.model.base import (
     DBSession,
+    DatabaseDecimal,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues15invoice import Dues15Invoice
@@ -25,6 +32,10 @@ from c3smembership.data.model.base.dues19invoice import Dues19Invoice
 class DuesInvoiceRepository(object):
     """
     Repository for operating with dues invoices
+
+    The constants _DUES_INVOICE_CLASS and _PAYMENT_FIELDS are workarounds until
+    the data model is cleaned up, agnostic to the year and does not contain any
+    payment information on the member record.
     """
     # pylint: disable=too-few-public-methods
 
@@ -34,6 +45,28 @@ class DuesInvoiceRepository(object):
         2017: Dues17Invoice,
         2018: Dues18Invoice,
         2019: Dues19Invoice,
+    }
+    _PAYMENT_FIELDS = {
+        2015: {
+            'paid_date': C3sMember.dues15_paid_date,
+            'amount_paid': C3sMember.dues15_amount_paid,
+        },
+        2016: {
+            'paid_date': C3sMember.dues16_paid_date,
+            'amount_paid': C3sMember.dues16_amount_paid,
+        },
+        2017: {
+            'paid_date': C3sMember.dues17_paid_date,
+            'amount_paid': C3sMember.dues17_amount_paid,
+        },
+        2018: {
+            'paid_date': C3sMember.dues18_paid_date,
+            'amount_paid': C3sMember.dues18_amount_paid,
+        },
+        2019: {
+            'paid_date': C3sMember.dues19_paid_date,
+            'amount_paid': C3sMember.dues19_amount_paid,
+        },
     }
 
     @classmethod
@@ -204,3 +237,90 @@ class DuesInvoiceRepository(object):
                 .filter(year_class.token == token) \
                 .first()
         return invoice is not None
+
+    @classmethod
+    def get_monthly_stats(cls, year):
+        """
+        Gets monthly statistics for the specified year
+
+        Args:
+            year (int): The year to which the invoice number belongs, e.g.
+                2019.
+
+        Returns:
+            Sums of the normale and reversal invoices per calendar month based
+            on the invoice date.
+        """
+        year_class = cls._get_year_class(year)
+        if year_class is None:
+            return None
+
+        db_session = DBSession()
+        result = []
+
+        # SQLite specific: substring for SQLite as it does not support
+        # date_trunc.
+        # invoice_date_month = func.date_trunc(
+        #     'month',
+        #     invoice_date)
+        paid_date = cls._PAYMENT_FIELDS[year]['paid_date']
+        amount_paid = cls._PAYMENT_FIELDS[year]['amount_paid']
+        invoice_date_month = func.substr(year_class.invoice_date, 1, 7)
+        payment_date_month = func.substr(paid_date, 1, 7)
+
+        # collect the invoice amounts per month
+        invoice_amounts_query = db_session.query(
+            invoice_date_month.label('month'),
+            func.sum(expression.case(
+                [(
+                    expression.not_(year_class.is_reversal),
+                    year_class.invoice_amount)],
+                else_=Decimal('0.0'))).label('amount_invoiced_normal'),
+            func.sum(expression.case(
+                [(
+                    year_class.is_reversal,
+                    year_class.invoice_amount)],
+                else_=Decimal('0.0'))).label('amount_invoiced_reversal'),
+            expression.literal_column(
+                '\'0.0\'', DatabaseDecimal).label('amount_paid')
+        ).group_by(invoice_date_month)
+
+        # collect the payments per month
+        member_payments_query = db_session.query(
+            payment_date_month.label('month'),
+            expression.literal_column(
+                '\'0.0\'', DatabaseDecimal).label('amount_invoiced_normal'),
+            expression.literal_column(
+                '\'0.0\'', DatabaseDecimal
+            ).label('amount_invoiced_reversal'),
+            func.sum(amount_paid).label('amount_paid')
+        ).filter(paid_date.isnot(None)) \
+            .group_by(payment_date_month)
+
+        # union invoice amounts and payments
+        union_all_query = expression.union_all(
+            member_payments_query, invoice_amounts_query)
+
+        # aggregate invoice amounts and payments by month
+        result_query = db_session.query(
+            union_all_query.c.month.label('month'),
+            func.sum(union_all_query.c.amount_invoiced_normal).label(
+                'amount_invoiced_normal'),
+            func.sum(union_all_query.c.amount_invoiced_reversal).label(
+                'amount_invoiced_reversal'),
+            func.sum(union_all_query.c.amount_paid).label('amount_paid')
+        ) \
+            .group_by(union_all_query.c.month) \
+            .order_by(union_all_query.c.month)
+        for month_stat in result_query.all():
+            result.append(
+                {
+                    'month': datetime(
+                        int(month_stat[0][0:4]),
+                        int(month_stat[0][5:7]),
+                        1),
+                    'amount_invoiced_normal': month_stat[1],
+                    'amount_invoiced_reversal': month_stat[2],
+                    'amount_paid': month_stat[3]
+                })
+        return result

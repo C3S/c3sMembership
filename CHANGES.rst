@@ -1,3 +1,11 @@
+Next Release
+============
+
+
+- Introduce dues invoice repository to the data layer.
+
+
+
 1.26
 ====
 

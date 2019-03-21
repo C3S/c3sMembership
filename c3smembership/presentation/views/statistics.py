@@ -6,13 +6,9 @@ Prepares statistics.
 from pyramid.view import view_config
 
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
-from c3smembership.data.model.base.dues16invoice import Dues16Invoice
-from c3smembership.data.model.base.dues17invoice import Dues17Invoice
-from c3smembership.data.model.base.dues18invoice import Dues18Invoice
-from c3smembership.data.model.base.dues19invoice import Dues19Invoice
 from c3smembership.data.model.base.staff import Staff
-from c3smembership.data.repository.share_repository import ShareRepository
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 
 
 @view_config(
@@ -64,15 +60,13 @@ def stats_view(request):
         # countries
         'num_countries': C3sMember.get_num_countries(),
         'countries_list': _cl_sorted,
-        #    key=lambda x: x[1]
-        # ),  # XXX TODO: sorte
 
         # dues stats
-        'dues15_stats': Dues15Invoice.get_monthly_stats(),
-        'dues16_stats': Dues16Invoice.get_monthly_stats(),
-        'dues17_stats': Dues17Invoice.get_monthly_stats(),
-        'dues18_stats': Dues18Invoice.get_monthly_stats(),
-        'dues19_stats': Dues19Invoice.get_monthly_stats(),
+        'dues15_stats': DuesInvoiceRepository.get_monthly_stats(2015),
+        'dues16_stats': DuesInvoiceRepository.get_monthly_stats(2016),
+        'dues17_stats': DuesInvoiceRepository.get_monthly_stats(2017),
+        'dues18_stats': DuesInvoiceRepository.get_monthly_stats(2018),
+        'dues19_stats': DuesInvoiceRepository.get_monthly_stats(2019),
 
         # staff figures
         'num_staff': len(Staff.get_all())
