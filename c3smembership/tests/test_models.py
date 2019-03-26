@@ -1156,7 +1156,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
         """
         Test get_monthly_stats.
         """
-        stats = Dues15Invoice.get_monthly_stats()
+        stats = DuesInvoiceRepository.get_monthly_stats(2015)
         self.assertEqual(len(stats), 2)
         self.assertEqual(stats[0]['month'], datetime(2015, 10, 1))
         self.assertAlmostEqual(stats[0]['amount_invoiced_normal'], D('-37.50'))
@@ -1445,7 +1445,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         """
         Test get_monthly_stats.
         """
-        stats = Dues16Invoice.get_monthly_stats()
+        stats = DuesInvoiceRepository.get_monthly_stats(2016)
         self.assertEqual(len(stats), 2)
         self.assertEqual(stats[0]['month'], datetime(2015, 10, 1))
         self.assertAlmostEqual(stats[0]['amount_invoiced_normal'], D('-37.50'))
@@ -1735,7 +1735,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
         """
         Test get_monthly_stats.
         """
-        stats = Dues17Invoice.get_monthly_stats()
+        stats = DuesInvoiceRepository.get_monthly_stats(2017)
         self.assertEqual(len(stats), 2)
         self.assertEqual(stats[0]['month'], datetime(2015, 10, 1))
         self.assertAlmostEqual(stats[0]['amount_invoiced_normal'], D('-37.50'))
@@ -2025,7 +2025,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
         """
         Test get_monthly_stats.
         """
-        stats = Dues18Invoice.get_monthly_stats()
+        stats = DuesInvoiceRepository.get_monthly_stats(2018)
         self.assertEqual(len(stats), 2)
         self.assertEqual(stats[0]['month'], datetime(2015, 10, 1))
         self.assertAlmostEqual(stats[0]['amount_invoiced_normal'], D('-37.50'))
@@ -2315,7 +2315,7 @@ class Dues19InvoiceModelTests(unittest.TestCase):
         """
         Test get_monthly_stats.
         """
-        stats = Dues19Invoice.get_monthly_stats()
+        stats = DuesInvoiceRepository.get_monthly_stats(2019)
         self.assertEqual(len(stats), 2)
         self.assertEqual(stats[0]['month'], datetime(2015, 10, 1))
         self.assertAlmostEqual(stats[0]['amount_invoiced_normal'], D('-37.50'))
