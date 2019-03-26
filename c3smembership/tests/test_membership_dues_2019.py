@@ -64,6 +64,7 @@ def _initTestingDB():
             name_of_colsoc=u"GEMA",
             num_shares=u'23',
         )
+        normal_de.membership_number = 11
         normal_en = C3sMember(  # english normal
             firstname=u'James',
             lastname=u'Musician',
@@ -84,6 +85,7 @@ def _initTestingDB():
             name_of_colsoc=u"",
             num_shares=u'2',
         )
+        normal_en.membership_number = 12
         investing_de = C3sMember(  # german investing
             firstname=u'Herman',
             lastname=u'Investorius',
@@ -104,6 +106,7 @@ def _initTestingDB():
             name_of_colsoc=u"GEMA",
             num_shares=u'60',
         )
+        investing_de.membership_number = 13
         investing_en = C3sMember(  # english investing
             firstname=u'Britany',
             lastname=u'Investing',
@@ -124,6 +127,7 @@ def _initTestingDB():
             name_of_colsoc=u"GEMA",
             num_shares=u'60',
         )
+        investing_en.membership_number = 14
         legal_entity_de = C3sMember(  # german investing legal entity
             firstname=u'Deutscher',
             lastname=u'Musikverlag',
@@ -144,6 +148,7 @@ def _initTestingDB():
             name_of_colsoc=u"",
             num_shares=u'60',
         )
+        legal_entity_de.membership_number = 15
         legal_entity_en = C3sMember(  # english investing legal entity
             firstname=u'Francoise',
             lastname=u'Company',
@@ -164,6 +169,7 @@ def _initTestingDB():
             name_of_colsoc=u"",
             num_shares=u'60',
         )
+        legal_entity_en.membership_number = 16
         DBSession.add(normal_de)
         DBSession.add(normal_en)
         DBSession.add(investing_de)
@@ -432,8 +438,9 @@ class TestDues19Views(unittest.TestCase):
         req.referrer = 'toolbox'
         res = send_dues19_invoice_batch(req_post)
 
-        assert(
-            'sent out 5 mails (to members with ids [1, 2, 3, 4, 5])' in
+        self.assertTrue(
+            'sent out 5 mails (to members with membership numbers [11, 12, '
+            '13, 14, 16])' in
             req.session.pop_flash('success'))
 
         # try to batch-send once more:

@@ -287,17 +287,17 @@ def send_dues19_invoice_batch(request):
         return HTTPFound(request.route_url('dues'))
 
     emails_sent = 0
-    ids_sent = []
+    membership_numbers_sent = []
     request.referrer = 'dues'
 
     for member in invoicees:
         send_dues19_invoice_email(request=request, m_id=member.id)
         emails_sent += 1
-        ids_sent.append(member.id)
+        membership_numbers_sent.append(member.membership_number)
 
     request.session.flash(
-        "sent out {} mails (to members with ids {})".format(
-            emails_sent, ids_sent),
+        "sent out {} mails (to members with membership numbers {})".format(
+            emails_sent, membership_numbers_sent),
         'success')
 
     return HTTPFound(request.route_url('dues'))

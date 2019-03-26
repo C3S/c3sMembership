@@ -4,6 +4,8 @@ Next Release
 
 - Introduce dues invoice repository to the data layer.
 
+- Show membership numbers instead of IDs after batch dues invoice sending
+
 
 
 1.26
