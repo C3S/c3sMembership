@@ -380,7 +380,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
 
     def test_dashboard_afterDelete_sameOrderAsBefore(self):
         self._login()
-        self.get_dashboard_page(1, 'lastname', 'asc', 200)  # To set cookie with order & orderby
+        # To set cookie with order & orderby
+        self.get_dashboard_page(1, 'lastname', 'asc', 200)
         # Delete member with lastname AAASomeLastnäme
         resdel = self.testapp.get('/delete/3?deletion_confirmed=1')
         resdel = resdel.follow()
@@ -394,7 +395,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resdel = self.testapp.get('/delete/1?deletion_confirmed=1')
         resdel = resdel.follow()
         pq = self._get_pyquery(resdel.body)
-        message = pq('#message').text()
+        message = pq('.alert-success').text()
         self.assertTrue('was deleted' in message)
 
     def test_dashboard_onFirstPage_noPreviousLinkShown(self):

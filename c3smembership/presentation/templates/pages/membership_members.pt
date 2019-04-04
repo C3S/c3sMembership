@@ -10,13 +10,6 @@
         i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
         <h1>Members</h1>
-        <h2 tal:condition="message" class="message" id="message">
-            ${message}
-        </h2>
-        <h3 tal:repeat="message request.session.pop_flash('messages')"
-                class="message text-danger" id="message">
-            ${message}
-        </h3>
         <p>
             Number of data sets: ${pagination.paging.content_size}
         </p>
