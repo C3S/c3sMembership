@@ -270,7 +270,7 @@ def batch_invite(request):
             'general_assembly', number=general_assembly_number))
 
     num_sent = 0
-    ids_sent = []
+    membership_numbers_sent = []
 
     for member in invitees:
         try:
@@ -283,11 +283,11 @@ def batch_invite(request):
                 'general_assembly', number=general_assembly_number))
 
         num_sent += 1
-        ids_sent.append(member.id)
+        membership_numbers_sent.append(member.membership_number)
 
     request.session.flash(
-        "sent out {} mails (to members with ids {})".format(
-            num_sent, ids_sent),
+        "sent out {} mails (to members with membership number {})".format(
+            num_sent, membership_numbers_sent),
         'success')
 
     return HTTPFound(request.route_url(

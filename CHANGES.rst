@@ -8,6 +8,9 @@ Next Release
 
 - General assembly 2019 invitations.
 
+- Show membership numbers instead of IDs after batch general assembly
+  invitation sending.
+
 
 
 1.26

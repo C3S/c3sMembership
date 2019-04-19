@@ -343,7 +343,8 @@ class TestInvitation(unittest.TestCase):
 
         _messages = req.session.peek_flash('success')
         self.assertTrue(
-            'sent out 1 mails (to members with ids' in _messages[0])
+            'sent out 1 mails (to members with membership numbers'
+            in _messages[0])
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
         self.assertEquals(len(invitees), 3)
@@ -360,7 +361,8 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(res.status_code, 302)
         _messages = req.session.peek_flash('success')
         self.assertTrue(
-            'sent out 3 mails (to members with ids' in _messages[1])
+            'sent out 3 mails (to members with membership numbers'
+            in _messages[1])
         # send more request with POST['number']
         req = testing.DummyRequest(
             POST={
