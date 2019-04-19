@@ -277,9 +277,7 @@ class TestInvitation(unittest.TestCase):
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
-        self.assertEquals(
-            u'[C3S] Einladung zur außerordentlichen Generalversammlung',
-            mailer.outbox[0].subject)
+        self.assertTrue(u'Einladung' in mailer.outbox[0].subject)
         self.assertTrue(member1.firstname
                         in mailer.outbox[0].body)
         # Token not in email template for current general assembly of
@@ -306,9 +304,7 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 2)
-        self.assertEquals(
-            u'[C3S] Invitation to extraordinary general assembly',
-            mailer.outbox[1].subject)
+        self.assertTrue(u'Invitation' in mailer.outbox[1].subject)
         self.assertTrue(member2.firstname
                         in mailer.outbox[1].body)
         # Token not in email template for current general assembly of

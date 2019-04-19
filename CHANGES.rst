@@ -4,7 +4,9 @@ Next Release
 
 - Introduce dues invoice repository to the data layer.
 
-- Show membership numbers instead of IDs after batch dues invoice sending
+- Show membership numbers instead of IDs after batch dues invoice sending.
+
+- General assembly 2019 invitations.
 
 
 
