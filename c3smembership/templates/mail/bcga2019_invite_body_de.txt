@@ -13,28 +13,28 @@ lädt Dich ein
 * zum C3S-Barcamp 2019 am Samstag den 01.06.2019
 * zur 6. ordentlichen Generalversammlung nach § 13 der Satzung der
   C3S SCE [1] am 02.06.2019 und
-* und vorsorglich zur 3. außerordentlichen Generalversammlung nach 
+* und vorsorglich zur 3. außerordentlichen Generalversammlung nach
   § 13 Abs. 4 Satz 3 am 23.06.2019.
 
 Bitte lies den gesamten Einladungstext, er enthält wichtige Hinweise.
 
-***************************  W I C H T I G  ***************************
-Wenn Du an einer oder mehreren Veranstaltungen teilnehmen möchtest, 
-teile uns bitte über eine Email an office@c3s.cc mit, bei welchen Du 
+***************************  W I C H T I G  **************************
+Wenn Du an einer oder mehreren Veranstaltungen teilnehmen möchtest,
+teile uns bitte über eine Email an office@c3s.cc mit, bei welchen Du
 teilnimmst bzw. ob du dich vertreten lassen willst.
-***********************************************************************
+**********************************************************************
 
 
 Veranstaltungsort
 =================
 
-Die Generalversammlungen und das Barcamp finden in Düsseldorf 
+Die Generalversammlungen und das Barcamp finden in Düsseldorf
 im selben Gebäude statt, in dem wir auch unser Büro haben:
 
             Rochusstr. 44
             40479 Düsseldorf [2]
 
-Bitte komme bei der Generalversammlung zeitig, um Verzögerungen zu 
+Bitte komme bei der Generalversammlung zeitig, um Verzögerungen zu
 vermeiden, da die Akkreditierung Zeit benötigt. Die Teilnahme an den
 Veranstaltungen ist selbstverständlich kostenlos.
 
@@ -51,30 +51,30 @@ Zeiten der Veranstaltungen
 Die Generalversammlungen
 ========================
 
-Hintergrund dafür, dass wir gleich zu zwei Generalversammlungen einladen, 
+Hintergrund dafür, dass wir gleich zu zwei Generalversammlungen einladen,
 ist, dass wir Satzungsänderungen beschließen wollen. Für eine Satzungs-
-änderung muss die Hälfte aller Genossenschaftsmitglieder zusammenkommen. 
+änderung muss die Hälfte aller Genossenschaftsmitglieder zusammenkommen.
 Wenn weniger als die Hälfte der Mitglieder erscheint, kann auf der General-
-versammlung nicht über die Satzung entschieden werden, sondern sie muss 
-dafür auf einer weiteren Generalversammlung behandelt werden, die extra 
-dafür einberufen werden muss und bei der das Mitgliederquorum dann nicht 
-gilt. Da wir davon ausgehen, dass wir bei der ersten Generalversammlung 
-unter der Hälfte der Mitglieder bleiben, laden wir bereits jetzt auch zur 
+versammlung nicht über die Satzung entschieden werden, sondern sie muss
+dafür auf einer weiteren Generalversammlung behandelt werden, die extra
+dafür einberufen werden muss und bei der das Mitgliederquorum dann nicht
+gilt. Da wir davon ausgehen, dass wir bei der ersten Generalversammlung
+unter der Hälfte der Mitglieder bleiben, laden wir bereits jetzt auch zur
 zweiten Generalversammlungen ein.
 
-Wir werden also zwar in der ersten Generalversammlung bezüglich der Satzung 
-wohl nichts abstimmen können (TOP 6), aber natürlich werden wir über die 
-aktuellen Entwicklungen bei den Gesprächen mit dem DPMA informieren und 
-diskutieren, so dass Meinungen aus der ersten Generalversammlung Nachhall 
+Wir werden also zwar in der ersten Generalversammlung bezüglich der Satzung
+wohl nichts abstimmen können (TOP 6), aber natürlich werden wir über die
+aktuellen Entwicklungen bei den Gesprächen mit dem DPMA informieren und
+diskutieren, so dass Meinungen aus der ersten Generalversammlung Nachhall
 in der zweiten Generalversammlung finden.
 
-Rückblickend hat der Prozess mit dem DPMA wesentlich länger gedauert als 
-gedacht und wir mussten Kompromisse in Kauf nehmen. Wir glauben aber, dass 
-uns der Balanceakt zwischen unseren Idealen und den gesetzlichen Vorgaben 
-ganz gut gelungen ist und wir mit der neuen Fassung der Satzung eine 
+Rückblickend hat der Prozess mit dem DPMA wesentlich länger gedauert als
+gedacht und wir mussten Kompromisse in Kauf nehmen. Wir glauben aber, dass
+uns der Balanceakt zwischen unseren Idealen und den gesetzlichen Vorgaben
+ganz gut gelungen ist und wir mit der neuen Fassung der Satzung eine
 Kernanforderung für die Zulassung erfüllt haben.
 
-Ein wichtiger Tagesordnungpunkt wird am 2. Juni auch die Neuwahl des 
+Ein wichtiger Tagesordnungpunkt wird am 2. Juni auch die Neuwahl des
 Verwaltungsrats sein, da die Amtsperiode des alten dieses Jahr endet.
 
 
@@ -88,9 +88,9 @@ Diskussionen vorzuverlagern, bieten wir am Vortag ein Barcamp [3] an,
 das einen halben Tag lang in mehreren parallelen Slots Zeit für
 Diskussion und Austausch bietet.
 
-Zunächst sammeln wir Themenvorschläge, stellen dann fest, an welchen 
-Themen es ausreichend Interesse gibt und ordnen sie zeitlich, so dass 
-es möglichst wenig personelle Überschneidungen gibt. Am Ende des Barcamps 
+Zunächst sammeln wir Themenvorschläge, stellen dann fest, an welchen
+Themen es ausreichend Interesse gibt und ordnen sie zeitlich, so dass
+es möglichst wenig personelle Überschneidungen gibt. Am Ende des Barcamps
 sollen kurze und verständliche Zusammenfassungen des in den Diskussions-
 gruppen Besprochenen erstellt werden.
 
@@ -116,20 +116,22 @@ Begrüßung der Anwesenden
 
 # 4 Neuwahl des Verwaltungsrates
 
-# 5 Bericht zum allgemeinen Stand des Zulassungsverfahrens beim Deutschen 
-    Patent- und Markenamt (DPMA) 
+# 5 Bericht zum allgemeinen Stand des Zulassungsverfahrens beim Deutschen
+    Patent- und Markenamt (DPMA)
 
-# 6 Diskussion zu den Satzungsänderungen
-    aktueller Entwurf: https://url.c3s.cc/ga2019statde
+# 6 Diskussion zur Satzungsneufassung
+    Entwurf mit hervorgehobenen Änderungen zur aktuellen Fassung:
+    https://url.c3s.cc/ga6bv1ade
 
-# 7 Beschlussfassung zu den Satzungsänderungen
+# 7 Beschlussfassung zur Satzungsneufassung
+    Beschlussvorlage: https://url.c3s.cc/ga6bv1bde
 
 # 8 Bericht vom C3S-Barcamp 2019
 
 # 9 Berichte aus den Beratungskommissionen
 
 ## 9.1 Kommission Tarife
-## 9.2 Kommission Verteilung und Beitragsordnung 
+## 9.2 Kommission Verteilung und Beitragsordnung
 ## 9.3 Kommission Wahrnehmungsverträge
 
 # 10 Diskussion zu und ggfs. Beschlussfassung über Festlegung einer
@@ -143,7 +145,7 @@ zum 24.05.2019 (Ausschlussfrist 24 Uhr MESZ/CEST, d.h. UTC +2) in Textform
 unter agenda@c3s.cc einreichen.
 
 
-Agenda der 3. außerordentlichen Generalversammlung 
+Agenda der 3. außerordentlichen Generalversammlung
 ===================================================
 
 Begrüßung der Anwesenden
@@ -152,11 +154,13 @@ Begrüßung der Anwesenden
 
 # 2 Genehmigung der Tagesordnung
 
-# 3 Zusammenfassung der Diskussion zu den Satzungsänderungen der letzen 
+# 3 Zusammenfassung der Diskussion zur Satzungsneufassung der letzten
     Generalversammlung und anschließende Aussprache
-    aktueller Entwurf: https://url.c3s.cc/ga2019statde
+    Entwurf mit hervorgehobenen Änderungen zur aktuellen Fassung:
+    https://url.c3s.cc/ga6bv1ade
 
-# 4 Beschlussfassung zu den Satzungsänderungen
+# 4 Beschlussfassung zur Satzungsneufassung
+    Beschlussvorlage): https://url.c3s.cc/ga6bv1bde
 
 Beschlussanträge und Anträge zur Änderung der Tagesordnung kannst Du bis
 zum 14.06.2019 (Ausschlussfrist 24 Uhr MESZ/CEST, d.h. UTC +2) in Textform
@@ -173,11 +177,12 @@ C3S SCE oder Bevollmächtigte nicht anwesender Mitglieder.
 
 Stellvertretende Bevollmächtigte
 --------------------------------
-Solltest Du nicht teilnehmen können und stimmberechtigt sein, also nutzendes 
-Mitglied, kannst Du eine Vollmacht erteilen. Bevollmächtigte dürfen maximal 
-zwei Mitglieder vertreten und müssen entweder Mitglied der Genossenschaft 
-oder Dein Ehegatte, Elternteil, Kind oder Geschwister sein. Die Vollmacht 
-muss unterschrieben auf Papier bei der Akkreditierung vorgelegt werden. 
+Solltest Du nicht teilnehmen können und stimmberechtigt sein, also
+nutzendes Mitglied, kannst Du eine Vollmacht erteilen. Bevollmächtigte
+dürfen maximal zwei Mitglieder vertreten und müssen entweder Mitglied
+der Genossenschaft oder Dein Ehegatte, Elternteil, Kind oder Geschwister
+sein. Die Vollmacht muss unterschrieben auf Papier bei der Akkreditierung
+vorgelegt werden.
 Vordrucke für die Vollmacht findest Du hier:
 - für ordentliche Mitglieder: https://url.c3s.cc/vmprivato
 - für investierende Mitglieder: https://url.c3s.cc/vmprivati
@@ -185,8 +190,8 @@ Vordrucke für die Vollmacht findest Du hier:
 
 Audio-Protokoll
 ---------------
-Während der Generalversammlung wird ein Audio-Mitschnitt aufgezeichnet, um
-ein fehlerfreies Protokoll zu gewährleisten. Der Mitschnitt wird nicht
+Während der Generalversammlung wird ein Audio-Mitschnitt aufgezeichnet,
+um ein fehlerfreies Protokoll zu gewährleisten. Der Mitschnitt wird nicht
 veröffentlicht, aber intern als Anhang zum Protokoll archiviert.
 Wer nicht möchte, dass sein Redebeitrag aufgezeichnet wird, kann dem vor
 Beginn seines/ihres Beitrags widersprechen.
