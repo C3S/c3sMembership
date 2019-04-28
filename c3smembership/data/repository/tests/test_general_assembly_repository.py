@@ -509,3 +509,10 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
             100, u'New general assembly', date(2018, 11, 18))
         max_number = GeneralAssemblyRepository.general_assembly_max_number()
         self.assertEquals(max_number, 100)
+
+    def test_get_latest_general_assembly(self):
+        """
+        Test the get_latest_general_assembly method
+        """
+        latest = GeneralAssemblyRepository.get_latest_general_assembly()
+        self.assertEqual(latest.number, GENERAL_ASSEMBLY_NUMBER_2018_2)

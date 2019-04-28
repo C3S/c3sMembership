@@ -241,6 +241,25 @@ class GeneralAssemblyRepository(object):
             .first()
 
     @classmethod
+    def get_latest_general_assembly(cls):
+        """
+        Get details of the latest general assembly
+
+        The latest general assembly is the one with the date later than all
+        other general assembly dates.
+
+        In case there are two general assemblies at the same ĺatest date an
+        unpredictable one of them in returned depending on factors like
+        creation date and implicit database ordering.
+        """
+        # pylint: disable=no-member
+        latest_date = DBSession.query(func.max(GeneralAssembly.date)).scalar()
+        return DBSession \
+            .query(GeneralAssembly) \
+            .filter(GeneralAssembly.date == latest_date) \
+            .first()
+
+    @classmethod
     def create_general_assembly(cls, number, name, date):
         """
         Create a general assembly

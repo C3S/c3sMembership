@@ -286,7 +286,7 @@ def batch_invite(request):
         membership_numbers_sent.append(member.membership_number)
 
     request.session.flash(
-        "sent out {} mails (to members with membership number {})".format(
+        "sent out {} mails (to members with membership numbers {})".format(
             num_sent, membership_numbers_sent),
         'success')
 

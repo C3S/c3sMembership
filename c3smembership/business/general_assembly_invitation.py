@@ -60,6 +60,38 @@ class GeneralAssemblyInvitation(object):
 
         return general_assembly_invitations
 
+    def get_member_invitation(
+            self, member, general_assembly_number):
+        """
+        Get the invitation of the member for the general assembly
+
+        Args:
+            membership_number: String. The membership number of the member for
+                which the invitation is returned.
+            general_assembly_number: Integer. The number of the general
+                assembly for which the member's invitation is returned.
+
+        Returns:
+            A dictionary with the elements:
+
+            - 'number': An integer representing the number of the general
+              assembly.
+            - 'name': A string representing the name of the general assembly.
+            - 'date': A date representing the date of the general assembly.
+            - 'flag': A boolean indication whether or not the member has been
+              invited.
+            - 'can_invite': A boolean indicating whether an invitation for the
+              general assembly can be sent to the member.
+
+            None, if the general assembly does not apply to the member, e.g.
+            because the membership period does not cover the general assembly
+            date.
+        """
+        invitations = self.get_member_invitations(member)
+        for invitation in invitations:
+            if invitation['number'] == general_assembly_number:
+                return invitation
+
     def invite_member(self, member, general_assembly, token):
         """
         Invite member to general assembly
@@ -168,3 +200,16 @@ class GeneralAssemblyInvitation(object):
                 'The general assembly does not exist.')
         self._general_assembly_repository.edit_general_assembly(
             number, name, assembly_date)
+
+    def get_latest_general_assembly(self):
+        """
+        Get details of the latest general assembly
+
+        The latest general assembly is the one with the date later than all
+        other general assembly dates.
+
+        In case there are two general assemblies at the same ĺatest date an
+        unpredictable one of them in returned depending on factors like
+        creation date and implicit database ordering.
+        """
+        return self._general_assembly_repository.get_latest_general_assembly()

@@ -29,7 +29,7 @@
                                     class="fas fa-envelope text-warning"></a>
                         </span>
                         <span tal:omit-tag="" tal:condition="not general_assembly_invitation['can_invite']">
-                            <i title="Invitation was not sent. It cannot be sent anymore because the general assembly was hold in the past."
+                            <i title="Invitation was not sent. It cannot be sent anymore because the general assembly was held in the past."
                                     class="fas fa-envelope text-danger"></i>
                         </span>
                     </span>

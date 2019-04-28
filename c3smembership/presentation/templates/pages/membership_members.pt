@@ -88,11 +88,9 @@
                     </a>
                 </th>
                 <th>Email</th>
-                <!--!
-                <th>
-                    BC &amp; GA<br />Invitation
+                <th tal:omit-tag="" tal:condition="latest_general_assembly is not None">
+                    <abbr title="Barcamp and general assembly invitation for general assembly ${latest_general_assembly.number} &quot;${latest_general_assembly.name}&quot; on ${latest_general_assembly.date}">BC &amp; GA<br />Invitation</abbr>
                 </th>
-                -->
                 <th>
                     Dues 2019<br/>Invoice
                 </th>
@@ -132,6 +130,30 @@
                     <a href="mailto:${member.email}"
                             title="${member.email}"
                             class="fas fa-at"></a>
+                </td>
+                <td class="icons" tal:omit-tag="" tal:condition="latest_general_assembly is not None">
+                    <span tal:omit-tag="" tal:condition="invitations[member.membership_number] is None">
+                        <i title="An invitation cannot be sent because the member does not have membership on the general assembly date."
+                                class="fas fa-envelope text-muted"></i>
+                    </span>
+                    <span tal:omit-tag="" tal:condition="invitations[member.membership_number] is not None and invitations[member.membership_number]['flag']">
+                        <i title="An invitation to general assembly ${latest_general_assembly.number} &quot;${latest_general_assembly.name}&quot; on ${latest_general_assembly.date} was sent on ${invitations[member.membership_number]['sent'].strftime('%d.%m.%Y %H:%M:%S')}."
+                                class="fas fa-envelope text-success"></i>
+                    </span>
+                    <span tal:omit-tag="" tal:condition="invitations[member.membership_number] is not None and not invitations[member.membership_number]['flag']">
+                        <span tal:omit-tag="" tal:condition="invitations[member.membership_number]['can_invite']">
+                            <a href="${request.route_url(
+                                        'general_assembly_invitation',
+                                        number=latest_general_assembly.number,
+                                        membership_number=member.membership_number)}"
+                                    title="An invitation to general assembly ${latest_general_assembly.number} &quot;${latest_general_assembly.name}&quot; on ${latest_general_assembly.date} was not sent yet. Click to send."
+                                    class="fas fa-envelope text-warning"></a>
+                        </span>
+                        <span tal:omit-tag="" tal:condition="not invitations[member.membership_number]['can_invite']">
+                            <i title="An invitation was not sent. It cannot be sent anymore because the general assembly was held in the past."
+                                    class="fas fa-envelope text-danger"></i>
+                        </span>
+                    </span>
                 </td>
                 <td class="icons">
                     <div tal:omit-tag="" tal:condition="not member.membership_date > date(2019, 12, 13) and (member.membership_loss_date is None or member.membership_loss_date > date(2019, 12, 31))">
