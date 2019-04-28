@@ -88,7 +88,7 @@
                     </a>
                 </th>
                 <th>Email</th>
-                <th tal:omit-tag="" tal:condition="latest_general_assembly is not None">
+                <th tal:condition="latest_general_assembly is not None">
                     <abbr title="Barcamp and general assembly invitation for general assembly ${latest_general_assembly.number} &quot;${latest_general_assembly.name}&quot; on ${latest_general_assembly.date}">BC &amp; GA<br />Invitation</abbr>
                 </th>
                 <th>
@@ -131,7 +131,7 @@
                             title="${member.email}"
                             class="fas fa-at"></a>
                 </td>
-                <td class="icons" tal:omit-tag="" tal:condition="latest_general_assembly is not None">
+                <td class="icons" tal:condition="latest_general_assembly is not None">
                     <span tal:omit-tag="" tal:condition="invitations[member.membership_number] is None">
                         <i title="An invitation cannot be sent because the member does not have membership on the general assembly date."
                                 class="fas fa-envelope text-muted"></i>
