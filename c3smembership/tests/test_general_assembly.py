@@ -201,7 +201,7 @@ class TestInvitation(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        self.config.add_route('membership_listing_backend', '/')
+        self.config.add_route('membership_listing_backend', '/memberships')
         self.config.add_route('toolbox', '/toolbox')
         self.config.add_route('dashboard', '/dashboard')
         self.config.add_route('general_assembly', '/general_assembly')
@@ -252,6 +252,8 @@ class TestInvitation(unittest.TestCase):
         res = general_assembly_invitation(req)
         self.assertEquals(302, res.status_code)
 
+        # working membership number
+        req.referer = '/members/'
         req.matchdict = {
             'number': str(CURRENT_GENERAL_ASSEMBLY),
             'membership_number': str(member1.membership_number),
@@ -265,15 +267,41 @@ class TestInvitation(unittest.TestCase):
         res = general_assembly_invitation(req)
 
         self.assertEquals(res.status_code, 302)
+        self.assertTrue('/members/' in res.location)
+
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 1)
 
+        # test other redirect for referer different from '/members/'
+        member3 = C3sMember.get_by_id(3)
+        req.referer = 'something_else'
+        req.matchdict = {
+            'number': str(CURRENT_GENERAL_ASSEMBLY),
+            'membership_number': str(member3.membership_number),
+        }
+
+        mailer = get_mailer(req)
+        self.assertEqual(len(mailer.outbox), 1)
+
+        self.config.registry.general_assembly_invitation.date \
+            .today.side_effect = [date(2018, 1, 1)]
+        res = general_assembly_invitation(req)
+
+        self.assertEquals(res.status_code, 302)
+        self.assertTrue('/memberships' in res.location)
+
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member3.membership_number, CURRENT_GENERAL_ASSEMBLY)
+        self.assertEqual(invitation['flag'], True)
+        self.assertTrue(invitation['token'] is not None)
+        self.assertEqual(len(mailer.outbox), 2)
+
         # Try to invite again which should not cause another email to be sent
         res = general_assembly_invitation(req)
-        self.assertEqual(len(mailer.outbox), 1)
+        self.assertEqual(len(mailer.outbox), 2)
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
@@ -303,10 +331,10 @@ class TestInvitation(unittest.TestCase):
             member2.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
-        self.assertEqual(len(mailer.outbox), 2)
-        self.assertTrue(u'Invitation' in mailer.outbox[1].subject)
+        self.assertEqual(len(mailer.outbox), 3)
+        self.assertTrue(u'Invitation' in mailer.outbox[2].subject)
         self.assertTrue(member2.firstname
-                        in mailer.outbox[1].body)
+                        in mailer.outbox[2].body)
         # Token not in email template for current general assembly of
         # 2018-12-01. Testing needs to be performed with dummy templates.
         # self.assertTrue(invitation['token']

@@ -116,8 +116,10 @@ class TestGeneralAssembly(unittest.TestCase):
             'number': '1',
             'membership_number': '2',
         })
+        request.referer = 'something'
         test_config = testing.setUp(request=request)
         test_config.add_route('member_details', 'member_details')
+        test_config.add_route('membership_listing_backend', '/memberships')
         request.registry.member_information = member_information
         general_assembly_invitation(request)
 

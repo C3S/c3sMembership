@@ -153,11 +153,22 @@ def general_assembly_invitation(request):
             'general_assembly', number=general_assembly_number))
 
     send_invitation(request, member, general_assembly_number)
-    return HTTPFound(
-        request.route_url(
-            'member_details',
-            membership_number=member.membership_number,
-            _anchor='general-assembly'))
+    # As in other places the route url pattern is hard-coded but should not be.
+    # The only place to change the route url pattern must be the configuration
+    # and therefore this hard-coding is error-prone. It should be referenced
+    # like route_url() but then route_url may require the passing of a
+    # parameter which is not known. Another way must be found to do this
+    # dynamically.
+    if '/members/' in request.referer:
+        return HTTPFound(
+            request.route_url(
+                'member_details',
+                membership_number=member.membership_number,
+                _anchor='general-assembly'))
+    else:
+        return HTTPFound(request.route_url(
+            'membership_listing_backend',
+            _anchor='member_{id}'.format(id=member.id)))
 
 
 def make_bcga_invitation_email(member, url):
