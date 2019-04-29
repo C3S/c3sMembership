@@ -10,12 +10,14 @@ Rochusstr. 44
 
 invites you
 
-* to the C3S barcamp 2019 on Saturday, June 2, 2019
+* to the C3S barcamp 2019 on Saturday, June 1, 2019
+
 * to the 6th statutory general assembly, according to § 13 of the
-  articles of association of the C3S SCE [1] on June 2, 2019 and
+  articles of association of the C3S SCE [1] on Sunday June 2, 2019 and
+
 * as a precautionary measure, to the 3rd exceptional general assembly
-   of the C3S SCE according to § 13 paragraph 4 sentence 3 on
-   June 23, 2019.
+  of the C3S SCE according to § 13 paragraph 4 sentence 3 on
+  Sunday June 23, 2019.
 
 Please read the whole text of the invitation. It contains important
 information.
@@ -43,7 +45,7 @@ will take some time. Of course, participation is free.
 Dates of the Events
 ===================
 
-01.06.2019: Barcamp 1pm - 7pm MEST [3]
+01.06.2019: Barcamp 1pm - 7pm CEST [3]
 02.06.2019: 6th Statutory General Assembly 1pm - 5pm CEST
 23.06.2019: 3rd Exceptional General Assembly 1pm - 5pm CEST
             Accreditation from 12.00 pm
