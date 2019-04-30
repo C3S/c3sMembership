@@ -250,3 +250,6 @@ Links:
 [2] Map of location:
 https://www.openstreetmap.org/node/2679106873#map=19/51.23274/6.78834
 [3] What is a barcamp? https://url.c3s.cc/bcexplanation
+
+{footer}
+

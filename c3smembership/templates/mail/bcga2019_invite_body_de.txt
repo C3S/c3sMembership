@@ -248,3 +248,5 @@ Links:
 [2] Karte Veranstaltungsort:
 https://www.openstreetmap.org/node/2679106873#map=19/51.23274/6.78834
 [3] Was ist ein Barcamp? https://url.c3s.cc/bcerklaerung
+
+{footer}
