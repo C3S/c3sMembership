@@ -54,8 +54,10 @@ __version__ = open(os.path.join(os.path.abspath(
 
 
 def main(global_config, **settings):
-    """ This function returns a Pyramid WSGI application.
     """
+    Create a Pyramid WSGI application
+    """
+    # pylint: disable=unused-argument
     engine = engine_from_config(settings, 'sqlalchemy.')
     Base.metadata.bind = engine
 

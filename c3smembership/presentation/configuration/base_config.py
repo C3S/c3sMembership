@@ -25,6 +25,9 @@ class BaseConfig(Configuration):
         self.configure_routes()
 
     def configure_includes(self):
+        """
+        Configure basic Pyramid extension includes
+        """
         includes = [
             'pyramid_mailer',
             'pyramid_chameleon',
@@ -35,6 +38,9 @@ class BaseConfig(Configuration):
             self.config.include(include)
 
     def configure_subscribers(self):
+        """
+        Configure basic Pyramid subscribers
+        """
         subscribers = [
             (
                 'c3smembership.subscribers.add_frontend_template',
