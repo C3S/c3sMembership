@@ -9,31 +9,34 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 VERSION = open(os.path.join(here, 'VERSION')).read()
 
 requires = [
-    'alembic==0.8.10',  # migrate the database when introducing new fields
+    'alembic==0.8.10',  # database schema migration
     'Babel',
     'colander==1.0',
     'cornice==0.17',
     'cryptacular==1.4.1',
-    'deform==2.0a2',  # should get deform-2.0...
+    'deform==2.0a2',  # HTML forms
     'fdfgen==0.11.0',
     'lingua==1.5',  # stick to 1.5 for now. TODO: learn to use 2.1/2.3
     'requests==2.2.1',
     'pycountry',  # replacing 'webhelpers',
-    'pyramid==1.5.2',  # use pyramid 1.5.2
-    'pyramid_beaker==0.8',
-    'pyramid_chameleon==0.3',  # 'pyramid 1.5 extension'
-    'pyramid_debugtoolbar==2.2.2',
-    'pyramid_mailer==0.13.',  # maybe not the last version to work
-    'pyramid_tm==0.8',
+    'pyramid>=1.7',
+    'pyramid_beaker',
+    'pyramid_chameleon',
+    'pyramid_debugtoolbar',
+    'pyramid_mailer==0.14.1',
+    'pyramid_tm',
     'python-gnupg==0.3.6',
     'repoze.sendmail==4.1',  # pin to 4.1 because of repoze/repoze.sendmail#31
     # see https://github.com/repoze/repoze.sendmail/issues/31
-    'SQLAlchemy==1.0.9',
-    'transaction==1.4.3',
+    'SQLAlchemy==1.0.9',  # Object-relational mapper
+    'transaction',
     'unicodecsv==0.9.4',
     'venusian==1.0',
     'waitress==0.8.9',
     'zope.sqlalchemy==0.7.5',
+    # webob>=1.8.3 is a pyramid 1.10.4 dependency and for some reason is not
+    # installed automatically with pyramid 1.10.4 by pip.
+    'webob>=1.8.3',
 ]
 # for the translations machinery using transifex you also need to
 # "pip install transifex-client"
