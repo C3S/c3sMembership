@@ -17,12 +17,13 @@ requires = [
     'deform==2.0a2',  # should get deform-2.0...
     'fdfgen==0.11.0',
     'lingua==1.5',  # stick to 1.5 for now. TODO: learn to use 2.1/2.3
+    'requests==2.2.1',
     'pycountry',  # replacing 'webhelpers',
     'pyramid==1.5.2',  # use pyramid 1.5.2
     'pyramid_beaker==0.8',
     'pyramid_chameleon==0.3',  # 'pyramid 1.5 extension'
     'pyramid_debugtoolbar==2.2.2',
-    'pyramid_mailer==0.13.', # maybe not the last version to work
+    'pyramid_mailer==0.13.',  # maybe not the last version to work
     'pyramid_tm==0.8',
     'python-gnupg==0.3.6',
     'repoze.sendmail==4.1',  # pin to 4.1 because of repoze/repoze.sendmail#31
@@ -48,7 +49,7 @@ test_requirements = [
 ]
 
 docs_require = [
-    'sphinx',  # for generating the documentation
+    'sphinx==1.3.3',  # for generating the documentation
     'sphinxcontrib-plantuml',
 ]
 
