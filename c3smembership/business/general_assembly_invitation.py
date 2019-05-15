@@ -171,8 +171,11 @@ class GeneralAssemblyInvitation(object):
         This method gets the number which is assigned to the next general
         assembly created.
         """
-        return self._general_assembly_repository \
-            .general_assembly_max_number() + 1
+        max_number = self._general_assembly_repository \
+            .general_assembly_max_number()
+        if max_number is None:
+            max_number = 0
+        return (max_number + 1)
 
     def edit_general_assembly(self, number, name, assembly_date):
         """

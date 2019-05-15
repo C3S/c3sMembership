@@ -340,3 +340,30 @@ class GeneralAssemblyInvitationTest(TestCase):
         self.assertEqual(latest_general_assembly, 'latest general assembly')
         general_assembly_repository.get_latest_general_assembly \
             .assert_called_with()
+
+    def test_get_next_number(self):
+        """
+        Test the get_next_number method
+
+        1. General assemblies available
+        2. No general assembly exists yet
+        """
+        # 1. General assemblies available
+        general_assembly_repository = mock.Mock()
+        general_assembly_repository.general_assembly_max_number.side_effect = \
+            [123]
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+
+        next_number = gai.get_next_number()
+
+        self.assertEqual(next_number, 124)
+
+        # 2. No general assembly exists yet
+        general_assembly_repository = mock.Mock()
+        general_assembly_repository.general_assembly_max_number.side_effect = \
+            [None]
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+
+        next_number = gai.get_next_number()
+
+        self.assertEqual(next_number, 1)
