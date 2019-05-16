@@ -93,6 +93,15 @@ class MemberIdIsMemberNode(MemberIdNode):
                 message.format(self.original_value))
 
 
+class MemberIdMatchdict(colander.MappingSchema):
+    """
+    Schema for validating a member ID Matchdict
+
+    The member ID has is valid as an integer and turned into a member object.
+    """
+    member_id = MemberIdNode()
+
+
 class MailCertificateMatchdict(colander.MappingSchema):
     """
     Schema for validating the mail certificate matchdict

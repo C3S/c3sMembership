@@ -3,7 +3,9 @@
 Compiles email texts for payment confirmation and signature confirmation
 emails.
 """
+
 import os
+
 from pyramid_mailer import get_mailer
 
 
@@ -125,6 +127,12 @@ def send_message(request, message):
         print(u'Subject: ' + unicode(message.subject))
         print(message.body.encode('utf-8'))
     else:
-        mailer = get_mailer(request)
+        mailer = None
+        if hasattr(request.registry, 'get_mailer'):
+            # For dependency injection
+            mailer = request.registry.get_mailer(request)
+        else:
+            # For legacy
+            # TODO: Remove long-term
+            mailer = get_mailer(request)
         mailer.send(message)
-
