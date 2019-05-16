@@ -67,7 +67,7 @@ def make_membership_certificate_email(request, member):
             legal_entity_name=member.lastname,
             url=request.route_url(
                 'certificate_pdf',
-                id=member.id,
+                member_id=member.id,
                 name=member.get_url_safe_name(),
                 token=member.certificate_token),
             footer=get_email_footer(member.locale))
@@ -79,7 +79,7 @@ def make_membership_certificate_email(request, member):
             salutation=get_salutation(member),
             url=request.route_url(
                 'certificate_pdf',
-                id=member.id,
+                member_id=member.id,
                 name=member.get_url_safe_name(),
                 token=member.certificate_token),
             footer=get_email_footer(member.locale))

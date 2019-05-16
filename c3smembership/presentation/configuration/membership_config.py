@@ -60,9 +60,9 @@ class MembershipConfig(Configuration):
             ('membership_listing_aufstockers', '/aml_aufstockers'),
 
             # membership_certificate
-            ('certificate_mail', '/cert_mail/{id}'),
-            ('certificate_pdf', '/cert/{id}/C3S_{name}_{token}.pdf'),
-            ('certificate_pdf_staff', '/cert/{id}/C3S_{name}.pdf'),
+            ('certificate_mail', '/cert_mail/{member_id}'),
+            ('certificate_pdf', '/cert/{member_id}/C3S_{name}_{token}.pdf'),
+            ('certificate_pdf_staff', '/cert/{member_id}/C3S_{name}.pdf'),
 
             # search for people
             ('search_people', '/search_people'),

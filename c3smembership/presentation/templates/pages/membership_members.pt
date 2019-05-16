@@ -169,14 +169,14 @@
                 </td>
                 <td class="icons">
                     <a tal:condition="not member.certificate_email"
-                            href="${request.route_url('certificate_mail', id=member.id)}"
+                            href="${request.route_url('certificate_mail', member_id=member.id)}"
                             title="certificate not sent yet"
                             class="fas fa-envelope text-danger"></a>
                     <a tal:condition="member.certificate_email"
-                            href="${request.route_url('certificate_mail', id=member.id)}"
+                            href="${request.route_url('certificate_mail', member_id=member.id)}"
                             title="gesendet ${member.certificate_email_date.strftime('am %d.%m.%Y um %H:%M')}"
                             class="fas fa-envelope text-success"></a>
-                    <a href="${request.route_url('certificate_pdf_staff', id=member.id, name=member.get_url_safe_name())}"
+                    <a href="${request.route_url('certificate_pdf_staff', member_id=member.id, name=member.get_url_safe_name())}"
                             title="Mitgliedschaftsurkunde ansehen"
                             class="fas fa-download">
                     </a>

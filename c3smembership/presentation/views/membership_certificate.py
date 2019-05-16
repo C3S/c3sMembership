@@ -15,29 +15,32 @@ that we do not want to be public, e.g. signatures.
 """
 from datetime import (
     date,
-    datetime
+    datetime,
+    timedelta,
 )
 import os
+import shutil
+import subprocess
+import tempfile
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid_mailer.message import Message
-import shutil
-import subprocess
-import tempfile
-from types import NoneType
+
 from c3smembership.mail_utils import (
     make_membership_certificate_email,
     send_message,
 )
-
-from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.tex_tools import TexTools
-from c3smembership.presentation.views.membership_listing import (
-    get_memberhip_listing_redirect
+from c3smembership.presentation.schemas.member import (
+    GenerateCertificateMatchdict,
+    MailCertificateMatchdict,
 )
-
-DEBUG = False
+from c3smembership.presentation.view_processing import \
+    ColanderMatchdictValidator
+from c3smembership.presentation.views.membership_listing import \
+    get_memberhip_listing_redirect
 
 
 def make_random_token():
@@ -52,28 +55,24 @@ def make_random_token():
         ) for x in range(15))
 
 
-@view_config(permission='manage',
-             route_name='certificate_mail')
+@view_config(
+    route_name='certificate_mail',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MailCertificateMatchdict(error_route='membership_listing_backend'),
+    ),
+)
 def send_certificate_email(request):
     '''
     Send email to a member with a link
     so the member can get her membership certificate.
     '''
-    _special_condition = False  # for redirects to referrer
+    member = request.validated_matchdict['member']
 
-    mid = request.matchdict['id']
-    member = C3sMember.get_by_id(mid)
-    if isinstance(member, NoneType) or not member.is_member():
-        return Response(
-            'that id does not exist or is not an accepted member. go back',
-            status='404 Not Found',)
-    # create a token for the certificate
     member.certificate_token = make_random_token()
-
     email_subject, email_body = make_membership_certificate_email(
         request,
         member)
-
     the_message = Message(
         subject=email_subject,
         sender=request.registry.settings['c3smembership.notification_sender'],
@@ -85,23 +84,26 @@ def send_certificate_email(request):
     member.certificate_email = True
     member.certificate_email_date = datetime.now()
 
-    try:  # pragma: no cover
-        if 'detail' in request.referrer:
-            _special_condition = True
-    except TypeError:  # pragma: no cover
-        pass
-
-    if _special_condition:  # pragma: no cover
+    if hasattr(request, 'referer') and request.referer is not None and \
+            'detail' in request.referer:
         return HTTPFound(
-            location=request.referrer +
-            '#certificate'
+            request.route_url(
+                'detail',
+                memberid=member.id,
+                _anchor='certificate'
+            )
         )
     else:
         return get_memberhip_listing_redirect(request, member.id)
 
 
-@view_config(permission='view',
-             route_name='certificate_pdf')
+@view_config(
+    route_name='certificate_pdf',
+    permission='view',
+    pre_processor=ColanderMatchdictValidator(
+        GenerateCertificateMatchdict(error_route='join'),
+    ),
+)
 def generate_certificate(request):
     '''
     Generate a membership_certificate for a member.
@@ -109,33 +111,17 @@ def generate_certificate(request):
     Member must posess a link containing an id and a valid token.
     Headquarters sends links to members upon request.
     '''
-    mid = request.matchdict['id']
-    token = request.matchdict['token']
+    member = request.validated_matchdict['member']
+    token = request.validated_matchdict['token']
 
-    try:
-        member = C3sMember.get_by_id(mid)
-
-        if DEBUG:  # pragma: no cover
-            print member.firstname
-            print member.certificate_token
-            print type(member.certificate_token)  # NoneType
-            print token
-            print type(token)  # unicode
-
-        # token may not ne None
-        assert(member.certificate_token is not None)
-        # token must match entry in database
-        assert(str(member.certificate_token) in str(token))
-        # and database entry must match token
-        assert(str(token) in str(member.certificate_token))
-
-        # check age of token
-        from datetime import timedelta
-        two_weeks = timedelta(weeks=2)
-        assert(member.certificate_email_date is not None)
-        delta = datetime.now() - member.certificate_email_date
-        assert(delta < two_weeks)
-    except AssertionError:
+    member_has_token = member.certificate_token is not None
+    token_is_valid = str(member.certificate_token) in str(token) and \
+        str(member.certificate_token) in str(token)
+    token_at_most_two_weeks_old = \
+        member.certificate_email_date is not None and \
+        (datetime.now() - member.certificate_email_date <= timedelta(weeks=2))
+    if not member_has_token or not token_is_valid or \
+            not token_at_most_two_weeks_old:
         return Response(
             'Not found. Or invalid credentials.  <br /><br /> '
             'Please contact office@c3s.cc. <br /><br /> '
@@ -143,33 +129,21 @@ def generate_certificate(request):
             status='404 Not Found',
         )
 
-    if isinstance(member, NoneType) or not member.is_member():
-        return Response(
-            'that id does not exist or is not an accepted member. go back',
-            status='404 Not Found',)
-
     return gen_cert(member)
 
 
-@view_config(permission='manage',
-             route_name='certificate_pdf_staff')
+@view_config(
+    route_name='certificate_pdf_staff',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MailCertificateMatchdict(error_route='membership_listing_backend'),
+    ),
+)
 def generate_certificate_staff(request):
     '''
     Generate the membership_certificate of any member for staffers.
     '''
-    mid = request.matchdict['id']
-    # print("Member id from matchdict: {}".format(mid))
-
-    # chech if member exists
-    member = C3sMember.get_by_id(mid)
-    if member is None:
-        return Response('Not found. Please check URL.')
-
-    if isinstance(member, NoneType) or not member.is_member():
-        return Response(
-            'Member with this id ({}) is not an accepted member!'.format(mid),
-            status='404 Not Found',)
-
+    member = request.validated_matchdict['member']
     return gen_cert(member)
 
 
@@ -262,7 +236,7 @@ def gen_cert(member):
         mship_num_text = u'membership number {}'.format(
             member.membership_number
         )
-        exec_dir = 'Executive Director'
+        exec_dir = u'Executive Director'
 
     # construct latex_file
     latex_data = '''
@@ -307,11 +281,6 @@ def gen_cert(member):
         exec_dir,
         mship_num_text
     )
-    if DEBUG:  # pragma: no cover
-        print('#'*60)
-        print(member.is_legalentity)
-        print(member.lastname)
-        print('#'*60)
     if member.is_legalentity:
         latex_data += '\n\\def\\company{%s}' % TexTools.escape(member.lastname)
     if member.address2 is not u'':  # add address part 2 iff exists
@@ -332,12 +301,6 @@ def gen_cert(member):
     # finish the latex document
     latex_data += '\n\\input{%s}' % latex_footer_tex
 
-    if DEBUG:  # pragma: no cover
-        print '*' * 70
-        print('*' * 30, 'latex data: ', '*' * 30)
-        print '*' * 70
-        print latex_data
-        print '*' * 70
     latex_file.write(latex_data.encode('utf-8'))
     latex_file.seek(0)  # rewind
 
