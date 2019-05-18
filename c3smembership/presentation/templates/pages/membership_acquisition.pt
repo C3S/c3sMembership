@@ -121,17 +121,17 @@
             <!--! loop over the list of applications for membership -->
             <tr tal:repeat="member members">
                 <td>
-                    <a href="${request.route_url('detail', memberid=member.id)}">
+                    <a href="${request.route_url('detail', member_id=member.id)}">
                         ${member.lastname}
                     </a>
                 </td>
                 <td>
-                    <a href="${request.route_url('detail', memberid=member.id)}">
+                    <a href="${request.route_url('detail', member_id=member.id)}">
                         ${member.firstname}
                     </a>
                 </td>
                 <td>
-                    <a href="${request.route_url('detail', memberid=member.id)}">
+                    <a href="${request.route_url('detail', member_id=member.id)}">
                         ${member.date_of_submission.strftime('%Y-%m-%d')}
                     </a>
                 </td>

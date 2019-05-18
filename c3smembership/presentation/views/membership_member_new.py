@@ -362,7 +362,7 @@ def new_member(request):
         return HTTPFound(  # redirect to success page
             location=request.route_url(
                 'detail',
-                memberid=the_new_id),
+                member_id=the_new_id),
         )
 
     # if the form was submitted and gathered info shown on the success page,

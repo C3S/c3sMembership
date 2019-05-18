@@ -102,4 +102,4 @@ def merge_member_view(request):
         merg.email_confirm_code)
 
     DBSession.delete(merg)
-    return HTTPFound(request.route_url('detail', memberid=member_id))
+    return HTTPFound(request.route_url('detail', member_id=member_id))

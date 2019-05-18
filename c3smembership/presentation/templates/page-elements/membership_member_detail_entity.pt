@@ -59,7 +59,7 @@
     <tr tal:condition="member.is_duplicate">
         <td>Duplicate of</td>
         <td>
-            <a href="${request.route_url('detail', memberid=member.is_duplicate_of)}">
+            <a href="${request.route_url('detail', member_id=member.is_duplicate_of)}">
                 ${member.is_duplicate_of}
             </a>
         </td>

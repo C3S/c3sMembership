@@ -89,7 +89,7 @@ def send_certificate_email(request):
         return HTTPFound(
             request.route_url(
                 'detail',
-                memberid=member.id,
+                member_id=member.id,
                 _anchor='certificate'
             )
         )

@@ -65,7 +65,7 @@
                 <span tal:define="global m_num python: m_num + 1">
                     <td tal:content="python: m_num">${m_num}</td>
                 </span>
-                <td><a href="${request.route_url('detail', memberid=m.id)}">${m.id}</a></td>
+                <td><a href="${request.route_url('detail', member_id=m.id)}">${m.id}</a></td>
                 <td>${m.lastname}</td>
                 <td>${m.firstname}</td>
                 <td>
@@ -115,7 +115,7 @@
                 <span tal:define="global m_num python: m_num + 1">
                     <td tal:content="python: m_num">${m_num}</td>
                 </span>
-                <td><a href="${request.route_url('detail', memberid=member.id)}">${member.id}</a></td>
+                <td><a href="${request.route_url('detail', member_id=member.id)}">${member.id}</a></td>
                 <td>${member.lastname}</td>
                 <td>${member.firstname}</td>
                 <td tal:define="global m_num_shares python: m_num_shares + member.num_shares">${member.num_shares}</td>
@@ -177,7 +177,7 @@
             </tr>
             <tr tal:define="global ua_num python: 0" tal:repeat="p shares_paid_unapproved">
                 <td tal:define="global ua_num python: ua_num + 1">${ua_num}</td>
-                <td><a href="${request.route_url('detail', memberid=p.id)}">${p.id}</a></td>
+                <td><a href="${request.route_url('detail', member_id=p.id)}">${p.id}</a></td>
                 <td>${p.lastname}</td>
                 <td>${p.firstname}</td>
                 <td>${p.shares_count}</td>

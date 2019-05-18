@@ -256,7 +256,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # now look at some members details with nonexistant id
         res7 = self.testapp.get('/detail/5000', status=302)
         res7a = res7.follow()
-        self.failUnless('Membership tools' in res7a.body)
+        self.failUnless('Acquisition of membership' in res7a.body)
 
         # now look at some members details
         res7 = self.testapp.get('/detail/1', status=200)

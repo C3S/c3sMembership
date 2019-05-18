@@ -198,7 +198,7 @@ def switch_sig(request):
         return HTTPFound(
             request.route_url(
                 'detail',
-                memberid=member.id,
+                member_id=member.id,
                 _anchor='membership_info'
             )
         )
@@ -237,7 +237,7 @@ def switch_pay(request):
         return HTTPFound(
             request.route_url(
                 'detail',
-                memberid=member.id,
+                member_id=member.id,
                 _anchor='membership_info')
         )
 
@@ -305,7 +305,7 @@ def mail_signature_confirmation(request):
     if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=member.id))
+            member_id=member.id))
     else:
         return get_dashboard_redirect(request, member.id)
 
@@ -338,7 +338,7 @@ def mail_payment_confirmation(request):
     if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=member.id))
+            member_id=member.id))
     else:
         return get_dashboard_redirect(request, member.id)
 
@@ -384,7 +384,7 @@ def mail_signature_reminder(request):
     if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=member.id))
+            member_id=member.id))
     else:
         return get_dashboard_redirect(request, member.id)
 
@@ -430,7 +430,7 @@ def mail_payment_reminder(request):
     if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=member.id))
+            member_id=member.id))
     else:
         return get_dashboard_redirect(request, member.id)
 

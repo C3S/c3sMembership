@@ -296,7 +296,7 @@ def send_dues16_invoice_email(request, m_id=None):
         return HTTPFound(
             request.route_url(
                 'detail',
-                memberid=member.id) +
+                member_id=member.id) +
             '#dues16')
     if 'toolbox' in request.referrer:
         return HTTPFound(request.route_url('toolbox'))
@@ -641,7 +641,7 @@ def dues16_reduction(request):
             'dues16_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     # sanity check: the given amount is a positive decimal
     try:
@@ -657,7 +657,7 @@ def dues16_reduction(request):
             'dues16_message_to_staff'  # message queue for user
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     if DEBUG:
         print("DEBUG: member.dues16_amount: {}".format(
@@ -680,7 +680,7 @@ def dues16_reduction(request):
             'dues16_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     # check the reduction amount: same as default calculated amount?
     if (not member.dues16_reduced and
@@ -690,7 +690,7 @@ def dues16_reduction(request):
             'dues16_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     if (member.dues16_reduced and
             reduced_amount == member.dues16_amount_reduced):
@@ -699,7 +699,7 @@ def dues16_reduction(request):
             'dues16_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     if (member.dues16_reduced and
             reduced_amount > member.dues16_amount_reduced or
@@ -710,7 +710,7 @@ def dues16_reduction(request):
             'dues16_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     # prepare: get highest invoice no from db
     max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(2016)
@@ -828,7 +828,7 @@ def dues16_reduction(request):
     return HTTPFound(
         request.route_url(
             'detail',
-            memberid=member_id) +
+            member_id=member_id) +
         '#dues16')
 
 
@@ -987,7 +987,7 @@ def dues16_notice(request):
             'dues16notice_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     # sanity check: the given amount is a positive decimal
     try:
@@ -1003,7 +1003,7 @@ def dues16_notice(request):
             'dues16notice_message_to_staff'  # message queue for user
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     # sanity check: the given date is a valid date
     try:
@@ -1020,10 +1020,10 @@ def dues16_notice(request):
             'dues16notice_message_to_staff'  # message queue for user
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues16')
+            request.route_url('detail', member_id=member.id) + '#dues16')
 
     # persist info about payment
     member.set_dues16_payment(paid_amount, paid_date)
 
     return HTTPFound(
-        request.route_url('detail', memberid=member.id) + '#dues16')
+        request.route_url('detail', member_id=member.id) + '#dues16')

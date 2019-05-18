@@ -65,7 +65,7 @@ def make_member_view(request):
             location=request.route_url('dashboard'))
     if member.membership_accepted:
         request.session.flash('id {} is already accepted member!', 'danger')
-        return HTTPFound(request.route_url('detail', memberid=member.id))
+        return HTTPFound(request.route_url('detail', member_id=member.id))
 
     if not (member.signature_received and member.payment_received):
         request.session.flash('signature or payment missing!', 'danger')
@@ -139,8 +139,8 @@ def make_member_view(request):
                 return HTTPFound(request.route_url('dashboard'))
             if request.POST['referrer'] == 'detail':
                 return HTTPFound(
-                    request.route_url('detail', memberid=member.id))
-        return HTTPFound(request.route_url('detail', memberid=member.id))
+                    request.route_url('detail', member_id=member.id))
+        return HTTPFound(request.route_url('detail', member_id=member.id))
 
     referrer = ''
     if 'dashboard' in request.referrer:

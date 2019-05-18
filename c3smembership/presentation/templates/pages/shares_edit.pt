@@ -18,7 +18,7 @@
             <tr>
                 <td>Member</td>
                 <td>
-                    <a href="${request.route_url('detail', memberid=s.members[0].id)}">
+                    <a href="${request.route_url('detail', member_id=s.members[0].id)}">
                         ${s.members[0].firstname} ${s.members[0].lastname}
                     </a>
                 </td>

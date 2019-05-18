@@ -67,7 +67,7 @@
                     ${sim.postcode} ${sim.city}<br />
                     see
                     <a target="_blank_${sim.id}"
-                            href="${request.route_url('detail', memberid=sim.id)}">
+                            href="${request.route_url('detail', member_id=sim.id)}">
                         ${sim.id}
                     </a>
                     <a href="${request.route_url('merge_member',afm_id=member.id,mid=sim.id)}"
@@ -89,7 +89,7 @@
                     ${sim.postcode} ${sim.city}<br />
                     see
                     <a target="_blank_${sim.id}"
-                            href="${request.route_url('detail', memberid=sim.id)}">
+                            href="${request.route_url('detail', member_id=sim.id)}">
                         ${sim.id}
                     </a>
                     <a href="${request.route_url('merge_member',afm_id=member.id,mid=sim.id)}"
@@ -110,7 +110,7 @@
                     ${sim.address1} ${sim.address2}<br />
                     ${sim.postcode} ${sim.city}<br />
                     see
-                    <a href="${request.route_url('detail', memberid=sim.id)}">
+                    <a href="${request.route_url('detail', member_id=sim.id)}">
                         ${sim.id}
                     </a>
                     <a href="${request.route_url('merge_member',afm_id=member.id,mid=sim.id)}"
@@ -131,7 +131,7 @@
                     ${sim.address1} ${sim.address2}<br />
                     ${sim.postcode} ${sim.city}<br />
                     see
-                    <a href="${request.route_url('detail', memberid=sim.id)}">
+                    <a href="${request.route_url('detail', member_id=sim.id)}">
                         ${sim.id}
                     </a>
                     <a href="${request.route_url('merge_member',afm_id=member.id,mid=sim.id)}"

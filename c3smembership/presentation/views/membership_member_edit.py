@@ -637,7 +637,7 @@ def edit_member(request):
         return HTTPFound(  # redirect to details page
             location=request.route_url(
                 'detail',
-                memberid=member.id),
+                member_id=member.id),
         )
 
     form.set_appstruct(appstruct)
