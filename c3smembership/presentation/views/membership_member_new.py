@@ -3,6 +3,25 @@
 This module has functionality for staff to enter new member application
 datasets into the database from the backend.
 """
+
+from datetime import (
+    date,
+    datetime,
+)
+import random
+import string
+from types import NoneType
+
+import colander
+import deform
+from deform import ValidationFailure
+from pyramid.httpexceptions import HTTPFound
+from pyramid.view import view_config
+from sqlalchemy.exc import (
+    InvalidRequestError,
+    IntegrityError
+)
+
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.presentation.i18n import (
@@ -13,27 +32,8 @@ from c3smembership.utils import (
     country_codes,
 )
 
-import colander
-from colander import (
-    # Invalid,
-    Range,
-)
-from datetime import (
-    date,
-    datetime,
-)
-import deform
-from deform import ValidationFailure
 
-from pyramid.httpexceptions import HTTPFound
-from pyramid.view import view_config
-from sqlalchemy.exc import (
-    InvalidRequestError,
-    IntegrityError
-)
-from types import NoneType
-
-country_default = 'Germany'
+COUNTRY_DEFAULT = 'Germany'
 
 
 @view_config(
@@ -43,14 +43,12 @@ country_default = 'Germany'
              'membership_member_new.pt')
 def new_member(request):
     '''
-    let staff create a new member entry, when receiving input via dead wood
+    Let staff create a new member entry, when receiving input via dead wood
     '''
-
-    # XXX check if submitted, etc...
 
     class PersonalData(colander.MappingSchema):
         """
-        colander schema for membership application form
+        Schema for personal data
         """
         firstname = colander.SchemaNode(
             colander.String(),
@@ -96,7 +94,7 @@ def new_member(request):
         country = colander.SchemaNode(
             colander.String(),
             title='Land',
-            default=country_default,
+            default=COUNTRY_DEFAULT,
             widget=deform.widget.SelectWidget(
                 values=country_codes),
             oid="country",
@@ -104,8 +102,6 @@ def new_member(request):
         date_of_birth = colander.SchemaNode(
             colander.Date(),
             title='Geburtsdatum',
-            # widget=deform.widget.DatePartsWidget(
-            #    inline=True),
             default=date(1970, 1, 1),
             oid="date_of_birth",
         )
@@ -117,6 +113,9 @@ def new_member(request):
         )
 
     class MembershipInfo(colander.Schema):
+        """
+        Schema for membership specific information
+        """
 
         yes_no = ((u'yes', _(u'Yes')),
                   (u'no', _(u'No')),
@@ -161,16 +160,12 @@ def new_member(request):
             widget=deform.widget.RadioChoiceWidget(values=yes_no),
             missing=unicode(''),
             oid="other_colsoc",
-            # validator=colsoc_validator
         )
         name_of_colsoc = colander.SchemaNode(
             colander.String(),
             title=(u'Falls ja, welche? (Kommasepariert)'),
             missing=unicode(''),
             oid="colsoc_name",
-            # validator=colander.All(
-            #    colsoc_validator,
-            # )
         )
 
     class Shares(colander.Schema):
@@ -198,8 +193,6 @@ def new_member(request):
         """
         person = PersonalData(
             title=_(u"Personal Data"),
-            # description=_(u"this is a test"),
-            # css_class="thisisjustatest"
         )
         membership_info = MembershipInfo(
             title=_(u"Membership Requirements")
@@ -223,58 +216,33 @@ def new_member(request):
     # if the form has NOT been used and submitted, remove error messages if any
     if 'submit' not in request.POST:
         request.session.pop_flash()
-        # print('ping!')
 
     # if the form has been used and SUBMITTED, check contents
     if 'submit' in request.POST:
         controls = request.POST.items()
         try:
             appstruct = form.validate(controls)
-            # print("the appstruct from the form: %s \n") % appstruct
-            # for thing in appstruct:
-            #    print("the thing: %s") % thing
-            #    print("type: %s") % type(thing)
 
-            # data sanity: if not in collecting society, don't save
-            #  collsoc name even if it was supplied through form
-            # if 'no' in appstruct['membership_info']['member_of_colsoc']:
-            #    appstruct['membership_info']['name_of_colsoc'] = ''
-            #    print appstruct['membership_info']['name_of_colsoc']
-            # print '-'*80
-
-        except ValidationFailure as e:
-            # print("Validation Failure!")
-            # print("the request.POST: %s \n" % request.POST)
-            # for thing in request.POST:
-            #    print("the thing: %s") % thing
-            #    print("type: %s") % type(thing)
-            # print(e.args)
-            # print(e.error)
-            # print(e.message)
+        except ValidationFailure as exception:
             request.session.flash(
                 _(u"Please note: There were errors, "
                   "please check the form below."),
                 'danger',
                 allow_duplicate=False)
-            return{'form': e.render()}
+            return{'form': exception.render()}
 
         def make_random_string():
             """
             used as email confirmation code
             """
-            import random
-            import string
             return u''.join(
                 random.choice(
                     string.ascii_uppercase + string.digits
                 ) for x in range(10))
 
-        # make confirmation code and
         randomstring = make_random_string()
-        # check if confirmation code is already used
-        while (C3sMember.check_for_existing_confirm_code(randomstring)):
-            # create a new one, if the new one already exists in the database
-            randomstring = make_random_string()  # pragma: no cover
+        while C3sMember.check_for_existing_confirm_code(randomstring):
+            randomstring = make_random_string()
 
         # to store the data in the DB, an objet is created
         member = C3sMember(
@@ -291,24 +259,14 @@ def new_member(request):
             date_of_birth=appstruct['person']['date_of_birth'],
             email_is_confirmed=False,
             email_confirm_code=randomstring,
-            # is_composer=('composer' in appstruct['activity']),
-            # is_lyricist=('lyricist' in appstruct['activity']),
-            # is_producer=('music producer' in appstruct['activity']),
-            # is_remixer=('remixer' in appstruct['activity']),
-            # is_dj=('dj' in appstruct['activity']),
             date_of_submission=datetime.now(),
-            # invest_member=(
-            #    appstruct['membership_info']['invest_member'] == u'yes'),
             membership_type=appstruct['membership_info']['membership_type'],
             member_of_colsoc=(
                 appstruct['membership_info']['member_of_colsoc'] == u'yes'),
             name_of_colsoc=appstruct['membership_info']['name_of_colsoc'],
-            # opt_band=appstruct['opt_band'],
-            # opt_URL=appstruct['opt_URL'],
             num_shares=appstruct['shares']['num_shares'],
         )
         if 'legalentity' in appstruct['membership_info']['entity_type']:
-            # print "this is a legal entity"
             member.membership_type = u'investing'
             member.is_legalentity = True
 
@@ -318,47 +276,33 @@ def new_member(request):
             _temp = request.url.split('?')[1].split('=')
             if 'id' in _temp[0]:
                 _id = _temp[1]
-                # print("the id we want to recreate: %s" % _id)
 
-            # add a member with a DB id that had seen its entry deleted before
-                _mem = C3sMember.get_by_id(_id)  # load from id
-                if isinstance(_mem, NoneType):  # check deletion status
-                    member.id = _id  # set id as specified
+                # add a member with a DB id that had seen its entry deleted
+                # before
+                _mem = C3sMember.get_by_id(_id)
+                if isinstance(_mem, NoneType):
+                    member.id = _id
         except:
-            # print "no splitable url params found, creating new entry"
             pass
 
         # add member at next free DB id (default if member.id not set)
         try:
             dbsession.add(member)
             dbsession.flush()
-            # print(member.id)
             the_new_id = member.id
-            # appstruct['email_confirm_code'] = randomstring  # ???
-        except InvalidRequestError, e:  # pragma: no cover
-            print("InvalidRequestError! %s") % e
-        except IntegrityError, ie:  # pragma: no cover
-            print("IntegrityError! %s") % ie
-
-        # send mail to accountants // prepare a mailer
-        # mailer = get_mailer(request)
-        # prepare mail
-        # the_mail = accountant_mail(appstruct)
-        # mailer.send(the_mail)
-        # log.info("NOT sending mail...")
-
-        # return generate_pdf(appstruct)  # would just return a PDF
+        except InvalidRequestError as exception:
+            print("InvalidRequestError! %s") % exception
+        except IntegrityError as exception:
+            print("IntegrityError! %s") % exception
 
         # redirect to success page, then return the PDF
         # first, store appstruct in session
         request.session['appstruct'] = appstruct
         request.session[
             'appstruct']['locale'] = appstruct['person']['locale']
-        # from pyramid.httpexceptions import HTTPFound
-        #
+
         # empty the messages queue (as validation worked anyways)
-        deleted_msg = request.session.pop_flash()
-        del deleted_msg
+        request.session.pop_flash()
         return HTTPFound(  # redirect to success page
             location=request.route_url(
                 'detail',
@@ -369,21 +313,11 @@ def new_member(request):
     # BUT the user wants to correct their information:
     else:
         # remove annoying message from other session
-        deleted_msg = request.session.pop_flash()
-        del deleted_msg
-        if ('appstruct' in request.session):
-            # print("form was not submitted, but found appstruct in session.")
+        request.session.pop_flash()
+        if 'appstruct' in request.session:
             appstruct = request.session['appstruct']
-            # print("the appstruct: %s") % appstruct
             # pre-fill the form with the values from last time
             form.set_appstruct(appstruct)
-            # import pdb
-            # pdb.set_trace()
-            # form = deform.Form(schema,
-            #           buttons=[deform.Button('submit', _(u'Submit'))],
-            #           use_ajax=True,
-            #           renderer=zpt_renderer
-            #           )
 
     html = form.render()
 
