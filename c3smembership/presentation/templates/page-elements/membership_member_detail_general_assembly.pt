@@ -1,3 +1,5 @@
+<!--! i18n needs one root element -->
+<div tal:omit-tag="">
 <h2>General Assembly Invitations</h2>
 <span tal:condition="len(general_assembly_invitations) > 0" tal:omit-tag="">
     <table class="table table-striped">
@@ -41,3 +43,4 @@
 <span tal:condition="len(general_assembly_invitations) == 0" tal:omit-tag="">
     There are no general assemblies relevant for this member.
 </span>
+</div>

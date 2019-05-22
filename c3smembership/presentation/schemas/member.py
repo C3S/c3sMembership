@@ -4,8 +4,130 @@ Member schema definitions
 """
 
 import colander
+from datetime import date
+import deform
 
+from c3smembership.utils import country_codes
+from c3smembership.presentation.i18n import _
 from c3smembership.presentation.view_processing import ValidationNode
+
+
+COUNTRY_DEFAULT = u'DE'
+LOCALE_DEFAULT = u'de'
+
+
+@colander.deferred
+def deferred_dob_validator(node, keywords):
+    """
+    Deferred date of birth validator
+
+    Needed for testing purposes.
+    """
+    kw_date = keywords['date']
+    return colander.Range(
+        min=kw_date(1913, 1, 1),
+        # max 18th birthday, no minors through web formular
+        max=kw_date(
+            kw_date.today().year-18,
+            kw_date.today().month,
+            kw_date.today().day),
+        min_err=_(
+            u'Sorry, but we do not believe that the birthday you '
+            u'entered is correct.'),
+        max_err=_(
+            u'Unfortunately, the membership application of an '
+            u'underaged person is currently not possible via our web '
+            u'form. Please send an email to office@c3s.cc.'))
+
+
+class PersonalDataBase(colander.MappingSchema):
+    """
+    Colander schema containing member personal data like name and address
+    """
+
+    firstname = colander.SchemaNode(
+        colander.String(),
+        title=_(u'First Name'),
+        oid='firstname',
+    )
+    lastname = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Last Name'),
+        oid='lastname',
+    )
+    email = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Email Address'),
+        validator=colander.Email(),
+        oid='email',
+    )
+    address1 = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Address Line 1'),
+    )
+    address2 = colander.SchemaNode(
+        colander.String(),
+        missing=u'',
+        title=_(u'Address Line 2'),
+    )
+    postcode = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Postal Code'),
+        oid='postcode'
+    )
+    city = colander.SchemaNode(
+        colander.String(),
+        title=_(u'City'),
+        oid='city',
+    )
+    country = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Country'),
+        default=COUNTRY_DEFAULT,
+        widget=deform.widget.SelectWidget(
+            values=country_codes),
+        oid='country',
+    )
+    date_of_birth = colander.SchemaNode(
+        colander.Date(),
+        title=_(u'Date of Birth'),
+        widget=deform.widget.DatePartsWidget(),
+        default=date(2013, 1, 1),
+        validator=deferred_dob_validator,
+        # colander.Range(
+        #     min=date(1913, 1, 1),
+        #     # max 18th birthday, no minors through web formular
+        #     max=date(
+        #         date.today().year-18,
+        #         date.today().month,
+        #         date.today().day),
+        #     min_err=_(
+        #         u'Sorry, but we do not believe that the birthday you '
+        #         u'entered is correct.'),
+        #     max_err=_(
+        #         u'Unfortunately, the membership application of an '
+        #         u'underaged person is currently not possible via our web '
+        #         u'form. Please send an email to office@c3s.cc.')
+        # ),
+        oid='date_of_birth',
+    )
+
+
+class PersonalDataJoin(PersonalDataBase):
+    """
+    Personal data colander schema a password field
+
+    Used for the join form.
+    """
+    password = colander.SchemaNode(
+        colander.String(),
+        validator=colander.Length(min=5, max=100),
+        widget=deform.widget.CheckedPasswordWidget(size=20),
+        title=_(u'Password (to protect access to your data)'),
+        description=_(u'We need a password to protect your data. After '
+                      u'verifying your email you will have to enter it.'),
+        oid='password',
+    )
 
 
 class MemberNode(ValidationNode):

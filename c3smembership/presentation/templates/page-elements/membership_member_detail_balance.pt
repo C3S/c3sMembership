@@ -1,3 +1,5 @@
+<!--! i18n needs one root element -->
+<div tal:omit-tag="">
 <h2 id="certificate">Account Balance</h2>
 <table class="table table-striped">
     <?python
@@ -45,3 +47,4 @@
         </th>
     </tr>
 </table>
+</div>

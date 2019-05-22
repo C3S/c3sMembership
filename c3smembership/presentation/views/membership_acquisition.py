@@ -282,7 +282,7 @@ def regenerate_pdf(request):
         "%s regenerated the PDF for code %s",
         authenticated_userid(request),
         code)
-    return generate_pdf(appstruct)
+    return generate_pdf(request, appstruct)
 
 
 @view_config(
@@ -456,7 +456,6 @@ def mail_mail_conf(request):
         request.registry.settings['c3smembership.url'],
         request.registry.settings['c3smembership.notification_sender'],
         request.registry.get_mailer(request),
-        request.localizer,
         request.registry.settings['testing.mail_to_console'])
 
     return get_dashboard_redirect(request, member.id)

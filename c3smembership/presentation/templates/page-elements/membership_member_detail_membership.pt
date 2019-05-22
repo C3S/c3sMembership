@@ -1,3 +1,5 @@
+<!--! i18n needs one root element -->
+<div tal:omit-tag="">
 <h2>Membership</h2>
 <table class="table table-striped">
     <tr>
@@ -91,3 +93,4 @@
         </td>
     </tr>
 </table>
+</div>

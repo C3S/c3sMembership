@@ -588,8 +588,6 @@ class FunctionalTests(unittest.TestCase):
         # print(res.body) #  if you want to see the pages source
         self.failUnless(
             'Mitgliedschaftsantrag für die' in res.body)
-        self.failUnless(
-            '<input type="hidden" name="locale" value="de"' in res.body)
 
     def test_accept_language_header_en(self):
         """check the http 'Accept-Language' header obedience: english
@@ -670,7 +668,8 @@ class FunctionalTests(unittest.TestCase):
         """load the join form in german, check german string exists
         this time forcing german locale the pyramid way
         """
-        res = self.testapp.get('/?_LOCALE_=de', status=200)
+        res = self.testapp.get('/?de', status=302)
+        res = res.follow()
         # test for german translation of template text (lingua_xml)
         self.failUnless(
             'Mitgliedschaftsantrag für die' in res.body)
