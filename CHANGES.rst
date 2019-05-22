@@ -1,3 +1,37 @@
+Next Release
+============
+
+
+- Use Python 2 for now
+
+- Fix first general assembly creation
+
+- Freeze required modules due to incompatibilities
+
+- Introduce view processing. View processing provides functionality for pre-
+  and post-processing especially to validate and transform view input like URL
+  pattern matchdict, GET and POST.
+
+- Refactor general assembly invitations to use view processing validation
+
+- Refactor membership certificate to use view processing validation
+
+- Refactor membership acquisition to use validation and proper integration
+  tests. Membership acquisition is refactored to use view processing
+  validation. At the same time integration tests for membership acquisition are
+  rebuilt from scratch introducing a general base for integration testing.
+
+- Refactor member detail to use validation and proper integration tests. Member
+  detail is refactored to use view processing validation. At the same time
+  integration tests for member detail are rebuilt from scratch introducing a
+  general base for integration testing.
+
+- Cleanup code
+
+- Introduce caching to footer version information
+
+
+
 1.27
 ====
 
