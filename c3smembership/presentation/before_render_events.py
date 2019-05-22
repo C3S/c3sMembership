@@ -10,6 +10,7 @@ from pyramid.events import (
     BeforeRender
 )
 
+from c3smembership.cache import cached
 from c3smembership.git_tools import GitTools
 
 
@@ -26,45 +27,59 @@ EXCLUDED_ROUTES = [
 ]
 
 
+@cached()
+def get_version_information():
+    """
+    Get the version information including Git tag and branch
+    """
+    version_number = open(os.path.join(
+        os.path.abspath(os.path.dirname(__file__)),
+        '../../',
+        'VERSION')).read()
+
+    tag = GitTools.get_tag()
+    branch = GitTools.get_branch()
+
+    version_metadata = [u'Version {0}'.format(version_number)]
+    if tag is not None:
+        version_metadata.append(u'Tag {0}'.format(tag))
+    if branch is not None:
+        version_metadata.append(u'Branch {0}'.format(branch))
+    version_information = u', '.join(version_metadata)
+    return version_information
+
+
+@cached()
+def get_version_location_name():
+    """
+    Get the version location name as the Git commit hash
+    """
+    return GitTools.get_commit_hash()
+
+
+@cached()
+def get_version_location_url():
+    """
+    Get the version location URL as the Git commit remote URL
+    """
+    return GitTools.get_github_commit_url()
+
+
 @subscriber(BeforeRender)
 def version_before_render(event):
     """
     Add version information to the renderer
 
-    In development mode get version information from Git tag, branch and
-    commit. In production mode only get version information from version file
-    because retrieving Git information is slow.
-
-    A possibility to improve this feature could be to also get the Git
-    information in production mode and cache it so that it is only retrieved
-    once.
+    Version information includes the Git tag, branch and commit and remote URL.
     """
     if isinstance(event.rendering_val, dict):
         request = event.get('request')
         if request.matched_route is not None \
                 and request.matched_route.name not in EXCLUDED_ROUTES:
-            version_number = open(os.path.join(
-                os.path.abspath(os.path.dirname(__file__)),
-                '../../',
-                'VERSION')).read()
-            version_location_url = None
-            version_location_name = None
-            settings = event['request'].registry.settings
-            if 'c3smembership.runmode' in settings  \
-                    and settings['c3smembership.runmode'] == 'dev':
-                git_tag = GitTools.get_tag()
-                branch_name = GitTools.get_branch()
-                version_metadata = [u'Version {0}'.format(version_number)]
-                if git_tag is not None:
-                    version_metadata.append(u'Tag {0}'.format(git_tag))
-                if branch_name is not None:
-                    version_metadata.append(u'Branch {0}'.format(branch_name))
-                version_information = u', '.join(version_metadata)
-                version_location_name = GitTools.get_commit_hash()
-                version_location_url = GitTools.get_github_commit_url()
-            else:
-                version_information = u'Version {0}'.format(version_number)
-            event.rendering_val['version_information'] = version_information
+
+            event.rendering_val['version_information'] = \
+                get_version_information()
             event.rendering_val['version_location_name'] = \
-                version_location_name
-            event.rendering_val['version_location_url'] = version_location_url
+                get_version_location_name()
+            event.rendering_val['version_location_url'] = \
+                get_version_location_url()
