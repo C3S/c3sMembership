@@ -1,0 +1,52 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+coverage = '*'
+nose = '*'
+
+[packages]
+#
+# the one we develop
+#
+c3smembership = {path = ".",editable = true}
+#
+# all the others: dependencies
+#
+alembic = '*'
+Babel = '*'
+colander = '*'
+cornice = '*'
+cryptacular = {ref = "cb96fb3",editable = true,hg = "https://bitbucket.org/dholth/cryptacular"}
+deform = '*'
+fdfgen = '*'
+gnupg = '*'
+pyramid = '*'
+pyramid_beaker = '*'
+pyramid_chameleon = '*'
+pyramid_debugtoolbar = '*'
+pyramid_mailer = '*'
+pyramid_tm = '*'
+setuptools = '*'
+unicodecsv = '*'
+waitress = '*'
+'zope.sqlalchemy' = '*' 
+#
+# for testing
+#
+nose = "*"
+coverage = "*"
+pep8 = "*"
+pylint = "*"
+pyflakes = "*"
+pyquery = "*"
+selenium = "*"
+webtest = "*"
+
+[requires]
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true

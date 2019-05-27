@@ -91,9 +91,9 @@ class TestApiViews(unittest.TestCase):
         """
         # try a GET -- must fail
         res = self.testapp.get('/lm', status=405)
-        self.assertTrue('405 Method Not Allowed' in res.body)
+        self.assertTrue('405 Method Not Allowed' in res.body.decode())
         self.assertTrue('The method GET is not allowed for this resource.'
-                        in res.body)
+                        in res.body.decode())
 
         # try a PUT -- fails under certain conditions
         with self.assertRaises(ValueError):

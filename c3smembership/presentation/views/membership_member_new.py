@@ -76,7 +76,7 @@ def new_member(request):
         )
         address2 = colander.SchemaNode(
             colander.String(),
-            missing=unicode(''),
+            missing='',
             title='Adresse Zeile 2'
         )
         postcode = colander.SchemaNode(
@@ -130,7 +130,7 @@ def new_member(request):
                      u'Körperschaft'),
                 ),
             ),
-            missing=unicode(''),
+            missing='',
             oid='entity_type',
         )
         membership_type = colander.SchemaNode(
@@ -147,7 +147,7 @@ def new_member(request):
                      u'Unbekannt.'),
                 ),
             ),
-            missing=unicode(''),
+            missing='',
             oid='membership_type',
         )
         member_of_colsoc = colander.SchemaNode(
@@ -155,14 +155,14 @@ def new_member(request):
             title='Mitglied einer Verwertungsgesellschaft?',
             validator=colander.OneOf([x[0] for x in yes_no]),
             widget=deform.widget.RadioChoiceWidget(values=yes_no),
-            missing=unicode(''),
+            missing='',
             oid="other_colsoc",
             # validator=colsoc_validator
         )
         name_of_colsoc = colander.SchemaNode(
             colander.String(),
             title=(u'Falls ja, welche? (Kommasepariert)'),
-            missing=unicode(''),
+            missing='',
             oid="colsoc_name",
             # validator=colander.All(
             #    colsoc_validator,

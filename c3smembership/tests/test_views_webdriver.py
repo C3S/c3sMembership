@@ -72,7 +72,7 @@ class SeleniumTestBase(unittest.TestCase):
         if os.path.isfile('webdrivertest.db'):
             call(['rm', 'webdrivertest.db'], stdout=open(os.devnull, 'w'))
         call(
-            ['env/bin/initialize_c3sMembership_db', 'webdrivertest.ini'],
+            ['pipenv run initialize_c3sMembership_db', 'webdrivertest.ini'],
             stdout=open(os.devnull, 'w'))
 
     def setUp(self):
@@ -94,6 +94,7 @@ class SeleniumTestBase(unittest.TestCase):
         self.driver.close()
         self.driver.quit()
         SERVER.disconnect()
+        SERVER.shutdown()
 
 
 class JoinFormTests(SeleniumTestBase):
@@ -239,8 +240,9 @@ class JoinFormTests(SeleniumTestBase):
         """
         self.assertEqual(self.driver.get_cookies(), [])
         # load the page with the form
-        self.driver.get("http://0.0.0.0:6544?en")
+        self.driver.get("http://0.0.0.0:6544/?en")
 
+        import pdb; pdb.set_trace()
         self.failUnless(
             u'Application for Membership' in self.driver.page_source)
 

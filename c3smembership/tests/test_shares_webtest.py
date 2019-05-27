@@ -33,10 +33,10 @@ class SharesTests(unittest.TestCase):
         try:
             DBSession.close()
             DBSession.remove()
-            # print "closed and removed DBSession"
+            # print("closed and removed DBSession")
         except:
             pass
-            # print "no session to close"
+            # print("no session to close")
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
@@ -200,9 +200,9 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' in res.body.decode())
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode())
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -214,23 +214,24 @@ class SharesTests(unittest.TestCase):
         # print('<'*20)
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.failUnless(
-            'Acquisition of membership' in res3.body)
+            'Acquisition of membership' in res3.body.decode())
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=302)
         res2 = res.follow()
         # we were redirected to the menberships list
         # because the shares package did not exist
         self.assertTrue(
-            'This shares id was not found in the database!' in res2.body)
-        self.assertTrue('Membership tools' in res2.body)
+            'This shares id was not found '
+            'in the database!' in res2.body.decode())
+        self.assertTrue('Membership tools' in res2.body.decode())
 
         self.make_member_with_shares()
 
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body.decode())
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body.decode())
+        self.assertTrue('ABCDEFGH' in res.body.decode())
 
     def test_shares_edit(self):
         '''
@@ -239,9 +240,9 @@ class SharesTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' in res.body.decode())
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode())
         # try valid user
         form = res.form
         form['login'] = u'rut'
@@ -249,7 +250,7 @@ class SharesTests(unittest.TestCase):
         res2 = form.submit('submit', status=302)
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
-        self.failUnless('Acquisition of membership' in res3.body)
+        self.failUnless('Acquisition of membership' in res3.body.decode())
 
         # no member in DB, so redirecting to dashboard
         res = self.testapp.get('/shares_edit/1', status=302)
@@ -262,24 +263,24 @@ class SharesTests(unittest.TestCase):
         # lets try invalid input
         res = self.testapp.get('/shares_edit/foo', status=302)
         res2 = res.follow()
-        self.failUnless('Members' in res2.body)
+        self.failUnless('Members' in res2.body.decode())
 
         # now try valid id
         res = self.testapp.get('/shares_edit/1', status=200)
-        self.failUnless('Edit Details for Shares' in res.body)
+        self.failUnless('Edit Details for Shares' in res.body.decode())
 
         # now we change details, really editing that member
         form = res.form
 
         if DEBUG:
-            print "form.fields: {}".format(form.fields)
+            print("form.fields: {}".format(form.fields))
 
         self.assertTrue('2' in form['number'].value)
         self.assertTrue(datetime.today().strftime(
-            '%Y-%m-%d') in form['date_of_acquisition'].value)
+            '%Y-%m-%d') in form['date'].value)
         # print(form['date_of_acquisition'].value)
         form['number'] = u'3'
-        form['date_of_acquisition'] = u'2015-01-02'
+        form['date'] = u'2015-01-02'
 
         # try to submit now. this must fail,
         # because the date of birth is wrong
@@ -288,7 +289,7 @@ class SharesTests(unittest.TestCase):
 
         # check data in DB
         _m1 = C3sMember.get_by_id(1)
-        self.assertTrue(_m1.shares[0].number is 3)
+        self.assertTrue(_m1.shares[0].number == 3)
         self.assertTrue(str(
             _m1.shares[0].date_of_acquisition) in str(datetime(2015, 1, 2)))
 
@@ -298,9 +299,9 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' in res.body.decode())
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode())
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -312,31 +313,33 @@ class SharesTests(unittest.TestCase):
         # print('<'*20)
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.failUnless(
-            'Acquisition of membership' in res3.body)
+            'Acquisition of membership' in res3.body.decode())
 
         self.make_member_with_shares()
 
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body.decode())
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body.decode())
+        self.assertTrue('ABCDEFGH' in res.body.decode())
 
         # try to delete a non-existing package
         res = self.testapp.get('/shares_delete/123', status=302)
         res2 = res.follow()
         self.assertTrue(
-            'This shares package 123 was not found in the DB.' in res2.body)
+            'This shares package 123 '
+            'was not found in the DB.' in res2.body.decode())
 
         # try to delete an existing package
         res = self.testapp.get('/shares_delete/1', status=302)
         res2 = res.follow()
         self.assertTrue(
-            'This shares package 1 still has a member owning it.' in res2.body)
+            'This shares package 1 '
+            'still has a member owning it.' in res2.body.decode())
         res = self.testapp.get('/delete/1', status=302)
         res2 = res.follow()
 
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body.decode())
         # self.assertTrue('1: Not Found' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('ABCDEFGH' in res.body.decode())

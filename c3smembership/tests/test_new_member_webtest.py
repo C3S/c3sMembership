@@ -79,7 +79,7 @@ class NewMemberTests(unittest.TestCase):
 
     def _login(self):
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in res.body.decode())
         res.form['login'] = 'rut'
         res.form['password'] = 'berries'
         res.form.submit('submit', status=302)
@@ -95,7 +95,7 @@ class NewMemberTests(unittest.TestCase):
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
         form['locale'] = u"DE"
-        form['date_of_birth'] = unicode(date(date.today().year-40, 1, 1))
+        form['date'] = str(date(date.today().year-40, 1, 1))
         form['entity_type'].value__set(u'person')
         form['membership_type'].value__set(u'normal')
         form['other_colsoc'].value__set(u'no')
@@ -113,7 +113,7 @@ class NewMemberTests(unittest.TestCase):
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
         form['locale'] = u"DE"
-        form['date_of_birth'] = unicode(date(date.today().year-40, 1, 1))
+        form['date'] = str(date(date.today().year-40, 1, 1))
         form['entity_type'] = u'legalentity'
         form['membership_type'] = u'investing'
         form['other_colsoc'].value__set(u'no')
@@ -129,7 +129,7 @@ class NewMemberTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/new_member', status=403)
-        assert('Access was denied to this resource' in res.body)
+        assert('Access was denied to this resource' in res.body.decode())
 
         # so login first
         self._login()
@@ -141,16 +141,16 @@ class NewMemberTests(unittest.TestCase):
         res = form.submit(u'submit', status=302)
         res4 = res.follow()
 
-        self.assertTrue('Membership application details' in res4.body)
-        self.assertTrue('SomeFirstname' in res4.body)
-        self.assertTrue('SomeLastname' in res4.body)
-        self.assertTrue('some@shri.de' in res4.body)
-        self.assertTrue('addr one' in res4.body)
-        self.assertTrue('addr two' in res4.body)
-        self.assertTrue('12345' in res4.body)
-        self.assertTrue('DE' in res4.body)
-        self.assertTrue('normal' in res4.body)
-        self.assertTrue('23' in res4.body)
+        self.assertTrue('Membership application details' in res4.body.decode())
+        self.assertTrue('SomeFirstname' in res4.body.decode())
+        self.assertTrue('SomeLastname' in res4.body.decode())
+        self.assertTrue('some@shri.de' in res4.body.decode())
+        self.assertTrue('addr one' in res4.body.decode())
+        self.assertTrue('addr two' in res4.body.decode())
+        self.assertTrue('12345' in res4.body.decode())
+        self.assertTrue('DE' in res4.body.decode())
+        self.assertTrue('normal' in res4.body.decode())
+        self.assertTrue('23' in res4.body.decode())
 
         # now, there is a member with id=1 in DB
         res = self.testapp.get('/new_member?id=1', status=200)
@@ -164,14 +164,14 @@ class NewMemberTests(unittest.TestCase):
         res = form.submit(u'submit', status=302)
         res4 = res.follow()
 
-        self.assertTrue('Membership application details' in res4.body)
-        self.assertTrue('SomeLegalentity' in res4.body)
-        self.assertTrue('SomeLegalName' in res4.body)
-        self.assertTrue('legal@example.de' in res4.body)
-        self.assertTrue('addr one' in res4.body)
-        self.assertTrue('addr two' in res4.body)
-        self.assertTrue('12345' in res4.body)
-        self.assertTrue('' in res4.body)
-        self.assertTrue('DE' in res4.body)
-        self.assertTrue('investing' in res4.body)
-        self.assertTrue('42' in res4.body)
+        self.assertTrue('Membership application details' in res4.body.decode())
+        self.assertTrue('SomeLegalentity' in res4.body.decode())
+        self.assertTrue('SomeLegalName' in res4.body.decode())
+        self.assertTrue('legal@example.de' in res4.body.decode())
+        self.assertTrue('addr one' in res4.body.decode())
+        self.assertTrue('addr two' in res4.body.decode())
+        self.assertTrue('12345' in res4.body.decode())
+        self.assertTrue('' in res4.body.decode())
+        self.assertTrue('DE' in res4.body.decode())
+        self.assertTrue('investing' in res4.body.decode())
+        self.assertTrue('42' in res4.body.decode())

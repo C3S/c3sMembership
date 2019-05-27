@@ -34,7 +34,8 @@ class Server(object):
             )
         )
         # store some derived variables
-        self.app_settings['sqlalchemy.url'] = 'sqlite:///'+self.cfg['app']['db']
+        self.app_settings[
+            'sqlalchemy.url'] = 'sqlite:///'+self.cfg['app']['db']
         # merge/override appConfig with custom settings in cfg
         self.app_settings.update(self.cfg['app']['appSettings'])
         # merge/override appConfig with individual custom settings
