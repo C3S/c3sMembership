@@ -540,7 +540,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
 
     # generate tex command for pdflatex
     tex_cmd = u''
-    for key, val in tex_vars.iteritems():
+    for key, val in iter(tex_vars.items()):
         tex_cmd += '\\newcommand{\\%s}{%s}' % (key, TexTools.escape(val))
     tex_cmd += '\\input{%s}' % tpl_tex
     tex_cmd = u'"'+tex_cmd+'"'
@@ -938,7 +938,7 @@ def make_reversal_pdf_pdflatex(member, invoice=None):
 
     # generate tex command for pdflatex
     tex_cmd = u''
-    for key, val in tex_vars.iteritems():
+    for key, val in iter(tex_vars.items()):
         tex_cmd += '\\newcommand{\\%s}{%s}' % (key, TexTools.escape(val))
     tex_cmd += '\\input{%s}' % tpl_tex
     tex_cmd = u'"'+tex_cmd+'"'
