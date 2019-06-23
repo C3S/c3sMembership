@@ -103,7 +103,7 @@ class MembershipApplicationTest(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.failUnless('login' in str(res.body))
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -120,11 +120,11 @@ class MembershipApplicationTest(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Dashboard' in res.body)
+        self.failUnless('Dashboard' in str(res.body))
 
     @classmethod
     def _response_to_bare_text(cls, res):
-        html = res.normal_body
+        html = res.normal_body.decode('utf-8')
         # remove JavaScript
         html = re.sub(re.compile('<script.*</script>'), '', html)
         # remove all tags
@@ -168,7 +168,8 @@ class MembershipApplicationTest(unittest.TestCase):
             'password': u'worst password ever chosen',
             'password-confirm': u'worst password ever chosen',
         }
-        for key, value in properties.iteritems():
+        for key, value in iter(properties.items()):
+            # python2dict.iteritems() -> iter(python3dict.items())
             res.form[key] = value
         res.form['country'].select(text=u'Sweden')
         res.form['membership_type'].value__set(u'normal')
@@ -192,7 +193,9 @@ class MembershipApplicationTest(unittest.TestCase):
         self.assertTrue('Date of Birth: 1980-01-02' in body)
         self.assertTrue('Type of Membership:normal' in body)
         self.assertTrue('Member of other Collecting Society: yes' in body)
-        self.assertTrue('Membership(s): Svenska Tonsättares Internationella Musikbyrå' in body)
+        self.assertTrue(
+            ('Membership(s): Svenska Tonsättares '
+             'Internationella Musikbyrå') in body)
         self.assertTrue('Number of Shares: 15' in body)
         self.assertTrue('Cost of Shares (50 € each): 750 €' in body)
         res = self.testapp.get('/check_email', status=200)
@@ -201,7 +204,8 @@ class MembershipApplicationTest(unittest.TestCase):
         mailer = self.get_mailer(None)
         email = mailer.get_email()
         self.assertEqual(email.recipients, ['soenke@example.com'])
-        self.assertEqual(email.subject, 'C3S: confirm your email address and load your PDF')
+        self.assertEqual(
+            email.subject, 'C3S: confirm your email address and load your PDF')
 
         # 4. Confirm email address via confirmation link
         match = re.search(
@@ -213,7 +217,7 @@ class MembershipApplicationTest(unittest.TestCase):
             match.group('url'),
             status=200)
 
-        self.assertTrue(u'password in order to verify your email' in res.body)
+        self.assertTrue(u'password in order to verify your email' in str(res.body))
         res.form['password'] = 'worst password ever chosen'
         res = res.form.submit(u'submit', status=200)
 
@@ -239,7 +243,9 @@ class MembershipApplicationTest(unittest.TestCase):
         self.assertTrue('Membership accepted  No' in body)
         self.assertTrue('Entity type Natural person' in body)
         self.assertTrue('Membership type normal' in body)
-        self.assertTrue('Member of collecting societies Yes Svenska Tonsättares Internationella Musikbyrå' in body)
+        self.assertTrue(
+            ('Member of collecting societies Yes Svenska '
+             'Tonsättares Internationella Musikbyrå') in body)
         self.assertTrue('Date of submission' in body)
         self.assertTrue('Signature received    No' in body)
         self.assertTrue('Signature confirmed No' in body)

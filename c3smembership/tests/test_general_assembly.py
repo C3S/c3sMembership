@@ -65,59 +65,59 @@ def init_testing_db():
 
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2014,
-            u'1. ordentliche Generalversammlung',
+            '1. ordentliche Generalversammlung',
             date(2014, 8, 23)))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2015,
-            u'2. ordentliche Generalversammlung',
+            '2. ordentliche Generalversammlung',
             date(2015, 6, 13)))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2015_2,
-            u'Außerordentliche Generalversammlung',
+            'Außerordentliche Generalversammlung',
             date(2015, 7, 16)))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2016,
-            u'3. ordentliche Generalversammlung',
+            '3. ordentliche Generalversammlung',
             date(2016, 4, 17)))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2017,
-            u'4. ordentliche Generalversammlung',
+            '4. ordentliche Generalversammlung',
             date(2017, 4, 2)))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2018,
-            u'5. ordentliche Generalversammlung',
+            '5. ordentliche Generalversammlung',
             date(2018, 6, 3)))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2018_2,
-            u'Außerordentliche Generalversammlung',
+            'Außerordentliche Generalversammlung',
             date(2018, 12, 1)))
 
         # German person
         member1 = C3sMember(
-            firstname=u'SomeFirstnäme',
-            lastname=u'SomeLastnäme',
-            email=u'some@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
+            firstname='SomeFirstnäme',
+            lastname='SomeLastnäme',
+            email='some@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
             city=u"Footown Mäh",
             country=u"Foocountry",
             locale=u"de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG1',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG1',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
             name_of_colsoc=u"",
-            num_shares=u'23',
+            num_shares='23',
         )
         # English person
         member2 = C3sMember(
-            firstname=u'AAASomeFirstnäme',
-            lastname=u'XXXSomeLastnäme',
-            email=u'some2@shri.de',
+            firstname='AAASomeFirstnäme',
+            lastname='XXXSomeLastnäme',
+            email='some2@shri.de',
             address1=u"addr one",
             address2=u"addr two",
             postcode=u"12345",
@@ -126,19 +126,19 @@ def init_testing_db():
             locale=u"en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG2',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG2',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
             name_of_colsoc=u"",
-            num_shares=u'23',
+            num_shares='23',
         )
         # German legal entity
         member3 = C3sMember(
-            firstname=u'Cooles PlattenLabel',
-            lastname=u'SomeLastnäme',
-            email=u'some@shri.de',
+            firstname='Cooles PlattenLabel',
+            lastname='SomeLastnäme',
+            email='some@shri.de',
             address1=u"addr one",
             address2=u"addr two",
             postcode=u"12345",
@@ -147,19 +147,19 @@ def init_testing_db():
             locale=u"de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG3',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG3',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
             name_of_colsoc=u"",
-            num_shares=u'42',
+            num_shares='42',
         )
         # English legal entity
         member4 = C3sMember(
-            firstname=u'Incredible Records',
-            lastname=u'XXXSomeLastnäme',
-            email=u'some2@shri.de',
+            firstname='Incredible Records',
+            lastname='XXXSomeLastnäme',
+            email='some2@shri.de',
             address1=u"addr one",
             address2=u"addr two",
             postcode=u"12345",
@@ -168,25 +168,25 @@ def init_testing_db():
             locale=u"en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG4',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG4',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
             name_of_colsoc=u"",
-            num_shares=u'2',
+            num_shares='2',
         )
         member1.membership_accepted = True
-        member1.membership_number = u'11'
+        member1.membership_number = '11'
         DBSession.add(member1)
         member2.membership_accepted = True
-        member2.membership_number = u'22'
+        member2.membership_number = '22'
         DBSession.add(member2)
         member3.membership_accepted = True
-        member3.membership_number = u'33'
+        member3.membership_number = '33'
         DBSession.add(member3)
         member4.membership_accepted = True
-        member4.membership_number = u'44'
+        member4.membership_number = '44'
         DBSession.add(member4)
 
         DBSession.flush()

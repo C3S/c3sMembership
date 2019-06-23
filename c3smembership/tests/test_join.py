@@ -263,7 +263,7 @@ class TestViews(unittest.TestCase):
         form['postcode'] = u"12345"
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
-        form['year'] = unicode(date.today().year-40)
+        form['year'] = date.today().year-40
         form['month'] = '1'
         form['day'] = '1'
         form['locale'] = u"DE"
@@ -309,7 +309,7 @@ class TestViews(unittest.TestCase):
         form = self._fill_form_valid_natural(res.form)
         res = form.submit(u'submit', status=302)
         res = res.follow()
-        self.assertTrue('information below to be correct' in res.body)
+        self.assertTrue('information below to be correct' in str(res.body))
 
         # success for 18th birthday
         res = self.testapp.get('/', status=200)
@@ -320,7 +320,7 @@ class TestViews(unittest.TestCase):
         form['day'] = u'29'
         res = form.submit(u'submit', status=302)
         res = res.follow()
-        self.assertTrue('information below to be correct' in res.body)
+        self.assertTrue('information below to be correct' in str(res.body))
 
         # failure on test one day before 18th birthday
         res = self.testapp.get('/', status=200)
@@ -330,7 +330,7 @@ class TestViews(unittest.TestCase):
         form['month'] = u'04'
         form['day'] = u'30'
         res = form.submit(u'submit', status=200)
-        self.assertTrue('underaged person is currently not' in res.body)
+        self.assertTrue('underaged person is currently not' in str(res.body))
 
         # failure for statute not checked
         res = self.testapp.get('/', status=200)

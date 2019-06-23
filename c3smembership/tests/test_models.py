@@ -1,6 +1,6 @@
 # -*- coding: utf-8  -*-
 # import os
-from datetime import(
+from datetime import (
     date,
     datetime,
     timedelta,
@@ -809,17 +809,17 @@ class TestMemberListing(C3sMembershipModelTestBase):
         self.assertEqual("ABC", result[-1].lastname)
 
     def test_order_invalid(self):
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='unknown', order="desc")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by=None, order="desc")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by="", order="desc")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='lastname', order="unknown")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='lastname', order="")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='lastname', order=None)
 
 
@@ -1024,8 +1024,8 @@ class Dues15InvoiceModelTests(unittest.TestCase):
 
             dues1 = Dues15Invoice(
                 invoice_no=1,
-                invoice_no_string=u'C3S-dues15-0001',
-                invoice_date=date(2015, 10, 01),
+                invoice_no_string='C3S-dues15-0001',
+                invoice_date=date(2015, 10, 1),
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
@@ -1037,7 +1037,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
             dues2 = Dues15Invoice(
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues15-0002-S',
-                invoice_date=date(2015, 10, 02),
+                invoice_date=date(2015, 10, 2),
                 invoice_amount=D('17.25'),
                 member_id=1,
                 membership_no=1,
@@ -1174,7 +1174,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_no=1,
                 invoice_no_string=u'C3S-dues15-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1195,7 +1195,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues15-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1217,7 +1217,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 invoice_no=5,
                 invoice_no_string=u'C3S-dues15-0002',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50.20').to_eng_string()),
+                invoice_amount=D('-37.50.20').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1238,7 +1238,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
             invoice_no=7,
             invoice_no_string=u'C3S-dues15-0002',
             invoice_date=date.today(),
-            # invoice_amount=unicode(D('-37.50').to_eng_string()),
+            # invoice_amount=D('-37.50').to_eng_string(),
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,
@@ -1339,7 +1339,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
             dues1 = Dues16Invoice(
                 invoice_no=1,
                 invoice_no_string=u'C3S-dues16-0001',
-                invoice_date=date(2015, 10, 01),
+                invoice_date=date(2015, 10, 1),
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
@@ -1351,7 +1351,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
             dues2 = Dues16Invoice(
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues16-0002-S',
-                invoice_date=date(2015, 10, 02),
+                invoice_date=date(2015, 10, 2),
                 invoice_amount=D('17.25'),
                 member_id=1,
                 membership_no=1,
@@ -1488,7 +1488,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_no=1,
                 invoice_no_string=u'C3S-dues16-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1509,7 +1509,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues16-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1531,11 +1531,11 @@ class Dues16InvoiceModelTests(unittest.TestCase):
                 invoice_no=5,
                 invoice_no_string=u'C3S-dues16-0002',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50.20').to_eng_string()),
+                invoice_amount=D('-37.50.20').to_eng_string(),
                 member_id=1,
                 membership_no=1,
-                email=u'test@example.com',
-                token=u'ABCDEFGH',
+                email='test@example.com',
+                token='ABCDEFGH',
             )
             DBSession.add(dues2)
             DBSession.flush()
@@ -1550,14 +1550,14 @@ class Dues16InvoiceModelTests(unittest.TestCase):
         # now really store a new Dues16Invoice
         dues3 = Dues16Invoice(
             invoice_no=7,
-            invoice_no_string=u'C3S-dues16-0002',
+            invoice_no_string='C3S-dues16-0002',
             invoice_date=date.today(),
-            # invoice_amount=unicode(D('-37.50').to_eng_string()),
+            # invoice_amount=D('-37.50').to_eng_string(),
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,
-            email=u'test@example.com',
-            token=u'ABCDEFGH',
+            email='test@example.com',
+            token='ABCDEFGH',
         )
         DBSession.add(dues3)
         DBSession.flush()
@@ -1586,10 +1586,10 @@ class Dues17InvoiceModelTests(unittest.TestCase):
 
         with transaction.manager:
             member1 = C3sMember(
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
                 address2=u"addr two",
                 postcode=u"12345",
                 city=u"Footown Mäh",
@@ -1654,7 +1654,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
             dues1 = Dues17Invoice(
                 invoice_no=1,
                 invoice_no_string=u'C3S-dues17-0001',
-                invoice_date=date(2015, 10, 01),
+                invoice_date=date(2015, 10, 1),
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
@@ -1666,7 +1666,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
             dues2 = Dues17Invoice(
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues17-0002-S',
-                invoice_date=date(2015, 10, 02),
+                invoice_date=date(2015, 10, 2),
                 invoice_amount=D('16.25'),
                 member_id=1,
                 membership_no=1,
@@ -1803,7 +1803,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_no=1,
                 invoice_no_string=u'C3S-dues17-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1824,7 +1824,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues17-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1846,7 +1846,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
                 invoice_no=5,
                 invoice_no_string=u'C3S-dues17-0002',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50.20').to_eng_string()),
+                invoice_amount=D('-37.50.20').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -1867,7 +1867,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
             invoice_no=7,
             invoice_no_string=u'C3S-dues17-0002',
             invoice_date=date.today(),
-            # invoice_amount=unicode(D('-37.50').to_eng_string()),
+            # invoice_amount=D('-37.50').to_eng_string(),
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,
@@ -1969,7 +1969,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
             dues1 = Dues18Invoice(
                 invoice_no=1,
                 invoice_no_string=u'C3S-dues18-0001',
-                invoice_date=date(2015, 10, 01),
+                invoice_date=date(2015, 10, 1),
                 invoice_amount=D('-37.50'),
                 member_id=1,
                 membership_no=1,
@@ -1981,7 +1981,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
             dues2 = Dues18Invoice(
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues18-0002-S',
-                invoice_date=date(2015, 10, 02),
+                invoice_date=date(2015, 10, 2),
                 invoice_amount=D('16.25'),
                 member_id=1,
                 membership_no=1,
@@ -2118,7 +2118,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_no=1,
                 invoice_no_string=u'C3S-dues18-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -2139,7 +2139,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_no=2,
                 invoice_no_string=u'C3S-dues18-0001',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50').to_eng_string()),
+                invoice_amount=D('-37.50').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -2161,7 +2161,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
                 invoice_no=5,
                 invoice_no_string=u'C3S-dues18-0002',
                 invoice_date=date.today(),
-                invoice_amount=unicode(D('-37.50.20').to_eng_string()),
+                invoice_amount=D('-37.50.20').to_eng_string(),
                 member_id=1,
                 membership_no=1,
                 email=u'test@example.com',
@@ -2182,7 +2182,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
             invoice_no=7,
             invoice_no_string=u'C3S-dues18-0002',
             invoice_date=date.today(),
-            # invoice_amount=unicode(D('-37.50').to_eng_string()),
+            # invoice_amount=D('-37.50').to_eng_string(),
             invoice_amount=D('-37.50').to_eng_string(),
             member_id=1,
             membership_no=1,

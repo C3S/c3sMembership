@@ -44,7 +44,7 @@ class PaymentRepository(object):
             if member.dues15_paid:
                 payments.append(cls._create_payment(
                     date=member.dues15_paid_date.date(),
-                    account=u'Membership dues 2015',
+                    account='Membership dues 2015',
                     reference=member.dues15_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -62,7 +62,7 @@ class PaymentRepository(object):
             if member.dues16_paid:
                 payments.append(cls._create_payment(
                     date=member.dues16_paid_date.date(),
-                    account=u'Membership dues 2016',
+                    account='Membership dues 2016',
                     reference=member.dues16_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -80,7 +80,7 @@ class PaymentRepository(object):
             if member.dues17_paid:
                 payments.append(cls._create_payment(
                     date=member.dues17_paid_date.date(),
-                    account=u'Membership dues 2017',
+                    account='Membership dues 2017',
                     reference=member.dues17_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -98,7 +98,7 @@ class PaymentRepository(object):
             if member.dues18_paid:
                 payments.append(cls._create_payment(
                     date=member.dues18_paid_date.date(),
-                    account=u'Membership dues 2018',
+                    account='Membership dues 2018',
                     reference=member.dues18_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -233,8 +233,8 @@ class PaymentRepository(object):
         """
         if not cls._is_valid_sort_property(sort_property):
             raise ValueError(
-                u'"{}"" is an invalid sort property.'.format(
-                    unicode(sort_property)))
+                '"{}"" is an invalid sort property.'.format(
+                    sort_property))
 
         payments = []
         members = DBSession().query(C3sMember).all()
@@ -251,7 +251,6 @@ class PaymentRepository(object):
         payments = cls._slice_payments(payments, page_number, page_size)
 
         return payments
-
 
     def get_payment_count(self, from_date=None, to_date=None):
         """

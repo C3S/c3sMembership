@@ -313,7 +313,7 @@ def gen_cert(member):
         print('#'*60)
     if member.is_legalentity:
         latex_data += '\n\\def\\company{%s}' % TexTools.escape(member.lastname)
-    if member.address2 is not u'':  # add address part 2 iff exists
+    if member.address2 != u'':  # add address part 2 iff exists
         latex_data += '\n\\def\\addressTwo{%s}' % TexTools.escape(
             member.address2)
     if member.num_shares > 1:  # how many shares?

@@ -48,7 +48,7 @@ def get_memberhip_listing_redirect(request, member_id=''):
         A HTTPFound for redirection to the membership listing.
     """
     anchor = {}
-    if type(member_id) == str or type(member_id) == unicode:
+    if type(member_id) == str:
         member_id_str = member_id
     else:
         member_id_str = str(member_id)

@@ -116,11 +116,7 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
     #    print("encrypt_with_gnupg: type(data): %s") % type(data)
     #    print("type of to_encode: %s") % type(to_encode)
 
-    if isinstance(to_encode, unicode):
-        # print("type is unicode")
-        to_encrypt = to_encode.encode(gpg.encoding)
-    else:
-        to_encrypt = to_encode
+    to_encrypt = to_encode
     # elif isinstance(to_encode, str):
     #    print("type was string")
     #    to_encrypt = to_encode.encode(gpg.encoding)

@@ -275,7 +275,7 @@ def batch_invite(request):
             send_invitation(request, member, general_assembly_number)
         except ValueError as value_error:
             request.session.flash(
-                unicode(value_error.message),
+                value_error.message,
                 'danger')
             return HTTPFound(request.route_url(
                 'general_assembly', number=general_assembly_number))
@@ -305,8 +305,8 @@ def general_assembly_create(request):
     form = deform.Form(
         schema,
         buttons=[
-            deform.Button('submit', u'Submit'),
-            deform.Button('reset', u'Reset'),
+            deform.Button('submit', 'Submit'),
+            deform.Button('reset', 'Reset'),
         ],
         renderer=ZPT_RENDERER,
         use_ajax=True,
@@ -346,9 +346,9 @@ def general_assembly_edit(request):
     form = deform.Form(
         schema,
         buttons=[
-            deform.Button('submit', u'Submit'),
-            deform.Button('reset', u'Reset'),
-            deform.Button('cancel', u'Cancel'),
+            deform.Button('submit', 'Submit'),
+            deform.Button('reset', 'Reset'),
+            deform.Button('cancel', 'Cancel'),
         ],
         renderer=ZPT_RENDERER,
         use_ajax=True,
