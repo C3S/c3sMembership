@@ -19,7 +19,7 @@ alembic = '*'
 Babel = '*'
 colander = '*'
 cornice = '*'
-cryptacular = {ref = "cb96fb3",editable = true,hg = "https://bitbucket.org/dholth/cryptacular"}
+cryptacular = {editable = true,ref = "cb96fb3",hg = "https://bitbucket.org/dholth/cryptacular"}
 deform = '*'
 fdfgen = '*'
 gnupg = '*'
@@ -44,6 +44,7 @@ pyflakes = "*"
 pyquery = "*"
 selenium = "*"
 webtest = "*"
+mock = "*"
 
 [requires]
 python_version = "3.6"
