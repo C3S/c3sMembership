@@ -56,7 +56,7 @@ def encrypt_with_gnupg(data):
     #        gpg = gnupg.GPG(gnupghome="keys", verbose=True)
     #    else:
     # gpg = gnupg.GPG(gnupghome="keys")
-    gpg = gnupg.GPG(gnupghome=keyfolder)
+    gpg = gnupg.GPG(homedir=keyfolder)
     gpg.encoding = 'utf-8'
 
     # check if we have the membership key
