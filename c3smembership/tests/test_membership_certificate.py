@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from datetime import (
     date,
     datetime,
@@ -97,6 +98,24 @@ def _initTestingDB():
     return DBSession
 
 
+certificate_path = os.path.join(
+    os.path.dirname(__file__),
+    '../../certificate')
+assert(os.path.isfile(
+    os.path.join(certificate_path, "README.rst")))
+# assert(os.path.isfile(
+#     os.path.join(certificate_path, "urkunde_header_en.tex")))
+cert_git_not_present = os.path.isfile(
+    os.path.join(certificate_path, "urkunde_header_en.tex"))
+reason = ("this installation of c3sMembership misses some files "
+          "necessary for membership certificate creation.")
+print("*" * 75)
+print("Note: Skipping all tests in TestMembershipCertificateViews "
+      "because certificate git content not present.")
+print("*" * 75)
+
+
+@unittest.skipIf(cert_git_not_present, reason)
 class TestMembershipCertificateViews(unittest.TestCase):
     """
     tests for the membership certificate views
