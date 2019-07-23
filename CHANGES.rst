@@ -30,6 +30,10 @@ Next Release
 
 - Introduce caching to footer version information
 
+- Start cleaning up personal data schema. There were three declarations of very
+  similar Colander schemas for personal data including name and address. These
+  three can be unified to reduce redundant code and improve test coverage.
+
 
 
 1.27

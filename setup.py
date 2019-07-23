@@ -46,7 +46,7 @@ test_requirements = [
     'pdfminer',  # and its dependency
     'mock',  # for creating mock objects
     'pyquery',
-    'selenium',
+    'selenium==3.14.1',  # 4.0.0a1 causes issues by not finding elements
     'slate',  # pdf to text helper
     'webtest',
 ]
