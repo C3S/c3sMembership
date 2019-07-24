@@ -39,15 +39,16 @@
         <h2>Mail Invoices for Membership Dues 2019</h2>
         <p>
             <a href="${request.route_url('send_dues19_invoice_batch', number=5)}"
-                    title="Note: change number in URL as appropriate! Default is 5."
+                    title="Send 5 Invoices for Membership Dues"
                     class="btn btn-primary">
                 Send 5 Invoices for Membership Dues
             </a>
-            <br />
-            You may send more than 5 invoices at once by using another number (in the URL):
+        </p>
+        <p>
+            Send a specific number of invoices at once:
             <form method='POST' action="${request.route_url('send_dues19_invoice_batch', number='foo')}">
-                <input type='text' name='number'></input>
-                <input type='submit' name='submit'></input>
+                <input type='text' name='number' placeholder='123'></input>
+                <input type='submit' name='submit' value="Send"></input>
             </form>
         </p>
     </tal:block>
