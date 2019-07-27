@@ -1,9 +1,10 @@
 """Test module for c3smembership.GitTools."""
 
-import unittest
-import subprocess
 import mock
+import os
 import re
+import subprocess
+import unittest
 
 from c3smembership.git_tools import GitTools
 
@@ -28,12 +29,16 @@ class TestGitTools(unittest.TestCase):
                 std_pipe_values
             spmock.PIPE = subprocess.PIPE
             method_result = git_tools_method()
+            application_path = os.path.abspath(os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                '../../'))
             for expected_command in expected_commands:
                 spmock.Popen.assert_any_call(
                     expected_command,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     shell=True,
+                    cwd=application_path,
                     universal_newlines=True)
             self.assertEqual(len(expected_commands), spmock.Popen.call_count)
             self.assertEqual(method_result, expected_result)
