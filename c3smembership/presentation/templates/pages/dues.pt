@@ -33,7 +33,7 @@
         </p>
         <p>
             <a href="${request.route_url('batch_archive_pdf_invoices')}" class="btn btn-secondary">
-                Dues invoices 2015 archiving
+                Dues invoices archiving
             </a>
         </p>
         <h2>Mail Invoices for Membership Dues 2019</h2>

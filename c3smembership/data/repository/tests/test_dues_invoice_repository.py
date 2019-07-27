@@ -10,9 +10,9 @@ from datetime import (
 from decimal import Decimal
 import unittest
 
-# import mock
-from sqlalchemy import engine_from_config
 import transaction
+
+from sqlalchemy import engine_from_config
 
 from c3smembership.data.model.base import (
     DBSession,
@@ -346,6 +346,7 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         4. Test 2018 with invoice, reversal invoice and reduced invoice
         5. Test 2019 with one invoice and one payment with the payment in
            another month
+        6. Test not configured year 2000
 
         TODO: DatabaseDecimal should not have to be rounded. Still, the results
         of stats are like
@@ -434,3 +435,7 @@ class TestDuesInvoiceRepository(unittest.TestCase):
             Decimal('0'))
         self.assertEqual(stats[1]['amount_invoiced_reversal'], Decimal('0'))
         self.assertAlmostEqual(stats[1]['amount_paid'], Decimal('19.11'))
+
+        # 6. Test not configured year 2000
+        stats = DuesInvoiceRepository.get_monthly_stats(2000)
+        self.assertIsNone(stats)

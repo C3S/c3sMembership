@@ -1,3 +1,18 @@
+Next Release
+============
+
+
+- Enable invoice archiving for all years
+
+- Retrieve Git version information from outside application path.  The Git
+  command for retrieving version information was executed in the working
+  directory thus not returning any results or even wrong results when the
+  application executed from some other path. Now the Git command is executed
+  based on the application path thus returning the application's Git version
+  information to be displayed in the backend footer.
+
+
+
 1.27.1
 ======
 

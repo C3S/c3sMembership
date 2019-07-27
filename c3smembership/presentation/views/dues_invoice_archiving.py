@@ -19,19 +19,29 @@ def batch_archive_pdf_invoices(request):
 
     Note:
         Expects the object request.registry.dues_invoice_archiving to implement
-        c3smembership.business.dues_invoice_archiving.IDuesInvoiceArchiving.
+        c3smembership.business.dues_invoice_archiving.DuesInvoiceArchiving.
     """
-    form_renderer = build_form_renderer()
-    result = {'invoices': []}
+    form_renderer = build_form_renderer(request)
+    result = {
+        'generated_invoices': [],
+        'archiving_stats': get_archiving_stats(request),
+    }
     return form_renderer.render(request, result)
 
 
-def build_form_renderer():
+def get_archiving_stats(request):
+    """
+    Get statistics about archiving status for all years
+    """
+    return request.registry.dues_invoice_archiving.get_archiving_stats()
+
+
+def build_form_renderer(request):
     """
     Build the form renderer for the dues invoice archiving form
     """
     form_renderer = MultipleFormRenderer()
-    form = create_archiving_form()
+    form = create_archiving_form(request)
     form.formid = 'form'
     form_renderer.add_form(form, archive_invoices)
     return form_renderer
@@ -42,22 +52,30 @@ def archive_invoices(request, result, appstruct):
     Archive the invoices
     """
     dues_invoice_archiving = request.registry.dues_invoice_archiving
-    result['invoices'] = dues_invoice_archiving.generate_missing_invoice_pdfs(
-        appstruct['count'])
-    flash_message(request, result['invoices'], appstruct['count'])
+    result['generated_invoices'] = dues_invoice_archiving.generate_missing_invoice_pdfs(
+        appstruct['archive_invoices']['year'],
+        appstruct['archive_invoices']['count'])
+    flash_message(
+        request,
+        result['generated_invoices'],
+        appstruct['archive_invoices']['count'])
+
+    # refresh as the initial set is not up-to-date anymore
+    result['archiving_stats'] = get_archiving_stats(request)
+
     return result
 
 
-def flash_message(request, generated_files, count):
+def flash_message(request, generated_invoices, count):
     """
     Construct the message for invoice archiving to be displayed
     """
-    if generated_files is not None:
+    if generated_invoices is not None:
         queue = 'success'
-        if generated_files:
+        if generated_invoices:
             message = 'Successfully archived {0} invoices.'.format(
-                len(generated_files))
-            if len(generated_files) == count:
+                len(generated_invoices))
+            if len(generated_invoices) == count:
                 message += ' There might be more invoices to be archived.'
             else:
                 message += ' There are no more invoices to be ' + \

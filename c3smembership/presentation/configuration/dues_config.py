@@ -5,8 +5,6 @@ Pyramid application configuration for membership dues.
 
 import os
 
-from c3smembership.data.model.base import DBSession
-from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 from c3smembership.data.repository.payment_repository import \
@@ -19,8 +17,24 @@ from c3smembership.business.payment_information import PaymentInformation
 
 from c3smembership.presentation.configuration import Configuration
 from c3smembership.presentation.views.dues_2015 import (
-    make_invoice_pdf_pdflatex,
-    make_reversal_pdf_pdflatex,
+    make_invoice_pdf_pdflatex as make_invoice_2015,
+    make_reversal_pdf_pdflatex as make_reversal_2015,
+)
+from c3smembership.presentation.views.dues_2016 import (
+    make_invoice_pdf_pdflatex as make_invoice_2016,
+    make_reversal_pdf_pdflatex as make_reversal_2016,
+)
+from c3smembership.presentation.views.dues_2017 import (
+    make_invoice_pdf_pdflatex as make_invoice_2017,
+    make_reversal_pdf_pdflatex as make_reversal_2017,
+)
+from c3smembership.presentation.views.dues_2018 import (
+    make_invoice_pdf_pdflatex as make_invoice_2018,
+    make_reversal_pdf_pdflatex as make_reversal_2018,
+)
+from c3smembership.presentation.views.dues_2019 import (
+    make_invoice_pdf_pdflatex as make_invoice_2019,
+    make_reversal_pdf_pdflatex as make_reversal_2019,
 )
 from c3smembership.presentation.views.payment_list import \
     payment_content_size_provider
@@ -47,14 +61,30 @@ class DuesConfig(Configuration):
         invoices_archive_path = os.path.abspath(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                '../invoices/'))
+                '../../../invoices/'))
         self.config.registry.dues_invoice_archiving = DuesInvoiceArchiving(
-            DBSession,
-            C3sMember,
             DuesInvoiceRepository,
-            make_invoice_pdf_pdflatex,
-            make_reversal_pdf_pdflatex,
             invoices_archive_path)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2015,
+            make_invoice_2015,
+            make_reversal_2015)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2016,
+            make_invoice_2016,
+            make_reversal_2016)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2017,
+            make_invoice_2017,
+            make_reversal_2017)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2018,
+            make_invoice_2018,
+            make_reversal_2018)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2019,
+            make_invoice_2019,
+            make_reversal_2019)
 
         # Payments
         self.config.registry.payment_information = PaymentInformation(

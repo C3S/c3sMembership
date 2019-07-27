@@ -388,7 +388,7 @@ def make_dues15_invoice_no_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-    pdf_file = make_invoice_pdf_pdflatex(member, invoice)
+    pdf_file = make_invoice_pdf_pdflatex(invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "r")
@@ -406,7 +406,7 @@ def make_dues15_invoice_pdf_backend(request):
     invoice = DuesInvoiceRepository.get_by_number(
         invoice_number.lstrip('0'), 2015)
     member = MemberRepository.get_member_by_id(invoice.member_id)
-    pdf_file = make_invoice_pdf_pdflatex(member, invoice)
+    pdf_file = make_invoice_pdf_pdflatex(invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "r")
@@ -424,14 +424,14 @@ def make_dues15_reversal_pdf_backend(request):
     invoice = Dues15Invoice.get_by_invoice_no(
         invoice_number.lstrip('0'))
     member = MemberRepository.get_member_by_id(invoice.member_id)
-    pdf_file = make_reversal_pdf_pdflatex(member, invoice)
+    pdf_file = make_reversal_pdf_pdflatex(invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "r")
     return response
 
 
-def make_invoice_pdf_pdflatex(member, invoice=None):
+def make_invoice_pdf_pdflatex(invoice):
     """
     This function uses pdflatex to create a PDF
     as receipt for the members membership dues.
@@ -439,6 +439,7 @@ def make_invoice_pdf_pdflatex(member, invoice=None):
     default output is the current invoice.
     if i_no is suplied, the relevant invoice number is produced
     """
+    member = C3sMember.get_by_id(invoice.member_id)
 
     # directory of pdf and tex files
     pdflatex_dir = os.path.abspath(
@@ -812,19 +813,20 @@ def make_dues15_reversal_invoice_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-    pdf_file = make_reversal_pdf_pdflatex(member, invoice)
+    pdf_file = make_reversal_pdf_pdflatex(invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "r")
     return response
 
 
-def make_reversal_pdf_pdflatex(member, invoice=None):
+def make_reversal_pdf_pdflatex(invoice):
     """
     This function uses pdflatex to create a PDF
     as reversal invoice: cancel and balance out a former invoice.
     """
 
+    member = C3sMember.get_by_id(invoice.member_id)
     pdflatex_dir = os.path.abspath(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),

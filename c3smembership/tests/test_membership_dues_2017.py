@@ -635,7 +635,7 @@ class TestDues17Views(unittest.TestCase):
         # m1.
         # print("length of the result: {}".format(len(res.body)))
         # print("headers of the result: {}".format((res.headers)))
-        assert(60000 < len(res.body) < 80000)
+        assert(60000 < len(res.body) < 100000)
         assert('application/pdf' in res.headers['Content-Type'])
 
         """
@@ -920,7 +920,7 @@ class TestDues17Views(unittest.TestCase):
         res = make_dues17_reversal_invoice_pdf(req2)
         # print("length of the result: {}".format(len(res.body)))
         # print("headers of the result: {}".format((res.headers)))
-        assert(60000 < len(res.body) < 80000)
+        assert(60000 < len(res.body) < 100000)
         assert('application/pdf' in res.headers['Content-Type'])
 
     def test_dues17_notice(self):
