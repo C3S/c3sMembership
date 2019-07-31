@@ -12,12 +12,12 @@ requires = [
     'alembic==0.8.10',  # database schema migration
     'Babel',
     'bcrypt',
-    'colander==1.0',
+    'colander>=1.7.0',
     'cornice==0.17',
-    'deform==2.0a2',  # HTML forms
+    'deform>=2.0.7',  # HTML forms
     'fdfgen==0.11.0',
     'lingua==1.5',  # stick to 1.5 for now. TODO: learn to use 2.1/2.3
-    'requests==2.2.1',
+    'requests>=2.20.0',
     'pycountry',  # replacing 'webhelpers',
     'pyramid>=1.7',
     'pyramid_beaker',
@@ -25,15 +25,15 @@ requires = [
     'pyramid_debugtoolbar',
     'pyramid_mailer==0.14.1',
     'pyramid_tm',
-    'python-gnupg==0.3.6',
+    'python-gnupg>=0.4.4',
     'repoze.sendmail==4.1',  # pin to 4.1 because of repoze/repoze.sendmail#31
     # see https://github.com/repoze/repoze.sendmail/issues/31
-    'SQLAlchemy==1.0.9',  # Object-relational mapper
+    'SQLAlchemy>=1.3.0',  # Object-relational mapper
     'transaction',
     'unicodecsv==0.9.4',
     'venusian==1.0',
     'waitress==0.8.9',
-    'zope.sqlalchemy==0.7.5',
+    'zope.sqlalchemy>=1.1',
     # webob>=1.8.3 is a pyramid 1.10.4 dependency and for some reason is not
     # installed automatically with pyramid 1.10.4 by pip.
     'webob>=1.8.3',

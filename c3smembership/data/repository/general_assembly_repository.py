@@ -143,6 +143,7 @@ class GeneralAssemblyRepository(object):
                 GeneralAssembly.date,
                 GeneralAssemblyInvitation.sent,
                 GeneralAssemblyInvitation.token)
+            .select_from(GeneralAssembly)
             # combine with the member as a cross join with the one member
             # requested
             .outerjoin(

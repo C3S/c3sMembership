@@ -275,11 +275,12 @@ class SharesTests(unittest.TestCase):
             print "form.fields: {}".format(form.fields)
 
         self.assertTrue('2' in form['number'].value)
+        field_id_dict = self.__get_field_id_dict(form)
         self.assertTrue(datetime.today().strftime(
-            '%Y-%m-%d') in form['date_of_acquisition'].value)
+            '%Y-%m-%d') in field_id_dict['date_of_acquisition'].value)
         # print(form['date_of_acquisition'].value)
         form['number'] = u'3'
-        form['date_of_acquisition'] = u'2015-01-02'
+        field_id_dict['date_of_acquisition'].value = u'2015-01-02'
 
         # try to submit now. this must fail,
         # because the date of birth is wrong
@@ -340,3 +341,26 @@ class SharesTests(unittest.TestCase):
         self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
         # self.assertTrue('1: Not Found' in res.body)
         self.assertTrue('ABCDEFGH' in res.body)
+
+    @classmethod
+    def __get_field_id_dict(cls, form):
+        """
+        Get a field id dict from the form
+
+        Fields are not easily accessible from the form by id. Therefore, create
+        a dictionary which maps the id to its field. Using the dict increases
+        performance in case many fields have to be found by id.
+
+        Args:
+            form: webtest.forms.Form. The form to be transformed into a field
+                id dict.
+
+        Returns:
+            dict mapping the id to its field.
+        """
+        field_id_dict = {}
+        for key in form.fields.keys():
+            fields = form.fields[key]
+            for field in fields:
+                field_id_dict[field.id] = field
+        return field_id_dict

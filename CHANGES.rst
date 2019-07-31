@@ -14,6 +14,8 @@ Next Release
 - Replace cryptacular with bcrypt for password hashing as cryptacular causes
   issues
 
+- Upgrade colander, python-gnupg, requests and SQLAlchemy
+
 
 
 1.27.1

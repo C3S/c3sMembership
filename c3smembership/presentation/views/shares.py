@@ -87,7 +87,8 @@ def shares_edit(request):
         )
         date_of_acquisition = colander.SchemaNode(
             colander.Date(),
-            title=_('Date of Acquisition')
+            title=_('Date of Acquisition'),
+            oid='date_of_acquisition',
         )
     schema = SharesSchema()
     form = deform.Form(

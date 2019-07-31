@@ -5,13 +5,14 @@ Tests for c3smembership.presentation.views.membership_member_edit
 """
 
 from datetime import date, timedelta
+import unittest
+
+import transaction
+import webtest
+from webtest import TestApp
 
 from pyramid import testing
 from sqlalchemy import engine_from_config
-import transaction
-import unittest
-from webtest import TestApp
-import webtest
 
 from c3smembership import main
 from c3smembership.data.model.base import (
@@ -37,7 +38,7 @@ class EditMemberTests(unittest.TestCase):
         """
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        DBSession.close()
+        DBSession().close()
         DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
@@ -48,12 +49,13 @@ class EditMemberTests(unittest.TestCase):
         Base.metadata.create_all(engine)
 
         # self._insert_members()
+        db_session = DBSession()
 
         with transaction.manager:
                 # a group for accountants/staff
             accountants_group = Group(name=u"staff")
-            DBSession.add(accountants_group)
-            DBSession.flush()
+            db_session.add(accountants_group)
+            db_session.flush()
             # staff personnel
             staffer1 = Staff(
                 login=u"rut",
@@ -61,9 +63,9 @@ class EditMemberTests(unittest.TestCase):
                 email=u"noreply@example.com",
             )
             staffer1.groups = [accountants_group]
-            DBSession.add(accountants_group)
-            DBSession.add(staffer1)
-            DBSession.flush()
+            db_session.add(accountants_group)
+            db_session.add(staffer1)
+            db_session.flush()
 
         app = main({}, **my_settings)
         self.testapp = TestApp(app)
@@ -72,12 +74,12 @@ class EditMemberTests(unittest.TestCase):
         """
         Tear down all test cases
         """
-        DBSession.close()
+        DBSession().close()
         DBSession.remove()
         testing.tearDown()
 
-    @staticmethod
-    def __create_membership_applicant():
+    @classmethod
+    def __create_membership_applicant(cls):
         """
         Create and return a membership applicant
         """
@@ -105,8 +107,8 @@ class EditMemberTests(unittest.TestCase):
             )
         return member
 
-    @staticmethod
-    def __create_accepted_member_full():
+    @classmethod
+    def __create_accepted_member_full(cls):
         """
         Creates and returns an accepted full member
         """
@@ -151,9 +153,9 @@ class EditMemberTests(unittest.TestCase):
         res = self.testapp.get('/edit/1', status=302)
         self.__validate_dashboard_redirect(res)
 
-        member = EditMemberTests.__create_membership_applicant()
-        DBSession.add(member)
-        DBSession.flush()
+        member = self.__create_membership_applicant()
+        DBSession().add(member)
+        DBSession().flush()
         # now there is a member in the DB
 
         # let's try invalid input
@@ -179,6 +181,8 @@ class EditMemberTests(unittest.TestCase):
                 'entity_type': u'legalentity',
                 'other_colsoc': u'no',
                 'name_of_colsoc': u'',
+            },
+            {
                 'date_of_birth': '1999-12-30',
                 'membership_date': '2013-09-24',
                 'signature_received_date': '2013-09-24',
@@ -229,35 +233,72 @@ class EditMemberTests(unittest.TestCase):
                 self.assertTrue(body_content_part.decode(
                     'utf-8') in res.body.decode('utf-8'))
 
-    @staticmethod
-    def __validate_submit_error(res):
+    @classmethod
+    def __validate_submit_error(cls, res):
         """
         Submit the resource, validate that it was not successful and return
         the resulting resource
         """
         return res.form.submit('submit', status=200)
 
-    @staticmethod
+    @classmethod
     def __set_form_properties(
-            res,
-            properties):
+            cls,
+            form,
+            name_properties,
+            id_properties=None):
         """
         Set the properties of the form in the resource.
+
+        Args:
+            form: webtest.forms.Form. The form in which to set the properties
+            name_properties: dict. Properties to set by the field's name
+            id_properties: dict. Properties to set by the field's id
         """
-        for key, value in properties.iteritems():
-            res.form[key] = value
+        if name_properties:
+            for key, value in name_properties.iteritems():
+                form[key] = value
+
+        if id_properties:
+            field_id_dict = cls.__get_field_id_dict(form)
+            for key, value in id_properties.iteritems():
+                field_id_dict[key].value = value
+
+    @classmethod
+    def __get_field_id_dict(cls, form):
+        """
+        Get a field id dict from the form
+
+        Fields are not easily accessible from the form by id. Therefore, create
+        a dictionary which maps the id to its field. Using the dict increases
+        performance in case many fields have to be found by id.
+
+        Args:
+            form: webtest.forms.Form. The form to be transformed into a field
+                id dict.
+
+        Returns:
+            dict mapping the id to its field.
+        """
+        field_id_dict = {}
+        for key in form.fields.keys():
+            fields = form.fields[key]
+            for field in fields:
+                field_id_dict[field.id] = field
+        return field_id_dict
 
     def __validate_successful_edit(
             self,
             member_id,
-            properties=None,
+            name_properties=None,
+            id_properties=None,
             body_content_parts=None):
         """
         Edit the member's properties, validate that it was successful,
         validate the body of the resulting resource and return it.
         """
         res = self.__get_edit_member(member_id)
-        EditMemberTests.__set_form_properties(res, properties)
+        self.__set_form_properties(res.form, name_properties, id_properties)
         res = self.__validate_successful_submit(res)
         self.__validate_body_content(res, body_content_parts)
         return res
@@ -265,15 +306,16 @@ class EditMemberTests(unittest.TestCase):
     def __validate_abortive_edit(
             self,
             member_id,
-            properties=None,
+            name_properties=None,
+            id_properties=None,
             body_content_parts=None):
         """
         Edit the member's properties, validate that it was not successful,
         validate the body of the resulting resource and return it.
         """
         res = self.__get_edit_member(member_id)
-        EditMemberTests.__set_form_properties(res, properties)
-        res = EditMemberTests.__validate_submit_error(res)
+        self.__set_form_properties(res.form, name_properties, id_properties)
+        res = self.__validate_submit_error(res)
         self.__validate_body_content(res, body_content_parts)
         return res
 
@@ -313,6 +355,22 @@ class EditMemberTests(unittest.TestCase):
         Validate that res is the dashboard
         """
         self.failUnless('Acquisition of membership' in res.body)
+
+    @classmethod
+    def __get_field_by_id(cls, form, field_id):
+        """
+        Get a field by its id
+
+        Args:
+            form: webtest.forms.Form. The form from which to get the field by
+                its id
+            field_id: String. The id of the field.
+
+        Returns:
+            webtest.forms.Field or subtype object of the specified id.
+        """
+        field_id_dict = cls.__get_field_id_dict(form)
+        return field_id_dict[field_id]
 
     def test_membership_loss(self):
         '''
@@ -372,9 +430,10 @@ class EditMemberTests(unittest.TestCase):
         # setup
         res = self.testapp.reset()
         self.__login()
-        member = EditMemberTests.__create_membership_applicant()
-        DBSession.add(member)
-        DBSession.flush()
+        member = self.__create_membership_applicant()
+        db_session = DBSession()
+        db_session.add(member)
+        db_session.flush()
 
         # 1 Editing non members
         res = self.__get_edit_member(member.id)
@@ -383,10 +442,10 @@ class EditMemberTests(unittest.TestCase):
         # 1.1 Loss inputs must be hidden
         res = self.__get_edit_member(member.id)
         self.assertTrue(
-            type(res.form['membership_loss_date']) == webtest.forms.Hidden)
+            isinstance(res.form['membership_loss_date'], webtest.forms.Hidden))
         self.assertTrue(res.form['membership_loss_date'].value == '')
         self.assertTrue(
-            type(res.form['membership_loss_type']) == webtest.forms.Hidden)
+            isinstance(res.form['membership_loss_type'], webtest.forms.Hidden))
         self.assertTrue(res.form['membership_loss_type'].value == '')
 
         # 1.2 Hidden loss inputs should not make any problem and therefore
@@ -398,32 +457,38 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_abortive_edit(
             member.id,
             {
-                'membership_loss_date': date.today(),
                 'membership_loss_type': u'resignation',
+            },
+            {
+                'membership_loss_date': date.today(),
             },
             [u'Please note: There were errors, please check the form below.'])
 
         # 2 Editing members
-        member = EditMemberTests.__create_accepted_member_full()
-        DBSession.add(member)
-        DBSession.flush()
+        member = self.__create_accepted_member_full()
+        db_session.add(member)
+        db_session.flush()
         res = self.__get_edit_member(member.id)
         # make sure default values are valid
         self.__validate_successful_submit(res)
 
         # 2.1 Loss inputs must not be hidden
         res = self.__get_edit_member(member.id)
+        membership_loss_date_field = self.__get_field_by_id(
+            res.form, 'membership_loss_date')
         self.assertTrue(res.form['membership_accepted'].checked)
         self.assertTrue(
-            type(res.form['membership_loss_date']) == webtest.forms.Field)
-        self.assertTrue(res.form['membership_loss_date'].value == '')
+            isinstance(membership_loss_date_field, webtest.forms.Field))
         self.assertTrue(
-            type(res.form['membership_loss_type']) == webtest.forms.Select)
+            membership_loss_date_field.value == '')
+        self.assertTrue(
+            isinstance(res.form['membership_loss_type'], webtest.forms.Select))
         self.assertTrue(res.form['membership_loss_type'].value == '')
 
         # 2.2.1 Set only loss date -> error, set both
         self.__validate_abortive_edit(
             member.id,
+            {},
             {
                 'membership_loss_date': date(2016, 12, 31),
             },
@@ -439,6 +504,7 @@ class EditMemberTests(unittest.TestCase):
             {
                 'membership_loss_type': 'resignation',
             },
+            {},
             [
                 'Please note: There were errors, please check the form '
                 'below.',
@@ -450,6 +516,8 @@ class EditMemberTests(unittest.TestCase):
             member.id,
             {
                 'membership_loss_type': '',
+            },
+            {
                 'membership_loss_date': '',
             })
 
@@ -458,6 +526,8 @@ class EditMemberTests(unittest.TestCase):
             member.id,
             {
                 'membership_loss_type': 'resignation',
+            },
+            {
                 'membership_loss_date': date(2016, 12, 31),
             })
 
@@ -468,9 +538,11 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_abortive_edit(
             member.id,
             {
+                'membership_loss_type': 'resignation',
+            },
+            {
                 'membership_loss_date': (
                     member.membership_date - timedelta(days=1)),
-                'membership_loss_type': 'resignation',
             },
             [
                 'Please note: There were errors, please check the form '
@@ -483,8 +555,10 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_successful_edit(
             member.id,
             {
-                'membership_loss_date': date(2016, 12, 31),
                 'membership_loss_type': 'resignation',
+            },
+            {
+                'membership_loss_date': date(2016, 12, 31),
             })
 
         # 2.4 Loss date for resignation must be 31st of December
@@ -494,8 +568,10 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_abortive_edit(
             member.id,
             {
-                'membership_loss_date': date(2016, 5, 28),
                 'membership_loss_type': 'resignation',
+            },
+            {
+                'membership_loss_date': date(2016, 5, 28),
             },
             [
                 'Please note: There were errors, please check the form '
@@ -509,8 +585,10 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_abortive_edit(
             member.id,
             {
-                'membership_loss_date': date(2016, 10, 31),
                 'membership_loss_type': 'resignation',
+            },
+            {
+                'membership_loss_date': date(2016, 10, 31),
             },
             [
                 'Please note: There were errors, please check the form '
@@ -524,8 +602,10 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_abortive_edit(
             member.id,
             {
-                'membership_loss_date': date(2016, 12, 30),
                 'membership_loss_type': 'resignation',
+            },
+            {
+                'membership_loss_date': date(2016, 12, 30),
             },
             [u'Resignations are only allowed to the 31st of December of a '
              'year.'])
@@ -535,8 +615,10 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_successful_edit(
             member.id,
             {
-                'membership_loss_date': date(2016, 12, 31),
                 'membership_loss_type': 'resignation',
+            },
+            {
+                'membership_loss_date': date(2016, 12, 31),
             })
 
         # 2.5 Only natural persons can be set to loss type death
@@ -547,8 +629,10 @@ class EditMemberTests(unittest.TestCase):
             member.id,
             {
                 'entity_type': 'legalentity',
-                'membership_loss_date': date(2016, 3, 25),
                 'membership_loss_type': 'death',
+            },
+            {
+                'membership_loss_date': date(2016, 3, 25),
             },
             [u'The membership loss type \'death\' is only allowed for natural '
              u'person members and not for legal entity members.'])
@@ -559,8 +643,10 @@ class EditMemberTests(unittest.TestCase):
             member.id,
             {
                 'entity_type': 'person',
-                'membership_loss_date': date(2016, 3, 25),
                 'membership_loss_type': 'death',
+            },
+            {
+                'membership_loss_date': date(2016, 3, 25),
             })
 
         # 2.6 Only legal entites can be set to loss type winding-up
@@ -571,8 +657,10 @@ class EditMemberTests(unittest.TestCase):
             member.id,
             {
                 'entity_type': 'person',
-                'membership_loss_date': date(2016, 3, 25),
                 'membership_loss_type': 'winding-up',
+            },
+            {
+                'membership_loss_date': date(2016, 3, 25),
             },
             [u'The membership loss type \'winding-up\' is only allowed for '
              u'legal entity members and not for natural person members.'])
@@ -583,6 +671,8 @@ class EditMemberTests(unittest.TestCase):
             member.id,
             {
                 'entity_type': 'legalentity',
-                'membership_loss_date': date(2016, 3, 25),
                 'membership_loss_type': 'winding-up',
+            },
+            {
+                'membership_loss_date': date(2016, 3, 25),
             })

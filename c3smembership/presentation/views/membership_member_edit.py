@@ -159,16 +159,19 @@ def edit_member(request):
             colander.String(),
             widget=deform.widget.HiddenWidget(),
             default='NoneSet',
-            missing='NoneSetPurposefully'
+            missing='NoneSetPurposefully',
+            oid='password',
         )
         address1 = colander.SchemaNode(
             colander.String(),
             title=_(u'Addess Line 1'),
+            oid='address1',
         )
         address2 = colander.SchemaNode(
             colander.String(),
             missing=u'',
             title=_(u'Address Line 2'),
+            oid='address2',
         )
         postcode = colander.SchemaNode(
             colander.String(),
@@ -199,6 +202,7 @@ def edit_member(request):
             title=_(u'Locale'),
             widget=deform.widget.SelectWidget(
                 values=locale_codes),
+            oid='locale',
             missing=u'',
         )
 
@@ -208,10 +212,10 @@ def edit_member(request):
         Returns a text or hidden input depending on the value of
         membership_accepted within the keywords.
         """
+        # pylint: disable=unused-argument
         if keywords.get('membership_accepted'):
             return deform.widget.DateInputWidget()
-        else:
-            return deform.widget.HiddenWidget()
+        return deform.widget.HiddenWidget()
 
     @colander.deferred
     def membership_loss_type_widget(node, keywords):
@@ -219,10 +223,10 @@ def edit_member(request):
         Returns a select or hidden input depending on the value of
         membership_accepted within the keywords.
         """
+        # pylint: disable=unused-argument
         if keywords.get('membership_accepted'):
             return deform.widget.SelectWidget(values=membership_loss_types)
-        else:
-            return deform.widget.HiddenWidget()
+        return deform.widget.HiddenWidget()
 
     class MembershipMeta(colander.Schema):
         """
@@ -230,7 +234,8 @@ def edit_member(request):
         """
         membership_accepted = colander.SchemaNode(
             colander.Boolean(),
-            title=_(u'Membership Accepted')
+            title=_(u'Membership Accepted'),
+            oid='membership_accepted',
         )
         membership_date = colander.SchemaNode(
             colander.Date(),
@@ -253,7 +258,7 @@ def edit_member(request):
             colander.String(),
             title=_(u'Duplicate Id'),
             missing=u'',
-            oid='duplicate_of',
+            oid='id_duplicate_of',
         )
         signature_received = colander.SchemaNode(
             colander.Boolean(),
@@ -270,10 +275,12 @@ def edit_member(request):
                 max_err=_(u'${val} is later than latest date ${max}.')
             ),
             missing=date(1970, 1, 1),
+            oid='signature_received_date',
         )
         payment_received = colander.SchemaNode(
             colander.Boolean(),
             title=_(u'Payment Received'),
+            oid='payment_received',
         )
         payment_received_date = colander.SchemaNode(
             colander.Date(),
@@ -285,7 +292,7 @@ def edit_member(request):
                 max_err=_(u'${val} is later than latest date ${max}.')
             ),
             missing=date(1970, 1, 1),
-            oid='_received_date',
+            oid='payment_received_date',
         )
         membership_loss_date = colander.SchemaNode(
             colander.Date(),
@@ -390,8 +397,8 @@ def edit_member(request):
         loss date must be larger than the membership acceptance date.
         """
         if (value['membership_loss_date'] is not None and
-            (value['membership_loss_date'] < value['membership_date'] or
-             not value['membership_accepted'])):
+                (value['membership_loss_date'] < value['membership_date'] or
+                 not value['membership_accepted'])):
             exc = colander.Invalid(form)
             exc['membership_loss_date'] = \
                 _(u'Date membership loss must be larger than membership '
@@ -406,9 +413,10 @@ def edit_member(request):
         Resignations are only allowed to the end of the year.
         """
         if (value.get('membership_loss_type', '') == 'resignation' and
-            value['membership_loss_date'] is not None and
-            not (value['membership_loss_date'].day == 31 and
-                 value['membership_loss_date'].month == 12)):
+                value['membership_loss_date'] is not None and
+                not (
+                    value['membership_loss_date'].day == 31 and
+                    value['membership_loss_date'].month == 12)):
             exc = colander.Invalid(form)
             exc['membership_loss_date'] = \
                 _(u'Resignations are only allowed to the 31st of December '
@@ -499,7 +507,10 @@ def edit_member(request):
     )
 
     def clean_error_messages(error):
-        if error.msg is not None and type(error.msg) == list:
+        """
+        Remove all error messages
+        """
+        if error.msg is not None and isinstance(error.msg, list):
             error.msg = list(set(error.msg))
             if None in error.msg:
                 error.msg.remove(None)

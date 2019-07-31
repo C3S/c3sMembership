@@ -84,8 +84,32 @@ class NewMemberTests(unittest.TestCase):
         res.form['password'] = 'berries'
         res.form.submit('submit', status=302)
 
+    @classmethod
+    def __get_field_id_dict(cls, form):
+        """
+        Get a field id dict from the form
+
+        Fields are not easily accessible from the form by id. Therefore, create
+        a dictionary which maps the id to its field. Using the dict increases
+        performance in case many fields have to be found by id.
+
+        Args:
+            form: webtest.forms.Form. The form to be transformed into a field
+                id dict.
+
+        Returns:
+            dict mapping the id to its field.
+        """
+        field_id_dict = {}
+        for key in form.fields.keys():
+            fields = form.fields[key]
+            for field in fields:
+                field_id_dict[field.id] = field
+        return field_id_dict
+
     def _fill_form_valid_natural(self, form):
         # print form.fields
+        field_id_dict = self.__get_field_id_dict(form)
         form['firstname'] = u'SomeFirstname'
         form['lastname'] = u'SomeLastname'
         form['email'] = u'some@shri.de'
@@ -95,7 +119,8 @@ class NewMemberTests(unittest.TestCase):
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
         form['locale'] = u"DE"
-        form['date_of_birth'] = unicode(date(date.today().year-40, 1, 1))
+        field_id_dict['date_of_birth'].value = \
+            unicode(date(date.today().year-40, 1, 1))
         form['entity_type'].value__set(u'person')
         form['membership_type'].value__set(u'normal')
         form['other_colsoc'].value__set(u'no')
@@ -104,6 +129,7 @@ class NewMemberTests(unittest.TestCase):
         return form
 
     def _fill_form_valid_legal(self, form):
+        field_id_dict = self.__get_field_id_dict(form)
         form['firstname'] = u'SomeLegalentity'
         form['lastname'] = u'SomeLegalName'
         form['email'] = u'legal@example.de'
@@ -113,7 +139,8 @@ class NewMemberTests(unittest.TestCase):
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
         form['locale'] = u"DE"
-        form['date_of_birth'] = unicode(date(date.today().year-40, 1, 1))
+        field_id_dict['date_of_birth'].value = \
+            unicode(date(date.today().year-40, 1, 1))
         form['entity_type'] = u'legalentity'
         form['membership_type'] = u'investing'
         form['other_colsoc'].value__set(u'no')

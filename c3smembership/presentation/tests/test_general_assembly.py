@@ -7,6 +7,7 @@ import unittest
 
 import mock
 from pyramid import testing
+from webob.multidict import MultiDict
 
 import c3smembership.presentation.views.general_assembly as \
     general_assembly_module
@@ -122,6 +123,19 @@ class TestGeneralAssembly(unittest.TestCase):
         self.assertEqual(result.status_code, 302)
         self.assertTrue('memberships#member_789' in result.location)
 
+    @classmethod
+    def _get_create_general_assembly_post(cls, assembly_name, assembly_date):
+        POST = MultiDict()
+        POST.add('__formid__', u'deform')
+        POST.add('__start__', u'general_assembly:mapping')
+        POST.add('name', assembly_name)
+        POST.add('__start__', u'date:mapping')
+        POST.add('date', unicode(assembly_date.strftime('%Y-%m-%d')))
+        POST.add('__end__', u'date:mapping')
+        POST.add('__end__', u'general_assembly:mapping')
+        POST.add('submit', u'submit')
+        return POST
+
     def test_general_assembly_create(self):
         """
         Test the general_assembly_create method
@@ -142,14 +156,14 @@ class TestGeneralAssembly(unittest.TestCase):
         self.assertTrue('12345' in result['form'])
 
         # 2. Submit without error
-        test_config = testing.setUp()
-        test_config.add_route('general_assemblies', 'general_assemblies')
         assembly_date = datetime.date.today() + datetime.timedelta(days=1)
-        request = testing.DummyRequest(post={
-            'submit': 'submit',
-            'general_assembly': {
-                'name': u'New general assembly',
-                'date': assembly_date.strftime('%Y-%m-%d')}})
+
+        request = testing.DummyRequest(
+            post=self._get_create_general_assembly_post(
+                'New general assembly',
+                assembly_date))
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assemblies', 'general_assemblies')
         request.registry.general_assembly_invitation = mock.Mock()
         request.registry.general_assembly_invitation \
             .get_next_number.side_effect = [12345]
@@ -165,11 +179,10 @@ class TestGeneralAssembly(unittest.TestCase):
 
         # 3. Submit with date in the past
         assembly_date = datetime.date.today() - datetime.timedelta(days=1)
-        request = testing.DummyRequest(post={
-            'submit': 'submit',
-            'general_assembly': {
-                'name': u'New general assembly',
-                'date': assembly_date.strftime('%Y-%m-%d')}})
+        request = testing.DummyRequest(
+            post=self._get_create_general_assembly_post(
+                'New general assembly',
+                assembly_date))
         request.registry.general_assembly_invitation = mock.Mock()
         request.registry.general_assembly_invitation \
             .get_next_number.side_effect = [12345]
@@ -248,11 +261,9 @@ class TestGeneralAssembly(unittest.TestCase):
         # 3. Call for submit
         general_assembly.number = 1
         request = testing.DummyRequest(
-            POST={
-                'submit': 'submit',
-                'general_assembly': {
-                    'date': datetime.date.today().strftime('%Y-%m-%d'),
-                    'name': 'assembly name'}},
+            post=self._get_create_general_assembly_post(
+                'assembly name',
+                datetime.date.today()),
             validated_matchdict={'general_assembly': general_assembly})
         test_config = testing.setUp(request=request)
         test_config.add_route('general_assembly', 'general_assembly')
