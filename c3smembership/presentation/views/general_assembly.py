@@ -50,11 +50,18 @@ from c3smembership.mail_utils import (
     get_salutation,
     send_message,
 )
-from c3smembership.presentation.i18n import (
-    ZPT_RENDERER,
+from c3smembership.presentation.schemas.general_assembly import (
+    GeneralAssemblyMatchdict,
+    GeneralAssemblyInvitationMatchdict,
+    BatchInvitePost,
+    GeneralAssemblyFormFactory,
 )
-from c3smembership.presentation.schemas.general_assembly import \
-    GeneralAssemblySchema
+from c3smembership.presentation.view_processing import (
+    ColanderMatchdictValidator,
+    ColanderPostValidator,
+    FlashCallbackErrorHandler,
+    MultiPreProcessor,
+)
 from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
@@ -69,6 +76,8 @@ DEBUG = False
 LOG = logging.getLogger(__name__)
 URL_PATTERN = '{ticketing_url}/lu/{token}/{email}'
 CURRENT_GENERAL_ASSEMBLY = 7
+BODY_TEMPLATE = 'bcga2019_invite_body'
+SUBJECT_TEMPLATE = 'bcga2019_invite_subject'
 
 
 @view_config(
@@ -92,73 +101,56 @@ def general_assemblies(request):
     renderer='c3smembership.presentation:templates/pages/'
              'general_assembly.pt',
     permission='manage',
-    route_name='general_assembly')
-def general_assembly(request):
+    route_name='general_assembly',
+    pre_processor=ColanderMatchdictValidator(
+        GeneralAssemblyMatchdict(error_route='general_assemblies'),
+    ),
+)
+def general_assembly_view(request):
     """
     Show general assembly
     """
-    result = {
-        'number': None,
-        'name': None,
-        'date': None,
+    assembly = request.validated_matchdict['general_assembly']
+    return {
+        'number': assembly.number,
+        'name': assembly.name,
+        'date': assembly.date,
     }
-    number_str = request.matchdict.get('number')
-    number = None
-    try:
-        number = int(number_str)
-        assembly = request.registry.general_assembly_invitation \
-            .get_general_assembly(number)
-        if assembly is not None:
-            result['number'] = assembly.number
-            result['name'] = assembly.name
-            result['date'] = assembly.date
-    except (ValueError, TypeError):
-        pass
-    return result
 
 
 @view_config(
     permission='manage',
-    route_name='general_assembly_invitation')
+    route_name='general_assembly_invitation',
+    pre_processor=ColanderMatchdictValidator(
+        GeneralAssemblyInvitationMatchdict(error_route='general_assemblies'),
+    ),
+)
 def general_assembly_invitation(request):
     """
     Invite member to general assembly
     """
-    general_assembly_number = None
-    try:
-        general_assembly_number = int(request.matchdict.get('number'))
-    except (ValueError, TypeError):
-        request.session.flash(
-            'Invalid general assembly number',
-            'message_to_staff')
-        return HTTPFound(request.route_url('general_assemblies'))
-
-    membership_number = None
-    try:
-        membership_number = int(request.matchdict.get('membership_number'))
-    except (ValueError, TypeError):
-        request.session.flash(
-            'Invalid membership number',
-            'message_to_staff')
+    general_assembly = request.validated_matchdict['general_assembly']
+    member = request.validated_matchdict['member']
+    send_invitation(request, member, general_assembly.number)
+    # As in other places the route url pattern is hard-coded but should not be.
+    # The only place to change the route url pattern must be the configuration
+    # and therefore this hard-coding is error-prone. It should be referenced
+    # like route_url() but then route_url may require the passing of a
+    # parameter which is not known. Another way must be found to do this
+    # dynamically.
+    if '/members/' in request.referer:
+        return HTTPFound(
+            request.route_url(
+                'member_details',
+                membership_number=member.membership_number,
+                _anchor='general-assembly'))
+    else:
         return HTTPFound(request.route_url(
-            'general_assembly', number=general_assembly_number))
-    member = request.registry.member_information.get_member(membership_number)
-    if member is None:
-        request.session.flash(
-            'Invalid membership number',
-            'message_to_staff')
-        return HTTPFound(request.route_url(
-            'general_assembly', number=general_assembly_number))
-
-    send_invitation(request, member, general_assembly_number)
-    return HTTPFound(
-        request.route_url(
-            'member_details',
-            membership_number=member.membership_number,
-            _anchor='general-assembly'))
+            'membership_listing_backend',
+            _anchor='member_{id}'.format(id=member.id)))
 
 
-def make_bcga18_2_invitation_email(member, url):
+def make_bcga_invitation_email(member, url):
     """
     Create email subject and body for an invitation email for members.
 
@@ -170,18 +162,18 @@ def make_bcga18_2_invitation_email(member, url):
         print(u"the member.locale: {}".format(member.locale))
         print(u"the url: {}".format(url))
         print(u"the subject: {}".format(
-            get_template_text('bcga2018_invite_subject', member.locale)))
+            get_template_text(SUBJECT_TEMPLATE, member.locale)))
         print(u"the salutation: {}".format(get_salutation(member)))
         print(u"the footer: {}".format(get_email_footer(member.locale)))
         print(u"the body: {}".format(
-            get_template_text('bcga2018_invite_body', member.locale).format(
+            get_template_text(BODY_TEMPLATE, member.locale).format(
                 salutation=get_salutation(member),
                 invitation_url=url,
                 footer=get_email_footer(member.locale))))
     return (
-        get_template_text('bcga2018_2_invite_subject', member.locale).rstrip(
+        get_template_text(SUBJECT_TEMPLATE, member.locale).rstrip(
             '\n'),  # remove newline (\n) from mail subject
-        get_template_text('bcga2018_2_invite_body', member.locale).format(
+        get_template_text(BODY_TEMPLATE, member.locale).format(
             salutation=get_salutation(member),
             invitation_url=url,
             footer=get_email_footer(member.locale)
@@ -221,7 +213,7 @@ def send_invitation(request, member, general_assembly_number):
             email=member.email)
         LOG.info("mailing event invitation to to member id %s", member.id)
 
-        email_subject, email_body = make_bcga18_2_invitation_email(member, url)
+        email_subject, email_body = make_bcga_invitation_email(member, url)
         message = Message(
             subject=email_subject,
             sender=request.registry.settings[
@@ -232,64 +224,75 @@ def send_invitation(request, member, general_assembly_number):
         send_message(request, message)
 
 
+def post_error_handler(request, schema, errors):
+    """
+    Redirect to specific general assembly on POST data validation error
+
+    The matchdict containing the general assembly number is validated before
+    and the POST data is only validated if the matchdict validation was
+    successful. Therefore, a redirect to the specific general assembly is
+    possible.
+    """
+    # pylint: disable=unused-argument
+    general_assembly = request.validated_matchdict['general_assembly']
+    return HTTPFound(
+        request.route_url(
+            'general_assembly',
+            number=general_assembly.number))
+
+
 @view_config(
     route_name='general_assembly_batch_invite',
-    permission='manage')
+    permission='manage',
+    pre_processor=MultiPreProcessor([
+        ColanderMatchdictValidator(
+            GeneralAssemblyMatchdict(error_route='general_assemblies'),
+        ),
+        ColanderPostValidator(
+            BatchInvitePost(),
+            FlashCallbackErrorHandler(post_error_handler),
+        ),
+    ]),
+)
 def batch_invite(request):
     """
     Batch invite n members at the same time.
     """
-    number = None
-    try:
-        if 'submit' in request.POST:
-            count = request.POST['count']
-            number = request.POST['number']
-        else:
-            count = request.matchdict.get('count')
-            number = request.matchdict.get('number')
-        batch_count = int(count)
-    except (ValueError, KeyError):
-        batch_count = 5
-    try:
-        general_assembly_number = int(number)
-    except (ValueError, TypeError):
-        request.session.flash(
-            'Invalid general assembly number',
-            'message_to_staff')
-        return HTTPFound(request.route_url('general_assemblies'))
+    general_assembly = request.validated_matchdict['general_assembly']
+    count = request.validated_post['count']
 
     invitees = GeneralAssemblyRepository.get_invitees(
-        general_assembly_number, batch_count)
+        general_assembly.number, count)
 
     if len(invitees) == 0:
         request.session.flash('no invitees left. all done!',
                               'success')
         return HTTPFound(request.route_url(
-            'general_assembly', number=general_assembly_number))
+            'general_assembly', number=general_assembly.number))
 
     num_sent = 0
-    ids_sent = []
+    membership_numbers_sent = []
 
     for member in invitees:
         try:
-            send_invitation(request, member, general_assembly_number)
+            send_invitation(request, member, general_assembly.number)
         except ValueError as value_error:
             request.session.flash(
                 value_error.message,
                 'danger')
             return HTTPFound(request.route_url(
-                'general_assembly', number=general_assembly_number))
+                'general_assembly', number=general_assembly.number))
 
         num_sent += 1
-        ids_sent.append(member.id)
+        membership_numbers_sent.append(member.membership_number)
 
     request.session.flash(
-        "sent out {} mails (to members with ids {})".format(
-            num_sent, ids_sent),
+        "sent out {} mails (to members with membership numbers {})".format(
+            num_sent, membership_numbers_sent),
         'success')
 
     return HTTPFound(request.route_url(
-        'general_assembly', number=general_assembly_number))
+        'general_assembly', number=general_assembly.number))
 
 
 @view_config(
@@ -301,16 +304,7 @@ def general_assembly_create(request):
     """
     Create a general assembly
     """
-    schema = GeneralAssemblySchema()
-    form = deform.Form(
-        schema,
-        buttons=[
-            deform.Button('submit', 'Submit'),
-            deform.Button('reset', 'Reset'),
-        ],
-        renderer=ZPT_RENDERER,
-        use_ajax=True,
-    )
+    form = GeneralAssemblyFormFactory.create()
     if 'submit' in request.POST:
         controls = request.POST.items()
         try:
@@ -322,6 +316,8 @@ def general_assembly_create(request):
             return HTTPFound(request.route_url('general_assemblies'))
         except deform.ValidationFailure as validationfailure:
             return {'form': validationfailure.render()}
+    elif 'cancel' in request.POST:
+        return HTTPFound(request.route_url('general_assemblies'))
     else:
         number = request.registry.general_assembly_invitation \
             .get_next_number()
@@ -333,46 +329,34 @@ def general_assembly_create(request):
     renderer='c3smembership.presentation:templates/pages/'
              'general_assembly_edit.pt',
     route_name='general_assembly_edit',
-    permission='manage')
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        GeneralAssemblyMatchdict(error_route='general_assemblies'),
+    ),
+)
 def general_assembly_edit(request):
     """
     Edit a general assembly
     """
-    try:
-        number = int(request.matchdict.get('number'))
-    except (TypeError, ValueError):
-        return HTTPFound(request.route_url('general_assemblies'))
-    schema = GeneralAssemblySchema()
-    form = deform.Form(
-        schema,
-        buttons=[
-            deform.Button('submit', 'Submit'),
-            deform.Button('reset', 'Reset'),
-            deform.Button('cancel', 'Cancel'),
-        ],
-        renderer=ZPT_RENDERER,
-        use_ajax=True,
-    )
+    assembly = request.validated_matchdict['general_assembly']
+    form = GeneralAssemblyFormFactory.create()
     if 'submit' in request.POST:
         controls = request.POST.items()
         try:
             appstruct = form.validate(controls)
             request.registry.general_assembly_invitation \
                 .edit_general_assembly(
-                    number,
+                    assembly.number,
                     appstruct['general_assembly']['name'],
                     appstruct['general_assembly']['date'])
             return HTTPFound(request.route_url(
-                'general_assembly', number=number))
+                'general_assembly', number=assembly.number))
         except deform.ValidationFailure as validationfailure:
             return {'form': validationfailure.render()}
     elif 'cancel' in request.POST:
-        return HTTPFound(request.route_url('general_assembly', number=number))
+        return HTTPFound(request.route_url(
+            'general_assembly', number=assembly.number))
     else:
-        assembly = request.registry.general_assembly_invitation \
-            .get_general_assembly(number)
-        if assembly is None:
-            return HTTPFound(request.route_url('general_assemblies'))
         form.set_appstruct({'general_assembly': {
             'number': assembly.number,
             'name': assembly.name,

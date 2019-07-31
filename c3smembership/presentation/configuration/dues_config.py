@@ -5,9 +5,8 @@ Pyramid application configuration for membership dues.
 
 import os
 
-from c3smembership.data.model.base import DBSession
-from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 from c3smembership.data.repository.payment_repository import \
     PaymentRepository
 
@@ -18,8 +17,24 @@ from c3smembership.business.payment_information import PaymentInformation
 
 from c3smembership.presentation.configuration import Configuration
 from c3smembership.presentation.views.dues_2015 import (
-    make_invoice_pdf_pdflatex,
-    make_reversal_pdf_pdflatex,
+    make_invoice_pdf_pdflatex as make_invoice_2015,
+    make_reversal_pdf_pdflatex as make_reversal_2015,
+)
+from c3smembership.presentation.views.dues_2016 import (
+    make_invoice_pdf_pdflatex as make_invoice_2016,
+    make_reversal_pdf_pdflatex as make_reversal_2016,
+)
+from c3smembership.presentation.views.dues_2017 import (
+    make_invoice_pdf_pdflatex as make_invoice_2017,
+    make_reversal_pdf_pdflatex as make_reversal_2017,
+)
+from c3smembership.presentation.views.dues_2018 import (
+    make_invoice_pdf_pdflatex as make_invoice_2018,
+    make_reversal_pdf_pdflatex as make_reversal_2018,
+)
+from c3smembership.presentation.views.dues_2019 import (
+    make_invoice_pdf_pdflatex as make_invoice_2019,
+    make_reversal_pdf_pdflatex as make_reversal_2019,
 )
 from c3smembership.presentation.views.payment_list import \
     payment_content_size_provider
@@ -46,14 +61,30 @@ class DuesConfig(Configuration):
         invoices_archive_path = os.path.abspath(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                '../invoices/'))
+                '../../../invoices/'))
         self.config.registry.dues_invoice_archiving = DuesInvoiceArchiving(
-            DBSession,
-            C3sMember,
-            Dues15Invoice,
-            make_invoice_pdf_pdflatex,
-            make_reversal_pdf_pdflatex,
+            DuesInvoiceRepository,
             invoices_archive_path)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2015,
+            make_invoice_2015,
+            make_reversal_2015)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2016,
+            make_invoice_2016,
+            make_reversal_2016)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2017,
+            make_invoice_2017,
+            make_reversal_2017)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2018,
+            make_invoice_2018,
+            make_reversal_2018)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2019,
+            make_invoice_2019,
+            make_reversal_2019)
 
         # Payments
         self.config.registry.payment_information = PaymentInformation(
@@ -73,6 +104,14 @@ class DuesConfig(Configuration):
             ('dues', '/dues'),
 
             # membership dues 2015
+            (
+                'dues15_invoice_pdf_backend',
+                '/dues15_invoice/C3S-dues15-{i}.pdf'
+            ),
+            (
+                'dues15_reversal_pdf_backend',
+                '/dues15_reversal/C3S-dues15-{i}-S.pdf'
+            ),
             ('send_dues15_invoice_email', '/dues15_invoice/{member_id}'),
             ('send_dues15_invoice_batch', '/dues15_invoice_batch'),
             (
@@ -87,7 +126,8 @@ class DuesConfig(Configuration):
             ('dues15_reduction', '/dues15_reduction/{member_id}'),
             (
                 'make_dues15_reversal_invoice_pdf',
-                '/dues15_reversal/{code}/C3S-dues15-{no}-S.pdf'),
+                '/dues15_reversal/{code}/C3S-dues15-{no}-S.pdf'
+            ),
             # for backward compatibility
             (
                 'make_dues15_reversal_invoice_pdf_email',
@@ -97,6 +137,14 @@ class DuesConfig(Configuration):
             ('dues15_listing', '/dues15_listing'),
 
             # membership dues 2016
+            (
+                'dues16_invoice_pdf_backend',
+                '/dues16_invoice/C3S-dues16-{i}.pdf'
+            ),
+            (
+                'dues16_reversal_pdf_backend',
+                '/dues16_reversal/C3S-dues16-{i}-S.pdf'
+            ),
             ('send_dues16_invoice_email', '/dues16_invoice/{member_id}'),
             ('send_dues16_invoice_batch', '/dues16_invoice_batch'),
             (
@@ -122,6 +170,14 @@ class DuesConfig(Configuration):
             ('dues16_listing', '/dues16_listing'),
 
             # membership dues 2017
+            (
+                'dues17_invoice_pdf_backend',
+                '/dues17_invoice/C3S-dues17-{i}.pdf'
+            ),
+            (
+                'dues17_reversal_pdf_backend',
+                '/dues17_reversal/C3S-dues17-{i}-S.pdf'
+            ),
             ('send_dues17_invoice_email', '/dues17_invoice/{member_id}'),
             ('send_dues17_invoice_batch', '/dues17_invoice_batch'),
             (
@@ -159,6 +215,30 @@ class DuesConfig(Configuration):
             ),
             ('dues18_notice', '/dues18_notice/{member_id}'),
             ('dues18_listing', '/dues18_listing'),
+
+            # membership dues 2019
+            (
+                'dues19_invoice_pdf_backend',
+                '/dues19_invoice/C3S-dues19-{i}.pdf'
+            ),
+            ('send_dues19_invoice_email', '/dues19_invoice/{member_id}'),
+            ('send_dues19_invoice_batch', '/dues19_invoice_batch'),
+            (
+                'make_dues19_invoice_no_pdf',
+                '/dues19_invoice_no/{code}/C3S-dues19-{i}.pdf'
+            ),
+            ('dues19_reduction', '/dues19_reduction/{member_id}'),
+
+            (
+                'dues19_reversal_pdf_backend',
+                '/dues19_reversal/C3S-dues19-{i}-S.pdf'
+            ),
+            (
+                'make_dues19_reversal_invoice_pdf',
+                '/dues19_reversal/{code}/C3S-dues19-{no}-S.pdf'
+            ),
+            ('dues19_notice', '/dues19_notice/{member_id}'),
+            ('dues19_listing', '/dues19_listing'),
 
             # Invoices
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),

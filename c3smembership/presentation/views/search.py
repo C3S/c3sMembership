@@ -38,7 +38,7 @@ def search_people(request):
             return HTTPFound(
                 location=request.route_url(
                     'detail',
-                    memberid=_entry.id)
+                    member_id=_entry.id)
             )
         except:
             pass
@@ -93,7 +93,7 @@ def search_codes(request):
             return HTTPFound(
                 location=request.route_url(
                     'detail',
-                    memberid=_entry.id)
+                    member_id=_entry.id)
             )
         except:
             pass

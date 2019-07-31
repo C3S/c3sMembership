@@ -17,7 +17,6 @@ Contents:
    design/index
    development/index
    code/index
-   models/index
    tests/index
    deployment/index
    glossary/index

@@ -37,17 +37,10 @@
 
         <h1>Invitations</h1>
         <p tal:condition="date >= date.today()">
-            <a href="${request.route_url('general_assembly_batch_invite', count=5, number=number)}"
-                    title="Note: change number in URL as appropriate! Default is 5."
-                    class="btn btn-success">
-                Send 5 invitations
-            </a>
-            <br />
-            You may send more than 5 invitations at once by using another number:
-            <form method="POST" action="${request.route_url('general_assembly_batch_invite', count=0, number=number)}">
+            Send number of invitations:
+            <form method="POST" action="${request.route_url('general_assembly_batch_invite', number=number)}">
                 <input type="text" name="count" value="5" placeholder="5"></input>
-                <input type="hidden" name="number" value="${number}"></input>
-                <input type="submit" name="submit"></input>
+                <input type="submit" name="submit" value="Send"></input>
             </form>
         </p>
         <p tal:condition="not date >= date.today()">

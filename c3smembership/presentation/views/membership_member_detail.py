@@ -8,15 +8,17 @@ import logging
 from datetime import date
 from decimal import Decimal
 
-from pyramid.httpexceptions import HTTPFound
 from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
-from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
-from c3smembership.data.model.base.dues16invoice import Dues16Invoice
-from c3smembership.data.model.base.dues17invoice import Dues17Invoice
-from c3smembership.data.model.base.dues18invoice import Dues18Invoice
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
+from c3smembership.presentation.schemas.member import (
+    MemberMatchdict,
+    MemberIdMatchdict,
+)
+from c3smembership.presentation.view_processing import \
+    ColanderMatchdictValidator
 
 LOG = logging.getLogger(__name__)
 
@@ -27,10 +29,16 @@ def get_member_details(request, member):
     """
     shares = request.registry.share_information.get_member_shares(
         member.membership_number)
-    invoices15 = Dues15Invoice.get_by_membership_no(member.membership_number)
-    invoices16 = Dues16Invoice.get_by_membership_no(member.membership_number)
-    invoices17 = Dues17Invoice.get_by_membership_no(member.membership_number)
-    invoices18 = Dues18Invoice.get_by_membership_no(member.membership_number)
+    invoices15 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2015])
+    invoices16 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2016])
+    invoices17 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2017])
+    invoices18 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2018])
+    invoices19 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2019])
     general_assembly_invitations = sorted(
         request.registry.general_assembly_invitation.get_member_invitations(
             member),
@@ -64,6 +72,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues15_listing'),
             'dues_notice_route': request.route_url(
                 'dues15_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues15_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues15_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues15notice_message_to_staff',
         })
     if (member.membership_date < date(2016, 12, 31) and
             (
@@ -91,6 +102,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues16_listing'),
             'dues_notice_route': request.route_url(
                 'dues16_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues16_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues16_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues16notice_message_to_staff',
         })
     if (member.membership_date < date(2017, 12, 31) and
             (
@@ -118,6 +132,9 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues17_listing'),
             'dues_notice_route': request.route_url(
                 'dues17_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues17_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues17_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues17notice_message_to_staff',
         })
     if (member.membership_date < date(2018, 12, 31) and
             (
@@ -145,6 +162,39 @@ def get_member_details(request, member):
             'invoice_listing_route': request.route_url('dues18_listing'),
             'dues_notice_route': request.route_url(
                 'dues18_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues18_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues18_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues18notice_message_to_staff',
+        })
+    if (member.membership_date < date(2019, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2019, 1, 1))):
+        dues.append({
+            'year': '2019',
+            'year_short': '19',
+            'invoices': invoices19,
+            'email_sent': member.dues19_invoice,
+            'email_sent_timestamp': member.dues19_invoice_date,
+            'has_invoice': len(invoices19) > 0,
+            'dues_start': member.dues19_start,
+            'dues_amount': member.dues19_amount,
+            'is_reduced': member.dues19_reduced,
+            'reduced_amount': member.dues19_amount_reduced,
+            'is_balanced': member.dues19_balanced,
+            'amount_paid': member.dues19_amount_paid,
+            'payment_received': member.dues19_paid,
+            'paid_date': member.dues19_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues19_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues19_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues19_listing'),
+            'dues_notice_route': request.route_url(
+                'dues19_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues19_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues19_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues19notice_message_to_staff',
         })
 
     return {
@@ -158,10 +208,14 @@ def get_member_details(request, member):
 
 
 @view_config(
+    route_name='member_details',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberMatchdict(error_route='dashboard')
+    ),
     renderer='c3smembership.presentation:templates/pages/'
              'membership_member_detail.pt',
-    permission='manage',
-    route_name='member_details')
+)
 def member_details(request):
     """
     This view lets accountants view member details:
@@ -172,34 +226,26 @@ def member_details(request):
     Mostly all the info about an application or membership
     in the database can be seen here.
     """
+    member = request.validated_matchdict['member']
+
     logged_in = authenticated_userid(request)
-    membership_number = request.matchdict['membership_number']
     LOG.info(
         'member details of membership number %s checked by %s',
-        membership_number,
+        member.membership_number,
         logged_in)
-
-    member_information = request.registry.member_information
-    member = member_information.get_member(membership_number)
-
-    if member is None:
-        request.session.flash(
-            "A Member with id "
-            "{} could not be found in the DB. run for the backups!".format(
-                membership_number),
-            'danger'
-        )
-        return HTTPFound(  # back to base
-            request.route_url('toolbox'))
 
     return get_member_details(request, member)
 
 
 @view_config(
+    route_name='detail',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
     renderer='c3smembership.presentation:templates/pages/'
              'membership_member_detail.pt',
-    permission='manage',
-    route_name='detail')
+)
 def member_detail(request):
     """
     This view lets accountants view member details:
@@ -210,20 +256,9 @@ def member_detail(request):
     Mostly all the info about an application or membership
     in the database can be seen here.
     """
+    member = request.validated_matchdict['member']
+
     logged_in = authenticated_userid(request)
-    memberid = request.matchdict['memberid']
-    LOG.info("member details of id %s checked by %s", memberid, logged_in)
-
-    member = C3sMember.get_by_id(memberid)
-
-    if member is None:  # that memberid did not produce good results
-        request.session.flash(
-            "A Member with id "
-            "{} could not be found in the DB. run for the backups!".format(
-                memberid),
-            'danger'
-        )
-        return HTTPFound(  # back to base
-            request.route_url('toolbox'))
+    LOG.info('member details of id %s checked by %s', member.id, logged_in)
 
     return get_member_details(request, member)

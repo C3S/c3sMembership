@@ -18,9 +18,6 @@ so this configuration is applied during app instanatiation.
    * - join
      - /
      - :ref:`code_docs_afm`
-   * - login
-     - /login
-     - :ref:`code_docs_accountants`
    * - static
      - /static/
      - :ref:`code_docs_init_main`

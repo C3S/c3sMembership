@@ -14,7 +14,6 @@ Membership acquisition
 
 from datetime import datetime
 import logging
-# from types import NoneType  # py2 is gone
 
 import colander
 import deform
@@ -40,6 +39,9 @@ from c3smembership.data.model.base.c3smember import (
 from c3smembership.presentation.parameter_validation import (
     ParameterValidationException,
 )
+from c3smembership.presentation.schemas.member import MemberIdMatchdict
+from c3smembership.presentation.view_processing import \
+    ColanderMatchdictValidator
 from c3smembership.presentation.views.join import send_mail_confirmation_mail
 from c3smembership.utils import generate_pdf
 
@@ -48,9 +50,8 @@ LOG = logging.getLogger(__name__)
 
 
 @view_config(
-    renderer=(
-        'c3smembership.presentation:'
-        'templates/pages/membership_acquisition.pt'),
+    renderer='c3smembership.presentation:'
+             'templates/pages/membership_acquisition.pt',
     permission='manage',
     route_name='dashboard')
 def dashboard(request):
@@ -91,6 +92,10 @@ def dashboard(request):
 
 
 def dashboard_content_size_provider(request):
+    """
+    Provide non-member listing count as a content size provider to pagination
+    """
+    # pylint: disable=unused-argument
     # TODO: Architectural cleanup necessary as the presentation layer
     # is directly accessing the data layer. It should instead access the
     # business layer.
@@ -156,8 +161,13 @@ def make_payment_reminder_email(member):
             footer=get_email_footer(member.locale)))
 
 
-@view_config(permission='manage',
-             route_name='switch_sig')
+@view_config(
+    route_name='switch_sig',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
+)
 def switch_sig(request):
     """
     This view lets accountants switch an applications signature status
@@ -166,69 +176,76 @@ def switch_sig(request):
     Note:
         Expects the object request.registry.membership_application to implement
     """
-    member_id = request.matchdict['memberid']
+    member = request.validated_matchdict['member']
 
     membership_application = request.registry.membership_application
-    signature_received = membership_application.get_signature_status(member_id)
+    signature_received = membership_application.get_signature_status(member.id)
     new_signature_received = not signature_received
     membership_application.set_signature_status(
-        member_id,
+        member.id,
         new_signature_received)
 
     LOG.info(
         "signature status of member.id %s changed by %s to %s",
-        member_id,
+        member.id,
         request.user.login,
         new_signature_received
     )
 
-    if 'dashboard' in request.referrer:
-        return get_dashboard_redirect(request, member_id)
+    if request.referer is not None and 'dashboard' in request.referer:
+        return get_dashboard_redirect(request, member.id)
     else:
         return HTTPFound(
             request.route_url(
                 'detail',
-                memberid=member_id,
+                member_id=member.id,
                 _anchor='membership_info'
             )
         )
 
 
-@view_config(permission='manage',
-             route_name='switch_pay')
+@view_config(
+    route_name='switch_pay',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
+)
 def switch_pay(request):
     """
-    This view lets accountants switch a member applications payment status
-    once their payment has arrived.
+    This view lets accountants switch a member applications payment status once
+    their payment has arrived.
     """
-    member_id = request.matchdict['memberid']
+    member = request.validated_matchdict['member']
 
     membership_application = request.registry.membership_application
-    payment_received = membership_application.get_payment_status(member_id)
+    payment_received = membership_application.get_payment_status(member.id)
     new_payment_received = not payment_received
     membership_application.set_payment_status(
-        member_id,
+        member.id,
         new_payment_received)
 
     LOG.info(
         "payment info of member.id %s changed by %s to %s",
-        member_id,
+        member.id,
         request.user.login,
         new_payment_received
     )
-    if 'dashboard' in request.referrer:
-        return get_dashboard_redirect(request, member_id)
+    if request.referer is not None and 'dashboard' in request.referer:
+        return get_dashboard_redirect(request, member.id)
     else:
         return HTTPFound(
             request.route_url(
                 'detail',
-                memberid=member_id,
+                member_id=member.id,
                 _anchor='membership_info')
         )
 
 
-@view_config(permission='manage',
-             route_name='regenerate_pdf')
+@view_config(
+    route_name='regenerate_pdf',
+    permission='manage',
+)
 def regenerate_pdf(request):
     """
     Staffers can regenerate an applicants PDF and send it to her.
@@ -237,7 +254,11 @@ def regenerate_pdf(request):
     member = C3sMember.get_by_code(code)
 
     if member is None:
+        request.session.flash(
+            'A member with code {} does not exist'.format(code),
+            'danger')
         return get_dashboard_redirect(request)
+
     membership_application = request.registry.membership_application.get(
         member.id)
 
@@ -261,38 +282,47 @@ def regenerate_pdf(request):
         "%s regenerated the PDF for code %s",
         authenticated_userid(request),
         code)
-    return generate_pdf(appstruct)
+    return generate_pdf(request, appstruct)
 
 
-@view_config(permission='manage',
-             route_name='mail_sig_confirmation')
+@view_config(
+    route_name='mail_sig_confirmation',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
+)
 def mail_signature_confirmation(request):
     """
-    Send a mail to a membership applicant
-    informing her about reception of signature.
+    Send a mail to a membership applicant informing her about reception of
+    signature.
     """
-    member_id = request.matchdict['memberid']
+    member = request.validated_matchdict['member']
 
     membership_application = request.registry.membership_application
-    membership_application.mail_signature_confirmation(member_id, request)
+    membership_application.mail_signature_confirmation(member.id, request)
 
-    if 'detail' in request.referrer:
+    if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=member_id))
+            member_id=member.id))
     else:
-        return get_dashboard_redirect(request, member_id)
+        return get_dashboard_redirect(request, member.id)
 
 
-@view_config(permission='manage',
-             route_name='mail_pay_confirmation')
+@view_config(
+    route_name='mail_pay_confirmation',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
+)
 def mail_payment_confirmation(request):
     """
     Send a mail to a membership applicant
     informing her about reception of payment.
     """
-    member = request.registry.member_information.get_member_by_id(
-        request.matchdict['member_id'])
+    member = request.validated_matchdict['member']
 
     email_subject, email_body = make_payment_confirmation_email(member)
     message = Message(
@@ -305,16 +335,21 @@ def mail_payment_confirmation(request):
 
     member.payment_confirmed = True
     member.payment_confirmed_date = datetime.now()
-    if 'detail' in request.referrer:
+    if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=member.id))
+            member_id=member.id))
     else:
         return get_dashboard_redirect(request, member.id)
 
 
-@view_config(permission='manage',
-             route_name='mail_sig_reminder')
+@view_config(
+    route_name='mail_sig_reminder',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
+)
 def mail_signature_reminder(request):
     """
     Send a mail to a membership applicant
@@ -328,14 +363,7 @@ def mail_signature_reminder(request):
     * Transfer money for the shares to acquire (at least one share).
     * **Send the signed form** back to headquarters.
     """
-    member_id = request.matchdict['memberid']
-    member = C3sMember.get_by_id(member_id)
-    if isinstance(member, type(None)):
-        request.session.flash(
-            'that member was not found! (id: {})'.format(member_id),
-            'danger'
-        )
-        return get_dashboard_redirect(request)
+    member = request.validated_matchdict['member']
 
     email_subject, email_body = make_signature_reminder_email(member)
     message = Message(
@@ -346,22 +374,28 @@ def mail_signature_reminder(request):
     )
     send_message(request, message)
 
-    try:
-        member.sent_signature_reminder += 1
-    except TypeError:
-        # if value was None (after migration of DB schema)
+    if member.sent_signature_reminder is None or \
+            member.sent_signature_reminder == 0:
         member.sent_signature_reminder = 1
+    else:
+        member.sent_signature_reminder += 1
     member.sent_signature_reminder_date = datetime.now()
-    if 'detail' in request.referrer:
+
+    if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=request.matchdict['memberid']))
+            member_id=member.id))
     else:
         return get_dashboard_redirect(request, member.id)
 
 
-@view_config(permission='manage',
-             route_name='mail_pay_reminder')
+@view_config(
+    route_name='mail_pay_reminder',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
+)
 def mail_payment_reminder(request):
     """
     Send a mail to a membership applicant
@@ -375,8 +409,7 @@ def mail_payment_reminder(request):
     * **Transfer money** for the shares to acquire (at least one share).
     * Send the signed form back to headquarters.
     """
-    member = request.registry.member_information.get_member_by_id(
-        request.matchdict['memberid'])
+    member = request.validated_matchdict['member']
 
     email_subject, email_body = make_payment_reminder_email(member)
     message = Message(
@@ -387,22 +420,28 @@ def mail_payment_reminder(request):
     )
     send_message(request, message)
 
-    try:  # if value is int
-        member.sent_payment_reminder += 1
-    except TypeError:  # pragma: no cover
-        # if value was None (after migration of DB schema)
+    if member.sent_payment_reminder is None or \
+            member.sent_payment_reminder == 0:
         member.sent_payment_reminder = 1
+    else:
+        member.sent_payment_reminder += 1
     member.sent_payment_reminder_date = datetime.now()
-    if 'detail' in request.referrer:
+
+    if request.referer is not None and 'detail' in request.referer:
         return HTTPFound(request.route_url(
             'detail',
-            memberid=request.matchdict['memberid']))
+            member_id=member.id))
     else:
         return get_dashboard_redirect(request, member.id)
 
 
-@view_config(permission='manage',
-             route_name='mail_mail_confirmation')
+@view_config(
+    route_name='mail_mail_confirmation',
+    permission='manage',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dashboard')
+    ),
+)
 def mail_mail_conf(request):
     '''
     Send email to member to confirm her email address by clicking a link.
@@ -410,20 +449,13 @@ def mail_mail_conf(request):
     Needed for applications that came in solely on paper
     and were digitalized/entered into DB by staff.
     '''
-    member_id = request.matchdict['member_id']
-    member = C3sMember.get_by_id(member_id)
-    if isinstance(member, type(None)):
-        request.session.flash(
-            'id not found. no mail sent.',
-            'danger')
-        return get_dashboard_redirect(request)
+    member = request.validated_matchdict['member']
 
     send_mail_confirmation_mail(
         member,
         request.registry.settings['c3smembership.url'],
         request.registry.settings['c3smembership.notification_sender'],
         request.registry.get_mailer(request),
-        request.localizer,
         request.registry.settings['testing.mail_to_console'])
 
     return get_dashboard_redirect(request, member.id)
@@ -493,6 +525,7 @@ def afms_awaiting_approval(request):
     Returns:
         Multiline string for copy and paste (using Pyramids string_renderer).
     """
+    # pylint: disable=unused-argument
 
     afms = C3sMember.afms_ready_for_approval()
 

@@ -35,13 +35,6 @@
         <h1>
             Acquisition of membership
         </h1>
-        <h2 tal:condition="message" class="message" id="message">
-            ${message}
-        </h2>
-        <h3 tal:repeat="message request.session.pop_flash('messages')"
-                class="message text-danger" id="message">
-            ${message}
-        </h3>
         <p>
             Number of data sets: ${pagination.paging.content_size}
         </p>
@@ -128,17 +121,17 @@
             <!--! loop over the list of applications for membership -->
             <tr tal:repeat="member members">
                 <td>
-                    <a href="${request.route_url('detail', memberid=member.id)}">
+                    <a href="${request.route_url('detail', member_id=member.id)}">
                         ${member.lastname}
                     </a>
                 </td>
                 <td>
-                    <a href="${request.route_url('detail', memberid=member.id)}">
+                    <a href="${request.route_url('detail', member_id=member.id)}">
                         ${member.firstname}
                     </a>
                 </td>
                 <td>
-                    <a href="${request.route_url('detail', memberid=member.id)}">
+                    <a href="${request.route_url('detail', member_id=member.id)}">
                         ${member.date_of_submission.strftime('%Y-%m-%d')}
                     </a>
                 </td>
@@ -200,7 +193,7 @@
                         </span>
                         <span class="application-process-step" title="Signature">
                             <div tal:condition="not member.signature_received" tal:omit-tag="">
-                                <a href="${request.route_url('switch_sig', memberid=member.id)}"
+                                <a href="${request.route_url('switch_sig', member_id=member.id)}"
                                         title="Confirm signature"
                                         class="fas fa-pencil-alt text-danger">
                                 </a>
@@ -215,7 +208,7 @@
                                             .format(member.sent_signature_reminder_date.strftime('%Y-%m-%d'))
                                     signature_reminder_title = signature_number_text + last_signature_text
                                 ?>
-                                <a href="${request.route_url('mail_sig_reminder', memberid=member.id)}"
+                                <a href="${request.route_url('mail_sig_reminder', member_id=member.id)}"
                                         title="${signature_reminder_title}"
                                         class="fas fa-bell send-reminder"
                                         id="send-reminder-${member.id}"
@@ -225,14 +218,14 @@
                                         title="Confirmations can only be sent when the signature has been received."></i>
                             </div>
                             <div tal:condition="member.signature_received" tal:omit-tag="">
-                                <a href="${request.route_url('switch_sig', memberid=member.id)}"
+                                <a href="${request.route_url('switch_sig', member_id=member.id)}"
                                         title="Revoke signature received at ${member.signature_received_date}"
                                         class="fas fa-pencil-alt text-success">
                                 </a>
                                 <i class="fas fa-bell text-secondary"
                                         title="Reminders can only be sent as long as the signature has not yet been received."></i>
                                 <a tal:condition="not member.signature_confirmed"
-                                        href="${request.route_url('mail_sig_confirmation', memberid=member.id)}"
+                                        href="${request.route_url('mail_sig_confirmation', member_id=member.id)}"
                                         title="Send signature confirmation"
                                         class="fas fa-envelope text-danger">
                                 </a>
@@ -243,7 +236,7 @@
                         </span>
                         <span class="application-process-step" title="Payment">
                             <div tal:condition="not member.payment_received" tal:omit-tag="">
-                                <a href="${request.route_url('switch_pay', memberid=member.id)}"
+                                <a href="${request.route_url('switch_pay', member_id=member.id)}"
                                         title="Confirm payment"
                                         class="fas fa-coins text-danger">
                                 </a>
@@ -258,7 +251,7 @@
                                             .format(member.sent_payment_reminder_date.strftime('%Y-%m-%d'))
                                     payment_reminder_title = payment_number_text + last_payment_text
                                 ?>
-                                <a href="${request.route_url('mail_pay_reminder', memberid=member.id)}"
+                                <a href="${request.route_url('mail_pay_reminder', member_id=member.id)}"
                                         title="${payment_reminder_title}"
                                         class="fas fa-bell send-reminder"
                                         id="send-reminder-${member.id}"
@@ -268,7 +261,7 @@
                                         title="Confirmations can only be sent when the payment has been received."></i>
                             </div>
                             <div tal:condition="member.payment_received" tal:omit-tag="">
-                                <a href="${request.route_url('switch_pay', memberid=member.id)}"
+                                <a href="${request.route_url('switch_pay', member_id=member.id)}"
                                         title="Revoke payment received at ${member.payment_received_date}"
                                         class="fas fa-coins text-success">
                                 </a>

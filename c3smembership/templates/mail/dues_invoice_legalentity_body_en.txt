@@ -1,12 +1,12 @@
 Hello {salutation},
 
-On June 3rd, 2018, the 5. regular general assembly of the C3S has
+On Dec. 1st, 2018, the extraordinary general assembly of the C3S has
 extended the temporary membership contribution rules, in order to secure 
 the financial basis for the continuation of our common project:
 
   https://archive.c3s.cc/aktuell/legal/C3S_SCE_membership_dues_en.pdf
 
-For 2018, the membership dues for active members will therefore be 50
+For 2019, the membership dues for active members will therefore be 50
 Euro.
 
 Since {legal_entity_name} is an investing member, you are exempt from this

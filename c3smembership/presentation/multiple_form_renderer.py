@@ -55,8 +55,8 @@ class IFormValidationEvent(object):
 
 class MultipleFormRenderer(object):
     """
-    MultipleFormRenderer enables rendering, validation and callbacks of multiple
-    forms.
+    MultipleFormRenderer enables rendering, validation and callbacks of
+    multiple forms.
 
     All forms added to the MultipleFormRenderer are rendered to the result. In
     case the form was submitted the form is validated. Callbacks for
@@ -77,8 +77,8 @@ class MultipleFormRenderer(object):
         Args:
             form: The form to be added to the renderer.
             validation_success: A python callable which is called in case
-                the form was successfully validated. The result of this callable
-                is returned to the view.
+                the form was successfully validated. The result of this
+                callable is returned to the view.
             validation_failure: A python callable which is called in case
                 the form validation failed. The result of this callable is
                 returned to the view.

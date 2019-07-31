@@ -1,14 +1,14 @@
 # Translations template for c3smembership.
-# Copyright (C) 2018 ORGANIZATION
+# Copyright (C) 2019 ORGANIZATION
 # This file is distributed under the same license as the c3smembership project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: c3smembership 1.24\n"
+"Project-Id-Version: c3smembership 1.27\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-08-22 08:28+0200\n"
+"POT-Creation-Date: 2019-05-22 13:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -153,7 +153,7 @@ msgstr ""
 msgid "Français"
 msgstr ""
 
-#: c3smembership/utils.py:260
+#: c3smembership/utils.py:261
 msgid "[yes][ALERT] check the logs!"
 msgstr ""
 
@@ -164,6 +164,75 @@ msgstr ""
 #: c3smembership/presentation/schemas/accountant_login.py:19
 #: c3smembership/presentation/templates/deform/checked_password.pt:8
 msgid "Password"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:34
+msgid "Sorry, but we do not believe that the birthday you entered is correct."
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:37
+msgid ""
+"Unfortunately, the membership application of an underaged person is currently"
+" not possible via our web form. Please send an email to office@c3s.cc."
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:50
+msgid "First Name"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:55
+msgid "Last Name"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:60
+#: c3smembership/presentation/templates/pages/join_check_data.pt:46
+#: c3smembership/presentation/views/membership_member_edit.py:143
+msgid "Email Address"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:66
+#: c3smembership/presentation/templates/pages/join_check_data.pt:47
+msgid "Address Line 1"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:71
+#: c3smembership/presentation/templates/pages/join_check_data.pt:48
+#: c3smembership/presentation/views/membership_member_edit.py:171
+msgid "Address Line 2"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:75
+#: c3smembership/presentation/templates/pages/join_check_data.pt:49
+#: c3smembership/presentation/views/membership_member_edit.py:175
+msgid "Postal Code"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:80
+#: c3smembership/presentation/templates/pages/join_check_data.pt:50
+#: c3smembership/presentation/views/membership_member_edit.py:180
+msgid "City"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:85
+#: c3smembership/presentation/templates/pages/join_check_data.pt:51
+#: c3smembership/presentation/views/membership_member_edit.py:185
+msgid "Country"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:93
+#: c3smembership/presentation/templates/pages/join_check_data.pt:52
+#: c3smembership/presentation/views/membership_member_edit.py:193
+msgid "Date of Birth"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:126
+msgid "Password (to protect access to your data)"
+msgstr ""
+
+#: c3smembership/presentation/schemas/member.py:127
+msgid ""
+"We need a password to protect your data. After verifying your email you will "
+"have to enter it."
 msgstr ""
 
 #: c3smembership/presentation/schemas/membership_listing.py:21
@@ -192,10 +261,10 @@ msgid "Apply"
 msgstr ""
 
 #: c3smembership/presentation/schemas/payment_list_filters.py:40
-#: c3smembership/presentation/views/join.py:333
+#: c3smembership/presentation/views/join.py:243
 #: c3smembership/presentation/views/login_logout.py:52
 #: c3smembership/presentation/views/membership_member_edit.py:495
-#: c3smembership/presentation/views/membership_member_new.py:217
+#: c3smembership/presentation/views/membership_member_new.py:210
 msgid "Reset"
 msgstr ""
 
@@ -220,32 +289,32 @@ msgid "There was a problem with this section"
 msgstr ""
 
 #. Default: https://www.c3s.cc/en/contact-us/
-#: c3smembership/presentation/templates/page-base/frontend.pt:40
+#: c3smembership/presentation/templates/page-base/frontend.pt:55
 msgid "footer-contact-href"
 msgstr ""
 
 #. Default: Contact
-#: c3smembership/presentation/templates/page-base/frontend.pt:40
+#: c3smembership/presentation/templates/page-base/frontend.pt:55
 msgid "footer-contact"
 msgstr ""
 
 #. Default: https://www.c3s.cc/en/impressum/
-#: c3smembership/presentation/templates/page-base/frontend.pt:46
+#: c3smembership/presentation/templates/page-base/frontend.pt:61
 msgid "footer-imprint-href"
 msgstr ""
 
 #. Default: Imprint
-#: c3smembership/presentation/templates/page-base/frontend.pt:46
+#: c3smembership/presentation/templates/page-base/frontend.pt:61
 msgid "footer-imprint"
 msgstr ""
 
 #. Default: https://www.c3s.cc/en/datenschutz/#dsgvo-membership
-#: c3smembership/presentation/templates/page-base/frontend.pt:52
+#: c3smembership/presentation/templates/page-base/frontend.pt:67
 msgid "footer-privacy-href"
 msgstr ""
 
 #. Default: Data Privacy Statement
-#: c3smembership/presentation/templates/page-base/frontend.pt:52
+#: c3smembership/presentation/templates/page-base/frontend.pt:67
 msgid "footer-privacy"
 msgstr ""
 
@@ -303,68 +372,25 @@ msgid "success-paragraph-thanks"
 msgstr ""
 
 #: c3smembership/presentation/templates/pages/join_check_data.pt:42
-#: c3smembership/presentation/views/join.py:316
+#: c3smembership/presentation/views/join.py:226
 #: c3smembership/presentation/views/membership_member_edit.py:424
-#: c3smembership/presentation/views/membership_member_new.py:200
+#: c3smembership/presentation/views/membership_member_new.py:195
 msgid "Personal Data"
 msgstr ""
 
 #: c3smembership/presentation/templates/pages/join_check_data.pt:44
-#: c3smembership/presentation/views/join.py:94
 #: c3smembership/presentation/views/membership_member_edit.py:133
 msgid "(Real) First Name"
 msgstr ""
 
 #: c3smembership/presentation/templates/pages/join_check_data.pt:45
-#: c3smembership/presentation/views/join.py:99
 #: c3smembership/presentation/views/membership_member_edit.py:138
 msgid "(Real) Last Name"
 msgstr ""
 
-#: c3smembership/presentation/templates/pages/join_check_data.pt:46
-#: c3smembership/presentation/views/join.py:104
-#: c3smembership/presentation/views/membership_member_edit.py:143
-msgid "Email Address"
-msgstr ""
-
-#: c3smembership/presentation/templates/pages/join_check_data.pt:47
-#: c3smembership/presentation/views/join.py:110
-msgid "Address Line 1"
-msgstr ""
-
-#: c3smembership/presentation/templates/pages/join_check_data.pt:48
-#: c3smembership/presentation/views/join.py:115
-#: c3smembership/presentation/views/membership_member_edit.py:171
-msgid "Address Line 2"
-msgstr ""
-
-#: c3smembership/presentation/templates/pages/join_check_data.pt:49
-#: c3smembership/presentation/views/join.py:119
-#: c3smembership/presentation/views/membership_member_edit.py:175
-msgid "Postal Code"
-msgstr ""
-
-#: c3smembership/presentation/templates/pages/join_check_data.pt:50
-#: c3smembership/presentation/views/join.py:124
-#: c3smembership/presentation/views/membership_member_edit.py:180
-msgid "City"
-msgstr ""
-
-#: c3smembership/presentation/templates/pages/join_check_data.pt:51
-#: c3smembership/presentation/views/join.py:129
-#: c3smembership/presentation/views/membership_member_edit.py:185
-msgid "Country"
-msgstr ""
-
-#: c3smembership/presentation/templates/pages/join_check_data.pt:52
-#: c3smembership/presentation/views/join.py:137
-#: c3smembership/presentation/views/membership_member_edit.py:193
-msgid "Date of Birth"
-msgstr ""
-
 #: c3smembership/presentation/templates/pages/join_check_data.pt:54
 #: c3smembership/presentation/views/membership_member_edit.py:436
-#: c3smembership/presentation/views/membership_member_new.py:205
+#: c3smembership/presentation/views/membership_member_new.py:198
 msgid "Membership Requirements"
 msgstr ""
 
@@ -381,8 +407,8 @@ msgid "Membership(s)"
 msgstr ""
 
 #: c3smembership/presentation/templates/pages/join_check_data.pt:62
-#: c3smembership/presentation/views/join.py:322
-#: c3smembership/presentation/views/membership_member_new.py:208
+#: c3smembership/presentation/views/join.py:232
+#: c3smembership/presentation/views/membership_member_new.py:201
 msgid "Shares"
 msgstr ""
 
@@ -621,6 +647,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:157
 #: c3smembership/presentation/templates/pages/statistics.pt:221
 #: c3smembership/presentation/templates/pages/statistics.pt:285
+#: c3smembership/presentation/templates/pages/statistics.pt:349
 msgid "stats-dues-month"
 msgstr ""
 
@@ -629,6 +656,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:158
 #: c3smembership/presentation/templates/pages/statistics.pt:222
 #: c3smembership/presentation/templates/pages/statistics.pt:286
+#: c3smembership/presentation/templates/pages/statistics.pt:350
 msgid "stats-dues-amount-invoiced-normal"
 msgstr ""
 
@@ -637,6 +665,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:159
 #: c3smembership/presentation/templates/pages/statistics.pt:223
 #: c3smembership/presentation/templates/pages/statistics.pt:287
+#: c3smembership/presentation/templates/pages/statistics.pt:351
 msgid "stats-dues-amount-invoiced-reversal"
 msgstr ""
 
@@ -645,6 +674,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:160
 #: c3smembership/presentation/templates/pages/statistics.pt:224
 #: c3smembership/presentation/templates/pages/statistics.pt:288
+#: c3smembership/presentation/templates/pages/statistics.pt:352
 msgid "stats-dues-amount-invoiced"
 msgstr ""
 
@@ -653,6 +683,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:161
 #: c3smembership/presentation/templates/pages/statistics.pt:225
 #: c3smembership/presentation/templates/pages/statistics.pt:289
+#: c3smembership/presentation/templates/pages/statistics.pt:353
 msgid "stats-dues-amount-paid"
 msgstr ""
 
@@ -661,6 +692,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:162
 #: c3smembership/presentation/templates/pages/statistics.pt:226
 #: c3smembership/presentation/templates/pages/statistics.pt:290
+#: c3smembership/presentation/templates/pages/statistics.pt:354
 msgid "stats-dues-amount-invoiced-current"
 msgstr ""
 
@@ -669,6 +701,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:163
 #: c3smembership/presentation/templates/pages/statistics.pt:227
 #: c3smembership/presentation/templates/pages/statistics.pt:291
+#: c3smembership/presentation/templates/pages/statistics.pt:355
 msgid "stats-dues-amount-paid-current"
 msgstr ""
 
@@ -677,6 +710,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:164
 #: c3smembership/presentation/templates/pages/statistics.pt:228
 #: c3smembership/presentation/templates/pages/statistics.pt:292
+#: c3smembership/presentation/templates/pages/statistics.pt:356
 msgid "stats-dues-amount-current"
 msgstr ""
 
@@ -685,6 +719,7 @@ msgstr ""
 #: c3smembership/presentation/templates/pages/statistics.pt:205
 #: c3smembership/presentation/templates/pages/statistics.pt:269
 #: c3smembership/presentation/templates/pages/statistics.pt:333
+#: c3smembership/presentation/templates/pages/statistics.pt:397
 msgid "stats-dues-sum"
 msgstr ""
 
@@ -703,140 +738,125 @@ msgstr ""
 msgid "stats-dues-2018"
 msgstr ""
 
+#. Default: 2019
+#: c3smembership/presentation/templates/pages/statistics.pt:345
+msgid "stats-dues-2019"
+msgstr ""
+
 #: c3smembership/presentation/views/annual_report.py:69
 #: c3smembership/presentation/views/login_logout.py:51
 #: c3smembership/presentation/views/membership_member_edit.py:494
-#: c3smembership/presentation/views/membership_member_new.py:216
+#: c3smembership/presentation/views/membership_member_new.py:209
 #: c3smembership/presentation/views/shares.py:95
 msgid "Submit"
 msgstr ""
 
 #: c3smembership/presentation/views/annual_report.py:87
-#: c3smembership/presentation/views/join.py:357
+#: c3smembership/presentation/views/join.py:267
 #: c3smembership/presentation/views/login_logout.py:63
 #: c3smembership/presentation/views/membership_member_edit.py:525
-#: c3smembership/presentation/views/membership_member_new.py:255
+#: c3smembership/presentation/views/membership_member_new.py:228
 #: c3smembership/presentation/views/shares.py:107
 msgid "Please note: There were errors, please check the form below."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:147
-msgid "Sorry, but we do not believe that the birthday you entered is correct."
-msgstr ""
-
-#: c3smembership/presentation/views/join.py:150
-msgid ""
-"Unfortunately, the membership application of an underaged person is currently"
-" not possible via our web form. Please send an email to office@c3s.cc."
-msgstr ""
-
-#: c3smembership/presentation/views/join.py:161
-msgid "Password (to protect access to your data)"
-msgstr ""
-
-#: c3smembership/presentation/views/join.py:162
-msgid ""
-"We need a password to protect your data. After verifying your email you will "
-"have to enter it."
-msgstr ""
-
-#: c3smembership/presentation/views/join.py:175
+#: c3smembership/presentation/views/join.py:82
 #: c3smembership/presentation/views/membership_member_edit.py:318
-#: c3smembership/presentation/views/membership_member_new.py:121
+#: c3smembership/presentation/views/membership_member_new.py:120
 msgid "Yes"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:176
+#: c3smembership/presentation/views/join.py:83
 #: c3smembership/presentation/views/membership_member_edit.py:319
-#: c3smembership/presentation/views/membership_member_new.py:122
+#: c3smembership/presentation/views/membership_member_new.py:121
 msgid "No"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:179
+#: c3smembership/presentation/views/join.py:86
 msgid "I want to become a ... (choose membership type, see C3S SCE statute sec. 4)"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:181
+#: c3smembership/presentation/views/join.py:88
 msgid "choose the type of membership."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:186
+#: c3smembership/presentation/views/join.py:93
 msgid ""
 "FULL member. Full members have to be natural persons who register at least "
 "three works they created themselves with C3S. This applies to composers, "
 "lyricists and remixers. They get a vote."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:193
+#: c3smembership/presentation/views/join.py:100
 msgid ""
 "INVESTING member. Investing members can be natural or legal entities or "
 "private companies that do not register works with C3S. They do not get a "
 "vote, but may counsel."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:203
+#: c3smembership/presentation/views/join.py:110
 msgid "Currently, I am a member of (at least) one other collecting society."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:212
+#: c3smembership/presentation/views/join.py:119
 msgid "If so, which one(s)? Please separate multiple collecting societies by comma."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:214
+#: c3smembership/presentation/views/join.py:121
 msgid ""
 "Please tell us which collecting societies you are a member of. If more than "
 "one, please separate them by comma."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:231
+#: c3smembership/presentation/views/join.py:138
 msgid ""
 "I want to buy the following number of Shares (50€ each, up to 3000€, see C3S "
 "statute sec. 5)"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:234
+#: c3smembership/presentation/views/join.py:141
 msgid "You can choose any amount of shares between 1 and 60."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:242
+#: c3smembership/presentation/views/join.py:149
 msgid "You need at least one share of 50 €."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:243
+#: c3smembership/presentation/views/join.py:150
 msgid "You may choose 60 shares at most (3000 €)."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:263
+#: c3smembership/presentation/views/join.py:170
 msgid ""
 "I acknowledge that the statutes and membership dues regulations determine "
 "periodic contributions for full members."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:267
+#: c3smembership/presentation/views/join.py:174
 msgid ""
 "An electronic copy of the statute of the C3S SCE has been made available to "
 "me (see link below)."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:270
+#: c3smembership/presentation/views/join.py:177
 msgid "You must confirm to have access to the statute."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:280
+#: c3smembership/presentation/views/join.py:187
 msgid ""
 "An electronic copy of the temporary membership dues regulations of the C3S "
 "SCE has been made available to me (see link below)."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:284
+#: c3smembership/presentation/views/join.py:191
 msgid "You must confirm to have access to the temporary membership dues regulations."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:294
+#: c3smembership/presentation/views/join.py:201
 msgid "Privacy"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:295
+#: c3smembership/presentation/views/join.py:202
 msgid ""
 "I hereby agree to my personal data entered in this form being stored and "
 "processed for the purpose of membership management. I have taken notice of "
@@ -844,39 +864,39 @@ msgid ""
 "membership (see link below)"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:319
+#: c3smembership/presentation/views/join.py:229
 msgid "Membership Data"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:325
+#: c3smembership/presentation/views/join.py:235
 msgid "Acknowledgement"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:334
+#: c3smembership/presentation/views/join.py:244
 msgid "Next"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:369
+#: c3smembership/presentation/views/join.py:279
 msgid ""
 "Please re-enter your password. For security reasons your password is not "
 "cached and therefore needs to be re-entered in case of validation issues."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:584
+#: c3smembership/presentation/views/join.py:492
 msgid ""
 "Not found. Check verification URL. If all seems right, please use the form "
 "again."
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:599
+#: c3smembership/presentation/views/join.py:507
 msgid "Wrong Password!"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:644
+#: c3smembership/presentation/views/join.py:551
 msgid "Success. Load your PDF!"
 msgstr ""
 
-#: c3smembership/presentation/views/join.py:647
+#: c3smembership/presentation/views/join.py:554
 msgid "Please enter your password."
 msgstr ""
 
@@ -1021,7 +1041,7 @@ msgid "Investing (non-user) member"
 msgstr ""
 
 #: c3smembership/presentation/views/membership_member_edit.py:344
-#: c3smembership/presentation/views/membership_member_new.py:123
+#: c3smembership/presentation/views/membership_member_new.py:122
 msgid "Unknown"
 msgstr ""
 
@@ -1066,7 +1086,7 @@ msgid ""
 "members and not for natural person members."
 msgstr ""
 
-#: c3smembership/presentation/views/membership_member_new.py:67
+#: c3smembership/presentation/views/membership_member_new.py:65
 msgid "E-Mail"
 msgstr ""
 

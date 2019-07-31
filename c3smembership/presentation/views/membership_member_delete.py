@@ -27,13 +27,10 @@ def delete_entry(request):
 
     deletion_confirmed = (request.params.get('deletion_confirmed', '0') == '1')
     redirection_view = request.params.get('redirect', 'dashboard')
-    LOG.info('redirect to: ' + str(redirection_view))
 
     if deletion_confirmed:
         memberid = request.matchdict['memberid']
         member = C3sMember.get_by_id(memberid)
-        member_lastname = member.lastname
-        member_firstname = member.firstname
 
         C3sMember.delete_by_id(member.id)
         LOG.info(
@@ -44,23 +41,12 @@ def delete_entry(request):
         message = "member.id %s was deleted" % member.id
         request.session.flash(message, 'success')
 
-        msgstr = u'Member with id {0} \"{1}, {2}\" was deleted.'
         return HTTPFound(
             request.route_url(
                 redirection_view,
-                _query={'message': msgstr.format(
-                    memberid,
-                    member_lastname,
-                    member_firstname)},
-                _anchor='member_{id}'.format(id=str(memberid))
-            )
-        )
+                _anchor='member_{id}'.format(id=str(memberid))))
     else:
-        return HTTPFound(
-            request.route_url(
-                redirection_view,
-                _query={'message': (
-                    'Deleting the member was not confirmed'
-                    ' and therefore nothing has been deleted.')}
-            )
-        )
+        request.session.flash(
+            'Member does not exist and was not deleted.',
+            'danger')
+        return HTTPFound(request.route_url(redirection_view))

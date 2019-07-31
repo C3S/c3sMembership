@@ -1,3 +1,5 @@
+<!--! i18n needs one root element -->
+<div tal:omit-tag="">
 <h2>Entity</h2>
 <table class="table table-striped">
     <tr>
@@ -59,7 +61,7 @@
     <tr tal:condition="member.is_duplicate">
         <td>Duplicate of</td>
         <td>
-            <a href="${request.route_url('detail', memberid=member.is_duplicate_of)}">
+            <a href="${request.route_url('detail', member_id=member.is_duplicate_of)}">
                 ${member.is_duplicate_of}
             </a>
         </td>
@@ -73,3 +75,4 @@
         <td>${member.accountant_comment}</td>
     </tr>
 </table>
+</div>

@@ -1,66 +1,45 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      metal:use-macro="backend"
-      i18n:domain="c3smembership">
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend"
+        i18n:domain="c3smembership">
     <tal:block metal:fill-slot="content">
-        <h1>Archiving Dues Invoice 2015</h1>
-        <a href="${request.route_url('toolbox')}" class="btn btn-success">Toolbox</a>
-        <a href="${request.route_url('dues15_listing')}" class="btn btn-success">Dues listing</a>
-        <p tal:condition="status == 'failed-count'" class="bg-danger">
-            Invalid number of invoices to archive.
-        </p>
-        <p tal:condition="status == 'failed-generation'" class="bg-danger">
-            An error occurred during archiving the invoices.
-        </p>
-        <p tal:condition="status == 'succeeded'" class="bg-success">
-            <div tal:condition="len(invoices) == 0" tal:omit-tag="">
-                There were no invoices to be archived.
-            </div>
-            <div tal:condition="len(invoices) > 0" tal:omit-tag="">
-                Successfully archived ${len(invoices)} invoices.
-                <div tal:condition="len(invoices) == count" tal:omit-tag="">
-                    There might be more invoices to be archived.
-                </div>
-                <!--!
-                    Unfortunately, the internationalization parsing has issues
-                    with the smaller than sign "<" in the condition
-                    "len(invoices) < count" as it interprets it as a tag opening
-                    sign without any tag name. To solve this issue, the positive
-                    boolean condition is replaced by its negative.
-
-                    len(invoices) < count  <=>  not (len(invoices) >= count)
-                -->
-                <div tal:condition="not (len(invoices) >= count)" tal:omit-tag="">
-                    There are no more invoices to be archived at the moment.
-                </div>
-            </div>
-        </p>
-        <div tal:condition="len(invoices) > 0">
+        <h1>Dues Invoice Archiving</h1>
+        <div tal:condition="generated_invoices">
             <p>
                 The following invoices have been archived:
             </p>
             <ol>
-                <li tal:repeat="invoice invoices">
-                    ${invoice}
+                <li tal:repeat="generated_invoice generated_invoices">
+                    ${generated_invoice}
                 </li>
             </ol>
         </div>
+        <h2>Summary</h2> 
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Total</th>
+                    <th>Archived</th>
+                    <th>Not archived</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr tal:repeat="archiving_stat archiving_stats">
+                    <td>${archiving_stat['year']}</td>
+                    <td>${archiving_stat['total']}</td>
+                    <td>${archiving_stat['archived']}</td>
+                    <td class="${'table-success' if archiving_stat['not_archived'] == 0 else 'table-danger'}">${archiving_stat['not_archived']}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Archive invoices</h2> 
         <p>
-            You can archive membership dues 2015 invoices. They will be
-            generated and permanently stored on the server. As this process may
-            take some time you can choose the number of invoices to be archived
-            at a time.
+            Archiving too many invoices at once may cause errors and the
+            request might abort.
         </p>
-        <p>
-            <form method="POST"
-                    action="${request.route_url('batch_archive_pdf_invoices')}">
-                <input type="text" name="count" value="${count}"></input>
-                <input type="submit" name="submit" value="Archive invoices"></input>
-            </form>
-        </p>
-        <a href="${request.route_url('toolbox')}" class="btn btn-success">Toolbox</a>
-        <a href="${request.route_url('dues15_listing')}" class="btn btn-success">Dues listing</a>
-  </tal:block>
+        <div id="form" tal:content="structure form"/>
+    </tal:block>
 </html>

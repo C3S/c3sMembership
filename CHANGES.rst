@@ -2,6 +2,75 @@ Next Release
 ============
 
 
+- Enable invoice archiving for all years
+
+- Retrieve Git version information from outside application path.  The Git
+  command for retrieving version information was executed in the working
+  directory thus not returning any results or even wrong results when the
+  application executed from some other path. Now the Git command is executed
+  based on the application path thus returning the application's Git version
+  information to be displayed in the backend footer.
+
+- Replace cryptacular with bcrypt for password hashing as cryptacular causes
+  issues
+
+
+
+1.27.1
+======
+
+
+- Use Python 2 for now
+
+- Fix first general assembly creation
+
+- Freeze required modules due to incompatibilities
+
+- Introduce view processing. View processing provides functionality for pre-
+  and post-processing especially to validate and transform view input like URL
+  pattern matchdict, GET and POST.
+
+- Refactor general assembly invitations to use view processing validation
+
+- Refactor membership certificate to use view processing validation
+
+- Refactor membership acquisition to use validation and proper integration
+  tests. Membership acquisition is refactored to use view processing
+  validation. At the same time integration tests for membership acquisition are
+  rebuilt from scratch introducing a general base for integration testing.
+
+- Refactor member detail to use validation and proper integration tests. Member
+  detail is refactored to use view processing validation. At the same time
+  integration tests for member detail are rebuilt from scratch introducing a
+  general base for integration testing.
+
+- Cleanup code
+
+- Introduce caching to footer version information
+
+- Start cleaning up personal data schema. There were three declarations of very
+  similar Colander schemas for personal data including name and address. These
+  three can be unified to reduce redundant code and improve test coverage.
+
+
+
+1.27
+====
+
+
+- Introduce dues invoice repository to the data layer.
+
+- Show membership numbers instead of IDs after batch dues invoice sending and
+  batch general assembly invitation sending.
+
+- General assembly 2019 invitations.
+
+
+
+1.26
+====
+
+
 - Move general assembly invitations to a separate table for a clean and
   normalised data model.
 
@@ -10,6 +79,13 @@ Next Release
 - Show member details page after member general assembly invitation.
 
 - Add general assembly creation.
+
+- Add general assembly editing.
+
+- Add dues 2019.
+
+- Let payments and reductions depend on whether there is an invoice instead of
+  the type of membership.
 
 
 

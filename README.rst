@@ -63,7 +63,7 @@ Setup the virtual environment:
 
 ::
 
-   $ virtualenv env
+   $ virtualenv -p python2 env
    $ env/bin/python setup.py develop
 
 You might have to update the version of setuptools in your virtual environment

@@ -65,15 +65,15 @@ class MembershipApplicationConfig(Configuration):
 
             ('new_member', '/new_member'),
 
-            ('switch_sig', '/switch_sig/{memberid}'),
-            ('switch_pay', '/switch_pay/{memberid}'),
+            ('switch_sig', '/switch_sig/{member_id}'),
+            ('switch_pay', '/switch_pay/{member_id}'),
 
-            ('mail_sig_confirmation', '/mail_sig_conf/{memberid}'),
+            ('mail_sig_confirmation', '/mail_sig_conf/{member_id}'),
             ('regenerate_pdf', '/re_C3S_SCE_AFM_{code}.pdf'),
             ('mail_pay_confirmation', '/mail_pay_conf/{member_id}'),
             ('mail_mail_confirmation', '/mail_mail_conf/{member_id}'),
-            ('mail_sig_reminder', '/mail_sig_reminder/{memberid}'),
-            ('mail_pay_reminder', '/mail_pay_reminder/{memberid}'),
+            ('mail_sig_reminder', '/mail_sig_reminder/{member_id}'),
+            ('mail_pay_reminder', '/mail_pay_reminder/{member_id}'),
             ('delete_entry', '/delete/{memberid}'),
             ('delete_afms', '/delete_afms'),
 
