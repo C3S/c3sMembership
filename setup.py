@@ -11,9 +11,9 @@ VERSION = open(os.path.join(here, 'VERSION')).read()
 requires = [
     'alembic==0.8.10',  # database schema migration
     'Babel',
+    'bcrypt',
     'colander==1.0',
     'cornice==0.17',
-    'cryptacular==1.4.1',
     'deform==2.0a2',  # HTML forms
     'fdfgen==0.11.0',
     'lingua==1.5',  # stick to 1.5 for now. TODO: learn to use 2.1/2.3

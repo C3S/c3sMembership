@@ -11,6 +11,9 @@ Next Release
   based on the application path thus returning the application's Git version
   information to be displayed in the backend footer.
 
+- Replace cryptacular with bcrypt for password hashing as cryptacular causes
+  issues
+
 
 
 1.27.1

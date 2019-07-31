@@ -12,7 +12,7 @@ Example::
 
 from decimal import Decimal
 
-import cryptacular.bcrypt
+import bcrypt
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     scoped_session,
@@ -29,14 +29,13 @@ Base = declarative_base()
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 
 
-CRYPT = cryptacular.bcrypt.BCRYPTPasswordManager()
-
-
 def hash_password(password):
     """
     Calculates the password hash.
     """
-    return unicode(CRYPT.encode(password))
+    return bcrypt \
+        .hashpw(password.encode('utf-8'), bcrypt.gensalt()) \
+        .decode('utf-8')
 
 
 def check_password(hashed_password, plain_password):
@@ -52,7 +51,9 @@ def check_password(hashed_password, plain_password):
         Boolean indicating whether the plain password matches the hashed
         password.
     """
-    return CRYPT.check(hashed_password, plain_password)
+    return bcrypt.checkpw(
+        plain_password.encode('utf-8'),
+        hashed_password.encode('utf-8'))
 
 
 # TODO: Use standard SQLAlchemy Decimal when a database is used which supports
