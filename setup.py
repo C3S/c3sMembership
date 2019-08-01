@@ -45,6 +45,7 @@ test_requirements = [
     'nose',
     'pdfminer',  # and its dependency
     'mock',  # for creating mock objects
+    'pylint',
     'pyquery',
     'selenium==3.14.1',  # 4.0.0a1 causes issues by not finding elements
     'slate',  # pdf to text helper
