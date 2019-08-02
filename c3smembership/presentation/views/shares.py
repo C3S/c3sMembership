@@ -172,11 +172,10 @@ def shares_delete(request):
                 shares_id),
             'danger'
         )
-        return HTTPFound(request.route_url('toolbox'))
     else:
         request.registry.share_information.delete(shares_id)
         request.session.flash(
             'the shares package {} was deleted.'.format(shares_id),
             'success'
         )
-        return HTTPFound(request.route_url('toolbox'))
+    return HTTPFound(request.route_url('toolbox'))

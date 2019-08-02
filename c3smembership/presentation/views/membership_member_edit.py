@@ -55,12 +55,11 @@ def edit_member(request):
     Let staff edit a member entry.
     """
     try:
-        _id = request.matchdict['_id']
-        assert(isinstance(int(_id), int))
+        _id = int(request.matchdict['_id'])
         member = C3sMember.get_by_id(_id)
-        if isinstance(member, NoneType):
+        if not member:
             return HTTPFound(request.route_url('dashboard'))
-    except:
+    except (TypeError, ValueError):
         return HTTPFound(request.route_url('dashboard'))
 
     # if we have a valid id, we can load a members data from the db
@@ -638,10 +637,8 @@ def edit_member(request):
                 member.membership_number = \
                     C3sMember.get_next_free_membership_number()
 
-        if appstruct['membership_info']['entity_type'] == 'legalentity':
-            member.is_legalentity = True
-        else:
-            member.is_legalentity = False
+        member.is_legalentity = (appstruct['membership_info']['entity_type'] \
+            == 'legalentity')
 
         # empty the messages queue (as validation worked anyways)
         request.session.pop_flash()

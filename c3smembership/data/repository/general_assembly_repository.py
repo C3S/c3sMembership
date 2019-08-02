@@ -196,6 +196,7 @@ class GeneralAssemblyRepository(object):
         for invitation in invitations:
             if invitation['number'] == general_assembly_number:
                 return invitation
+        return None
 
     @classmethod
     def invite_member(cls, membership_number, general_assembly_number, token):

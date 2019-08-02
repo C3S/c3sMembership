@@ -1,12 +1,16 @@
-#!/bin/env/python
 # -*- coding: utf-8 -*-
+"""
+Test new member by using WebTest
+"""
 
 from datetime import date
+import unittest
+
+import transaction
+from webtest import TestApp
 
 from pyramid import testing
 from sqlalchemy import engine_from_config
-import transaction
-import unittest
 
 from c3smembership.data.model.base import (
     DBSession,
@@ -28,14 +32,8 @@ class NewMemberTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.close()
-            DBSession.remove()
-            # print "closed and removed DBSession"
-        except:
-            pass
-            # print "no session to close"
-        # self.session = DBSession()
+        DBSession().close()
+        DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
@@ -44,14 +42,12 @@ class NewMemberTests(unittest.TestCase):
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
 
+        db_session = DBSession()
         with transaction.manager:
             # a group for accountants/staff
             accountants_group = Group(name=u"staff")
-            try:
-                DBSession.add(accountants_group)
-                DBSession.flush()
-            except:
-                pass
+            db_session.add(accountants_group)
+            db_session.flush()
             # staff personnel
             staffer1 = Staff(
                 login=u"rut",
@@ -59,21 +55,16 @@ class NewMemberTests(unittest.TestCase):
                 email=u"noreply@example.com",
             )
             staffer1.groups = [accountants_group]
-            try:
-                DBSession.add(accountants_group)
-                DBSession.add(staffer1)
-                DBSession.flush()
-            except:
-                # print("it borked! (rut)")
-                pass
+            db_session.add(accountants_group)
+            db_session.add(staffer1)
+            db_session.flush()
 
         from c3smembership import main
         app = main({}, **my_settings)
-        from webtest import TestApp
         self.testapp = TestApp(app)
 
     def tearDown(self):
-        DBSession.close()
+        DBSession().close()
         DBSession.remove()
         testing.tearDown()
 
@@ -108,7 +99,6 @@ class NewMemberTests(unittest.TestCase):
         return field_id_dict
 
     def _fill_form_valid_natural(self, form):
-        # print form.fields
         field_id_dict = self.__get_field_id_dict(form)
         form['firstname'] = u'SomeFirstname'
         form['lastname'] = u'SomeLastname'
@@ -156,7 +146,7 @@ class NewMemberTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/new_member', status=403)
-        assert('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
 
         # so login first
         self._login()

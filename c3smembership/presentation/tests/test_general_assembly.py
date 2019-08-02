@@ -54,11 +54,11 @@ class TestGeneralAssembly(unittest.TestCase):
         result = general_assemblies(request)
 
         # Verify assemblies count
-        self.assertEquals(len(result['general_assemblies']), 2)
+        self.assertEqual(len(result['general_assemblies']), 2)
 
         # Verify decending order by number
-        self.assertEquals(result['general_assemblies'][0].number, 2)
-        self.assertEquals(result['general_assemblies'][1].number, 1)
+        self.assertEqual(result['general_assemblies'][0].number, 2)
+        self.assertEqual(result['general_assemblies'][1].number, 1)
 
     def test_general_assembly_view(self):
         """
@@ -73,9 +73,9 @@ class TestGeneralAssembly(unittest.TestCase):
 
         result = general_assembly_view(request)
 
-        self.assertEquals(result['date'], datetime.date(2018, 12, 15))
-        self.assertEquals(result['number'], 123)
-        self.assertEquals(result['name'], 'my first general assembly')
+        self.assertEqual(result['date'], datetime.date(2018, 12, 15))
+        self.assertEqual(result['number'], 123)
+        self.assertEqual(result['name'], 'my first general assembly')
 
     # pylint: disable=invalid-name
     @mock.patch.object(

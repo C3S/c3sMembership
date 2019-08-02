@@ -1,13 +1,18 @@
-#!/bin/env/python
 # -*- coding: utf-8 -*-
+"""
+Test shares by using WebTest
+"""
 
 from datetime import (datetime, date)
-
 import unittest
+
+import transaction
+from webtest import TestApp
+
 from pyramid import testing
 from sqlalchemy import engine_from_config
-import transaction
 
+from c3smembership import main
 from c3smembership.data.model.base import (
     DBSession,
     Base,
@@ -30,13 +35,8 @@ class SharesTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.close()
-            DBSession.remove()
-            # print "closed and removed DBSession"
-        except:
-            pass
-            # print "no session to close"
+        DBSession().close()
+        DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
@@ -45,16 +45,13 @@ class SharesTests(unittest.TestCase):
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
 
+        db_session = DBSession()
+
         with transaction.manager:
             # a group for accountants/staff
             accountants_group = Group(name=u"staff")
-            try:
-                DBSession.add(accountants_group)
-                DBSession.flush()
-                # print("adding group staff")
-            except:
-                # print("could not add group staff.")
-                pass
+            db_session.add(accountants_group)
+            db_session.flush()
             # staff personnel
             staffer1 = Staff(
                 login=u"rut",
@@ -62,25 +59,26 @@ class SharesTests(unittest.TestCase):
                 email=u"noreply@example.com",
             )
             staffer1.groups = [accountants_group]
-            try:
-                DBSession.add(accountants_group)
-                DBSession.add(staffer1)
-                DBSession.flush()
-            except:
-                # print("it borked! (rut)")
-                pass
+            db_session.add(accountants_group)
+            db_session.add(staffer1)
+            db_session.flush()
 
-        from c3smembership import main
         app = main({}, **my_settings)
-        from webtest import TestApp
         self.testapp = TestApp(app)
 
     def tearDown(self):
-        DBSession.close()
+        """
+        Tear down the test case
+        """
+        DBSession().close()
         DBSession.remove()
         testing.tearDown()
 
-    def make_member_with_shares(self):
+    @classmethod
+    def make_member_with_shares(cls):
+        """
+        Create member and shares database records
+        """
         with transaction.manager:
             member1 = C3sMember(  # german
                 firstname=u'SomeFirstnäme',
@@ -131,12 +129,16 @@ class SharesTests(unittest.TestCase):
                 payment_confirmed_date=date(2014, 1, 9),
                 accountant_comment=u'not connected',
             )
+        db_session = DBSession()
+        db_session.add(member1)
+        db_session.add(shares1)
+        db_session.add(shares2)
 
-        DBSession.add(member1)
-        DBSession.add(shares1)
-        DBSession.add(shares2)
-
-    def make_member_with_shares2(self):
+    @classmethod
+    def make_member_with_shares2(cls):
+        """
+        Create member and shares database records
+        """
         with transaction.manager:
             member1 = C3sMember(  # german
                 firstname=u'SomeFirstnäme',
@@ -173,10 +175,15 @@ class SharesTests(unittest.TestCase):
                 accountant_comment=u'no comment',
             )
             member1.shares = [shares1]
-        DBSession.add(member1)
-        DBSession.add(shares1)
+        db_session = DBSession()
+        db_session.add(member1)
+        db_session.add(shares1)
 
-    def make_unconnected_shares(self):
+    @classmethod
+    def make_unconnected_shares(cls):
+        """
+        Create shares package without member
+        """
         with transaction.manager:
             shares2 = Shares(
                 number=23,
@@ -192,7 +199,7 @@ class SharesTests(unittest.TestCase):
                 payment_confirmed_date=date(2014, 1, 9),
                 accountant_comment=u'not connected',
             )
-        DBSession.add(shares2)
+        DBSession().add(shares2)
 
     def test_shares_detail(self):
         '''
@@ -200,21 +207,17 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.assertTrue('login' in res.body)
         # try valid user
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
         res2 = form.submit('submit', status=302)
         # # being logged in ...
-        # print('>'*20)
-        # print(res3.body)
-        # print('<'*20)
         res3 = res2.follow()  # being redirected to dashboard with parameters
-        self.failUnless(
-            'Acquisition of membership' in res3.body)
+        self.assertTrue('Acquisition of membership' in res3.body)
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=302)
         res2 = res.follow()
@@ -239,9 +242,9 @@ class SharesTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.assertTrue('login' in res.body)
         # try valid user
         form = res.form
         form['login'] = u'rut'
@@ -249,7 +252,7 @@ class SharesTests(unittest.TestCase):
         res2 = form.submit('submit', status=302)
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
-        self.failUnless('Acquisition of membership' in res3.body)
+        self.assertTrue('Acquisition of membership' in res3.body)
 
         # no member in DB, so redirecting to dashboard
         res = self.testapp.get('/shares_edit/1', status=302)
@@ -262,23 +265,19 @@ class SharesTests(unittest.TestCase):
         # lets try invalid input
         res = self.testapp.get('/shares_edit/foo', status=302)
         res2 = res.follow()
-        self.failUnless('Members' in res2.body)
+        self.assertTrue('Members' in res2.body)
 
         # now try valid id
         res = self.testapp.get('/shares_edit/1', status=200)
-        self.failUnless('Edit Details for Shares' in res.body)
+        self.assertTrue('Edit Details for Shares' in res.body)
 
         # now we change details, really editing that member
         form = res.form
-
-        if DEBUG:
-            print "form.fields: {}".format(form.fields)
 
         self.assertTrue('2' in form['number'].value)
         field_id_dict = self.__get_field_id_dict(form)
         self.assertTrue(datetime.today().strftime(
             '%Y-%m-%d') in field_id_dict['date_of_acquisition'].value)
-        # print(form['date_of_acquisition'].value)
         form['number'] = u'3'
         field_id_dict['date_of_acquisition'].value = u'2015-01-02'
 
@@ -288,10 +287,10 @@ class SharesTests(unittest.TestCase):
         res2 = form.submit('submit', status=200)
 
         # check data in DB
-        _m1 = C3sMember.get_by_id(1)
-        self.assertTrue(_m1.shares[0].number is 3)
+        member = C3sMember.get_by_id(1)
+        self.assertEqual(member.shares[0].number, 3)
         self.assertTrue(str(
-            _m1.shares[0].date_of_acquisition) in str(datetime(2015, 1, 2)))
+            member.shares[0].date_of_acquisition) in str(datetime(2015, 1, 2)))
 
     def test_shares_delete(self):
         '''
@@ -299,20 +298,17 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        assert('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.assertTrue('login' in res.body)
         # try valid user
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
         res2 = form.submit('submit', status=302)
         # # being logged in ...
-        # print('>'*20)
-        # print(res3.body)
-        # print('<'*20)
         res3 = res2.follow()  # being redirected to dashboard with parameters
-        self.failUnless(
+        self.assertTrue(
             'Acquisition of membership' in res3.body)
 
         self.make_member_with_shares()
