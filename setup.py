@@ -14,46 +14,40 @@ VERSION = open(os.path.join(HERE, 'VERSION')).read()
 
 REQUIRES = [
     'alembic==0.8.10',  # database schema migration
-    'Babel',
-    'bcrypt',
-    'colander>=1.7.0',
-    'cornice==0.17',
-    'deform>=2.0.7',  # HTML forms
-    'fdfgen==0.11.0',
-    'lingua==1.5',  # stick to 1.5 for now. TODO: learn to use 2.1/2.3
-    'requests>=2.20.0',
-    'pycountry',  # replacing 'webhelpers',
-    'pyramid>=1.7',
-    'pyramid_beaker',
-    'pyramid_chameleon',
-    'pyramid_debugtoolbar',
-    'pyramid_mailer==0.14.1',
-    'pyramid_tm',
-    'python-gnupg>=0.4.4',
-    'repoze.sendmail==4.1',  # pin to 4.1 because of repoze/repoze.sendmail#31
-    # see https://github.com/repoze/repoze.sendmail/issues/31
+    'Babel',  # Internationalization for XML page templates and Python files
+    'bcrypt',  # Password hashing. TODO: Use bcrypt instead?
+    'colander>=1.7.0',  # Schema validation
+    'cornice==0.17',  # API tools
+    'deform>=2.0.7',  # HTML forms from colander schemas
+    'fdfgen==0.11.0',  # Filling PDF forms
+    # Stick to lingua 1.5 for now. TODO: learn to use 2.1/2.3
+    'lingua==1.5',  # Internationalization
+    'pyramid>=1.7',  # Web framework
+    'pyramid_beaker',  # Create a Pyramid session factory from settings
+    'pyramid_chameleon',  # Templating for Chameleon page templates
+    'pyramid_debugtoolbar',  # Developer debug toolbar
+    'pyramid_mailer==0.14.1',  # Send emails
+    'pyramid_tm',  # Pyramid transaction management, used for development
+    'python-gnupg>=0.4.4',  # GPG encryption
     'SQLAlchemy>=1.3.0',  # Object-relational mapper
-    'transaction',
-    'unicodecsv==0.9.4',
-    'venusian==1.0',
-    'waitress==0.8.9',
-    'zope.sqlalchemy>=1.1',
-    # webob>=1.8.3 is a pyramid 1.10.4 dependency and for some reason is not
-    # installed automatically with pyramid 1.10.4 by pip.
-    'webob>=1.8.3',
+    'transaction',  # Transaction management, e.g. for database transactions
+    'unicodecsv==0.9.4',  # Create CSV file
+    'zope.sqlalchemy>=1.1',  # TODO: Can it be replaced by SQLAlchemy?
 ]
 # for the translations machinery using transifex you also need to
 # "pip install transifex-client"
 TEST_REQUIREMENTS = [
-    'coverage',
-    'nose',
-    'pdfminer',  # and its dependency
-    'mock',  # for creating mock objects
-    'pylint',
-    'pyquery',
+    'coverage',  # Get code test coverage for nose
+    'mock',  # Creating mock objects for unit testing
+    'nose',  # Execute unit testing
+    'pylint==1.9.5',  # Code linting
+    'pyquery',  # HTML element querying
     'selenium==3.14.1',  # 4.0.0a1 causes issues by not finding elements
-    'slate',  # pdf to text helper
-    'webtest',
+    'webtest',  # Run web applications for unit testing
+
+    # Dependency compatibility
+    # waitress is required by webtest but version 1.3.0 causes issues
+    'waitress==0.8.9',
 ]
 
 DOCS_REQUIRE = [
