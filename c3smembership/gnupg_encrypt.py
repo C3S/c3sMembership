@@ -30,18 +30,7 @@ def encrypt_with_gnupg(data):
     ...
     -----END PGP MESSAGE-----\n
     """
-    # we use a folder named 'keys' to store stuff
-
-    # if os.path.exists("keys"):
-    #     if DEBUG:  # pragma: no cover
-    #         print("===================================== GNUPG START")
-    #         print "folder 'keys' exists"
-    #     shutil.rmtree("keys")     # delete to renew
-    #     print "deleted keys"
-
-    # tempfile approach
     keyfolder = tempfile.mkdtemp()
-    # print(keyfolder)
 
     # TODO: check for a better way to do this:
     # do we really need to create a new tempdir for every run? no!
@@ -51,11 +40,6 @@ def encrypt_with_gnupg(data):
     # however: as long as this is reasonably fast,
     # we can live with it. for now...
 
-    #    if DEBUG:  # pragma: no cover
-    #        # a gpg object to work with
-    #        gpg = gnupg.GPG(gnupghome="keys", verbose=True)
-    #    else:
-    # gpg = gnupg.GPG(gnupghome="keys")
     gpg = gnupg.GPG(gnupghome=keyfolder)
     gpg.encoding = 'utf-8'
 
@@ -111,26 +95,13 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
     # prepare
     to_encode = data
 
-    # if DEBUG:  # pragma: no cover
-    #    print("encrypt_with_gnupg: data: %s") % data
-    #    print("encrypt_with_gnupg: type(data): %s") % type(data)
-    #    print("type of to_encode: %s") % type(to_encode)
-
     if isinstance(to_encode, unicode):
-        # print("type is unicode")
         to_encrypt = to_encode.encode(gpg.encoding)
     else:
         to_encrypt = to_encode
-    # elif isinstance(to_encode, str):
-    #    print("type was string")
-    #    to_encrypt = to_encode.encode(gpg.encoding)
-    #    print("type is now %s") % type(to_encrypt)
-    # else:
-    #    print("type is neither str nor unicode: %s") % type(to_encode)
 
     if DEBUG:  # pragma: no cover
         print "len(to_encrypt): " + str(len(str(to_encrypt)))
-        # print("encrypt_with_gnupg: to_encrypt: %s") % to_encrypt
         print("encrypt_with_gnupg: type(to_encrypt): %s") % type(to_encrypt)
 
     # encrypt
@@ -141,14 +112,11 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
         always_trust=True)
 
     if DEBUG:  # pragma: no cover
-        # print("encrypt_with_gnupg: encrypted: %s") % encrypted
         print("encrypt_with_gnupg: type(encrypted): %s") % type(encrypted)
         print(
             "encrypt_with_gnupg: type(encrypted.data): %s"
         ) % type(
             encrypted.data)
-        # print "encrypted: " + str(encrypted)
-        # print "len(encrypted): " + str(len(str(encrypted)))
         print ("========================================== GNUPG END")
     shutil.rmtree(keyfolder)
 

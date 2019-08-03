@@ -945,9 +945,7 @@ class C3sMember(Base):
                 if len(row.postcode) == 5:
                     postal_codes_de.append(row.postcode)
             except ValueError:
-                print("exception at id {}: {}".format(
-                    row.id,
-                    row.postcode))
+                pass
         return postal_codes_de
 
     # statistical stuff

@@ -79,7 +79,6 @@ class TextInputSliderWidget(widget.Widget):
     def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
             cstruct = ''
-        # print("cstruct: %s" % cstruct)
         readonly = kw.get('readonly', self.readonly)
         template = readonly and self.readonly_template or self.template
         values = self.get_template_values(field, cstruct, kw)
@@ -88,7 +87,6 @@ class TextInputSliderWidget(widget.Widget):
     def deserialize(self, field, pstruct):
         if pstruct is null:
             return null
-        # print("pstruct: %s" % pstruct)
         if self.strip:
             pstruct = pstruct.strip()
         if not pstruct:

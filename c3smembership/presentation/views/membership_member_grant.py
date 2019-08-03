@@ -72,7 +72,6 @@ def make_member_view(request):
         return HTTPFound(request.route_url('dashboard'))
 
     if 'make_member' in request.POST:
-        # print "yes! contents: {}".format(request.POST['make_member'])
         try:
             member.membership_date = datetime.strptime(
                 request.POST['membership_date'], '%Y-%m-%d').date()

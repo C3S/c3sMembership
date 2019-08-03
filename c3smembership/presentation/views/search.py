@@ -29,16 +29,14 @@ def search_people(request):
     # check for input from "find people" form
     if 'code_to_show' in request.POST:
         try:
-            _code = request.POST['code_to_show']
-            # print u"_code = {}".format(_code)
-            _code_ = _code.split(' ')[0]
-            # print u"_code_ = {}".format(_code_)
-            _entry = C3sMember.get_by_code(_code_)
+            code = request.POST['code_to_show']
+            code = code.split(' ')[0]
+            member = C3sMember.get_by_code(code)
 
             return HTTPFound(
                 location=request.route_url(
                     'detail',
-                    member_id=_entry.id)
+                    member_id=member.id)
             )
         except:
             pass
@@ -83,17 +81,14 @@ def search_codes(request):
     # check for input from "find people" form
     if 'code_to_show' in request.POST:
         try:
-            _code = request.POST['code_to_show']
-            # print u"_code = {}".format(_code)
-            _code_ = _code.split(' ')[0]
-            # print u"_code_ = {}".format(_code_)
-            _entry = C3sMember.get_by_code(_code_)
-            # print _entry
+            code = request.POST['code_to_show']
+            code = code.split(' ')[0]
+            member = C3sMember.get_by_code(code)
 
             return HTTPFound(
                 location=request.route_url(
                     'detail',
-                    member_id=_entry.id)
+                    member_id=member.id)
             )
         except:
             pass
@@ -155,5 +150,4 @@ def autocomplete_people_search(request):
     string to find matching entries (e.g. starting with 'foo') in the database
     '''
     text = request.params.get('term', '')
-    # print u"DEBUG: autocomp. people search for: {}".format(text)
     return C3sMember.get_matching_people(text)
