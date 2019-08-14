@@ -16,6 +16,8 @@ Next Release
 
 - Upgrade colander, python-gnupg, requests and SQLAlchemy
 
+- Move PDFLaTeX templates to presentation layer
+
 
 
 1.27.1

@@ -104,7 +104,7 @@ def latex_membership_loss(membership_loss_date, membership_loss_type):
 def generate_membership_list_pdf(effective_date, members):
     template_path = os.path.join(
         os.path.dirname(__file__),
-        '../../../membership_list_pdflatex')
+        '../templates/pdflatex')
     latex_dir = tempfile.mkdtemp()
     latex_file = tempfile.NamedTemporaryFile(
         suffix='.tex',
