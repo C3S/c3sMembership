@@ -27,7 +27,8 @@ REQUIRES = [
     'pyramid_chameleon',  # Templating for Chameleon page templates
     'pyramid_debugtoolbar',  # Developer debug toolbar
     'pyramid_mailer==0.14.1',  # Send emails
-    'pyramid_tm',  # Pyramid transaction management, used for development
+    # Pyramid transaction management, used for development
+    'pyramid_tm>=2.2.1',    
     'python-gnupg>=0.4.4',  # GPG encryption
     'SQLAlchemy>=1.3.0',  # Object-relational mapper
     'transaction',  # Transaction management, e.g. for database transactions
