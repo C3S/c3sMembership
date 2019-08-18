@@ -31,7 +31,8 @@ REQUIRES = [
     'pyramid_tm>=2.2.1',    
     'python-gnupg>=0.4.4',  # GPG encryption
     'SQLAlchemy>=1.3.0',  # Object-relational mapper
-    'transaction',  # Transaction management, e.g. for database transactions
+    # Transaction management, e.g. for database transactions
+    'transaction>=2.4.0',
     'unicodecsv==0.9.4',  # Create CSV file
     'zope.sqlalchemy>=1.1',  # TODO: Can it be replaced by SQLAlchemy?
 ]
