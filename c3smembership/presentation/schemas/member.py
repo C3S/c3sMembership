@@ -3,13 +3,15 @@
 Member schema definitions
 """
 
-import colander
 from datetime import date
+
+import colander
 import deform
 
 from c3smembership.utils import country_codes
 from c3smembership.presentation.i18n import _
 from c3smembership.presentation.view_processing import ValidationNode
+from c3smembership.utils import locale_codes
 
 
 COUNTRY_DEFAULT = u'DE'
@@ -23,6 +25,10 @@ def deferred_dob_validator(node, keywords):
 
     Needed for testing purposes.
     """
+    # The node argument is necessary to confirm to the deferred validator
+    # interface. Therefore:
+
+    # pylint: disable=unused-argument
     kw_date = keywords['date']
     return colander.Range(
         min=kw_date(1913, 1, 1),
@@ -94,30 +100,15 @@ class PersonalDataBase(colander.MappingSchema):
         widget=deform.widget.DatePartsWidget(),
         default=date(2013, 1, 1),
         validator=deferred_dob_validator,
-        # colander.Range(
-        #     min=date(1913, 1, 1),
-        #     # max 18th birthday, no minors through web formular
-        #     max=date(
-        #         date.today().year-18,
-        #         date.today().month,
-        #         date.today().day),
-        #     min_err=_(
-        #         u'Sorry, but we do not believe that the birthday you '
-        #         u'entered is correct.'),
-        #     max_err=_(
-        #         u'Unfortunately, the membership application of an '
-        #         u'underaged person is currently not possible via our web '
-        #         u'form. Please send an email to office@c3s.cc.')
-        # ),
         oid='date_of_birth',
     )
 
 
 class PersonalDataJoin(PersonalDataBase):
     """
-    Personal data colander schema a password field
+    Personal data colander schema for member registration
 
-    Used for the join form.
+    Includes a password field, used for the join form.
     """
     password = colander.SchemaNode(
         colander.String(),
@@ -127,6 +118,38 @@ class PersonalDataJoin(PersonalDataBase):
         description=_(u'We need a password to protect your data. After '
                       u'verifying your email you will have to enter it.'),
         oid='password',
+    )
+
+
+class PersonalDataCreateEdit(PersonalDataBase):
+    """
+    Personal data colander schema for backend creation and editing
+
+    Includes email_is_confirmed flag and locale, used to create and edit
+    members by staff.
+    """
+    date_of_birth = colander.SchemaNode(
+        colander.Date(),
+        title=_(u'Date of Birth'),
+        default=date(1970, 1, 1),
+        oid='date_of_birth',
+    )
+    email_is_confirmed = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Email Address Confirmed'),
+        widget=deform.widget.RadioChoiceWidget(
+            values=(
+                (u'yes', _(u'Yes, confirmed')),
+                (u'no', _(u'No, not confirmed')),)),
+        missing=False,
+        oid='email_is_confirmed',
+    )
+    locale = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Preferred Language'),
+        widget=deform.widget.SelectWidget(
+            values=locale_codes),
+        missing=u'',
     )
 
 

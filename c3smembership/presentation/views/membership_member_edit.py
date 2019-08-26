@@ -18,14 +18,12 @@ from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.utils import (
-    country_codes,
-    locale_codes
-)
 from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,
 )
+from c3smembership.presentation.schemas.member import PersonalDataCreateEdit
+
 
 COUNTRY_DEFAULT = u'DE'
 LOCALE_DEFAULT = u'de'
@@ -122,88 +120,6 @@ def edit_member(request):
         ('winding-up', _(u'Winding-up')),
         ('shares_transfer', _(u'Transfer of remaining shares'))
     )
-
-    class PersonalData(colander.MappingSchema):
-        """
-        Colander schema of the personal data for editing member data.
-        """
-        firstname = colander.SchemaNode(
-            colander.String(),
-            title=_(u'(Real) First Name'),
-            oid='firstname',
-        )
-        lastname = colander.SchemaNode(
-            colander.String(),
-            title=_(u'(Real) Last Name'),
-            oid='lastname',
-        )
-        email = colander.SchemaNode(
-            colander.String(),
-            title=_(u'Email Address'),
-            validator=colander.Email(),
-            oid='email',
-        )
-        email_is_confirmed = colander.SchemaNode(
-            colander.String(),
-            title=_(u'Email Address Confirmed'),
-            widget=deform.widget.RadioChoiceWidget(
-                values=(
-                    (u'yes', _(u'Yes, confirmed')),
-                    (u'no', _(u'No, not confirmed')),)),
-            missing=u'',
-            oid='email_is_confirmed',
-        )
-
-        passwort = colander.SchemaNode(
-            colander.String(),
-            widget=deform.widget.HiddenWidget(),
-            default='NoneSet',
-            missing='NoneSetPurposefully',
-            oid='password',
-        )
-        address1 = colander.SchemaNode(
-            colander.String(),
-            title=_(u'Addess Line 1'),
-            oid='address1',
-        )
-        address2 = colander.SchemaNode(
-            colander.String(),
-            missing=u'',
-            title=_(u'Address Line 2'),
-            oid='address2',
-        )
-        postcode = colander.SchemaNode(
-            colander.String(),
-            title=_(u'Postal Code'),
-            oid='postcode'
-        )
-        city = colander.SchemaNode(
-            colander.String(),
-            title=_(u'City'),
-            oid='city',
-        )
-        country = colander.SchemaNode(
-            colander.String(),
-            title=_(u'Country'),
-            default=COUNTRY_DEFAULT,
-            widget=deform.widget.SelectWidget(
-                values=country_codes),
-            oid='country',
-        )
-        date_of_birth = colander.SchemaNode(
-            colander.Date(),
-            title=_(u'Date of Birth'),
-            default=date(2013, 1, 1),
-            oid='date_of_birth',
-        )
-        locale = colander.SchemaNode(
-            colander.String(),
-            title=_(u'Locale'),
-            widget=deform.widget.SelectWidget(
-                values=locale_codes),
-            oid='locale',
-            missing=u'',
-        )
 
     @colander.deferred
     def membership_loss_date_widget(node, keywords):
@@ -427,7 +343,7 @@ def edit_member(request):
         The form for editing membership information combining all forms for
         the subject areas.
         """
-        person = PersonalData(
+        person = PersonalDataCreateEdit(
             title=_(u'Personal Data'),
         )
         membership_meta = MembershipMeta(
@@ -496,7 +412,7 @@ def edit_member(request):
             membership_loss_type_entity_type_validator,
         ))
     form = deform.Form(
-        schema,
+        schema.bind(date=date),
         buttons=[
             deform.Button('submit', _(u'Submit')),
             deform.Button('reset', _(u'Reset')),
@@ -616,12 +532,11 @@ def edit_member(request):
                 pass
             else:
                 LOG.info(
-                    u'{0} changes {1} of id {2} to {3}'.format(
-                        authenticated_userid(request),
-                        attribute_name,
-                        member.id,
-                        attribute_value
-                    )
+                    u'%s changes %s of id %s to %s',
+                    authenticated_userid(request),
+                    attribute_name,
+                    member.id,
+                    attribute_value
                 )
                 setattr(member, attribute_name, attribute_value)
 

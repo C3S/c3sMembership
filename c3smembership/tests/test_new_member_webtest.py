@@ -108,7 +108,7 @@ class NewMemberTests(unittest.TestCase):
         form['postcode'] = u"12345"
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
-        form['locale'] = u"DE"
+        form['locale'] = u"de"
         field_id_dict['date_of_birth'].value = \
             unicode(date(date.today().year-40, 1, 1))
         form['entity_type'].value__set(u'person')
@@ -116,6 +116,7 @@ class NewMemberTests(unittest.TestCase):
         form['other_colsoc'].value__set(u'no')
         form['name_of_colsoc'] = u"GEMA"
         form['num_shares'] = u'23'
+        form['email_is_confirmed'] = u'no'
         return form
 
     def _fill_form_valid_legal(self, form):
@@ -128,7 +129,7 @@ class NewMemberTests(unittest.TestCase):
         form['postcode'] = u"12345"
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
-        form['locale'] = u"DE"
+        form['locale'] = u"de"
         field_id_dict['date_of_birth'].value = \
             unicode(date(date.today().year-40, 1, 1))
         form['entity_type'] = u'legalentity'
@@ -136,6 +137,7 @@ class NewMemberTests(unittest.TestCase):
         form['other_colsoc'].value__set(u'no')
         form['name_of_colsoc'] = u""
         form['num_shares'] = u'42'
+        form['email_is_confirmed'] = u'yes'
         return form
 
 
@@ -168,6 +170,7 @@ class NewMemberTests(unittest.TestCase):
         self.assertTrue('DE' in res4.body)
         self.assertTrue('normal' in res4.body)
         self.assertTrue('23' in res4.body)
+        self.assertTrue('<td>No.</td>' in res4.body)  # Email is confirmed
 
         # now, there is a member with id=1 in DB
         res = self.testapp.get('/new_member?id=1', status=200)
@@ -192,3 +195,4 @@ class NewMemberTests(unittest.TestCase):
         self.assertTrue('DE' in res4.body)
         self.assertTrue('investing' in res4.body)
         self.assertTrue('42' in res4.body)
+        self.assertTrue('<td>Yes</td>' in res4.body)  # Email is confirmed

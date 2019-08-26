@@ -28,9 +28,7 @@ from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,
 )
-from c3smembership.utils import (
-    country_codes,
-)
+from c3smembership.presentation.schemas.member import PersonalDataCreateEdit
 
 
 COUNTRY_DEFAULT = 'Germany'
@@ -45,72 +43,6 @@ def new_member(request):
     '''
     Let staff create a new member entry, when receiving input via dead wood
     '''
-
-    class PersonalData(colander.MappingSchema):
-        """
-        Schema for personal data
-        """
-        firstname = colander.SchemaNode(
-            colander.String(),
-            title=u'Vorname (b. Körpersch.: Ansprechpartner)',
-            oid="firstname",
-        )
-        lastname = colander.SchemaNode(
-            colander.String(),
-            title=u'Nachname (b. Körpersch.: Name der Körperschaft)',
-            oid="lastname",
-        )
-        email = colander.SchemaNode(
-            colander.String(),
-            title=_(u'E-Mail'),
-            validator=colander.Email(),
-            oid="email",
-        )
-        passwort = colander.SchemaNode(
-            colander.String(),
-            widget=deform.widget.HiddenWidget(),
-            default='NoneSet',
-            missing='NoneSetPurposefully'
-        )
-        address1 = colander.SchemaNode(
-            colander.String(),
-            title='Adresse Zeile 1'
-        )
-        address2 = colander.SchemaNode(
-            colander.String(),
-            missing=unicode(''),
-            title='Adresse Zeile 2'
-        )
-        postcode = colander.SchemaNode(
-            colander.String(),
-            title='Postleitzahl',
-            oid="postcode"
-        )
-        city = colander.SchemaNode(
-            colander.String(),
-            title='Ort',
-            oid="city",
-        )
-        country = colander.SchemaNode(
-            colander.String(),
-            title='Land',
-            default=COUNTRY_DEFAULT,
-            widget=deform.widget.SelectWidget(
-                values=country_codes),
-            oid="country",
-        )
-        date_of_birth = colander.SchemaNode(
-            colander.Date(),
-            title='Geburtsdatum',
-            default=date(1970, 1, 1),
-            oid="date_of_birth",
-        )
-        locale = colander.SchemaNode(
-            colander.String(),
-            widget=deform.widget.HiddenWidget(),
-            default='de',
-            missing='de',
-        )
 
     class MembershipInfo(colander.Schema):
         """
@@ -191,7 +123,7 @@ def new_member(request):
         - Membership Information
         - Shares
         """
-        person = PersonalData(
+        person = PersonalDataCreateEdit(
             title=_(u"Personal Data"),
         )
         membership_info = MembershipInfo(
@@ -204,7 +136,7 @@ def new_member(request):
     schema = MembershipForm()
 
     form = deform.Form(
-        schema,
+        schema.bind(date=date),
         buttons=[
             deform.Button('submit', _(u'Submit')),
             deform.Button('reset', _(u'Reset'))
@@ -257,7 +189,9 @@ def new_member(request):
             country=appstruct['person']['country'],
             locale=appstruct['person']['locale'],
             date_of_birth=appstruct['person']['date_of_birth'],
-            email_is_confirmed=False,
+            email_is_confirmed=(
+                True if appstruct['person']['email_is_confirmed'] == 'yes'
+                else False),
             email_confirm_code=randomstring,
             date_of_submission=datetime.now(),
             membership_type=appstruct['membership_info']['membership_type'],

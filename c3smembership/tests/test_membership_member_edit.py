@@ -181,6 +181,7 @@ class EditMemberTests(unittest.TestCase):
                 'entity_type': u'legalentity',
                 'other_colsoc': u'no',
                 'name_of_colsoc': u'',
+                'email_is_confirmed': u'yes',
             },
             {
                 'date_of_birth': '1999-12-30',
@@ -197,6 +198,7 @@ class EditMemberTests(unittest.TestCase):
                 u'die city',
                 u'FI',
                 u'investing',
+                u'<td>Yes</td>',
             ])
 
         # edit again ... changing membership acceptance status
