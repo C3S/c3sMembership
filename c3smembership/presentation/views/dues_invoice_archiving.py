@@ -11,6 +11,7 @@ from c3smembership.presentation.multiple_form_renderer import \
 
 
 @view_config(
+    permission='manage',
     route_name='batch_archive_pdf_invoices',
     renderer='c3smembership:presentation/templates/pages/invoice_archiving.pt')
 def batch_archive_pdf_invoices(request):
