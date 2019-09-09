@@ -34,7 +34,9 @@ class InvoiceArchivingSchema(colander.MappingSchema):
     )
     count = colander.SchemaNode(
         colander.Int(),
+        validator=colander.Range(min=1),
         title=_('Number of invoices to archive'),
+        default=20,
         oid='count',
     )
 
