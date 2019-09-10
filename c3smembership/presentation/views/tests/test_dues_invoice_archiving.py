@@ -9,8 +9,14 @@ import mock
 from pyramid import testing
 from webob.multidict import MultiDict
 
-from c3smembership.presentation.views.dues_invoice_archiving import \
-    batch_archive_pdf_invoices
+from c3smembership.presentation.views.dues_invoice_archiving import (
+    batch_archive_pdf_invoices,
+    background_archive_pdf_invoices,
+    BackgroundArchivingControl,
+    background_archiving,
+    AlreadyStoppedError,
+    AlreadyRunningError,
+)
 
 
 class TestDuesInvoiceArchiving(unittest.TestCase):
@@ -29,8 +35,16 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
         self.config.registry.dues_invoice_archiving = mock.Mock()
         # configure two stats as the repository is requested twice on form
         # submits, before archiving and then again afterwards
+        archiving_stats = [
+            {
+                'year': 2015,
+                'total': 30,
+                'archived': 10,
+                'not_archived': 20,
+            }
+        ]
         self.config.registry.dues_invoice_archiving.get_archiving_stats \
-            .side_effect = ['archiving_stats', 'archiving_stats']
+            .side_effect = [archiving_stats, archiving_stats]
         self.config.registry.dues_invoice_archiving.get_configured_years \
             .side_effect = [[2015]]
 
@@ -185,5 +199,181 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
         self.assertTrue('generated_invoices' in result)
         self.assertTrue('archiving_stats' in result)
         self.assertTrue('form' in result)
-        self.assertEqual(result['archiving_stats'], 'archiving_stats')
+        self.assertTrue('archiving_stats_sums' in result)
+        self.assertTrue('background_archiving_active' in result)
+        self.assertTrue('background_archiving_count' in result)
+        self.assertTrue('background_archiving_total' in result)
+        self.assertTrue('background_archiving_error' in result)
+
+        self.assertEqual(len(result['archiving_stats']), 1)
+        self.assertEqual(result['archiving_stats'][0]['year'], 2015)
+        self.assertEqual(result['archiving_stats'][0]['total'], 30)
+        self.assertEqual(result['archiving_stats'][0]['archived'], 10)
+        self.assertEqual(result['archiving_stats'][0]['not_archived'], 20)
         self.assertEqual(result['generated_invoices'], expected_invoices)
+
+
+
+class TestBackgroundArchiving(unittest.TestCase):
+    """
+    Test background archiving
+    """
+
+    def setUp(self):
+        """
+        Set up testing
+
+        Initialize Pyramid testing, dummy request and repository mock
+        """
+        self.request = testing.DummyRequest()
+        self.config = testing.setUp(request=self.request)
+        self.config.add_route(
+            'batch_archive_pdf_invoices', '/batch_archive_pdf_invoices')
+        # configure two stats as the repository is requested twice on form
+        # submits, before archiving and then again afterwards
+        archiving_stats = [
+            {
+                'year': 2015,
+                'total': 30,
+                'archived': 10,
+                'not_archived': 20,
+            }
+        ]
+        self.dues_invoice_archiving = mock.Mock()
+        self.config.registry.dues_invoice_archiving = self.dues_invoice_archiving
+        self.dues_invoice_archiving.get_archiving_stats \
+            .side_effect = [archiving_stats, archiving_stats]
+        self.dues_invoice_archiving.get_configured_years \
+            .side_effect = [[2015]]
+        self.dues_invoice_archiving.generate_missing_invoice_pdfs \
+            .side_effect = [['test.pdf'], []]
+
+        self.background_archiving_control = mock.Mock()
+        background_archive_pdf_invoices.background_archiving_control = \
+            self.background_archiving_control
+
+        self.logger = mock.Mock()
+        background_archive_pdf_invoices.logger = self.logger
+
+    def tearDown(self):
+        """
+        Tear down the testing setup
+        """
+        testing.tearDown()
+
+    def test_background_archive_pdf_invoices(self):
+        """
+        Test starting background archiving
+
+        1. Test starting
+        2. Test already running
+        """
+        # 1. Test starting
+        self.background_archiving_control.is_running.side_effect = [
+            False, True]
+        self.background_archiving_control.start.side_effect = [False]
+
+        result = background_archive_pdf_invoices(self.request)
+
+        self.logger.info.assert_called_with('Starting background invoice archiving')
+        self.assertEqual(result.status_code, 302)
+
+        # 2. Test already running
+        self.background_archiving_control.is_running.side_effect = [True]
+
+        result = background_archive_pdf_invoices(self.request)
+
+        self.logger.info.assert_called_with('Invoice archiving already running')
+        self.assertEqual(result.status_code, 302)
+
+    def test_background_archiving(self):
+        """
+        Test background archiving
+
+        1. Normal call
+        2. Exception handling
+        """
+        # 1. Normal call
+        background_archiving.logger = mock.Mock()
+
+        background_archiving(
+            self.dues_invoice_archiving, self.background_archiving_control)
+
+        self.dues_invoice_archiving.get_archiving_stats.assert_called_with()
+        self.dues_invoice_archiving.generate_missing_invoice_pdfs \
+            .assert_called_with(2015, 1)
+        self.background_archiving_control.increment_count.assert_called_with()
+        background_archiving.logger.info.assert_has_calls([
+            mock.call('Generated %d invoice: %s', 1, 'test.pdf'),
+            mock.call('Finished background invoice archiving')])
+
+        # 2. Exception handling
+        self.dues_invoice_archiving.get_archiving_stats.side_effect = [Exception()]
+
+        background_archiving(
+            self.dues_invoice_archiving, self.background_archiving_control)
+
+        background_archiving.logger.exception.assert_called_with(
+            'An error occured during background invoice archiving')
+
+
+class TestBackgroundArchivingControl(unittest.TestCase):
+    """
+    Test the BackgroundArchivingControl class
+    """
+
+    def test(self):
+        """
+        Test BackgroundArchivingControl
+
+        1. Initial, not running
+        2. Start
+        3. Increment count
+        4. Set error
+        5. Stop
+        6. Error when start and already started
+        7. Error when stop and already stopped
+        """
+        # 1. Initial, not running
+        self.assertEqual(BackgroundArchivingControl.is_running(), False)
+        self.assertEqual(BackgroundArchivingControl.get_count(), 0)
+        self.assertEqual(BackgroundArchivingControl.get_total(), 0)
+        self.assertEqual(BackgroundArchivingControl.has_error(), False)
+
+        # 2. Start
+        BackgroundArchivingControl.start(10)
+        self.assertEqual(BackgroundArchivingControl.is_running(), True)
+        self.assertEqual(BackgroundArchivingControl.get_total(), 10)
+        self.assertEqual(BackgroundArchivingControl.get_count(), 0)
+        self.assertEqual(BackgroundArchivingControl.has_error(), False)
+
+        # 3. Increment count
+        BackgroundArchivingControl.increment_count()
+        self.assertEqual(BackgroundArchivingControl.is_running(), True)
+        self.assertEqual(BackgroundArchivingControl.get_total(), 10)
+        self.assertEqual(BackgroundArchivingControl.get_count(), 1)
+        self.assertEqual(BackgroundArchivingControl.has_error(), False)
+
+        # 4. Set error
+        BackgroundArchivingControl.set_error()
+        self.assertEqual(BackgroundArchivingControl.is_running(), True)
+        self.assertEqual(BackgroundArchivingControl.get_total(), 10)
+        self.assertEqual(BackgroundArchivingControl.get_count(), 1)
+        self.assertEqual(BackgroundArchivingControl.has_error(), True)
+
+        # 5. Stop
+        BackgroundArchivingControl.stop()
+        self.assertEqual(BackgroundArchivingControl.is_running(), False)
+        self.assertEqual(BackgroundArchivingControl.get_total(), 10)
+        self.assertEqual(BackgroundArchivingControl.get_count(), 1)
+        self.assertEqual(BackgroundArchivingControl.has_error(), True)
+
+        # 6. Error when start and already started
+        BackgroundArchivingControl.start(10)
+        with self.assertRaises(AlreadyRunningError):
+            BackgroundArchivingControl.start(10)
+
+        # 7. Error when stop and already stopped
+        BackgroundArchivingControl.stop()
+        with self.assertRaises(AlreadyStoppedError):
+            BackgroundArchivingControl.stop()

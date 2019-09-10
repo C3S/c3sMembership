@@ -240,8 +240,12 @@ class DuesConfig(Configuration):
             ('dues19_notice', '/dues19_notice/{member_id}'),
             ('dues19_listing', '/dues19_listing'),
 
-            # Invoices
+            # Archiving
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),
+            (
+                'background_archive_pdf_invoices',
+                '/background_archive_pdf_invoices'
+            ),
 
             # Payments
             ('payment_list', '/payments'),

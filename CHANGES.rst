@@ -2,7 +2,10 @@ Next Release
 ============
 
 
-- Enable invoice archiving for all years
+- Enable invoice archiving for all years. Background archiving can be started
+  and the progress observed. It will archive all invoices which are not yet
+  archived and do so without relying on a person to specify numbers of invoice
+  to be archived or to keep a browser connection alive.
 
 - Retrieve Git version information from outside application path.  The Git
   command for retrieving version information was executed in the working
