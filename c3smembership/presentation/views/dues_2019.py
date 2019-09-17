@@ -339,7 +339,20 @@ def make_dues19_invoice_pdf_backend(request):
     """
     Show the invoice to a backend user
     """
-    invoice_number = request.matchdict['i']
+    invoice_number = request.matchdict['invoice_number']
+    invoice = DuesInvoiceRepository.get_by_number(
+        invoice_number.lstrip('0'), 2019)
+    return get_dues19_invoice(invoice, request)
+
+
+@view_config(
+    route_name='dues19_reversal_pdf_backend',
+    permission='manage')
+def make_dues19_reversal_pdf_backend(request):
+    """
+    Show the invoice to a backend user
+    """
+    invoice_number = request.matchdict['invoice_number']
     invoice = DuesInvoiceRepository.get_by_number(
         invoice_number.lstrip('0'), 2019)
     return get_dues19_invoice(invoice, request)
@@ -743,19 +756,6 @@ def dues19_reduction(request):
             'detail',
             member_id=member_id) +
         '#dues19')
-
-
-@view_config(
-    route_name='dues19_reversal_pdf_backend',
-    permission='manage')
-def make_dues19_reversal_pdf_backend(request):
-    """
-    Show the invoice to a backend user
-    """
-    invoice_number = request.matchdict['i']
-    invoice = DuesInvoiceRepository.get_by_number(
-        invoice_number.lstrip('0'), 2019)
-    return get_dues19_invoice(invoice, request)
 
 
 @view_config(route_name='make_dues19_reversal_invoice_pdf')

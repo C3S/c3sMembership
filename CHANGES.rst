@@ -21,6 +21,10 @@ Next Release
 
 - Move PDFLaTeX templates to presentation layer
 
+- Fix issue to make invoices always available from backend. They had not been
+  available from backend after a defined period of time. This behavior is
+  intended for email links but not for backend.
+
 
 
 1.27.1
