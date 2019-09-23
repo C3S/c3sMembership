@@ -34,7 +34,39 @@
                     <td class="${'table-success' if archiving_stat['not_archived'] == 0 else 'table-danger'}">${archiving_stat['not_archived']}</td>
                 </tr>
             </tbody>
+            <tfoot>
+                <tr>
+                    <th>${archiving_stats_sums['year']} Years</th>
+                    <th>${archiving_stats_sums['total']}</th>
+                    <th>${archiving_stats_sums['archived']}</th>
+                    <th>${archiving_stats_sums['not_archived']}</th>
+                </tr>
+            </tfoot>
         </table>
+        <h2>Background archiving</h2>
+        <p>
+            Archive invoices in background.
+        </p>
+        <p>
+            <div tal:condition="background_archiving_error"
+                    class="alert alert-danger">
+                An error occured during background archiving. Please try again.
+            </div>
+            <span tal:condition="not background_archiving_active" tal:omit-tag="">
+                <a tal:condition="archiving_stats_sums['not_archived'] > 0"
+                        href="${request.route_url('background_archive_pdf_invoices')}"
+                        class="btn btn-primary">
+                    Start archiving ${archiving_stats_sums['not_archived']} invoices
+                </a>
+                <button tal:condition="archiving_stats_sums['not_archived'] == 0" class="btn btn-primary" disabled>
+                    No invoices to archive
+                </button>
+            </span>
+            <button tal:condition="background_archiving_active"
+                    class="btn btn-primary" disabled>
+                Generating ${background_archiving_count}/${background_archiving_total} &hellip;
+            </button>
+        </p>
         <h2>Archive invoices</h2> 
         <p>
             Archiving too many invoices at once may cause errors and the

@@ -2,7 +2,21 @@ Next Release
 ============
 
 
-- Enable invoice archiving for all years
+- Finish cleaning up personal data schema. There were three declarations of
+  very similar Colander schemas for personal data including name and address.
+  These three can be unified to reduce redundant code and improve test
+  coverage.
+
+
+
+1.28
+====
+
+
+- Enable invoice archiving for all years. Background archiving can be started
+  and the progress observed. It will archive all invoices which are not yet
+  archived and do so without relying on a person to specify numbers of invoice
+  to be archived or to keep a browser connection alive.
 
 - Retrieve Git version information from outside application path.  The Git
   command for retrieving version information was executed in the working
@@ -18,10 +32,9 @@ Next Release
 
 - Move PDFLaTeX templates to presentation layer
 
-- Finish cleaning up personal data schema. There were three declarations of
-  very similar Colander schemas for personal data including name and address.
-  These three can be unified to reduce redundant code and improve test
-  coverage.
+- Fix issue to make invoices always available from backend. They had not been
+  available from backend after a defined period of time. This behavior is
+  intended for email links but not for backend.
 
 
 
@@ -635,7 +648,7 @@ Fix data type issues by treating date values as date and not datetime.
   instead of "E-Mail" and "Addresse" instead of "Adresse".
 
 - Change certificate email templates from .pt to .txt as they are plain
-  text, therefore not compatible with .pt internationalization and causing 
+  text, therefore not compatible with .pt internationalization and causing
   parsing errors.
 
 - Fix several template HTML syntax errors.

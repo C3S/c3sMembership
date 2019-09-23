@@ -106,11 +106,11 @@ class DuesConfig(Configuration):
             # membership dues 2015
             (
                 'dues15_invoice_pdf_backend',
-                '/dues15_invoice/C3S-dues15-{i}.pdf'
+                '/dues15_invoice/C3S-dues15-{invoice_number}.pdf'
             ),
             (
                 'dues15_reversal_pdf_backend',
-                '/dues15_reversal/C3S-dues15-{i}-S.pdf'
+                '/dues15_reversal/C3S-dues15-{invoice_number}-S.pdf'
             ),
             ('send_dues15_invoice_email', '/dues15_invoice/{member_id}'),
             ('send_dues15_invoice_batch', '/dues15_invoice_batch'),
@@ -139,11 +139,11 @@ class DuesConfig(Configuration):
             # membership dues 2016
             (
                 'dues16_invoice_pdf_backend',
-                '/dues16_invoice/C3S-dues16-{i}.pdf'
+                '/dues16_invoice/C3S-dues16-{invoice_number}.pdf'
             ),
             (
                 'dues16_reversal_pdf_backend',
-                '/dues16_reversal/C3S-dues16-{i}-S.pdf'
+                '/dues16_reversal/C3S-dues16-{invoice_number}-S.pdf'
             ),
             ('send_dues16_invoice_email', '/dues16_invoice/{member_id}'),
             ('send_dues16_invoice_batch', '/dues16_invoice_batch'),
@@ -172,11 +172,11 @@ class DuesConfig(Configuration):
             # membership dues 2017
             (
                 'dues17_invoice_pdf_backend',
-                '/dues17_invoice/C3S-dues17-{i}.pdf'
+                '/dues17_invoice/C3S-dues17-{invoice_number}.pdf'
             ),
             (
                 'dues17_reversal_pdf_backend',
-                '/dues17_reversal/C3S-dues17-{i}-S.pdf'
+                '/dues17_reversal/C3S-dues17-{invoice_number}-S.pdf'
             ),
             ('send_dues17_invoice_email', '/dues17_invoice/{member_id}'),
             ('send_dues17_invoice_batch', '/dues17_invoice_batch'),
@@ -195,7 +195,11 @@ class DuesConfig(Configuration):
             # membership dues 2018
             (
                 'dues18_invoice_pdf_backend',
-                '/dues18_invoice/C3S-dues18-{i}.pdf'
+                '/dues18_invoice/C3S-dues18-{invoice_number}.pdf'
+            ),
+            (
+                'dues18_reversal_pdf_backend',
+                '/dues18_reversal/C3S-dues18-{invoice_number}-S.pdf'
             ),
             ('send_dues18_invoice_email', '/dues18_invoice/{member_id}'),
             ('send_dues18_invoice_batch', '/dues18_invoice_batch'),
@@ -206,10 +210,6 @@ class DuesConfig(Configuration):
             ('dues18_reduction', '/dues18_reduction/{member_id}'),
 
             (
-                'dues18_reversal_pdf_backend',
-                '/dues18_reversal/C3S-dues18-{i}-S.pdf'
-            ),
-            (
                 'make_dues18_reversal_invoice_pdf',
                 '/dues18_reversal/{code}/C3S-dues18-{no}-S.pdf'
             ),
@@ -219,7 +219,11 @@ class DuesConfig(Configuration):
             # membership dues 2019
             (
                 'dues19_invoice_pdf_backend',
-                '/dues19_invoice/C3S-dues19-{i}.pdf'
+                '/dues19_invoice/C3S-dues19-{invoice_number}.pdf'
+            ),
+            (
+                'dues19_reversal_pdf_backend',
+                '/dues19_reversal/C3S-dues19-{invoice_number}-S.pdf'
             ),
             ('send_dues19_invoice_email', '/dues19_invoice/{member_id}'),
             ('send_dues19_invoice_batch', '/dues19_invoice_batch'),
@@ -228,11 +232,6 @@ class DuesConfig(Configuration):
                 '/dues19_invoice_no/{code}/C3S-dues19-{i}.pdf'
             ),
             ('dues19_reduction', '/dues19_reduction/{member_id}'),
-
-            (
-                'dues19_reversal_pdf_backend',
-                '/dues19_reversal/C3S-dues19-{i}-S.pdf'
-            ),
             (
                 'make_dues19_reversal_invoice_pdf',
                 '/dues19_reversal/{code}/C3S-dues19-{no}-S.pdf'
@@ -240,8 +239,12 @@ class DuesConfig(Configuration):
             ('dues19_notice', '/dues19_notice/{member_id}'),
             ('dues19_listing', '/dues19_listing'),
 
-            # Invoices
+            # Archiving
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),
+            (
+                'background_archive_pdf_invoices',
+                '/background_archive_pdf_invoices'
+            ),
 
             # Payments
             ('payment_list', '/payments'),

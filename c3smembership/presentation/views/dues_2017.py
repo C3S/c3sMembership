@@ -411,15 +411,7 @@ def make_dues17_invoice_pdf_backend(request):
     """
     Show the invoice to a backend user
     """
-    invoice_number = request.matchdict['i']
-    invoice = DuesInvoiceRepository.get_by_number(
-        invoice_number.lstrip('0'), 2017)
-    member = MemberRepository.get_member_by_id(invoice.member_id)
-    pdf_file = make_invoice_pdf_pdflatex(invoice)
-    response = Response(content_type='application/pdf')
-    pdf_file.seek(0)  # rewind to beginning
-    response.app_iter = open(pdf_file.name, "r")
-    return response
+    return get_invoice(request.matchdict['invoice_number'].lstrip('0'))
 
 
 @view_config(
@@ -429,13 +421,19 @@ def make_dues17_reversal_pdf_backend(request):
     """
     Show the invoice to a backend user
     """
-    invoice_number = request.matchdict['i']
-    invoice = Dues17Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
-    member = MemberRepository.get_member_by_id(invoice.member_id)
-    pdf_file = make_reversal_pdf_pdflatex(invoice)
-    response = Response(content_type='application/pdf')
+    return get_invoice(request.matchdict['invoice_number'].lstrip('0'))
+
+
+def get_invoice(invoice_number):
+    invoice = DuesInvoiceRepository.get_by_number(
+        invoice_number, 2017)
+    pdf_file = None
+    if invoice.is_reversal:
+        pdf_file = make_reversal_pdf_pdflatex(invoice)
+    else:
+        pdf_file = make_invoice_pdf_pdflatex(invoice)
     pdf_file.seek(0)  # rewind to beginning
+    response = Response(content_type='application/pdf')
     response.app_iter = open(pdf_file.name, "r")
     return response
 
