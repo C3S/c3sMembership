@@ -1,4 +1,4 @@
--- 
+--
       :::::::::::::::::: I sustain C3S! ::::::::::::::::::
       :::     support fair remuneration for artists    :::
       :::          https://sustain.c3s.cc/?en          :::
@@ -13,7 +13,7 @@
         Meik Michalke :
       Julian Tillmann : executive directors
                       :
-         Veit Winkler : chairperson of the board of directors
+    Stephan Fritzsche : chairperson of the board of directors
                       :
               GnR 506 : Genossenschaftsregister AG Düsseldorf
                USt-ID : DE294690528
