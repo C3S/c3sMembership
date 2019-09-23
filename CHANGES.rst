@@ -1,5 +1,5 @@
-Next Release
-============
+1.28
+====
 
 
 - Enable invoice archiving for all years. Background archiving can be started
@@ -637,7 +637,7 @@ Fix data type issues by treating date values as date and not datetime.
   instead of "E-Mail" and "Addresse" instead of "Adresse".
 
 - Change certificate email templates from .pt to .txt as they are plain
-  text, therefore not compatible with .pt internationalization and causing 
+  text, therefore not compatible with .pt internationalization and causing
   parsing errors.
 
 - Fix several template HTML syntax errors.
