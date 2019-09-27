@@ -1,6 +1,8 @@
-Next Release
-============
+1.28.1
+======
 
+
+- Adjust chair-person name in email footer.
 
 - Finish cleaning up personal data schema. There were three declarations of
   very similar Colander schemas for personal data including name and address.
