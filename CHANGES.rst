@@ -1,3 +1,12 @@
+1.28.2
+======
+
+
+Fix member certificate downloading from email link. The link did not work and
+returned a 500 Internal Server Error.
+
+
+
 1.28.1
 ======
 
