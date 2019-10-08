@@ -275,4 +275,4 @@ class GenerateCertificateMatchdict(colander.MappingSchema):
     The token is a string.
     """
     member_id = MemberIdIsMemberNode()
-    token = colander.SchemaNode(colander.String)
+    token = colander.SchemaNode(colander.String())
