@@ -96,77 +96,123 @@ class MembershipCertificateInt(IntegrationTestCaseBase):
 
     def test_certificate_pdf(self):
         """
-        Test the certificate_pdf view.
+        Test the certificate_pdf view
 
-        1. Success, member with recent certificate email
-        2. Failure, member with outdated certificate email
-        3. Failure, wrong certificate token
-        4. Failure, no certificate token set
-        5. Failure, no certificate email sent
+        - 1 Success, member with recent certificate email
+        - 2 Failure, member does not exist
+        - 3 Failure, member with outdated certificate email
+        - 4 Failure, wrong certificate token
+        - 5 Failure, no certificate token set
+        - 6 Failure, no certificate email sent
         """
+        route_pattern = '/cert/{member_id}/C3S_{name}_{token}.pdf'
         self.log_out()
 
-        # 1. Success, member with recent certificate email
+        # 1 Success, member with recent certificate email
         self.reset_member() \
             .set_membership() \
             .set_certificate_email_just_sent() \
             .set_certificate_token()
 
-        response = self.testapp.get(
-            '/cert/{member_id}/C3S_{name}_{token}.pdf'.format(
-                member_id=self.member.id,
-                name='some-name',
-                token=self.member.certificate_token),
-            status=200)
+        response = self.testapp.get(route_pattern.format(
+            member_id=self.member.id,
+            name='some-name',
+            token=self.member.certificate_token),
+                                    status=200)
 
         self.assertTrue(len(response.body) > 50000)
         self.assertTrue(len(response.body) < 100000)
 
-        # 2. Failure, member with outdated certificate email
+        # 2 Success, member with recent certificate email
+        wrong_member_id = 999999
+        self.reset_member() \
+            .set_membership() \
+            .set_certificate_email_just_sent() \
+            .set_certificate_token()
+
+        self.assert_get_redirect_flash(
+            route_pattern.format(member_id=wrong_member_id,
+                                 name='some-name',
+                                 token=self.member.certificate_token), '/',
+            'danger', 'Member ID {} does not exist.'.format(wrong_member_id))
+
+        # 3 Failure, member with outdated certificate email
         self.reset_member() \
             .set_membership() \
             .set_outdated_certificate_email() \
             .set_certificate_token()
 
-        response = self.testapp.get(
-            '/cert/{member_id}/C3S_{name}_{token}.pdf'.format(
-                member_id=self.member.id,
-                name='some-name',
-                token=self.member.certificate_token),
-            status=404)
+        response = self.testapp.get(route_pattern.format(
+            member_id=self.member.id,
+            name='some-name',
+            token=self.member.certificate_token),
+                                    status=404)
 
-        # 3. Failure, wrong certificate token
+        # 4 Failure, wrong certificate token
         wrong_token = 'not-the-correct-token'
         self.reset_member() \
             .set_membership() \
             .set_certificate_email_just_sent() \
             .set_certificate_token()
 
-        response = self.testapp.get(
-            '/cert/{member_id}/C3S_{name}_{token}.pdf'.format(
-                member_id=self.member.id, name='some-name', token=wrong_token),
-            status=404)
+        response = self.testapp.get(route_pattern.format(
+            member_id=self.member.id, name='some-name', token=wrong_token),
+                                    status=404)
 
-        # 4. Failure, no certificate token set
+        # 5 Failure, no certificate token set
         self.reset_member() \
             .set_membership() \
             .set_certificate_email_just_sent() \
             .set_certificate_token(None)
 
-        response = self.testapp.get(
-            '/cert/{member_id}/C3S_{name}_{token}.pdf'.format(
-                member_id=self.member.id, name='some-name', token=wrong_token),
-            status=404)
+        response = self.testapp.get(route_pattern.format(
+            member_id=self.member.id, name='some-name', token=wrong_token),
+                                    status=404)
 
-        # 5. Failure, no certificate email sent
+        # 6 Failure, no certificate email sent
         self.reset_member() \
             .set_membership() \
             .set_no_certificate_email_sent() \
             .set_certificate_token()
 
+        response = self.testapp.get(route_pattern.format(
+            member_id=self.member.id,
+            name='some-name',
+            token=self.member.certificate_token),
+                                    status=404)
+
+    def test_certificate_pdf_staff(self):
+        """
+        Test the certificate_pdf_staff view
+
+        - 1 Success, logged in, member does exist
+        - 2 Failure, logged in, member does not exist
+        - 3 Logged out, failure, not authorized
+        """
+        self.log_in()
+
+        # 1 Success, logged in, member does exist
+        self.reset_member() \
+            .set_membership() \
+            .set_certificate_token()
+
         response = self.testapp.get(
-            '/cert/{member_id}/C3S_{name}_{token}.pdf'.format(
-                member_id=self.member.id,
-                name='some-name',
-                token=self.member.certificate_token),
-            status=404)
+            '/cert/{member_id}/C3S_some-name.pdf'.format(
+                member_id=self.member.id),
+            status=200)
+
+        self.assertTrue(len(response.body) > 50000)
+        self.assertTrue(len(response.body) < 100000)
+
+        # 2 Failure, logged in, member does not exist
+        self.reset_member() \
+            .set_membership()
+        self.assert_get_redirect_flash(
+            '/cert/{member_id}/C3S_some-name.pdf'.format(member_id=999999),
+            'memberships', 'danger', 'Member ID 999999 does not exist.')
+
+        # 3 Logged out, failure, not authorized
+        self.log_out()
+        self.assert_get_unauthorized(
+            '/cert/{member_id}/C3S_some-name.pdf'.format(
+                member_id=self.member.id))
