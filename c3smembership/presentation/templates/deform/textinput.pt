@@ -5,21 +5,21 @@
             mask_placeholder mask_placeholder|field.widget.mask_placeholder;
             style style|field.widget.style;"
         tal:omit-tag="">
-    <input type="text" name="${name}" value="${cstruct}" 
+    <input type="text" name="${name}" value="${cstruct}"
             tal:attributes="
                 class string: form-control ${css_class}
                     ${field.error and 'is-invalid' or ''};
                 style style"
             id="${oid}"/>
-        <script tal:condition="mask" type="text/javascript">
-            deform.addCallback(
-                '${oid}',
-                function (oid) {
-                    $("#" + oid).mask(
-                        "${mask}",
-                        {placeholder:"${mask_placeholder}"}
-                    );
-                }
-            );
+    <script tal:condition="mask" type="text/javascript">
+        deform.addCallback(
+            '${oid}',
+            function (oid) {
+                $("#" + oid).mask(
+                    "${mask}",
+                    {placeholder:"${mask_placeholder}"}
+                );
+            }
+        );
     </script>
 </span>
