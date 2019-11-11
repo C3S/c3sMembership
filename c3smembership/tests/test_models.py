@@ -1,6 +1,5 @@
 # -*- coding: utf-8  -*-
-# import os
-from datetime import(
+from datetime import (
     date,
     datetime,
     timedelta,
@@ -29,9 +28,6 @@ from c3smembership.data.model.base.staff import Staff
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
-# Disable Pylint error message when using DBSession methods
-# pylint: disable=no-member
-
 DEBUG = False
 
 
@@ -40,20 +36,14 @@ class C3sMembershipModelTestBase(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_models.db')
         engine = create_engine('sqlite:///:memory:')
-        self.session = DBSession
         DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_models.db')
+        DBSession.remove()
 
     @classmethod
     def _get_target_class(cls):
@@ -149,8 +139,8 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
                 name_of_colsoc=u"GEMA",
                 num_shares=u'23',
             )
-            DBSession.add(member1)
-            DBSession.flush()
+            self.session.add(member1)
+            self.session.flush()
 
     def test_constructor(self):
         instance = self._make_one()
@@ -573,8 +563,6 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
 
         with self.assertRaises(Exception):
             members = my_membership_signee_class.member_listing("foo")
-            if DEBUG:
-                print members
 
     def test_nonmember_listing(self):
         """
@@ -778,7 +766,8 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
         member.membership_loss_date = date.today()
         self.assertEqual(member.is_member(), True)
 
-        # If the loss date is in the future then the member still has membership
+        # If the loss date is in the future then the member still has
+        # membership
         member.membership_accepted = True
         member.membership_date = date(2016, 1, 1)
         member.membership_loss_date = date.today() + timedelta(days=1)
@@ -793,9 +782,6 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
 
 
 class TestMemberListing(C3sMembershipModelTestBase):
-    """
-    XXX TODO
-    """
     def setUp(self):
         super(TestMemberListing, self).setUp()
         instance = self._make_one(
@@ -861,26 +847,20 @@ class GroupTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_model_groups.db')
-        engine = create_engine('sqlite://')
-        self.session = DBSession
-        self.session.configure(bind=engine)
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
             group1 = Group(name=u'staff')
-            DBSession.add(group1)
-            DBSession.flush()
+            self.session.add(group1)
+            self.session.flush()
             self.assertEquals(group1.__str__(), 'group:staff')
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_model_groups.db')
+        DBSession.remove()
 
     def test_group(self):
         result = Group.get_staffers_group()
@@ -899,14 +879,9 @@ class StaffTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_model_staff.db')
-        engine = create_engine('sqlite://')
-        self.session = DBSession
-        self.session.configure(bind=engine)
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
@@ -917,8 +892,7 @@ class StaffTests(unittest.TestCase):
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_model_staff.db')
+        DBSession.remove()
 
     def test_staff(self):
         staffer1 = Staff(
@@ -976,14 +950,9 @@ class Dues15InvoiceModelTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_model_staff.db')
-        engine = create_engine('sqlite://')
-        self.session = DBSession
-        self.session.configure(bind=engine)
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
@@ -1007,7 +976,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 name_of_colsoc=u"GEMA",
                 num_shares=u'23',
             )
-            DBSession.add(member1)
+            self.session.add(member1)
 
             member2 = C3sMember(
                 firstname=u'Franziska',
@@ -1029,7 +998,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 name_of_colsoc=u'',
                 num_shares=u'23',
             )
-            DBSession.add(member2)
+            self.session.add(member2)
 
             member3 = C3sMember(
                 firstname=u'Jane',
@@ -1051,7 +1020,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 name_of_colsoc=u'',
                 num_shares=u'23',
             )
-            DBSession.add(member3)
+            self.session.add(member3)
 
             dues1 = Dues15Invoice(
                 invoice_no=1,
@@ -1063,7 +1032,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
-            DBSession.add(dues1)
+            self.session.add(dues1)
 
             dues2 = Dues15Invoice(
                 invoice_no=2,
@@ -1076,7 +1045,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 token=u'fa4wfjlasjfd',
             )
             dues2.is_reversal = True
-            DBSession.add(dues2)
+            self.session.add(dues2)
 
             dues3 = Dues15Invoice(
                 invoice_no=3,
@@ -1088,7 +1057,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 email=u'test@example.com',
                 token=u'Jleifjsw9e',
             )
-            DBSession.add(dues3)
+            self.session.add(dues3)
 
             dues4 = Dues15Invoice(
                 invoice_no=4,
@@ -1101,7 +1070,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 token=u'f348h98sdf',
             )
             dues4.is_reversal = True
-            DBSession.add(dues4)
+            self.session.add(dues4)
 
             dues5 = Dues15Invoice(
                 invoice_no=5,
@@ -1113,7 +1082,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 email=u'test@example.com',
                 token=u'sgdfoiddfg',
             )
-            DBSession.add(dues5)
+            self.session.add(dues5)
 
             dues6 = Dues15Invoice(
                 invoice_no=6,
@@ -1126,8 +1095,8 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 token=u'3o948n',
             )
             dues6.is_reversal = True
-            DBSession.add(dues6)
-            DBSession.flush()
+            self.session.add(dues6)
+            self.session.flush()
 
             member1.set_dues15_payment(D('12.34'), date(2015, 10, 31))
             member2.set_dues15_payment(D('95.65'), date(2015, 11, 5))
@@ -1135,8 +1104,7 @@ class Dues15InvoiceModelTests(unittest.TestCase):
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_model_staff.db')
+        DBSession.remove()
 
     def test_get_all(self):
         '''
@@ -1186,8 +1154,8 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
-            DBSession.add(dues2)
-            DBSession.flush()
+            self.session.add(dues2)
+            self.session.flush()
 
         self.assertRaises(IntegrityError, trigger_integrity_error_1)
         self.session.rollback()
@@ -1207,8 +1175,8 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
-            DBSession.add(dues2)
-            DBSession.flush()
+            self.session.add(dues2)
+            self.session.flush()
 
         self.assertRaises(IntegrityError, trigger_integrity_error_2)
         self.session.rollback()
@@ -1229,8 +1197,8 @@ class Dues15InvoiceModelTests(unittest.TestCase):
                 email=u'test@example.com',
                 token=u'ABCDEFGH',
             )
-            DBSession.add(dues2)
-            DBSession.flush()
+            self.session.add(dues2)
+            self.session.flush()
 
         self.assertRaises(InvalidOperation, trigger_invalid_operation)
         # trigger_invalid_operation()
@@ -1251,12 +1219,13 @@ class Dues15InvoiceModelTests(unittest.TestCase):
             email=u'test@example.com',
             token=u'ABCDEFGH',
         )
-        DBSession.add(dues3)
-        DBSession.flush()
+        self.session.add(dues3)
+        self.session.flush()
 
         res = DuesInvoiceRepository.get_all([2015])
         self.assertEqual(len(res), 7)
         self.assertEqual(dues3.id, 7)
+
 
 class Dues16InvoiceModelTests(unittest.TestCase):
     """
@@ -1265,14 +1234,9 @@ class Dues16InvoiceModelTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_model_staff.db')
-        engine = create_engine('sqlite://')
-        self.session = DBSession
-        self.session.configure(bind=engine)
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
@@ -1424,8 +1388,7 @@ class Dues16InvoiceModelTests(unittest.TestCase):
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_model_staff.db')
+        DBSession.remove()
 
     def test_get_all(self):
         '''
@@ -1555,14 +1518,9 @@ class Dues17InvoiceModelTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_model_staff.db')
-        engine = create_engine('sqlite://')
-        self.session = DBSession
-        self.session.configure(bind=engine)
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
@@ -1714,8 +1672,7 @@ class Dues17InvoiceModelTests(unittest.TestCase):
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_model_staff.db')
+        DBSession.remove()
 
     def test_get_all(self):
         '''
@@ -1845,14 +1802,9 @@ class Dues18InvoiceModelTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_model_staff.db')
-        engine = create_engine('sqlite://')
-        self.session = DBSession
-        self.session.configure(bind=engine)
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
@@ -2004,8 +1956,7 @@ class Dues18InvoiceModelTests(unittest.TestCase):
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_model_staff.db')
+        DBSession.remove()
 
     def test_get_all(self):
         '''
@@ -2135,14 +2086,9 @@ class Dues19InvoiceModelTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.remove()
-        except:
-            pass
-        # engine = create_engine('sqlite:///test_model_staff.db')
-        engine = create_engine('sqlite://')
-        self.session = DBSession
-        self.session.configure(bind=engine)
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
@@ -2294,8 +2240,7 @@ class Dues19InvoiceModelTests(unittest.TestCase):
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_model_staff.db')
+        DBSession.remove()
 
     def test_get_all(self):
         '''

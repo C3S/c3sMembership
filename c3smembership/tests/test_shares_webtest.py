@@ -35,8 +35,6 @@ class SharesTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        DBSession().close()
-        DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
@@ -215,7 +213,7 @@ class SharesTests(unittest.TestCase):
         form['login'] = 'rut'
         form['password'] = 'berries'
         res2 = form.submit('submit', status=302)
-        # # being logged in ...
+        # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.assertTrue('Acquisition of membership' in res3.body)
         # now look at a shares package
@@ -335,7 +333,6 @@ class SharesTests(unittest.TestCase):
 
         res = self.testapp.get('/shares_detail/1', status=200)
         self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        # self.assertTrue('1: Not Found' in res.body)
         self.assertTrue('ABCDEFGH' in res.body)
 
     @classmethod

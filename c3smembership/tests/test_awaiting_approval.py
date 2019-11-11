@@ -27,31 +27,21 @@ class AwaitingApprovalTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.close()
-            DBSession.remove()
-            # print "closed and removed DBSession"
-        except:
-            pass
-            # print "no session to close"
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
             'c3smembership.dashboard_number': '30'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
+        self.session = DBSession()
         Base.metadata.create_all(engine)
 
         with transaction.manager:
             # a group for accountants/staff
             accountants_group = Group(name=u"staff")
-            try:
-                DBSession.add(accountants_group)
-                DBSession.flush()
-                # print("adding group staff")
-            except:
-                # print("could not add group staff.")
-                pass
+            self.session.add(accountants_group)
+            self.session.flush()
+
             # staff personnel
             staffer1 = Staff(
                 login=u"rut",
@@ -59,13 +49,9 @@ class AwaitingApprovalTests(unittest.TestCase):
                 email=u"noreply@example.com",
             )
             staffer1.groups = [accountants_group]
-            try:
-                DBSession.add(accountants_group)
-                DBSession.add(staffer1)
-                DBSession.flush()
-            except:
-                # print("it borked! (rut)")
-                pass
+            self.session.add(accountants_group)
+            self.session.add(staffer1)
+            self.session.flush()
 
         from c3smembership import main
         app = main({}, **my_settings)
@@ -73,7 +59,7 @@ class AwaitingApprovalTests(unittest.TestCase):
         self.testapp = TestApp(app)
 
     def tearDown(self):
-        DBSession.close()
+        self.session.close()
         DBSession.remove()
         testing.tearDown()
 

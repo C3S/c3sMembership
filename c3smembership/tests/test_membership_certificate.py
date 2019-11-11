@@ -152,7 +152,6 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.config.include('c3smembership.presentation.view_processing')
         self.error_handler = TestErrorHandler()
         self.config.set_colander_error_handler(self.error_handler)
-        DBSession.remove()
         self.db_session = init_testing_db()
         self.config.registry.settings['testing.mail_to_console'] = 'no'
         self.config.registry.settings['c3smembership.notification_sender'] = \

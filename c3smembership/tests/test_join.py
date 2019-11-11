@@ -122,9 +122,6 @@ class TestViews(unittest.TestCase):
         self.config.registry.settings['testing.mail_to_console'] = 'false'
         self.config.registry.get_mailer = get_mailer
 
-        DBSession.remove()
-        self.session = DBSession
-
     def tearDown(self):
         DBSession.remove()
         testing.tearDown()
@@ -149,8 +146,8 @@ class TestViews(unittest.TestCase):
             }
         }
         result = show_success(request)
-        self.assertTrue(result['lastname'] is 'bar')
-        self.assertTrue(result['firstname'] is 'foo')
+        self.assertEqual(result['lastname'], 'bar')
+        self.assertEqual(result['firstname'], 'foo')
 
     def test_show_success_no_appstruct(self):
         """
@@ -208,8 +205,8 @@ class TestViews(unittest.TestCase):
         # Undo dependency injection
         utils.encrypt_with_gnupg = original_encrypt_with_gnupg
 
-        self.assertTrue(result['lastname'] is 'bar')
-        self.assertTrue(result['firstname'] is 'foo')
+        self.assertEqual(result['lastname'], 'bar')
+        self.assertEqual(result['firstname'], 'foo')
 
         # expect email to accountant and email to applicant for email address
         # confirmation
@@ -268,8 +265,8 @@ class TestViews(unittest.TestCase):
         utils.encrypt_with_gnupg = encrypt_with_gnupg_dummy
 
         result = success_check_email(request)
-        self.assertTrue(result['lastname'] is 'bar')
-        self.assertTrue(result['firstname'] is 'foo')
+        self.assertEqual(result['lastname'], 'bar')
+        self.assertEqual(result['firstname'], 'foo')
 
         # Undo dependency injection
         utils.encrypt_with_gnupg = original_encrypt_with_gnupg
@@ -329,18 +326,16 @@ class TestViews(unittest.TestCase):
         """
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        DBSession().close()
-        DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
             'c3smembership.dashboard_number': '30'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
+        db_session = DBSession()
         Base.metadata.create_all(engine)
         with transaction.manager:
             accountants_group = Group(name=u"staff")
-            db_session = DBSession()
             db_session.add(accountants_group)
             db_session.flush()
             staffer1 = Staff(
@@ -398,7 +393,7 @@ class TestViews(unittest.TestCase):
         res = form.submit(u'submit', status=200)
 
         # teardown
-        DBSession().close()
+        db_session.close()
         DBSession.remove()
         testing.tearDown()
 

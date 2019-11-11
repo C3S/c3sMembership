@@ -38,8 +38,6 @@ class EditMemberTests(unittest.TestCase):
         """
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        DBSession().close()
-        DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
@@ -52,7 +50,7 @@ class EditMemberTests(unittest.TestCase):
         db_session = DBSession()
 
         with transaction.manager:
-                # a group for accountants/staff
+            # a group for accountants/staff
             accountants_group = Group(name=u"staff")
             db_session.add(accountants_group)
             db_session.flush()

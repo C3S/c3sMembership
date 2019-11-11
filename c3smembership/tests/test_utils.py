@@ -3,11 +3,14 @@
 Tests the utils package.
 """
 
-from datetime import date
+import datetime
 import os
 import unittest
 
 from pyramid import testing
+from pyramid_mailer.message import Message
+from sqlalchemy import create_engine
+import subprocess
 import transaction
 
 from c3smembership.data.model.base import (
@@ -15,6 +18,11 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.utils import (
+    generate_pdf,
+    create_accountant_mail,
+    make_mail_body,
+)
 
 
 class TestUtilities(unittest.TestCase):
@@ -28,9 +36,6 @@ class TestUtilities(unittest.TestCase):
         """
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        DBSession().close()
-        DBSession.remove()
-        from sqlalchemy import create_engine
         engine = create_engine('sqlite:///:memory:')
         DBSession.configure(bind=engine)
         self.session = DBSession
@@ -48,11 +53,11 @@ class TestUtilities(unittest.TestCase):
                 city=u'Footown Mäh',
                 country=u'Foocountry',
                 locale=u'DE',
-                date_of_birth=date.today(),
+                date_of_birth=datetime.date.today(),
                 email_is_confirmed=False,
                 email_confirm_code=u'ABCDEFGBAR',
                 password=u'arandompassword',
-                date_of_submission=date.today(),
+                date_of_submission=datetime.date.today(),
                 membership_type=u'normal',
                 member_of_colsoc=True,
                 name_of_colsoc=u'GEMA',
@@ -74,8 +79,6 @@ class TestUtilities(unittest.TestCase):
         """
         Test pdf generation and resulting pdf size
         """
-        from c3smembership.utils import generate_pdf
-
         mock_appstruct = {
             'firstname': u'Anne',
             'lastname': u'Gilles',
@@ -96,8 +99,6 @@ class TestUtilities(unittest.TestCase):
         }
 
         # a skipTest iff pdftk is not installed
-        import subprocess
-        from subprocess import CalledProcessError
         try:
             res = subprocess.check_call(
                 ['which', 'pdftk'], stdout=open(os.devnull, 'w'))
@@ -110,8 +111,7 @@ class TestUtilities(unittest.TestCase):
                                   'application/pdf')
                 # check pdf size
                 self.assertTrue(210000 > len(result.body) > 50000)
-
-        except CalledProcessError:
+        except subprocess.CalledProcessError:
             pass
 
     def test_generate_pdf_de(self):
@@ -119,7 +119,6 @@ class TestUtilities(unittest.TestCase):
         Test pdf generation
         and resulting pdf size
         """
-        from c3smembership.utils import generate_pdf
 
         request = testing.DummyRequest()
         appstruct = {
@@ -140,8 +139,6 @@ class TestUtilities(unittest.TestCase):
         }
 
         # a skipTest iff pdftk is not installed
-        import subprocess
-        from subprocess import CalledProcessError
         try:
             res = subprocess.check_call(
                 ['which', 'pdftk'], stdout=open(os.devnull, 'w'))
@@ -150,16 +147,13 @@ class TestUtilities(unittest.TestCase):
                 self.assertEquals(result.content_type,
                                   'application/pdf')
                 self.assertTrue(210000 > len(result.body) > 50000)
-
-        except CalledProcessError:
+        except subprocess.CalledProcessError:
             pass
 
     def test_mail_body(self):
         """
         Test if mail body is constructed correctly and if umlauts work
         """
-        from c3smembership.utils import make_mail_body
-        import datetime
         dob = datetime.date(1999, 1, 1)
         member = C3sMember(
             firstname=u'Jöhn test_mail_body',
@@ -199,8 +193,6 @@ class TestUtilities(unittest.TestCase):
         """
         Test creation of email message object
         """
-        from c3smembership.utils import create_accountant_mail
-        import datetime
         member = C3sMember(
             firstname=u'Jöhn test_create_accountant_mail',
             lastname=u'Doe',
@@ -224,8 +216,6 @@ class TestUtilities(unittest.TestCase):
         )
         result = create_accountant_mail(
             member, 'yes@example.com', ['yes@example.com'])
-
-        from pyramid_mailer.message import Message
 
         self.assertTrue(isinstance(result, Message))
         self.assertTrue('yes@example.com' in result.recipients)

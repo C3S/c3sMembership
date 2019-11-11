@@ -11,16 +11,18 @@ There are two 'areas' covered:
 """
 # http://docs.pylonsproject.org/projects/pyramid/dev/narr/testing.html
 #                                            #creating-functional-tests
-# import os
 
 from datetime import date
 
+from pyquery import PyQuery as pq
 from pyramid import testing
 from pyramid_mailer import get_mailer
 from sqlalchemy import engine_from_config
 import transaction
 import unittest
+from webtest import TestApp
 
+from c3smembership import main
 from c3smembership.data.model.base import (
     DBSession,
     Base,
@@ -39,22 +41,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.close()
-            DBSession.remove()
-            # print "closed and removed DBSession"
-        except:
-            pass
-            # print "no session to close"
-        # try:
-        #    os.remove('test_webtest_accountants.db')
-        #    #print "deleted old test database"
-        # except:
-        #    pass
-        #    #print "never mind"
-        # self.session = DBSession()
         my_settings = {
-            # 'sqlalchemy.url': 'sqlite:///test_webtest_accountants.db',
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
             'c3smembership.dashboard_number': '30'}
@@ -65,15 +52,13 @@ class AccountantsFunctionalTests(unittest.TestCase):
         self._insert_members()
 
         with transaction.manager:
-                # a group for accountants/staff
+            # a group for accountants/staff
             accountants_group = Group(name=u"staff")
             try:
                 DBSession.add(accountants_group)
                 DBSession.flush()
-                # print("adding group staff")
             except:
                 print("could not add group staff.")
-                # pass
             # staff personnel
             staffer1 = Staff(
                 login=u"rut",
@@ -86,18 +71,14 @@ class AccountantsFunctionalTests(unittest.TestCase):
                 DBSession.add(staffer1)
                 DBSession.flush()
             except:
-                print("it borked! (rut)")
-                # pass
+                pass
 
-        from c3smembership import main
         app = main({}, **my_settings)
-        from webtest import TestApp
         self.testapp = TestApp(app)
 
     def tearDown(self):
         DBSession.close()
         DBSession.remove()
-        # os.remove('test_webtest_accountants.db')
         testing.tearDown()
 
     def _insert_members(self):
@@ -169,9 +150,11 @@ class AccountantsFunctionalTests(unittest.TestCase):
 
     def get_dashboard_page(self, page_number, sort_property, sort_direction,
                            status):
+        url = '/dashboard?page-number={0}&sort-property={1}&sort-direction={2}'
         return self.testapp.get(
-            '/dashboard?page-number={0}&sort-property={1}&sort-direction={2}'.format(
-                page_number, sort_property, sort_direction), status=status,
+            url.format(
+                page_number, sort_property, sort_direction),
+            status=status,
         )
 
     def test_login_and_dashboard(self):
@@ -203,7 +186,6 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         # being logged in ...
         res4 = res3.follow()
-        # print(res4.body)
         self.failUnless(
             'Acquisition of membership' in res4.body)
         # now that we are logged in,
@@ -211,7 +193,6 @@ class AccountantsFunctionalTests(unittest.TestCase):
         res5 = self.testapp.get('/login', status=302)
         # so yes: that was a redirect
         res6 = res5.follow()
-        # print(res4.body)
         self.failUnless(
             'Acquisition of membership' in res6.body)
         # choose number of applications shown
@@ -279,12 +260,9 @@ class AccountantsFunctionalTests(unittest.TestCase):
     def test_dashboard_orderByFirstnameAsc_dashboardOrdered(self):
         res2 = self._login()
         res2 = self.get_dashboard_page(1, 'firstname', 'asc', 200)
-        # print res2.body
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
-        # print "the first row: {}".format(first_member_row)
         first_name = first_member_row('td:nth-child(2)')
-        # print "the first name: {}".format(first_name)
         self.assertEqual(u'AAASomeFirstnäme', first_name.text())
 
     def test_dashboard_orderByFirstnameDesc_dashboardOrdered(self):
@@ -368,7 +346,6 @@ class AccountantsFunctionalTests(unittest.TestCase):
         self.assertEqual(len(pq("#navigate_next")), 0)
 
     def _get_pyquery(self, html):
-        from pyquery import PyQuery as pq
         pure_html = ''.join(html.split('\n')[2:])
         pure_html = "<html>" + pure_html
         d = pq(pure_html)
@@ -404,11 +381,11 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         res3 = self._login()
         res3 = self.testapp.get('/search_codes', status=200)
-        """
-        we fill the confirmation code search form with a valid code,
-        submit the form
-        and check results
-        """
+
+        # we fill the confirmation code search form with a valid code,
+        # submit the form
+        # and check results
+
         # try invalid code
         form = res3.forms[0]
         form['code_to_show'] = 'foo'
@@ -417,11 +394,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
         self.failUnless('Code finden' in res.body)
         # now use existing code
         form = res.forms[0]
-        # print form.fields
         form['code_to_show'] = 'ABCDEFGBAZ'
-        # print form['code_to_show'].value
         res2 = form.submit()
-        # print res2.body
         res = res2.follow()
         self.failUnless('Membership application details' in res.body)
         self.failUnless('ABCDEFGBAZ' in res.body)
@@ -435,11 +409,11 @@ class AccountantsFunctionalTests(unittest.TestCase):
         #
         res3 = self._login()
         res3 = self.testapp.get('/search_people', status=200)
-        """
-        we fill the confirmation code search form with a valid code,
-        submit the form
-        and check results
-        """
+
+        # we fill the confirmation code search form with a valid code,
+        # submit the form
+        # and check results
+
         # try invalid code
         form = res3.forms[0]
         form['code_to_show'] = 'foo'
@@ -448,15 +422,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
         self.failUnless('Personen finden' in res.body)
         # now use existing code
         form = res.forms[0]
-        # print form.fields
         form['code_to_show'] = u'XXXSomeLastnäme'
-        # print form['code_to_show'].value
         res = form.submit()
-        # print res.body
-        # res = res2.follow()
-        # self.failUnless('Details for Member Application' in res.body)
-        # self.failUnless('ABCDEFGBAZ' in res.body)
-        # XXX FIXME
 
 
 class FunctionalTests(unittest.TestCase):
@@ -468,29 +435,14 @@ class FunctionalTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.close()
-            DBSession.remove()
-            # print("removed old DBSession ==============================")
-        except:
-            # print("no DBSession to remove =============================")
-            pass
-        # try:
-        #    os.remove('test_webtest_functional.db')
-        #    #print "deleted old test database"
-        # except:
-        #    pass
-        #    #print "never mind"
-
         my_settings = {
-            # 'sqlalchemy.url': 'sqlite:///test_webtest_functional.db',
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
             'c3smembership.notification_sender': 'c@example.com',
             'testing.mail_to_console': 'false'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
-        self.session = DBSession  # ()
+        self.session = DBSession()
 
         Base.metadata.create_all(engine)
         # dummy database entries for testing
@@ -518,17 +470,14 @@ class FunctionalTests(unittest.TestCase):
             DBSession.add(member1)
             DBSession.flush()
 
-        from c3smembership import main
         app = main({}, **my_settings)
         app.registry.get_mailer = get_mailer
 
-        from webtest import TestApp
         self.testapp = TestApp(app)
 
     def tearDown(self):
         self.session.close()
-        self.session.remove()
-        # os.remove('test_webtest_functional.db')
+        DBSession.remove()
 
     def test_base_template(self):
         """load the front page, check string exists"""
@@ -536,13 +485,6 @@ class FunctionalTests(unittest.TestCase):
         self.failUnless('Cultural Commons Collecting Society' in res.body)
         self.failUnless(
             'Copyright 2014, C3S SCE' in res.body)
-
-    # def test_faq_template(self):
-    #     """load the FAQ page, check string exists"""
-    #     res = self.testapp.get('/faq', status=200)
-    #     self.failUnless('FAQ' in res.body)
-    #     self.failUnless(
-    #         'Copyright 2013, OpenMusicContest.org e.V.' in res.body)
 
     def test_lang_en_LOCALE(self):
         """load the front page, forced to english (default pyramid way),
@@ -563,20 +505,6 @@ class FunctionalTests(unittest.TestCase):
         self.failUnless(
             'Application for Membership of ' in res1.body)
 
-# so let's test the app's obedience to the language requested by the browser
-# i.e. will it respond to http header Accept-Language?
-
-    # def test_accept_language_header_da(self):
-    #     """check the http 'Accept-Language' header obedience: danish
-    #     load the front page, check danish string exists"""
-    #     res = self.testapp.reset()  # delete cookie
-    #     res = self.testapp.get('/', status=200,
-    #                            headers={
-    #             'Accept-Language': 'da'})
-    #     #print(res.body) #  if you want to see the pages source
-    #     self.failUnless(
-    #         '<input type="hidden" name="_LOCALE_" value="da"' in res.body)
-
     def test_accept_language_header_de_DE(self):
         """check the http 'Accept-Language' header obedience: german
         load the front page, check german string exists"""
@@ -585,7 +513,6 @@ class FunctionalTests(unittest.TestCase):
             '/', status=200,
             headers={
                 'Accept-Language': 'de-DE'})
-        # print(res.body) #  if you want to see the pages source
         self.failUnless(
             'Mitgliedschaftsantrag für die' in res.body)
 
@@ -597,32 +524,9 @@ class FunctionalTests(unittest.TestCase):
             '/', status=200,
             headers={
                 'Accept-Language': 'en'})
-        # print(res.body) #  if you want to see the pages source
         self.failUnless(
             "I want to become"
             in res.body)
-
-    # def test_accept_language_header_es(self):
-    #     """check the http 'Accept-Language' header obedience: spanish
-    #     load the front page, check spanish string exists"""
-    #     res = self.testapp.reset()  # delete cookie
-    #     res = self.testapp.get('/', status=200,
-    #                            headers={
-    #             'Accept-Language': 'es'})
-    #     #print(res.body) #  if you want to see the pages source
-    #     self.failUnless(
-    #         'Luego de enviar el siguiente formulario,' in res.body)
-
-    # def test_accept_language_header_fr(self):
-    #     """check the http 'Accept-Language' header obedience: french
-    #     load the front page, check french string exists"""
-    #     res = self.testapp.reset()  # delete cookie
-    #     res = self.testapp.get('/', status=200,
-    #                            headers={
-    #             'Accept-Language': 'fr'})
-    #     #print(res.body) #  if you want to see the pages source
-    #     self.failUnless(
-    #         'En envoyant un courriel à data@example.com vous pouvez' in res.body)
 
     def test_no_cookies(self):
         """load the front page, check default english string exists"""
@@ -631,7 +535,6 @@ class FunctionalTests(unittest.TestCase):
             '/', status=200,
             headers={
                 'Accept-Language': 'af, cn'})  # ask for missing languages
-        # print res.body
         self.failUnless('Application for Membership' in res.body)
 
 #############################################################################
@@ -642,8 +545,6 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.reset()
         res = self.testapp.get('/?_LOCALE_=en', status=200)
         form = res.form
-        # print(form.fields)
-        # print(form.fields.values())
         form['firstname'] = 'John'
         # form['address2'] = 'some address part'
         res2 = form.submit('submit')
@@ -653,11 +554,9 @@ class FunctionalTests(unittest.TestCase):
     def test_form_lang_de(self):
         """load the join form, check german string exists"""
         res = self.testapp.get('/?de', status=302)
-        # print(res)
         self.failUnless('The resource was found at' in res.body)
         # we are being redirected...
         res2 = res.follow()
-        # print(res2)
         # test for german translation of template text (lingua_xml)
         self.failUnless(
             'Mitgliedschaftsantrag für die' in res2.body)
@@ -687,7 +586,6 @@ class FunctionalTests(unittest.TestCase):
         self.failUnless('The resource was found at' in res.body)
         # we are being redirected...
         res1 = res.follow()
-        # print(res1)
         self.failUnless(
             'Application for Membership of ' in str(
                 res1.body),
@@ -710,8 +608,6 @@ class FunctionalTests(unittest.TestCase):
             'Password' in res2.body)
 
     def test_verify_email_en_w_good_code(self):
-        """
-        """
         res = self.testapp.reset()
         res = self.testapp.get('/verify/some@shri.de/ABCDEFGFOO', status=200)
         self.failUnless(
@@ -719,13 +615,8 @@ class FunctionalTests(unittest.TestCase):
         form = res.form
         form['password'] = 'arandompassword'
         res2 = form.submit('submit')
-        # print res2.body
         self.failUnless(
             'C3S_SCE_AFM_SomeFirstn_meSomeLastn_me.pdf' in res2.body)
-        # 'Your Email has been confirmed, Firstnäme Lastname!' in res.body)
-        # res2 = self.testapp.get(
-        #    '/C3S_SCE_AFM_Firstn_meLastname.pdf', status=200)
-        # self.failUnless(len(res2.body) > 70000)
 
     def test_success_wo_data_en(self):
         """load the success page in english (via query_string),
@@ -735,7 +626,6 @@ class FunctionalTests(unittest.TestCase):
         self.failUnless('The resource was found at' in res.body)
         # we are being redirected...
         res1 = res.follow()
-        # print(res1)
         self.failUnless(  # check text on page redirected to
             'Please fill out the form' in str(
                 res1.body),
@@ -753,7 +643,6 @@ class FunctionalTests(unittest.TestCase):
         self.failUnless('The resource was found at' in res.body)
         # we are being redirected...
         res1 = res.follow()
-        # print(res1)
         self.failUnless(  # check text on page redirected to
             'Please fill out the form' in str(
                 res1.body),
@@ -766,11 +655,9 @@ class FunctionalTests(unittest.TestCase):
         """
         res = self.testapp.reset()
         res = self.testapp.get('/verify/some@shri.de/ABCDEFGFOO', status=200)
-        # print(res.body)
         form = res.form
         form['password'] = 'arandompassword'
         res2 = form.submit('submit')
-        # print res2.body
         self.failUnless("Load your PDF" in res2.body)
         self.failUnless(
             "/C3S_SCE_AFM_SomeFirstn_meSomeLastn_me.pdf" in res2.body)
@@ -779,8 +666,6 @@ class FunctionalTests(unittest.TestCase):
             '/C3S_SCE_AFM_SomeFirstn_meSomeLastn_me.pdf',
             status=200
         )
-        # print("length of result: %s") % len(res3.body)
-        # print("body result: %s") % (res3.body)  # ouch, PDF content!
         self.failUnless(80000 < len(res3.body) < 220000)  # check pdf size
 
     def test_email_confirmation_wrong_mail(self):
@@ -790,7 +675,6 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.reset()
         res = self.testapp.get(
             '/verify/NOTEXISTS@shri.de/ABCDEFGHIJ', status=200)
-        # print(res.body)
         self.failUnless("Please enter your password." in res.body)
         # XXX this test shows nothing interesting
 
@@ -800,7 +684,6 @@ class FunctionalTests(unittest.TestCase):
         """
         res = self.testapp.reset()
         res = self.testapp.get('/verify/foo@shri.de/WRONGCODE', status=200)
-        # print(res.body)
         self.failUnless("Please enter your password." in res.body)
 
     def test_success_check_email(self):

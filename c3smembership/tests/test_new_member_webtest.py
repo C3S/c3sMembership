@@ -32,8 +32,6 @@ class NewMemberTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        DBSession().close()
-        DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
@@ -130,8 +128,8 @@ class NewMemberTests(unittest.TestCase):
         form['city'] = u"Footown Meeh"
         form['country'].value__set(u"DE")
         form['locale'] = u"de"
-        field_id_dict['date_of_birth'].value = \
-            unicode(date(date.today().year-40, 1, 1))
+        field_id_dict['date_of_birth'].value = unicode(
+            date(date.today().year - 40, 1, 1))
         form['entity_type'] = u'legalentity'
         form['membership_type'] = u'investing'
         form['other_colsoc'].value__set(u'no')
@@ -139,7 +137,6 @@ class NewMemberTests(unittest.TestCase):
         form['num_shares'] = u'42'
         form['email_is_confirmed'] = u'yes'
         return form
-
 
     def test_add_member(self):
         '''
@@ -177,7 +174,6 @@ class NewMemberTests(unittest.TestCase):
 
         # check the number of entries in the DB
         self.assertEqual(C3sMember.get_number(), 1)
-
 
         res = self.testapp.get('/new_member', status=200)
         form = self._fill_form_valid_legal(res.form)

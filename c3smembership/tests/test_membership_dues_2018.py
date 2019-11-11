@@ -188,8 +188,6 @@ class TestDues18Views(unittest.TestCase):
         self.config.registry.settings['c3smembership.notification_sender'] = \
             'c@example.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
-
-        DBSession.remove()
         self.session = _initTestingDB()
 
     def tearDown(self):

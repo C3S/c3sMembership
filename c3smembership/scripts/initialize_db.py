@@ -272,7 +272,7 @@ def main(argv=sys.argv):
 
 
 def init():
-    engine = engine_from_config({'sqlalchemy.url': 'sqlite://'})
+    engine = engine_from_config({'sqlalchemy.url': 'sqlite:///:memory:'})
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     # Setup alembic database migration information.

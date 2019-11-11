@@ -41,9 +41,6 @@ class MemberTestsBase(unittest.TestCase):
         """
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        # pylint: disable=no-member
-        DBSession.close()
-        DBSession.remove()
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
@@ -358,8 +355,8 @@ class MakeMergeMemberTests(MemberTestsBase):
         res3 = res2.follow()
         # this now is a member!
         self.failUnless('Member details' in res3.body)
-        self.failUnless('Membership accepted  Yes' in \
-            self._response_to_bare_text(res3))
+        self.failUnless(
+            'Membership accepted  Yes' in self._response_to_bare_text(res3))
 
     def test_merge_member_view(self):
         '''
@@ -438,10 +435,10 @@ class MembershipListTests(MemberTestsBase):
         self.assertEqual(res.content_type, 'application/pdf')
 
         member1 = C3sMember.get_by_id(1)
-        member1.membership_date = date(2015, 01, 01)
+        member1.membership_date = date(2015, 1, 1)
         member1.membership_number = 42
-        member1.shares[0].date_of_acquisition = date(2015, 01, 01)
-        member1.shares[1].date_of_acquisition = date(2015, 01, 02)
+        member1.shares[0].date_of_acquisition = date(2015, 1, 1)
+        member1.shares[1].date_of_acquisition = date(2015, 1, 2)
 
         # try with valid date in URL
         res = self.testapp.get('/aml-' + _date + '.pdf', status=200)
