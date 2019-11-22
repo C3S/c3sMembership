@@ -18,6 +18,7 @@ pipenv --version
 
 # sudo apt-get install libxml2-dev libxslt1-dev (needed for pyquery)
 
+pipenv install
 #pipenv install -e hg+https://bitbucket.org/dholth/cryptacular@cb96fb3#egg=cryptacular
 
 # set it up
