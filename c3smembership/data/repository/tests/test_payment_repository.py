@@ -47,7 +47,7 @@ class TestPaymentRepository(unittest.TestCase):
             locale=u'',
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=unicode(membership_number),
+            email_confirm_code=membership_number,
             password=u'',
             date_of_submission=date.today(),
             membership_type=u'normal',

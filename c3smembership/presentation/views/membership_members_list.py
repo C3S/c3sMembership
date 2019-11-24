@@ -79,14 +79,15 @@ def latex_address(address1, address2, postal_code, city, country_code):
     address2_latex = ''
     if len(address2) > 0:
         address2_latex = '\\linebreak '
-        address2_latex += unicode(TexTools.escape(address2)).encode('utf-8')
+        address2_latex += TexTools.escape(address2)
+
     return LATEX_ADDRESS.format(
-        address1_latex=unicode(TexTools.escape(address1)).encode('utf-8'),
+        address1_latex=TexTools.escape(address1),
         address2_latex=address2_latex,
-        postal_code_latex=unicode(
-            TexTools.escape(postal_code)).encode('utf-8'),
-        city=unicode(TexTools.escape(city)).encode('utf-8'),
-        country_code=unicode(TexTools.escape(country_code)).encode('utf-8'))
+        postal_code_latex=TexTools.escape(postal_code),
+        city=TexTools.escape(city),
+        country_code=TexTools.escape(country_code)
+    )
 
 
 def latex_membership_loss(membership_loss_date, membership_loss_type):
@@ -95,7 +96,7 @@ def latex_membership_loss(membership_loss_date, membership_loss_type):
         membership_loss += membership_loss_date.strftime('%d.%m.%Y')
     if membership_loss_type is not None:
         membership_loss += '\\linebreak '
-        membership_loss += unicode(TexTools.escape(
+        membership_loss += str(TexTools.escape(
             membership_loss_type)).encode('utf-8')
     return membership_loss
 
@@ -112,6 +113,7 @@ def generate_membership_list_pdf(effective_date, members):
     )
 
     shares_count = sum([member['shares_count'] for member in members])
+    print("shares_count: " + str(shares_count))
 
     latex_file.write(
         LATEX_HEADER.format(
@@ -131,12 +133,12 @@ def generate_membership_list_pdf(effective_date, members):
 
     # make table rows per member
     for member in members:
+        print("member['shares_count']: " + str(member['shares_count']))
         latex_file.write(
             LATEX_MEMBER_ROW.format(
-                lastname=TexTools.escape(member['lastname']).encode('utf-8'),
-                firstname=TexTools.escape(member['firstname']).encode('utf-8'),
-                membership_number=TexTools.escape(
-                    str(member['membership_number'])),
+                lastname=TexTools.escape(member['lastname']),
+                firstname=TexTools.escape(member['firstname']),
+                membership_number=TexTools.escape(member['membership_number']),
                 address=latex_address(
                     member['address1'],
                     member['address2'],
@@ -147,8 +149,11 @@ def generate_membership_list_pdf(effective_date, members):
                     '%d.%m.%Y'),
                 membership_loss=latex_membership_loss(
                     member['membership_loss_date'],
-                    member['membership_loss_type']),
-                shares=str(member['shares_count'])))
+                    member['membership_loss_type']
+                ),
+                shares=str(member['shares_count'])
+            )
+        )
 
     latex_file.write(LATEX_FOOTER)
     latex_file.close()

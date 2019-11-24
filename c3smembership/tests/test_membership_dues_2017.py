@@ -33,6 +33,9 @@ from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
+from c3smembership.tests.utils import check_certificate_git_present
+
+cert_git_condition, cert_git_reason = check_certificate_git_present()
 
 
 def _initTestingDB():
@@ -635,8 +638,13 @@ class TestDues17Views(unittest.TestCase):
         # m1.
         # print("length of the result: {}".format(len(res.body)))
         # print("headers of the result: {}".format((res.headers)))
+<<<<<<< Updated upstream
         assert(60000 < len(res.body) < 100000)
         assert('application/pdf' in res.headers['Content-Type'])
+=======
+        # assert(60000 < len(res.body) < 80000)
+        # assert('application/pdf' in res.headers['Content-Type'])
+>>>>>>> Stashed changes
 
         """
         test dues listing
@@ -920,7 +928,54 @@ class TestDues17Views(unittest.TestCase):
         res = make_dues17_reversal_invoice_pdf(req2)
         # print("length of the result: {}".format(len(res.body)))
         # print("headers of the result: {}".format((res.headers)))
+<<<<<<< Updated upstream
         assert(60000 < len(res.body) < 100000)
+=======
+        # assert(60000 < len(res.body) < 80000)
+        # assert('application/pdf' in res.headers['Content-Type'])
+
+    @unittest.skipIf(cert_git_condition, cert_git_reason)
+    def test_dues17_reduction_pdf(self):
+        """
+        test the dues17_reduction functionality end-to-end,
+        also producing a pdf shippable to the member
+        """
+        m2 = C3sMember.get_by_id(2)
+        m2.membership_accepted = True
+        self.config.add_route('make_dues17_invoice_no_pdf', '/')
+        self.config.add_route('make_dues17_reversal_invoice_pdf', '/')
+        self.config.add_route('detail', '/detail/')
+        self.config.add_route('error', '/error')
+        self.config.add_route('toolbox', '/toolbox')
+
+        req = testing.DummyRequest()
+        from c3smembership.presentation.views.dues_2017 import (
+            make_dues17_reversal_invoice_pdf,
+            send_dues17_invoice_batch
+        )
+        # send out invoices. this is a prerequisite for reductions
+        res = send_dues17_invoice_batch(req)
+        res
+        i2 = Dues17Invoice.get_by_invoice_no(1)
+        req.referrer = 'toolbox'
+        i2.token = m2.dues17_token  # we give it a valid token
+        req.matchdict = {
+            'email': m2.email,
+            'code': m2.dues17_token,
+            'no': u'0002',
+        }
+        
+        # retry with valid token:
+        req.matchdict = {
+            'email': m2.email,
+            'code': m2.dues17_token,
+            'no': u'0003',
+        }
+        res = make_dues17_reversal_invoice_pdf(req)
+        # print("length of the result: {}".format(len(res.body)))
+        # print("headers of the result: {}".format((res.headers)))
+        assert(60000 < len(res.body) < 80000)
+>>>>>>> Stashed changes
         assert('application/pdf' in res.headers['Content-Type'])
 
     def test_dues17_notice(self):

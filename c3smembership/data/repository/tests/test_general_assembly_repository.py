@@ -143,6 +143,7 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
             member1.membership_date = date(2018, 1, 1)
             member1.membership_accepted = True
             DBSession.add(member1)
+            DBSession.flush()
 
             datetime_mock.now.side_effect = [datetime(2018, 9, 1, 23, 5, 15)]
             GeneralAssemblyRepository.invite_member(
@@ -152,6 +153,7 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
             member2.membership_date = date(2017, 1, 1)
             member2.membership_accepted = True
             DBSession.add(member2)
+            DBSession.flush()
 
             datetime_mock.now.side_effect = [datetime(2018, 9, 2, 22, 3, 10)]
             GeneralAssemblyRepository.invite_member(

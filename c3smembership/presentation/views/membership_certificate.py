@@ -154,6 +154,14 @@ def gen_cert(member):
     certificate_path = os.path.join(
         os.path.dirname(__file__),
         '../../../certificate')
+    # check presence of file needed for certificate generation
+    if not os.path.isfile(
+        os.path.join(certificate_path, "urkunde_header_en.tex")
+    ):
+        print("this installation of c3sMembership misses some files "
+              "necessary for membership certificate creation.")
+        return ("this installation of c3sMembership misses some files "
+                "necessary for membership certificate creation.")
 
     if 'de' in member.locale:
         latex_background_image = os.path.abspath(
@@ -305,17 +313,20 @@ def gen_cert(member):
     latex_file.seek(0)  # rewind
 
     # pdflatex latex_file to pdf_file
-    # pdflatex_output =
-    subprocess.call(
+    pdflatex_output = subprocess.call(
         [
             'pdflatex',
             '-output-directory=%s' % tempdir,
             latex_file.name
         ],
-        stdout=open(os.devnull, 'w'),
-        stderr=subprocess.STDOUT  # hide output
+        #stdout=open(os.devnull, 'w'),
+        #stderr=subprocess.STDOUT  # hide output
     )
 
+    if DEBUG:
+        print("the output of the pdflatex run:")
+        print(pdflatex_output)
+    
     # return a pdf file
     response = Response(content_type='application/pdf')
     response.app_iter = open(pdf_file.name, "r")

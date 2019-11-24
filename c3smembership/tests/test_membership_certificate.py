@@ -304,6 +304,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
     def test_generate_certificate_en(self):
         """
         test the certificate download view (english)
+        * with an invalid token
+        * with valid token but invalif id
         """
         member2 = C3sMember.get_by_id(2)
         request = testing.DummyRequest()
@@ -325,7 +327,11 @@ class TestMembershipCertificateViews(unittest.TestCase):
         member2.certificate_email_date = datetime.now() - timedelta(weeks=1)
         member2.membership_accepted = True
         member2.membership_loss_date = date.today() + timedelta(days=1)
+        print("member2: about to generate_certificate")
         result = generate_certificate(request)
+        ## XXX this is where the test fails... maybe I need the private repo?
+        print("result:")
+        print(result)
         self.assertEqual(result.status_code, 200)
 
         member2.certificate_email_date = datetime.now() - timedelta(weeks=1)

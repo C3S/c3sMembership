@@ -552,13 +552,13 @@ def make_invoice_pdf_pdflatex(invoice):
         'personalAddressTwo': member.address2,
         'personalPostCode': member.postcode,
         'personalCity': member.city,
-        'personalMShipNo': unicode(member.membership_number),
+        'personalMShipNo': str(member.membership_number),
         'invoiceNo': str(invoice_no).zfill(4),  # leading zeroes!
         'invoiceDate': invoice_date,
-        'account': unicode(-dues15_balance - dues16_balance),
+        'account': str(-dues15_balance - dues16_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else string_start_quarter_dues16(member),
-        'duesAmount': unicode(invoice.invoice_amount),
+        'duesAmount': str(invoice.invoice_amount),
         'lang': 'de',
         'pdfBackground': bg_pdf,
     }
@@ -930,10 +930,10 @@ def make_reversal_pdf_pdflatex(invoice):
         'personalAddressTwo': member.address2,
         'personalPostCode': member.postcode,
         'personalCity': member.city,
-        'personalMShipNo': unicode(member.membership_number),
+        'personalMShipNo': str(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
-        'duesAmount': unicode(invoice.invoice_amount),
+        'duesAmount': str(invoice.invoice_amount),
         'origInvoiceRef': ('C3S-dues2016-' +
                            str(invoice.preceding_invoice_no).zfill(4)),
         'lang': 'de',

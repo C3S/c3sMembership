@@ -127,7 +127,7 @@ def get_filter_from_cookies(
         information from the cookies.
     """
     for filter_name in filter_settings:
-        cookie_name = u'payment_list.{}'.format(unicode(filter_name))
+        cookie_name = u'payment_list.{}'.format(filter_name)
         if cookie_name in request.cookies:
             cookie_value = request.cookies[cookie_name]
             cookie_type = filter_settings[filter_name]['type']
@@ -175,7 +175,7 @@ def set_filters_to_cookies(
             name.
     """
     for filter_name in filter_settings:
-        cookie_name = u'payment_list.{}'.format(unicode(filter_name))
+        cookie_name = u'payment_list.{}'.format(filter_name)
         cookie_type = filter_settings[filter_name]['type']
         cookie_formatter = cookie_formatters[cookie_type]
         filter_value = filtering[filter_name]

@@ -19,23 +19,25 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 import sqlalchemy.types as types
-from zope.sqlalchemy import ZopeTransactionExtension
+from zope.sqlalchemy import register
 
 
 # pylint: disable=invalid-name
 Base = declarative_base()
 
 
-DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
+DBSession = scoped_session(sessionmaker(autoflush=False))
+register(DBSession)
 
 
 def hash_password(password):
     """
     Calculates the password hash.
     """
-    return bcrypt \
-        .hashpw(password.encode('utf-8'), bcrypt.gensalt()) \
-        .decode('utf-8')
+    return bcrypt.hashpw(
+        password.encode('utf-8'),
+        bcrypt.gensalt()
+    ).decode('utf-8')
 
 
 def check_password(hashed_password, plain_password):
@@ -53,7 +55,8 @@ def check_password(hashed_password, plain_password):
     """
     return bcrypt.checkpw(
         plain_password.encode('utf-8'),
-        hashed_password.encode('utf-8'))
+        hashed_password.encode('utf-8')
+    )
 
 
 # TODO: Use standard SQLAlchemy Decimal when a database is used which supports

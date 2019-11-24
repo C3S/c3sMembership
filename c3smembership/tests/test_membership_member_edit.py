@@ -244,7 +244,7 @@ class EditMemberTests(unittest.TestCase):
         """
         Set the properties of the form in the resource.
         """
-        for key, value in properties.iteritems():
+        for key, value in iter(properties.items()):
             res.form[key] = value
 
     def __validate_successful_edit(
