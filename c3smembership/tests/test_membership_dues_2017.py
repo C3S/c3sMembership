@@ -638,13 +638,8 @@ class TestDues17Views(unittest.TestCase):
         # m1.
         # print("length of the result: {}".format(len(res.body)))
         # print("headers of the result: {}".format((res.headers)))
-<<<<<<< Updated upstream
         assert(60000 < len(res.body) < 100000)
         assert('application/pdf' in res.headers['Content-Type'])
-=======
-        # assert(60000 < len(res.body) < 80000)
-        # assert('application/pdf' in res.headers['Content-Type'])
->>>>>>> Stashed changes
 
         """
         test dues listing
@@ -928,11 +923,7 @@ class TestDues17Views(unittest.TestCase):
         res = make_dues17_reversal_invoice_pdf(req2)
         # print("length of the result: {}".format(len(res.body)))
         # print("headers of the result: {}".format((res.headers)))
-<<<<<<< Updated upstream
         assert(60000 < len(res.body) < 100000)
-=======
-        # assert(60000 < len(res.body) < 80000)
-        # assert('application/pdf' in res.headers['Content-Type'])
 
     @unittest.skipIf(cert_git_condition, cert_git_reason)
     def test_dues17_reduction_pdf(self):

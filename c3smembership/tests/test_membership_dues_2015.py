@@ -961,12 +961,8 @@ class TestDues15Views(unittest.TestCase):
         # prepare test candidate
         m1 = C3sMember.get_by_id(1)  # german normal member
         m1.membership_accepted = True
-<<<<<<< Updated upstream
         from c3smembership.presentation.views.dues_2015 import \
             send_dues15_invoice_email
-=======
-
->>>>>>> Stashed changes
         req0 = testing.DummyRequest(
             matchdict={'member_id': m1.id})
         req0.referrer = 'detail'
