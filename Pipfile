@@ -17,9 +17,9 @@ c3smembership = {path = ".",editable = true}
 #
 alembic = '*'
 Babel = '*'
+bcrypt = '*'
 colander = '*'
 cornice = '*'
-cryptacular = {editable = true,ref = "cb96fb3",hg = "https://bitbucket.org/dholth/cryptacular"}
 deform = '*'
 fdfgen = '*'
 gnupg = '*'
@@ -47,7 +47,7 @@ webtest = "*"
 mock = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
