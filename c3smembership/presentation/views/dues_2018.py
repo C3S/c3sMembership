@@ -21,7 +21,6 @@ from datetime import (
     timedelta,
 )
 from decimal import Decimal as D
-import math
 import os
 import shutil
 import subprocess
@@ -35,7 +34,8 @@ from pyramid.view import view_config
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
-
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
 from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
@@ -211,14 +211,15 @@ def send_dues18_invoice_email(request, m_id=None):
     #     also: offer staffers to cancel this invoice
 
     if member.dues18_invoice is True:
-        invoice = Dues18Invoice.get_by_invoice_no(member.dues18_invoice_no)
+        invoice = DuesInvoiceRepository.get_by_number(
+            member.dues18_invoice_no, 2018)
         member.dues18_invoice_date = datetime.now()
 
     else:  # if no invoice already exists:
         # make dues token and ...
         randomstring = make_random_string()
         # check if dues token is already used
-        while (Dues18Invoice.check_for_existing_dues18_token(randomstring)):
+        while DuesInvoiceRepository.token_exists(randomstring, 2018):
             # create a new one, if the new one already exists in the database
             randomstring = make_random_string()  # pragma: no cover
 
@@ -230,7 +231,7 @@ def send_dues18_invoice_email(request, m_id=None):
         except AssertionError:
             # ... or we create a new one and save it
             # get max invoice no from db
-            max_invoice_no = Dues18Invoice.get_max_invoice_no()
+            max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(2018)
             # use the next free number, save it to db
             new_invoice_no = int(max_invoice_no) + 1
             DBSession.flush()  # save dataset to DB
@@ -316,7 +317,7 @@ def send_dues18_invoice_email(request, m_id=None):
         return HTTPFound(
             request.route_url(
                 'detail',
-                memberid=member.id) +
+                member_id=member.id) +
             '#dues18')
     if 'dues' in request.referrer:
         return HTTPFound(request.route_url('dues'))
@@ -383,7 +384,7 @@ def get_dues18_invoice(invoice, request):
     if invoice is None:
         request.session.flash(
             u'No invoice found!',
-            'message_to_user'  # message queue for user
+            'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
 
@@ -405,8 +406,8 @@ def make_dues18_invoice_pdf_backend(request):
     Show the invoice to a backend user
     """
     invoice_number = request.matchdict['i']
-    invoice = Dues18Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        invoice_number.lstrip('0'), 2018)
     return get_dues18_invoice(invoice, request)
 
 
@@ -417,8 +418,8 @@ def make_dues18_invoice_no_pdf(request):
     """
     token = request.matchdict['code']
     invoice_number = request.matchdict['i']
-    invoice = Dues18Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        invoice_number.lstrip('0'), 2018)
 
     member = None
     token_is_invalid = True
@@ -432,7 +433,7 @@ def make_dues18_invoice_no_pdf(request):
     if invoice is None or token_is_invalid or invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -440,10 +441,9 @@ def make_dues18_invoice_no_pdf(request):
         request.session.flash(
             u'This invoice cannot be downloaded anymore. '
             u'Please contact office@c3s.cc for further information.',
-            'message_to_user'
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
-
 
     return get_dues18_invoice(invoice, request)
 
@@ -552,8 +552,8 @@ def make_invoice_pdf_pdflatex(invoice):
         is_altered_str = u'angepasst' if (
             'de' in member.locale) else u'altered'
 
-    invoice_no = str(member.dues18_invoice_no).zfill(4)
-    invoice_date = member.dues18_invoice_date.strftime('%d. %m. %Y')
+    invoice_no = str(invoice.invoice_no).zfill(4)
+    invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
 
     # set variables for tex command
     tex_vars = {
@@ -588,9 +588,7 @@ def dues18_listing(request):
     a listing of all invoices for the 2018 dues run.
     shall show both active/valid and cancelled/invalid invoices.
     """
-    # get them all from the DB
-    dues18_invoices = Dues18Invoice.get_all()
-
+    dues18_invoices = DuesInvoiceRepository.get_all([2018])
     return {
         'count': len(dues18_invoices),
         '_today': date.today(),
@@ -610,23 +608,18 @@ def dues18_reduction(request):
     * change payable amount for member
     * cancel old invoice by issuing a cancellation
     * issue a new invoice with the new amount (if new amount != 0)
-
-    this will only work for *normal* members.
     """
-    # member: sanity checks
-    try:
-        member_id = request.matchdict['member_id']
-        member = C3sMember.get_by_id(member_id)  # is in database
-        assert member.membership_accepted  # is a member
-        assert 'investing' not in member.membership_type  # is normal member
-    except (KeyError, AssertionError):  # pragma: no cover
+    member_id = request.matchdict.get('member_id')
+    member = C3sMember.get_by_id(member_id)  # is in database
+    if (member is None or
+            not member.membership_accepted or
+            not member.dues18_invoice):
         request.session.flash(
-            u"No member OR not accepted OR not normal member",
+            u"Member not found or not a member or no invoice to reduce",
             'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     # sanity check: the given amount is a positive decimal
     try:
@@ -642,7 +635,7 @@ def dues18_reduction(request):
             'dues18_message_to_staff'  # message queue for user
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     if DEBUG:
         print("DEBUG: member.dues18_amount: {}".format(
@@ -665,7 +658,7 @@ def dues18_reduction(request):
             'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     # check the reduction amount: same as default calculated amount?
     if (not member.dues18_reduced  and
@@ -675,7 +668,7 @@ def dues18_reduction(request):
             'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     if (member.dues18_reduced and
             reduced_amount == member.dues18_amount_reduced):
@@ -684,7 +677,7 @@ def dues18_reduction(request):
             'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     if (member.dues18_reduced and
             reduced_amount > member.dues18_amount_reduced or
@@ -695,10 +688,10 @@ def dues18_reduction(request):
             'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     # prepare: get highest invoice no from db
-    max_invoice_no = Dues18Invoice.get_max_invoice_no()
+    max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(2018)
 
     # things to be done:
     # * change dues amount for that member
@@ -709,7 +702,8 @@ def dues18_reduction(request):
     request.session.flash('reduction to {}'.format(reduced_amount),
                           'dues18_message_to_staff')
 
-    old_invoice = Dues18Invoice.get_by_invoice_no(member.dues18_invoice_no)
+    old_invoice = DuesInvoiceRepository.get_by_number(
+        member.dues18_invoice_no, 2018)
     old_invoice.is_cancelled = True
 
     reversal_invoice_amount = -D(old_invoice.invoice_amount)
@@ -812,7 +806,7 @@ def dues18_reduction(request):
     return HTTPFound(
         request.route_url(
             'detail',
-            memberid=member_id) +
+            member_id=member_id) +
         '#dues18')
 
 
@@ -824,8 +818,8 @@ def make_dues18_reversal_pdf_backend(request):
     Show the invoice to a backend user
     """
     invoice_number = request.matchdict['i']
-    invoice = Dues18Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        invoice_number.lstrip('0'), 2018)
     return get_dues18_invoice(invoice, request)
 
 
@@ -838,11 +832,10 @@ def make_dues18_reversal_invoice_pdf(request):
     - an error message or
     - a PDF
     """
-
     token = request.matchdict['code']
     invoice_number = request.matchdict['no']
-    invoice = Dues18Invoice.get_by_invoice_no(
-        invoice_number.lstrip('0'))
+    invoice = DuesInvoiceRepository.get_by_number(
+        invoice_number.lstrip('0'), 2018)
 
     member = None
     token_is_invalid = True
@@ -853,11 +846,18 @@ def make_dues18_reversal_invoice_pdf(request):
         older_than_a_year = (
             date.today() - invoice.invoice_date.date() > timedelta(days=365))
 
-    if invoice is None or token_is_invalid or not invoice.is_reversal \
-            or older_than_a_year or member.dues18_paid:
+    if invoice is None or token_is_invalid or not invoice.is_reversal:
         request.session.flash(
             u"No invoice found!",
-            'message_to_user'  # message queue for user
+            'warning'
+        )
+        return HTTPFound(request.route_url('error'))
+
+    if older_than_a_year or member.dues18_paid:
+        request.session.flash(
+            u'This invoice cannot be downloaded anymore. '
+            u'Please contact office@c3s.cc for further information.',
+            'warning'
         )
         return HTTPFound(request.route_url('error'))
 
@@ -913,19 +913,17 @@ def dues18_notice(request):
     """
     notice of arrival for transferral of dues
     """
-    # member: sanity checks
-    try:
-        member_id = request.matchdict['member_id']
-        member = C3sMember.get_by_id(member_id)  # is in database
-        assert member.membership_accepted  # is a member
-        assert 'investing' not in member.membership_type  # is normal member
-    except (KeyError, AssertionError):  # pragma: no cover
+    member_id = request.matchdict.get('member_id')
+    member = C3sMember.get_by_id(member_id)  # is in database
+    if (member is None or
+            not member.membership_accepted or
+            not member.dues18_invoice):
         request.session.flash(
-            u"No member OR not accepted OR not normal member",
-            'dues18notice_message_to_staff'  # message queue for staff
+            u"Member not found or not a member or no invoice to pay for",
+            'dues18_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     # sanity check: the given amount is a positive decimal
     try:
@@ -941,7 +939,7 @@ def dues18_notice(request):
             'dues18notice_message_to_staff'  # message queue for user
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     # sanity check: the given date is a valid date
     try:
@@ -958,10 +956,10 @@ def dues18_notice(request):
             'dues18notice_message_to_staff'  # message queue for user
         )
         return HTTPFound(
-            request.route_url('detail', memberid=member.id) + '#dues18')
+            request.route_url('detail', member_id=member.id) + '#dues18')
 
     # persist info about payment
     member.set_dues18_payment(paid_amount, paid_date)
 
     return HTTPFound(
-        request.route_url('detail', memberid=member.id) + '#dues18')
+        request.route_url('detail', member_id=member.id) + '#dues18')

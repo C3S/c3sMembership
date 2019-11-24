@@ -26,13 +26,9 @@ import logging
 import colander
 from colander import (
     Invalid,
-    Range,
 )
 import deform
 from deform import ValidationFailure
-from pyramid.i18n import (
-    get_locale_name,
-)
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from pyramid_mailer.message import Message
@@ -46,6 +42,7 @@ from c3smembership.presentation.i18n import (
     _,
     ZPT_RENDERER,
 )
+from c3smembership.presentation.schemas.member import PersonalDataJoin
 from c3smembership.utils import (
     generate_pdf,
     send_accountant_mail,
@@ -70,102 +67,8 @@ def join_c3s(request):
         # set language cookie
         request.response.set_cookie('locale', _query)
         request.locale = _query
-        locale_name = _query
         return HTTPFound(location=request.route_url('join'),
                          headers=request.response.headers)
-    else:
-        locale_name = get_locale_name(request)
-
-    from c3smembership.utils import country_codes
-    # set default of Country select widget according to locale
-    locale_country_mapping = {
-        'de': 'DE',
-        'en': 'GB',
-    }
-    country_default = locale_country_mapping.get(locale_name)
-
-    class PersonalData(colander.MappingSchema):
-        """
-        colander schema for membership application form
-        """
-        firstname = colander.SchemaNode(
-            colander.String(),
-            title=_("(Real) First Name"),
-            oid="firstname",
-        )
-        lastname = colander.SchemaNode(
-            colander.String(),
-            title=_("(Real) Last Name"),
-            oid="lastname",
-        )
-        email = colander.SchemaNode(
-            colander.String(),
-            title=_('Email Address'),
-            validator=colander.Email(),
-            oid="email",
-        )
-        address1 = colander.SchemaNode(
-            colander.String(),
-            title=_('Address Line 1')
-        )
-        address2 = colander.SchemaNode(
-            colander.String(),
-            missing='',
-            title=_('Address Line 2')
-        )
-        postcode = colander.SchemaNode(
-            colander.String(),
-            title=_('Postal Code'),
-            oid="postcode"
-        )
-        city = colander.SchemaNode(
-            colander.String(),
-            title=_('City'),
-            oid="city",
-        )
-        country = colander.SchemaNode(
-            colander.String(),
-            title=_('Country'),
-            default=country_default,
-            widget=deform.widget.SelectWidget(
-                values=country_codes),
-            oid="country",
-        )
-        date_of_birth = colander.SchemaNode(
-            colander.Date(),
-            title=_('Date of Birth'),
-            widget=deform.widget.DatePartsWidget(),
-            default=date(2013, 1, 1),
-            validator=Range(
-                min=date(1913, 1, 1),
-                # max 18th birthday, no minors through web formular
-                max=date(
-                    date.today().year-18,
-                    date.today().month,
-                    date.today().day),
-                min_err=_(
-                    'Sorry, but we do not believe that the birthday you '
-                    'entered is correct.'),
-                max_err=_(
-                    'Unfortunately, the membership application of an '
-                    'underaged person is currently not possible via our web '
-                    'form. Please send an email to office@c3s.cc.')
-            ),
-            oid="date_of_birth",
-        )
-        password = colander.SchemaNode(
-            colander.String(),
-            validator=colander.Length(min=5, max=100),
-            widget=deform.widget.CheckedPasswordWidget(size=20),
-            title=_('Password (to protect access to your data)'),
-            description=_('We need a password to protect your data. After '
-                          'verifying your email you will have to enter it.'),
-            oid='password',
-        )
-        locale = colander.SchemaNode(
-            colander.String(),
-            widget=deform.widget.HiddenWidget(),
-            default=locale_name)
 
     class MembershipInfo(colander.Schema):
         """
@@ -243,19 +146,19 @@ def join_c3s(request):
             ),
             oid="num_shares")
 
+    def empty_message_validator(node, value):
+        """
+        Validator for statute confirmation.
+        """
+        if not value:
+            # raise without additional error message as the description
+            # already explains the necessity of the checkbox
+            raise Invalid(node, u'')
+
     class TermsInfo(colander.Schema):
         """
         some legal requirements
         """
-
-        def empty_message_validator(node, value):
-            """
-            Validator for statute confirmation.
-            """
-            if not value:
-                # raise without additional error message as the description
-                # already explains the necessity of the checkbox
-                raise Invalid(node, '')
 
         got_statute = colander.SchemaNode(
             colander.Bool(true_val='yes'),
@@ -311,8 +214,8 @@ def join_c3s(request):
         - Membership Information
         - Shares
         """
-        person = PersonalData(
-            title=_('Personal Data'),
+        person = PersonalDataJoin(
+            title=_(u'Personal Data'),
         )
         membership_info = MembershipInfo(
             title=_('Membership Data')
@@ -327,7 +230,7 @@ def join_c3s(request):
     schema = MembershipForm()
 
     form = deform.Form(
-        schema,
+        schema.bind(date=date),
         buttons=[
             deform.Button('reset', _('Reset'), type='reset'),
             deform.Button('submit', _('Next'))
@@ -377,8 +280,6 @@ def join_c3s(request):
 
         appstruct['membership_info']['privacy_consent'] = datetime.now()
         request.session['appstruct'] = appstruct
-        request.session['appstruct']['locale'] = \
-            appstruct['person']['locale']
         # empty the messages queue (as validation worked anyways)
         deleted_msg = request.session.pop_flash()
         del deleted_msg
@@ -427,8 +328,11 @@ def show_success(request):
 
 
 def send_mail_confirmation_mail(
-        member, base_url, email_sender_address, mailer, localizer,
+        member, base_url, email_sender_address, mailer,
         testing_mail_to_console):
+    """
+    Send the confirmation email including the application form
+    """
     if 'de' in member.locale.lower():
         email_subject = 'C3S: E-Mail-Adresse bestätigen und Formular abrufen'
         email_body = '''
@@ -518,7 +422,7 @@ def success_check_email(request):
             postcode=appstruct['person']['postcode'],
             city=appstruct['person']['city'],
             country=appstruct['person']['country'],
-            locale=appstruct['person']['locale'],
+            locale=request.locale_name,
             date_of_birth=appstruct['person']['date_of_birth'],
             email_is_confirmed=False,
             email_confirm_code=email_confirm_code,
@@ -538,7 +442,6 @@ def success_check_email(request):
             request.registry.settings['c3smembership.url'],
             request.registry.settings['c3smembership.notification_sender'],
             request.registry.get_mailer(request),
-            request.localizer,
             request.registry.settings['testing.mail_to_console'])
 
         # make the session go away
@@ -620,7 +523,6 @@ def success_verify_email(request):
                 'postcode': member.postcode,
                 'city': member.city,
                 'country': member.country,
-                'locale': member.locale,
                 'date_of_birth': member.date_of_birth,
                 'date_of_submission': member.date_of_submission,
                 'membership_type': member.membership_type,
@@ -664,5 +566,5 @@ def show_success_pdf(request):
     """
     # check if user has used form or 'guessed' this URL
     if 'appstruct' in request.session:
-        return generate_pdf(request.session['appstruct'])
+        return generate_pdf(request, request.session['appstruct'])
     return HTTPFound(location=request.route_url('join'))

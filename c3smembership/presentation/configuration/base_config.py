@@ -8,6 +8,7 @@ from pyramid_mailer import get_mailer
 from c3smembership.security.request import RequestWithUserAttribute
 
 from c3smembership.presentation.configuration import Configuration
+from c3smembership.presentation.view_processing import FlashErrorHandler
 
 
 class BaseConfig(Configuration):
@@ -25,16 +26,23 @@ class BaseConfig(Configuration):
         self.configure_routes()
 
     def configure_includes(self):
+        """
+        Configure basic Pyramid extension includes
+        """
         includes = [
             'pyramid_mailer',
             'pyramid_chameleon',
             'cornice',
             'c3smembership.presentation.pagination',
+            'c3smembership.presentation.view_processing',
         ]
         for include in includes:
             self.config.include(include)
 
     def configure_subscribers(self):
+        """
+        Configure basic Pyramid subscribers
+        """
         subscribers = [
             (
                 'c3smembership.subscribers.add_frontend_template',
@@ -82,6 +90,8 @@ class BaseConfig(Configuration):
             'docs',
             '../docs/_build/html/',
             cache_max_age=3600)
+
+        self.config.set_colander_error_handler(FlashErrorHandler())
 
     def configure_routes(self):
         """

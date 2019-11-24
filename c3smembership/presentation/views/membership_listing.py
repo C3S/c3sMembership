@@ -23,8 +23,25 @@ def membership_listing_backend(request):
         how_many=request.pagination.paging.page_size,
         offset=request.pagination.paging.content_offset,
         order=request.pagination.sorting.sort_direction)
+
+    general_assembly_invitation = request.registry.general_assembly_invitation
+
+    latest_general_assembly = general_assembly_invitation \
+        .get_latest_general_assembly()
+
+    invitations = None
+    if latest_general_assembly is not None:
+        invitations = {}
+        for membership in memberships:
+            invitations[membership.membership_number] = \
+                general_assembly_invitation.get_member_invitation(
+                    membership,
+                    latest_general_assembly.number)
+
     return {
         'members': memberships,
+        'invitations': invitations,
+        'latest_general_assembly': latest_general_assembly,
     }
 
 

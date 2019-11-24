@@ -256,7 +256,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # now look at some members details with nonexistant id
         res7 = self.testapp.get('/detail/5000', status=302)
         res7a = res7.follow()
-        self.failUnless('Membership tools' in res7a.body.decode())
+        self.failUnless('Acquisition of membership' in res7a.body.decode())
 
         # now look at some members details
         res7 = self.testapp.get('/detail/1', status=200)
@@ -270,73 +270,6 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resL = self.testapp.get('/login', status=302)
         self.failUnless('302 Found' in resL.body)
         self.failUnless('http://localhost/dashboard' in resL.location)
-
-        # finally log out ##################################################
-        res9 = self.testapp.get('/logout', status=302)  # redirects to login
-        res10 = res9.follow()
-        self.failUnless('login' in res10.body)
-
-    def test_switch_signature_and_payment(self):
-        # login
-        res = self.testapp.get('/login', status=200)
-        form = res.form
-        form['login'] = 'rut'
-        form['password'] = 'berries'
-        res2 = form.submit('submit', status=302)
-        # being logged in ...
-        res3 = res2.follow()
-
-        # have a set of headers with and without 'dashboard' in http referrer
-        headers_dash = [
-            ('Referer', 'http://this.app/dashboard')
-        ]
-        headers_nodash = [
-            ('Referer', 'http://this.app/dashboard')
-        ]
-
-        # switch signature
-        resD2a = self.testapp.get(
-            '/switch_sig/1', status=302,
-            headers=headers_dash)  # # # # # OFF
-        resD2b = resD2a.follow()  # we are taken to the dashboard
-        resD2b = self.testapp.get('/detail/1', status=200)
-        # print resD2b.body
-        self.assertTrue(
-            "Eingang bestätigen" not in resD2b.body)
-        resD2a = self.testapp.get(
-            '/switch_sig/1', status=302,
-            headers=headers_nodash
-        )  # # # # # ON
-        resD2b = resD2a.follow()  # we are taken to the dashboard
-        resD2b = self.testapp.get('/detail/1', status=200)
-        self.assertTrue(
-            "Confirm signature" in resD2b.body)
-        #
-        # switch payment
-        resD3a = self.testapp.get(
-            '/switch_pay/1', status=302,
-            headers=headers_dash
-        )  # # # # OFF
-        resD3b = resD3a.follow()  # we are taken to the dashboard
-        resD3b = self.testapp.get('/detail/1', status=200)
-        self.assertTrue(
-            "Confirm payment" not in resD3b.body)
-        resD3a = self.testapp.get('/switch_pay/1', status=302,
-                                  headers=headers_dash)  # # # # ON
-        resD3b = resD3a.follow()  # we are taken to the dashboard
-        resD3b = self.testapp.get('/detail/1', status=200)
-        self.assertTrue(
-            "Confirm payment" in resD3b.body)
-        #
-        ####################################################################
-        # delete an entry
-        _num = C3sMember.get_number()
-        resDel2 = self.testapp.get(
-            '/delete/1?deletion_confirmed=1', status=302)
-        _num2 = C3sMember.get_number()
-        self.assertTrue(int(_num2) + 1 == int(_num))
-        resDel3 = resDel2.follow()
-        self.failUnless('was deleted' in resDel3.body)
 
         # finally log out ##################################################
         res9 = self.testapp.get('/logout', status=302)  # redirects to login
@@ -380,8 +313,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
 
     def test_dashboard_afterDelete_sameOrderAsBefore(self):
         self._login()
-        self.get_dashboard_page(
-            1, 'lastname', 'asc', 200)  # To set cookie with order & orderby
+        # To set cookie with order & orderby
+        self.get_dashboard_page(1, 'lastname', 'asc', 200)
         # Delete member with lastname AAASomeLastnäme
         resdel = self.testapp.get('/delete/3?deletion_confirmed=1')
         resdel = resdel.follow()
@@ -395,7 +328,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         resdel = self.testapp.get('/delete/1?deletion_confirmed=1')
         resdel = resdel.follow()
         pq = self._get_pyquery(resdel.body.decode())
-        message = pq('#message').text()
+        message = pq('.alert-success').text()
         self.assertTrue('was deleted' in message)
 
     def test_dashboard_onFirstPage_noPreviousLinkShown(self):
@@ -524,70 +457,6 @@ class AccountantsFunctionalTests(unittest.TestCase):
         # self.failUnless('Details for Member Application' in res.body)
         # self.failUnless('ABCDEFGBAZ' in res.body)
         # XXX FIXME
-
-    def test_dashboard_regenerate_pdf(self):
-        """
-        load the dashboard and regenerate a PDF
-        """
-        #
-        # login
-        #
-        res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body.decode())
-        # try valid user, valid password
-        form = res.form
-        form['login'] = 'rut'
-        form['password'] = 'berries'
-        res2 = form.submit('submit', status=302)
-        #
-        # being logged in ...
-        res3 = res2.follow()
-        self.failUnless('Acquisition of membership' in res3.body.decode())
-
-        """
-        try to load a users PDF
-        check size
-        """
-        # try invalid code
-        pdf = self.testapp.get('/re_C3S_SCE_AFM_WRONGCODE.pdf')
-        self.failUnless('The resource was found at' in pdf.body.decode())
-        pdf = self.testapp.get('/re_C3S_SCE_AFM_ABCDEFGFOO.pdf')
-        # now use existing code
-        self.failUnless(80000 < len(pdf.body) < 220000)  # check pdf size
-
-    # this test was commented out:
-    # * it does not do what it claims to to... and fails anyway
-    # * TODO: check if we have a test for this elsewhere... or repair it
-    # def test_dashboard_mail_signature_confirmation(self):
-    #     """
-    #     load the dashboard and send out confirmation mails
-    #     """
-    #     #
-    #     # login
-    #     #
-    #     res = self.testapp.get('/login', status=200)
-    #     self.failUnless('login' in res.body)
-    #     # try valid user, valid password
-    #     form = res.form
-    #     form['login'] = 'rut'
-    #     form['password'] = 'berries'
-    #     res2 = form.submit('submit', status=302)
-    #     #
-    #     # being logged in ...
-    #     res3 = res2.follow()
-    #     res3 = res3.follow()
-
-    #     self.failUnless('Acquisition of membership' in res3.body)
-
-    #     """
-    #     try to send out the signature confirmation email
-    #     """
-    #     # try invalid code
-    #     pdf = self.testapp.get('/re_C3S_SCE_AFM_WRONGCODE.pdf')
-    #     self.failUnless('The resource was found at' in pdf.body)
-    #     pdf = self.testapp.get('/re_C3S_SCE_AFM_ABCDEFGFOO.pdf')
-    #     # now use existing code
-    #     self.failUnless(80000 < len(pdf.body) < 150000)  # check pdf size
 
 
 class FunctionalTests(unittest.TestCase):
@@ -720,9 +589,6 @@ class FunctionalTests(unittest.TestCase):
         # print(res.body) #  if you want to see the pages source
         self.failUnless(
             'Mitgliedschaftsantrag für die' in res.body.decode())
-        self.failUnless(
-            '<input type="hidden" name="locale" value="de"' in res.body.decode(
-            ))
 
     def test_accept_language_header_en(self):
         """check the http 'Accept-Language' header obedience: english
@@ -803,7 +669,8 @@ class FunctionalTests(unittest.TestCase):
         """load the join form in german, check german string exists
         this time forcing german locale the pyramid way
         """
-        res = self.testapp.get('/?_LOCALE_=de', status=200)
+        res = self.testapp.get('/?de', status=302)
+        res = res.follow()
         # test for german translation of template text (lingua_xml)
         self.failUnless(
             'Mitgliedschaftsantrag für die' in res.body.decode())

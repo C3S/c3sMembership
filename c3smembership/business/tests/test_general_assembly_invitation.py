@@ -68,6 +68,67 @@ class GeneralAssemblyInvitationTest(TestCase):
         self.assertEqual(invitations[2]['can_invite'], True)
         self.assertEqual(invitations[3]['can_invite'], False)
 
+    def test_get_member_invitation(self):
+        """
+        Test the get_member_invitation method
+
+        Verify that it returns the general assembly with the correct number
+        from the list it got from the get_member_invitations method.
+        """
+        date_dummy = mock.Mock()
+        date_dummy.today.side_effect = [
+            date(2018, 9, 16),
+            date(2018, 9, 16),
+            date(2018, 9, 16),
+            date(2018, 9, 16),
+        ]
+
+        member = mock.Mock()
+        member.membership_number = 'membership number'
+        member.membership_date = 'membership date'
+        member.membership_loss_date = 'membership loss date'
+
+        general_assembly_repository = mock.Mock()
+        general_assembly_repository.get_member_invitations.side_effect = [
+            # First method call
+            [
+                # In the past and not invited => no invitation
+                {
+                    'flag': False,
+                    'date': date(2018, 9, 15),
+                    'number': 1,
+                },
+                # In the past and invited => no invitation
+                {
+                    'flag': True,
+                    'date': date(2018, 9, 15),
+                    'number': 2,
+                },
+            ],
+            # Second method call
+            [
+                # In the past and not invited => no invitation
+                {
+                    'flag': False,
+                    'date': date(2018, 9, 15),
+                    'number': 1,
+                },
+                # In the past and invited => no invitation
+                {
+                    'flag': True,
+                    'date': date(2018, 9, 15),
+                    'number': 2,
+                },
+            ],
+        ]
+
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+        gai.date = date_dummy
+        invitation = gai.get_member_invitation(member, 1)
+        self.assertEqual(invitation['number'], 1)
+        invitation = gai.get_member_invitation(member, 2)
+        self.assertEqual(invitation['number'], 2)
+
     def test_invite_member(self):
         """
         Test the invite_member method
@@ -263,3 +324,46 @@ class GeneralAssemblyInvitationTest(TestCase):
         self.assertEqual(
             str(raise_context.exception),
             'The general assembly does not exist.')
+
+    def test_get_latest_general_assembly(self):
+        """
+        Test the get_latest_general_assembly method
+
+        Verified that it passed the call on to the repository.
+        """
+        general_assembly_repository = mock.Mock()
+        general_assembly_repository.get_latest_general_assembly.side_effect = [
+            'latest general assembly']
+
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+        latest_general_assembly = gai.get_latest_general_assembly()
+        self.assertEqual(latest_general_assembly, 'latest general assembly')
+        general_assembly_repository.get_latest_general_assembly \
+            .assert_called_with()
+
+    def test_get_next_number(self):
+        """
+        Test the get_next_number method
+
+        1. General assemblies available
+        2. No general assembly exists yet
+        """
+        # 1. General assemblies available
+        general_assembly_repository = mock.Mock()
+        general_assembly_repository.general_assembly_max_number.side_effect = \
+            [123]
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+
+        next_number = gai.get_next_number()
+
+        self.assertEqual(next_number, 124)
+
+        # 2. No general assembly exists yet
+        general_assembly_repository = mock.Mock()
+        general_assembly_repository.general_assembly_max_number.side_effect = \
+            [None]
+        gai = GeneralAssemblyInvitation(general_assembly_repository)
+
+        next_number = gai.get_next_number()
+
+        self.assertEqual(next_number, 1)

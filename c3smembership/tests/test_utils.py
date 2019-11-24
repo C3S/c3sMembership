@@ -5,17 +5,16 @@ Tests the utils package.
 
 from datetime import date
 import os
-import transaction
 import unittest
 
 from pyramid import testing
+import transaction
 
 from c3smembership.data.model.base import (
     DBSession,
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
-import c3smembership.utils as utils
 
 
 class TestUtilities(unittest.TestCase):
@@ -29,11 +28,8 @@ class TestUtilities(unittest.TestCase):
         """
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        try:
-            DBSession.close()
-            DBSession.remove()
-        except:
-            pass
+        DBSession().close()
+        DBSession.remove()
         from sqlalchemy import create_engine
         engine = create_engine('sqlite:///:memory:')
         DBSession.configure(bind=engine)
@@ -62,14 +58,15 @@ class TestUtilities(unittest.TestCase):
                 name_of_colsoc=u'GEMA',
                 num_shares=u'23',
             )
-            DBSession.add(member1)
-            DBSession.flush()
+            db_session = DBSession()
+            db_session.add(member1)
+            db_session.flush()
 
     def tearDown(self):
         """
         Clean up database
         """
-        DBSession.close()
+        DBSession().close()
         DBSession.remove()
         testing.tearDown()
 
@@ -106,15 +103,15 @@ class TestUtilities(unittest.TestCase):
                 ['which', 'pdftk'], stdout=open(os.devnull, 'w'))
             if res == 0:
                 # go ahead with the tests
-                result = generate_pdf(mock_appstruct)
+                request = testing.DummyRequest()
+                result = generate_pdf(request, mock_appstruct)
 
                 self.assertEquals(result.content_type,
                                   'application/pdf')
                 # check pdf size
                 self.assertTrue(210000 > len(result.body) > 50000)
-                # TODO: check pdf for contents
 
-        except CalledProcessError, cpe:
+        except CalledProcessError:
             pass
 
     def test_generate_pdf_de(self):
@@ -124,7 +121,8 @@ class TestUtilities(unittest.TestCase):
         """
         from c3smembership.utils import generate_pdf
 
-        mock_appstruct = {
+        request = testing.DummyRequest()
+        appstruct = {
             'firstname': u'Anne',
             'lastname': u'Gilles',
             'address1': u'addr one',
@@ -148,13 +146,12 @@ class TestUtilities(unittest.TestCase):
             res = subprocess.check_call(
                 ['which', 'pdftk'], stdout=open(os.devnull, 'w'))
             if res == 0:
-                result = generate_pdf(mock_appstruct)
+                result = generate_pdf(request, appstruct)
                 self.assertEquals(result.content_type,
                                   'application/pdf')
                 self.assertTrue(210000 > len(result.body) > 50000)
-                # TODO: check pdf for contents
 
-        except CalledProcessError, cpe:
+        except CalledProcessError:
             pass
 
     def test_mail_body(self):
@@ -239,5 +236,5 @@ class TestUtilities(unittest.TestCase):
         self.failUnless(
             '[C3S] Yes! a new member' in result.subject,
             'something missing in the mail subject!')
-        self.failUnless('yes@example.com' == result.sender,
-                        'something missing in the mail body!')
+        self.assertEqual('yes@example.com', result.sender,
+                         'something missing in the mail body!')

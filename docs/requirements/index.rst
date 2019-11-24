@@ -317,7 +317,7 @@ Acquisition of Additional Shares
 
 
 A member can acquire additional shares. The number of shares must be at most 60
-(§ 5 II 2 [C3S_Statue]_, § 7a I [GenG]_).
+(§ 5 II 2 [C3S_Statute]_, § 7a I [GenG]_).
 
 The member must provide a signed and unconditional request for acquiring
 additional shares (§ 15b I 1 [GenG]_).
@@ -346,7 +346,7 @@ Shares can be transferred from one member to another member.
 Requirements for transferring shares:
 
 - Any number of shares which the member owns can be transferred (§ 9
-  [C3S_Statue]_).
+  [C3S_Statute]_).
 
   - The member must transfer at least one share.
   - The member must transfer at most all shares in posession.
@@ -356,7 +356,7 @@ Requirements for transferring shares:
     upon transfer of all shares.
 
 - Consent of the administrative board is required for the transfer to become
-  valid (§ 9 [C3S_Statue]_).
+  valid (§ 9 [C3S_Statute]_).
 - A written statement of the transferring member signed by the giving must be
   given (§ 76 I 1 [GenG]_). **TODO:** *Must the acquiring member sign the
   statement? Compare § 76 I 1 [GenG]_ "durch schriftliche Vereinbarung". The
@@ -368,7 +368,7 @@ Requirements for transferring shares:
 - The member must be immediately informed about the fact that the shares
   transfer was documented in the membership list (§ 69 [GenG]_).
 - The acquirer of the shares must be a member or must become a member (§ 9
-  [C3S_Statue]_).
+  [C3S_Statute]_).
 
   - A share transfer can be initiated from a member to an acquirer which is not
     a members yet but has already applied for membership.
@@ -452,7 +452,7 @@ Legal requirements:
 - A member can request a copy of its own entry of the membership list (§ 31 I 2
   [GenG]_q).
 
-**TODO:** *Legal requirements?
+**TODO:** *Legal requirements?*
 
 
 
@@ -467,8 +467,6 @@ The certificate must contain the member's current information.
 We supply the member with a URL which is valid for two weeks.
 This link is sent per automated mail by request of the member to headquarters office.
 
-The relevant documentation (generated from the code)
-can be found here: :ref:`code_docs_membership_certificate`.
 
 
 

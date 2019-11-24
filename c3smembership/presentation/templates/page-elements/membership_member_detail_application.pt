@@ -1,3 +1,5 @@
+<!--! i18n needs one root element -->
+<div tal:omit-tag="">
 <h2>Application</h2>
 <table class="table table-striped">
     <tr tal:condition="member.signature_received and member.payment_received and not member.membership_accepted">
@@ -27,7 +29,7 @@
                         class="btn btn-success">
                     Generate PDF
                 </a>
-                <a href="${request.route_url('switch_sig', memberid=member.id)}"
+                <a href="${request.route_url('switch_sig', member_id=member.id)}"
                         class="btn btn-primary">
                     Confirm signature
                 </a>
@@ -42,24 +44,24 @@
                             .format(member.sent_signature_reminder_date.strftime('%Y-%m-%d'))
                     signature_reminder_title = signature_number_text + last_signature_text
                 ?>
-                <a href="${request.route_url('mail_sig_reminder', memberid=member.id)}"
+                <a href="${request.route_url('mail_sig_reminder', member_id=member.id)}"
                         title="${signature_reminder_title}"
                         class="btn btn-warning">
                     Send reminder
                 </a>
             </div>
             <div tal:condition="member.signature_received">
-                <a href="${request.route_url('switch_sig', memberid=member.id)}"
+                <a href="${request.route_url('switch_sig', member_id=member.id)}"
                         class="btn btn-success"
                         title="${member.signature_received_date} (click to revoke)">
                     Yes
                 </a>
-                <a href="${request.route_url('mail_sig_confirmation', memberid=member.id)}"
+                <a href="${request.route_url('mail_sig_confirmation', member_id=member.id)}"
                         class="btn btn-success"
                         tal:condition="not member.signature_confirmed">
                     Send confirmation email
                 </a>
-                <a href="${request.route_url('mail_sig_confirmation', memberid=member.id)}"
+                <a href="${request.route_url('mail_sig_confirmation', member_id=member.id)}"
                         class="btn btn-success"
                         tal:condition="member.signature_confirmed">
                     Resent confirmation email
@@ -84,7 +86,7 @@
         <td>
             <div tal:condition="not member.payment_received">
                 <div class="btn btn-danger">No</div>
-                <a href="${request.route_url('switch_pay', memberid=member.id)}"
+                <a href="${request.route_url('switch_pay', member_id=member.id)}"
                         class="btn btn-primary">
                     Confirm payment
                 </a>
@@ -99,14 +101,14 @@
                             .format(member.sent_payment_reminder_date.strftime('%Y-%m-%d'))
                     payment_reminder_title = payment_number_text + last_payment_text
                 ?>
-                <a href="${request.route_url('mail_pay_reminder', memberid=member.id)}"
+                <a href="${request.route_url('mail_pay_reminder', member_id=member.id)}"
                         title="${payment_reminder_title}"
                         class="btn btn-warning">
                     Send reminder
                 </a>
             </div>
             <div tal:condition="member.payment_received">
-                <a href="${request.route_url('switch_pay', memberid=member.id)}"
+                <a href="${request.route_url('switch_pay', member_id=member.id)}"
                         class="btn btn-success"
                         title="${member.payment_received_date} (click to revoke)">
                     Yes
@@ -137,3 +139,4 @@
         <td>${member.payment_confirmed_date}</td>
     </tr>
 </table>
+</div>

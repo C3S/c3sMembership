@@ -5,7 +5,7 @@ Deployment (prod)
 =================
 
 The basic setup of c3sMembership goes along the lines
-presented in :ref:`sec_development__setup_and_requirements`, so read that first.
+presented in :ref:`setup_and_requirements`, so read that first.
 
 For deployment, we use Apache2 with mod_wsgi.
 ::

@@ -1,3 +1,5 @@
+<!--! i18n needs one root element -->
+<div tal:omit-tag="">
 <h2>General Assembly Invitations</h2>
 <span tal:condition="len(general_assembly_invitations) > 0" tal:omit-tag="">
     <table class="table table-striped">
@@ -29,7 +31,7 @@
                                     class="fas fa-envelope text-warning"></a>
                         </span>
                         <span tal:omit-tag="" tal:condition="not general_assembly_invitation['can_invite']">
-                            <i title="Invitation was not sent. It cannot be sent anymore because the general assembly was hold in the past."
+                            <i title="Invitation was not sent. It cannot be sent anymore because the general assembly was held in the past."
                                     class="fas fa-envelope text-danger"></i>
                         </span>
                     </span>
@@ -41,3 +43,4 @@
 <span tal:condition="len(general_assembly_invitations) == 0" tal:omit-tag="">
     There are no general assemblies relevant for this member.
 </span>
+</div>

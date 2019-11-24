@@ -61,7 +61,7 @@ locale_codes = [
 ]
 
 
-def generate_pdf(appstruct):
+def generate_pdf(request, appstruct):
     """
     this function receives an appstruct
     (a datastructure received via formsubmission)
@@ -77,9 +77,9 @@ def generate_pdf(appstruct):
     declaration_pdf_en = os.path.join(
         here, "../pdftk/C3S-SCE-AFM-v13-20180531-en.pdf")
 
-    if appstruct['locale'] == "de":
+    if request.locale_name == "de":
         pdf_to_be_used = declaration_pdf_de
-    elif appstruct['locale'] == "en":
+    elif request.locale_name == "en":
         pdf_to_be_used = declaration_pdf_en
     else:  # pragma: no cover
         pdf_to_be_used = declaration_pdf_en
@@ -252,6 +252,7 @@ def send_accountant_mail(request, member):
             request.registry.settings['c3smembership.notification_sender'],
             [request.registry.settings['c3smembership.status_receiver']])
         if 'true' in request.registry.settings['testing.mail_to_console']:
+            # pylint: disable=superfluous-parens
             print(the_mail.body)
         else:
             mailer.send(the_mail)

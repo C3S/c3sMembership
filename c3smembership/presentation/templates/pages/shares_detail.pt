@@ -26,7 +26,7 @@
             <tr>
                 <td>Member</td>
                 <td>
-                    <a href="${request.route_url('detail', memberid=m_id)}">
+                    <a href="${request.route_url('detail', member_id=m_id)}">
                         ${m_first} ${m_last}
                     </a>
                 </td>

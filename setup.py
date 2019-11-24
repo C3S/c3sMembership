@@ -12,6 +12,7 @@ VERSION = open(os.path.join(here, 'VERSION')).read()
 #if sys.version_info[:3] < (2, 5, 0):
 #    requires.append('pysqlite')
 
+
 setup(
     name='c3smembership',
     version=VERSION,

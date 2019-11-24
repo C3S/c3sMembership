@@ -1,19 +1,27 @@
 # -*- coding: utf-8 -*-
-
-import mock
-import os
+"""
+Test the c3smembership.business.dues_invoice_archiving package
+"""
 
 from unittest import TestCase
 
-from c3smembership.business.dues_invoice_archiving import (
-    DuesInvoiceArchiving,
-    IDuesInvoiceArchiving,
-)
+import mock
+
+from c3smembership.business.dues_invoice_archiving import DuesInvoiceArchiving
 
 
 class DuesInvoiceArchivingTest(TestCase):
+    """
+    Test the DuesInvoiceArchiving class
+    """
+    # pylint: disable=too-many-instance-attributes
 
     def setUp(self):
+        """
+        Set up the test case
+
+        Prepare invoices, file mocks and patch system methods
+        """
         self.invoices = [
             mock.Mock(invoice_no_string='Dues15-0001', is_reversal=False),
             mock.Mock(invoice_no_string='Dues15-0002', is_reversal=True),
@@ -21,10 +29,6 @@ class DuesInvoiceArchivingTest(TestCase):
             mock.Mock(invoice_no_string='Dues15-0004', is_reversal=False),
             mock.Mock(invoice_no_string='Dues15-0005', is_reversal=False),
             mock.Mock(invoice_no_string='Dues15-0006', is_reversal=False),
-        ]
-        self.members = [
-            mock.Mock(membership_number=1),
-            mock.Mock(membership_number=2),
         ]
         file1 = mock.Mock()
         type(file1).name = mock.PropertyMock(return_value='tmp1.pdf')
@@ -50,52 +54,75 @@ class DuesInvoiceArchivingTest(TestCase):
         self.makedirs_patcher = mock.patch('os.makedirs')
         self.makedirs_mock = self.makedirs_patcher.start()
 
-    def create_db_session(self, members=None):
-        if members is None:
-            members = []
-        db_session = mock.Mock()
-        query_result = mock.Mock()
-        query_result.all.return_value = members
-        db_session.query.return_value = query_result
-        return db_session
+    @classmethod
+    def create_make_invoice(cls, files=None):
+        """
+        Create a make_invoice mock returning the specified files
 
-    def create_make_invoice(self, files=None):
+        Args:
+            files: Array. The files to be returned.
+
+        Return:
+            Mock for make_invoice
+        """
         if files is None:
             files = []
         make_invoice_mock = mock.Mock()
         make_invoice_mock.side_effect = files
         return make_invoice_mock
 
-    def create_dues15_invoices(self, invoices=None):
+    @classmethod
+    def create_dues_invoice_repo_invoices(cls, invoices=None):
+        """
+        Create a dues invoice repository mock returning the specified invoices
+
+        Args:
+            invoices: Array. The invoices to be returned by the repository's
+                get_all method
+
+        Return:
+            A dues invoice repository mock which returns the specified invoices
+            on call of the get_all method.
+        """
         if invoices is None:
             invoices = []
-        dues15_invoices_mock = mock.Mock()
-        dues15_invoices_mock.get_by_membership_no.side_effect = invoices
-        return dues15_invoices_mock
+        dues_invoice_repo_mock = mock.Mock()
+        dues_invoice_repo_mock.get_all.side_effect = invoices
+        return dues_invoice_repo_mock
 
     def test_generate_missing_invoice_pdfs(self):
-        self.isfile_mock.side_effect = [False, False, False, True, False, False]
+        """
+        Test generating missing invoice PDF files
+
+        1. Test more invoices to generate than count
+        2. Test less invoices to generate than count
+        """
+        # 1. Test more invoices to generate than count
+        self.isfile_mock.side_effect = [
+            False, False, False, True, False, False]
         make_invoice_mock = self.create_make_invoice([
             self.files[0],
             self.files[2],
             self.files[3],
             self.files[4]])
         make_reversal_mock = self.create_make_invoice([self.files[1]])
-        db_session = self.create_db_session(self.members)
-        dues15_invoices_mock = self.create_dues15_invoices([
-            [self.invoices[0], self.invoices[1]],
-            [self.invoices[2], self.invoices[3], self.invoices[4], self.invoices[5]],
+        dues15_invoices_mock = self.create_dues_invoice_repo_invoices([
+            [
+                self.invoices[0], self.invoices[1], self.invoices[2],
+                self.invoices[3], self.invoices[4], self.invoices[5],
+            ],
+            [
+                self.invoices[0], self.invoices[1], self.invoices[2],
+                self.invoices[3], self.invoices[4], self.invoices[5],
+            ],
         ])
 
         archiving = DuesInvoiceArchiving(
-            db_session,
-            'c3s_member',
             dues15_invoices_mock,
-            make_invoice_mock,
-            make_reversal_mock,
             '/tmp/invoices/archive'
         )
-        generated_files = archiving.generate_missing_invoice_pdfs(4)
+        archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
+        generated_files = archiving.generate_missing_invoice_pdfs(2015, 4)
 
         self.assertEqual(len(generated_files), 4)
         self.assertEqual(
@@ -110,45 +137,122 @@ class DuesInvoiceArchivingTest(TestCase):
             mock.call('tmp4.pdf', '/tmp/invoices/archive/Dues15-0005.pdf'),
         ])
         make_invoice_mock.assert_has_calls([
-            mock.call(self.members[0], self.invoices[0]),
-            mock.call(self.members[1], self.invoices[2]),
-            mock.call(self.members[1], self.invoices[4])
+            mock.call(self.invoices[0]),
+            mock.call(self.invoices[2]),
+            mock.call(self.invoices[4])
         ])
         self.assertEqual(make_invoice_mock.call_count, 3)
         make_reversal_mock.assert_has_calls([
-            mock.call(self.members[0], self.invoices[1]),
+            mock.call(self.invoices[1]),
         ])
         self.assertEqual(make_reversal_mock.call_count, 1)
 
+        # 2. Test less invoices to generate than count
+        self.isfile_mock.side_effect = [
+            False, False, False, True, True, True]
+        make_invoice_mock = self.create_make_invoice([
+            self.files[0],
+            self.files[2],
+            self.files[3]])
+        make_reversal_mock = self.create_make_invoice([self.files[1]])
+
+        archiving = DuesInvoiceArchiving(
+            dues15_invoices_mock,
+            '/tmp/invoices/archive'
+        )
+        archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
+        generated_files = archiving.generate_missing_invoice_pdfs(2015, 10)
+
+        self.assertEqual(len(generated_files), 3)
+
     def test_archive_directory_creation(self):
-        db_session = self.create_db_session()
-        dues15_invoices_mock = self.create_dues15_invoices()
+        """
+        Test that the archive directory is created if it does not exist
+        """
+        dues15_invoices_mock = self.create_dues_invoice_repo_invoices()
         make_invoice_mock = self.create_make_invoice()
         make_reversal_mock = self.create_make_invoice()
 
         self.isdir_mock.side_effect = [True]
         archiving = DuesInvoiceArchiving(
-            db_session,
-            'c3s_member',
             dues15_invoices_mock,
-            make_invoice_mock,
-            make_reversal_mock,
             '/tmp/invoices/archive'
         )
+        archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
         self.makedirs_mock.assert_not_called()
 
         self.isdir_mock.side_effect = [False]
-        archiving = DuesInvoiceArchiving(
-            db_session,
-            'c3s_member',
+        DuesInvoiceArchiving(
             dues15_invoices_mock,
-            make_invoice_mock,
-            make_reversal_mock,
             '/tmp/invoices/archive'
         )
+        archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
         self.makedirs_mock.assert_called_with('/tmp/invoices/archive')
 
+    def test_get_configured_years(self):
+        """
+        Test the get_configured_years method
+        """
+        archiving = DuesInvoiceArchiving(None, None)
+        self.assertEqual(archiving.get_configured_years(), [])
+        archiving.configure_year(2015, None, None)
+        self.assertEqual(archiving.get_configured_years(), [2015])
+        archiving.configure_year(2010, None, None)
+        self.assertEqual(archiving.get_configured_years(), [2010, 2015])
+        archiving.configure_year(2019, None, None)
+        self.assertEqual(archiving.get_configured_years(), [2010, 2015, 2019])
+
+    def test_get_archiving_stats(self):
+        """
+        Test the get_archiving_stats method
+        """
+        repository_mock = self.create_dues_invoice_repo_invoices([
+            # 2015 total
+            [
+                self.invoices[0], self.invoices[1]
+            ],
+            # 2015 check missing
+            [
+                self.invoices[0], self.invoices[1]
+            ],
+            # 2016 total
+            [
+                self.invoices[0], self.invoices[1], self.invoices[2],
+                self.invoices[3], self.invoices[4], self.invoices[5],
+            ],
+            # 2016 check missing
+            [
+                self.invoices[0], self.invoices[1], self.invoices[2],
+                self.invoices[3], self.invoices[4], self.invoices[5],
+            ],
+        ])
+        self.isfile_mock.side_effect = [
+            # 2015 checks
+            False, False,
+            # 2016 checks
+            False, True, False, True, False, False,
+        ]
+        archiving = DuesInvoiceArchiving(
+            repository_mock,
+            '/tmp/invoices/archive'
+        )
+        archiving.configure_year(2015, None, None)
+        archiving.configure_year(2016, None, None)
+        stats = archiving.get_archiving_stats()
+        self.assertEqual(len(stats), 2)
+        self.assertEqual(stats[0]['year'], 2015)
+        self.assertEqual(stats[0]['total'], 2)
+        self.assertEqual(stats[0]['archived'], 0)
+        self.assertEqual(stats[0]['not_archived'], 2)
+        self.assertEqual(stats[1]['year'], 2016)
+        self.assertEqual(stats[1]['total'], 6)
+        self.assertEqual(stats[1]['archived'], 2)
+        self.assertEqual(stats[1]['not_archived'], 4)
+
     def tearDown(self):
+        """
+        Tear down the test case by unpatching system methods
+        """
         self.isdir_patcher.stop()
         self.isfile_patcher.stop()
         self.copyfile_patcher.stop()

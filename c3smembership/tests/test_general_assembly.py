@@ -201,7 +201,7 @@ class TestInvitation(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        self.config.add_route('membership_listing_backend', '/')
+        self.config.add_route('membership_listing_backend', '/memberships')
         self.config.add_route('toolbox', '/toolbox')
         self.config.add_route('dashboard', '/dashboard')
         self.config.add_route('general_assembly', '/general_assembly')
@@ -235,6 +235,7 @@ class TestInvitation(unittest.TestCase):
         prepare cookies, invite this member,
         assure the flag and token are now set,
         """
+        # pylint: disable=too-many-statements
         member1 = C3sMember.get_by_id(1)
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
@@ -242,19 +243,17 @@ class TestInvitation(unittest.TestCase):
         self.assertTrue(invitation['token'] is None)
 
         req = testing.DummyRequest()
-        # have some cookies
         req.cookies['on_page'] = 0
         req.cookies['order'] = 'asc'
         req.cookies['orderby'] = 'id'
 
-        # try with non-existing id
-        req.matchdict = {'membership_number': 10000}
-        res = general_assembly_invitation(req)
-        self.assertEquals(302, res.status_code)
-
-        req.matchdict = {
-            'number': str(CURRENT_GENERAL_ASSEMBLY),
-            'membership_number': str(member1.membership_number),
+        # working membership number
+        req.referer = '/members/'
+        general_assembly = mock.Mock()
+        general_assembly.number = CURRENT_GENERAL_ASSEMBLY
+        req.validated_matchdict = {
+            'general_assembly': general_assembly,
+            'member': member1,
         }
 
         mailer = get_mailer(req)
@@ -265,21 +264,47 @@ class TestInvitation(unittest.TestCase):
         res = general_assembly_invitation(req)
 
         self.assertEquals(res.status_code, 302)
+        self.assertTrue('/members/' in res.location)
+
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 1)
 
+        # test other redirect for referer different from '/members/'
+        member3 = C3sMember.get_by_id(3)
+        req.referer = 'something_else'
+        general_assembly = mock.Mock()
+        general_assembly.number = CURRENT_GENERAL_ASSEMBLY
+        req.validated_matchdict = {
+            'general_assembly': general_assembly,
+            'member': member3,
+        }
+
+        mailer = get_mailer(req)
+        self.assertEqual(len(mailer.outbox), 1)
+
+        self.config.registry.general_assembly_invitation.date \
+            .today.side_effect = [date(2018, 1, 1)]
+        res = general_assembly_invitation(req)
+
+        self.assertEquals(res.status_code, 302)
+        self.assertTrue('/memberships' in res.location)
+
+        invitation = GeneralAssemblyRepository.get_member_invitation(
+            member3.membership_number, CURRENT_GENERAL_ASSEMBLY)
+        self.assertEqual(invitation['flag'], True)
+        self.assertTrue(invitation['token'] is not None)
+        self.assertEqual(len(mailer.outbox), 2)
+
         # Try to invite again which should not cause another email to be sent
         res = general_assembly_invitation(req)
-        self.assertEqual(len(mailer.outbox), 1)
+        self.assertEqual(len(mailer.outbox), 2)
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
-        self.assertEquals(
-            u'[C3S] Einladung zur außerordentlichen Generalversammlung',
-            mailer.outbox[0].subject)
+        self.assertTrue(u'Einladung' in mailer.outbox[0].subject)
         self.assertTrue(member1.firstname
                         in mailer.outbox[0].body)
         # Token not in email template for current general assembly of
@@ -293,9 +318,11 @@ class TestInvitation(unittest.TestCase):
             member2.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], False)
         self.assertTrue(invitation['token'] is None)
-        req.matchdict = {
-            'number': str(CURRENT_GENERAL_ASSEMBLY),
-            'membership_number': str(member2.membership_number),
+        general_assembly = mock.Mock()
+        general_assembly.number = CURRENT_GENERAL_ASSEMBLY
+        req.validated_matchdict = {
+            'general_assembly': general_assembly,
+            'member': member2,
         }
 
         self.config.registry.general_assembly_invitation.date \
@@ -305,12 +332,10 @@ class TestInvitation(unittest.TestCase):
             member2.membership_number, CURRENT_GENERAL_ASSEMBLY)
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
-        self.assertEqual(len(mailer.outbox), 2)
-        self.assertEquals(
-            u'[C3S] Invitation to extraordinary general assembly',
-            mailer.outbox[1].subject)
+        self.assertEqual(len(mailer.outbox), 3)
+        self.assertTrue(u'Invitation' in mailer.outbox[2].subject)
         self.assertTrue(member2.firstname
-                        in mailer.outbox[1].body)
+                        in mailer.outbox[2].body)
         # Token not in email template for current general assembly of
         # 2018-12-01. Testing needs to be performed with dummy templates.
         # self.assertTrue(invitation['token']
@@ -335,9 +360,11 @@ class TestInvitation(unittest.TestCase):
         req.cookies['orderby'] = 'id'
 
         # with matchdict
-        req.matchdict = {
-            'count': 1,
-            'number': CURRENT_GENERAL_ASSEMBLY,
+        general_assembly = mock.Mock()
+        general_assembly.number = CURRENT_GENERAL_ASSEMBLY
+        req.validated_post = {'count': 1}
+        req.validated_matchdict = {
+            'general_assembly': general_assembly
         }
 
         invitees = GeneralAssemblyRepository.get_invitees(
@@ -347,16 +374,19 @@ class TestInvitation(unittest.TestCase):
 
         _messages = req.session.peek_flash('success')
         self.assertTrue(
-            'sent out 1 mails (to members with ids' in _messages[0])
+            'sent out 1 mails (to members with membership numbers'
+            in _messages[0])
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
         self.assertEquals(len(invitees), 3)
 
         # without matchdict
-        req.matchdict = {
-            'count': '',
-            'number': CURRENT_GENERAL_ASSEMBLY,
+        general_assembly = mock.Mock()
+        general_assembly.number = CURRENT_GENERAL_ASSEMBLY
+        req.validated_matchdict = {
+            'general_assembly': general_assembly
         }
+        req.validated_post = {'count': 5}
         res = batch_invite(req)
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
@@ -364,22 +394,21 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(res.status_code, 302)
         _messages = req.session.peek_flash('success')
         self.assertTrue(
-            'sent out 3 mails (to members with ids' in _messages[1])
+            'sent out 3 mails (to members with membership numbers'
+            in _messages[1])
         # send more request with POST['number']
-        req = testing.DummyRequest(
-            POST={
-                'number': CURRENT_GENERAL_ASSEMBLY,
-                'count': 'foo',
-                'submit': True,
-            })
+        req = testing.DummyRequest()
+        general_assembly = mock.Mock()
+        general_assembly.number = CURRENT_GENERAL_ASSEMBLY
+        req.validated_matchdict = {'general_assembly': general_assembly}
+        req.validated_post = {'count': 5}
         res = batch_invite(req)
 
-        req = testing.DummyRequest(
-            POST={
-                'count': 1,
-                'number': CURRENT_GENERAL_ASSEMBLY,
-                'submit': True,
-            })
+        req = testing.DummyRequest()
+        general_assembly = mock.Mock()
+        general_assembly.number = CURRENT_GENERAL_ASSEMBLY
+        req.validated_matchdict = {'general_assembly': general_assembly}
+        req.validated_post = {'count': 5}
         res = batch_invite(req)
 
         _messages = req.session.peek_flash('success')

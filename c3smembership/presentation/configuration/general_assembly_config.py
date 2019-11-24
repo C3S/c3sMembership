@@ -46,7 +46,7 @@ class GeneralAssemblyConfig(Configuration):
             ),
             (
                 'general_assembly_batch_invite',
-                '/general-assemblies/{number}/batch-invite/{count}'
+                '/general-assemblies/{number}/batch-invite'
             ),
         ]
         self._add_routes(routes)

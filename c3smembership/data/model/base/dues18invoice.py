@@ -3,7 +3,6 @@
 Dues 2015 invoice
 """
 
-from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import (
@@ -13,15 +12,11 @@ from sqlalchemy import (
     Integer,
     Unicode,
 )
-from sqlalchemy.sql import func
-from sqlalchemy.sql import expression
 
 from c3smembership.data.model.base import (
     Base,
     DatabaseDecimal,
-    DBSession,
 )
-from c3smembership.data.model.base.c3smember import C3sMember
 
 
 class Dues18Invoice(Base):
@@ -106,120 +101,3 @@ class Dues18Invoice(Base):
         self.membership_no = membership_no
         self.email = email
         self.token = token
-
-    @classmethod
-    def get_all(cls):
-        """
-        Return all dues18 invoices
-        """
-        return DBSession.query(cls).all()
-
-    @classmethod
-    def get_by_invoice_no(cls, _no):
-        """return one invoice by invoice number"""
-        return DBSession.query(cls).filter(cls.invoice_no == _no).first()
-
-    @classmethod
-    def get_by_membership_no(cls, _no):
-        """return all invoices of one member by membership number"""
-        return DBSession.query(cls).filter(cls.membership_no == _no).all()
-
-    @classmethod
-    def get_max_invoice_no(cls):
-        """
-        Get the maximum invoice number.
-
-        Returns:
-            * Integer: maximum of given invoice numbers or 0"""
-        res, = DBSession.query(func.max(cls.id)).first()
-
-        if res is None:
-            return 0
-        return res
-
-    @classmethod
-    def check_for_existing_dues18_token(cls, dues_token):
-        """
-        Check if a dues token is already present.
-
-        Args:
-            dues_token: a given string
-
-        Returns:
-            * **True**, if token already in table
-            * **False** else
-        """
-        check = DBSession.query(cls).filter(
-            cls.token == dues_token).first()
-        return check is not None
-
-    @classmethod
-    def get_monthly_stats(cls):
-        """
-        Gets the monthly statistics.
-
-        Provides sums of the normale as well as reversal invoices per
-        calendar month based on the invoice date.
-        """
-        result = []
-        # SQLite specific: substring for SQLite as it does not support
-        # date_trunc.
-        # invoice_date_month = func.date_trunc(
-        #     'month',
-        #     Dues18Invoice.invoice_date)
-        invoice_date_month = func.substr(Dues18Invoice.invoice_date, 1, 7)
-        payment_date_month = func.substr(C3sMember.dues18_paid_date, 1, 7)
-
-        # collect the invoice amounts per month
-        invoice_amounts_query = DBSession.query(
-            invoice_date_month.label('month'),
-            func.sum(expression.case(
-                [(
-                    expression.not_(Dues18Invoice.is_reversal),
-                    Dues18Invoice.invoice_amount)],
-                else_=Decimal('0.0'))).label('amount_invoiced_normal'),
-            func.sum(expression.case(
-                [(
-                    Dues18Invoice.is_reversal,
-                    Dues18Invoice.invoice_amount)],
-                else_=Decimal('0.0'))).label('amount_invoiced_reversal'),
-            expression.literal_column(
-                '\'0.0\'', DatabaseDecimal).label('amount_paid')
-        ).group_by(invoice_date_month)
-        # collect the payments per month
-        member_payments_query = DBSession.query(
-            payment_date_month.label('month'),
-            expression.literal_column(
-                '\'0.0\'', DatabaseDecimal).label('amount_invoiced_normal'),
-            expression.literal_column(
-                '\'0.0\'', DatabaseDecimal
-            ).label('amount_invoiced_reversal'),
-            func.sum(C3sMember.dues18_amount_paid).label('amount_paid')
-        ).filter(C3sMember.dues18_paid_date.isnot(None)) \
-            .group_by(payment_date_month)
-        # union invoice amounts and payments
-        union_all_query = expression.union_all(
-            member_payments_query, invoice_amounts_query)
-        # aggregate invoice amounts and payments by month
-        result_query = DBSession.query(
-            union_all_query.c.month.label('month'),
-            func.sum(union_all_query.c.amount_invoiced_normal).label(
-                'amount_invoiced_normal'),
-            func.sum(union_all_query.c.amount_invoiced_reversal).label(
-                'amount_invoiced_reversal'),
-            func.sum(union_all_query.c.amount_paid).label('amount_paid')
-        ) \
-            .group_by(union_all_query.c.month) \
-            .order_by(union_all_query.c.month)
-        for month_stat in result_query.all():
-            result.append(
-                {
-                    'month': datetime(
-                        int(month_stat[0][0:4]),
-                        int(month_stat[0][5:7]),
-                        1),
-                    'amount_invoiced_normal': month_stat[1],
-                    'amount_invoiced_reversal': month_stat[2],
-                    'amount_paid': month_stat[3]
-                })
-        return result

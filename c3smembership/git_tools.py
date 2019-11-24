@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Provides methods to access git information."""
 
+import os
 import subprocess
 import re
 
@@ -22,11 +23,15 @@ class GitTools(object):
         strout value will be returned as a stripped string.
         """
         try:
+            application_path = os.path.abspath(os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                '../'))
             git = subprocess.Popen(
                 command,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 shell=True,
+                cwd=application_path,
                 universal_newlines=True)
         except Exception:
             # catch any exception which might be raised by the child process

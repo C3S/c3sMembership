@@ -5,6 +5,7 @@ Tests for c3smembership.membership_list
 
 from datetime import (
     date,
+    datetime,
     timedelta,
 )
 import re
@@ -285,10 +286,14 @@ class MakeMergeMemberTests(MemberTestsBase):
 
         # set reception of signature & payment, try again
         member1.signature_received = True
+        member1.signature_received_date = datetime(2019, 2, 23)
+        member1.signature_confirmed = True
+        member1.signature_confirmed_date = datetime(2019, 2, 24)
         member1.payment_received = True
+        member1.payment_received_date = datetime(2019, 2, 25)
+        member1.payment_confirmed = True
+        member1.payment_confirmed_date = datetime(2019, 2, 26)
         self.assertTrue(member1.membership_accepted is False)
-        self.assertTrue(member1.signature_received is True)
-        self.assertTrue(member1.payment_received is True)
 
         # we need to send a Referer-header, so the redirect works
         _headers = {'Referer': 'http://this.web/detail/1'}
@@ -306,15 +311,13 @@ class MakeMergeMemberTests(MemberTestsBase):
             'form action="http://localhost/make_member/1' in res.body)
         self.assertTrue(
             u'SomeFirstnäme SomeLastnäme' in res.body.decode('utf-8'))
-        self.assertTrue('' in res.body)
-        self.assertTrue('' in res.body)
 
         # this member must not be accepted yet
         self.assertTrue(member1.membership_accepted is False)
         # this member must not have a membership number yet
         self.assertTrue(member1.membership_number is None)
         # this members membership date is not set to a recent date
-        self.assertEqual(member1.membership_date, date(1970, 01, 01))
+        self.assertEqual(member1.membership_date, date(1970, 1, 1))
         # this member holds no shares yet
         member1.shares = []
         self.assertTrue(len(member1.shares) is 0)
@@ -327,7 +330,30 @@ class MakeMergeMemberTests(MemberTestsBase):
         self.assertTrue(member1.membership_accepted is True)
         self.assertTrue(member1.membership_number is 1)
         self.assertTrue(member1.membership_date is not None)
+        self.assertTrue(member1.signature_received)
+        self.assertEqual(
+            member1.signature_received_date, datetime(2019, 2, 23))
+        self.assertTrue(member1.signature_confirmed)
+        self.assertEqual(
+            member1.signature_confirmed_date, datetime(2019, 2, 24))
+        self.assertTrue(member1.payment_received)
+        self.assertEqual(member1.payment_received_date, datetime(2019, 2, 25))
+        self.assertTrue(member1.payment_confirmed)
+        self.assertEqual(member1.payment_confirmed_date, datetime(2019, 2, 26))
+
         self.assertEqual(len(member1.shares), 1)
+        self.assertTrue(member1.shares[0].signature_received)
+        self.assertEqual(
+            member1.shares[0].signature_received_date, date(2019, 2, 23))
+        self.assertTrue(member1.shares[0].signature_confirmed)
+        self.assertEqual(
+            member1.shares[0].signature_confirmed_date, date(2019, 2, 24))
+        self.assertTrue(member1.shares[0].payment_received)
+        self.assertEqual(
+            member1.shares[0].payment_received_date, date(2019, 2, 25))
+        self.assertTrue(member1.shares[0].payment_confirmed)
+        self.assertEqual(
+            member1.shares[0].payment_confirmed_date, date(2019, 2, 26))
         # we are redirected to members details page
         res3 = res2.follow()
         # this now is a member!
