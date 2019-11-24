@@ -6,7 +6,7 @@ set -e
 #
 echo "so you have cloned git@github.com:C3S/c3sMembership.git..."
 #
-echo "make sure you have *pipenv*, see https://pipenv.readthedocs.io/!"
+echo "make sure you have *pipenv*, see https://pipenv.readthedocs.io/ !"
 #
 # we try to use pipenv now.
 pipenv --version
