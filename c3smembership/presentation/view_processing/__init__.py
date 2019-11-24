@@ -27,13 +27,13 @@ objects which retrieved based on data passed via HTTP. Using validation these
 objects are already validated and converted into the target object type.
 """
 
-# pylint: disable=relative-import
-import colander_validation
-import error_handling
-import post_processing
-import pre_processing
-import validation_node
-
+from c3smembership.presentation.view_processing import (
+    colander_validation,
+    error_handling,
+    post_processing,
+    pre_processing,
+    validation_node
+)
 
 ColanderGetValidator = colander_validation.ColanderGetValidator
 ColanderMatchdictValidator = colander_validation.ColanderMatchdictValidator
