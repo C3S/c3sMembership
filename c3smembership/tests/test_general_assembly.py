@@ -41,7 +41,7 @@ GENERAL_ASSEMBLY_NUMBER_2018 = 6
 GENERAL_ASSEMBLY_NUMBER_2018_2 = 7
 
 
-def init_testing_db():
+def init_db():
     """
     Initializes the memory database with test samples.
     """
@@ -218,7 +218,7 @@ class TestInvitation(unittest.TestCase):
         self.config.registry.general_assembly_invitation.date = mock.Mock()
         self.config.registry.member_information = MemberInformation(
             MemberRepository)
-        self.session = init_testing_db()
+        self.session = init_db()
 
     def tearDown(self):
         # pylint: disable=no-member
