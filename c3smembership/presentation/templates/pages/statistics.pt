@@ -17,7 +17,7 @@
             ${afm_shares_paid} Anteile, die schon bezahlt sind.
             Summe: ${python: int(afm_shares_paid)*50}€<br />
         </p>
-        
+
         <h3>Throughput/Turnover</h3>
         <p>
             Anzahl fertiger mitgliedschaften: ${num_members_accepted}
@@ -381,6 +381,70 @@
                     <td>${numbers.format_decimal(dues19_stat.amount_invoiced_reversal, locale=user_locale)}&nbsp;&euro;</td>
                     <td>${numbers.format_decimal(amount_invoiced, locale=user_locale)}&nbsp;&euro;</td>
                     <td>${numbers.format_decimal(dues19_stat.amount_paid, locale=user_locale)}&nbsp;&euro;</td>
+                    <td class="warning">
+                        ${numbers.format_decimal(amount_invoiced_current, locale=user_locale)}&nbsp;&euro;
+                    </td>
+                    <td class="warning">
+                        ${numbers.format_decimal(amount_paid_current, locale=user_locale)}&nbsp;&euro;
+                    </td>
+                    <td class="warning">
+                        ${numbers.format_decimal(amount_invoiced_current - amount_paid_current, locale=user_locale)}&nbsp;&euro;
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th i18n:translate="stats-dues-sum">Total</th>
+                    <th>${numbers.format_decimal(amount_invoiced_normal_total)}&nbsp;&euro;</th>
+                    <th>${numbers.format_decimal(amount_invoiced_reversal_total)}&nbsp;&euro;</th>
+                    <th>${numbers.format_decimal(amount_invoiced_normal_total + amount_invoiced_reversal_total)}&nbsp;&euro;</th>
+                    <th>${numbers.format_decimal(amount_paid_current)}&nbsp;&euro;</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <h3 i18n:translate="stats-dues-2020">2020</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th i18n:translate="stats-dues-month">Month</th>
+                    <th i18n:translate="stats-dues-amount-invoiced-normal">Normal amount invoiced</th>
+                    <th i18n:translate="stats-dues-amount-invoiced-reversal">Reversal amount invoiced</th>
+                    <th i18n:translate="stats-dues-amount-invoiced">Amount invoiced</th>
+                    <th i18n:translate="stats-dues-amount-paid">Amount paid</th>
+                    <th i18n:translate="stats-dues-amount-invoiced-current" class="warning">Current amount invoiced</th>
+                    <th i18n:translate="stats-dues-amount-paid-current" class="warning">Current amount paid</th>
+                    <th i18n:translate="stats-dues-amount-current" class="warning">Current balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?python
+                    from babel.core import Locale
+                    user_locale = Locale(request.locale_name)
+                    from babel import numbers
+                    from decimal import Decimal
+
+                    amount_invoiced_normal_total = Decimal('0.0')
+                    amount_invoiced_reversal_total = Decimal('0.0')
+                    amount_invoiced_current = Decimal('0.0')
+                    amount_paid_current = Decimal('0.0')
+                ?>
+                <tr tal:repeat="dues20_stat dues20_stats">
+                    <?python
+                        amount_invoiced = dues20_stat['amount_invoiced_normal'] + dues20_stat['amount_invoiced_reversal']
+                        amount_invoiced_normal_total = amount_invoiced_normal_total + dues20_stat['amount_invoiced_normal']
+                        amount_invoiced_reversal_total = amount_invoiced_reversal_total + dues20_stat['amount_invoiced_reversal']
+                        amount_invoiced_current = amount_invoiced_current + amount_invoiced
+                        amount_paid_current = amount_paid_current + dues20_stat['amount_paid']
+                    ?>
+                    <th>${dues20_stat.month.strftime('%Y-%m')}</th>
+                    <td>${numbers.format_decimal(dues20_stat.amount_invoiced_normal, locale=user_locale)}&nbsp;&euro;</td>
+                    <td>${numbers.format_decimal(dues20_stat.amount_invoiced_reversal, locale=user_locale)}&nbsp;&euro;</td>
+                    <td>${numbers.format_decimal(amount_invoiced, locale=user_locale)}&nbsp;&euro;</td>
+                    <td>${numbers.format_decimal(dues20_stat.amount_paid, locale=user_locale)}&nbsp;&euro;</td>
                     <td class="warning">
                         ${numbers.format_decimal(amount_invoiced_current, locale=user_locale)}&nbsp;&euro;
                     </td>

@@ -1,3 +1,14 @@
+Next Release
+============
+
+
+Add membership dues 2020. As for the previous years the source code has been
+copied, pasted and adjusted for the new year. This is quite a tedious job which
+is caused by the insufficient design for the first year and the lack of proper
+redesign until today.
+
+
+
 1.28.2
 ======
 

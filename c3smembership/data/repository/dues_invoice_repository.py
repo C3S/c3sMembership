@@ -27,6 +27,7 @@ from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 from c3smembership.data.model.base.dues19invoice import Dues19Invoice
+from c3smembership.data.model.base.dues20invoice import Dues20Invoice
 
 
 class DuesInvoiceRepository(object):
@@ -45,6 +46,7 @@ class DuesInvoiceRepository(object):
         2017: Dues17Invoice,
         2018: Dues18Invoice,
         2019: Dues19Invoice,
+        2020: Dues20Invoice,
     }
     _PAYMENT_FIELDS = {
         2015: {
@@ -66,6 +68,10 @@ class DuesInvoiceRepository(object):
         2019: {
             'paid_date': C3sMember.dues19_paid_date,
             'amount_paid': C3sMember.dues19_amount_paid,
+        },
+        2020: {
+            'paid_date': C3sMember.dues20_paid_date,
+            'amount_paid': C3sMember.dues20_amount_paid,
         },
     }
 

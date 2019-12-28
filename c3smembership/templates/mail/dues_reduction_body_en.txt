@@ -1,8 +1,8 @@
 Hello {salutation},
 
-You have applied for a reduction of your membership contributions.
+You have applied for a reduction of your membership dues.
 
-We therefore reduce your dues to € {dues_amount}.
+We therefore reduce your dues to {dues_amount} €.
 
 Please transfer the above-mentioned amount to the following account
 of the C3S SCE:

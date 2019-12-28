@@ -2,7 +2,7 @@ Hallo {salutation},
 
 Du hast eine Reduzierung Deines Mitgliedsbeitrages beantragt.
 
-Wir geben Deinem Antrag statt und reduzieren Deinen Beitrag daher auf
+Wir geben Deinem Antrag statt und reduzieren Deinen Beitrag auf
 {dues_amount} €.
 
 Bitte überweise die genannte Summe auf folgendes Konto der C3S SCE:

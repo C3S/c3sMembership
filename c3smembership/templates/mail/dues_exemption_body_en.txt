@@ -1,6 +1,6 @@
 Hello {salutation},
 
-You have applied for exemption from your membership contributions.
+You have applied for exemption from your membership dues.
 
 We therefore exempt you from the payment of your dues.
 

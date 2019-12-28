@@ -24,6 +24,7 @@ from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 from c3smembership.data.model.base.dues19invoice import Dues19Invoice
+from c3smembership.data.model.base.dues20invoice import Dues20Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
@@ -76,6 +77,8 @@ class TestDuesInvoiceRepository(unittest.TestCase):
             member1.dues18_amount_paid = Decimal('18.11')
             member1.dues19_paid_date = date(2019, 11, 19)
             member1.dues19_amount_paid = Decimal('19.11')
+            member1.dues20_paid_date = date(2020, 11, 20)
+            member1.dues20_amount_paid = Decimal('20.11')
             self.db_session.add(member1)
             self.db_session.flush()
             self.db_session.add(Dues15Invoice(
@@ -155,6 +158,15 @@ class TestDuesInvoiceRepository(unittest.TestCase):
                 membership_no=member1.membership_number,
                 email=member1.email,
                 token=u'19WXYZ7890'))
+            self.db_session.add(Dues20Invoice(
+                invoice_no=2020,
+                invoice_no_string=u'dues20-1234',
+                invoice_date=date(2020, 2, 24),
+                invoice_amount=Decimal('1234.20'),
+                member_id=member1.id,
+                membership_no=member1.membership_number,
+                email=member1.email,
+                token=u'20WXYZ7890'))
 
     def tearDown(self):
         """
@@ -168,7 +180,7 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         Test the get_all method
         """
         invoices = DuesInvoiceRepository.get_all()
-        self.assertEqual(len(invoices), 7)
+        self.assertEqual(len(invoices), 8)
 
         invoices = DuesInvoiceRepository.get_all([])
         self.assertEqual(len(invoices), 0)
@@ -195,9 +207,13 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertEqual(len(invoices), 1)
         self.assertEqual(invoices[0].invoice_no, 1234)
 
+        invoices = DuesInvoiceRepository.get_all([2020])
+        self.assertEqual(len(invoices), 1)
+        self.assertEqual(invoices[0].invoice_no, 2020)
+
         invoices = DuesInvoiceRepository.get_all([
-            2015, 2016, 2017, 2018, 2019])
-        self.assertEqual(len(invoices), 7)
+            2015, 2016, 2017, 2018, 2019, 2020])
+        self.assertEqual(len(invoices), 8)
         self.assertEqual(invoices[0].invoice_no, 2348)
         self.assertEqual(invoices[1].invoice_no, 1276)
         self.assertEqual(invoices[2].invoice_no, 7544)
@@ -205,6 +221,7 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertEqual(invoices[4].invoice_no, 9877)
         self.assertEqual(invoices[5].invoice_no, 9878)
         self.assertEqual(invoices[6].invoice_no, 1234)
+        self.assertEqual(invoices[7].invoice_no, 2020)
 
     def test_get_by_number(self):
         """
@@ -228,6 +245,9 @@ class TestDuesInvoiceRepository(unittest.TestCase):
 
         invoice = DuesInvoiceRepository.get_by_number(1234, 2019)
         self.assertEqual(invoice.invoice_no, 1234)
+
+        invoice = DuesInvoiceRepository.get_by_number(2020, 2020)
+        self.assertEqual(invoice.invoice_no, 2020)
 
         invoice = DuesInvoiceRepository.get_by_number(1234, 2000)
         self.assertIsNone(invoice)
@@ -261,15 +281,20 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertEqual(len(invoices), 1)
 
         invoices = DuesInvoiceRepository.get_by_membership_number(
-            9, [2018, 2019])
-        self.assertEqual(len(invoices), 4)
+            9, [2020])
+        self.assertEqual(len(invoices), 1)
+
+        invoices = DuesInvoiceRepository.get_by_membership_number(
+            9, [2018, 2019, 2020])
+        self.assertEqual(len(invoices), 5)
         self.assertEqual(invoices[0].invoice_no, 9876)
         self.assertEqual(invoices[1].invoice_no, 9877)
         self.assertEqual(invoices[2].invoice_no, 9878)
         self.assertEqual(invoices[3].invoice_no, 1234)
+        self.assertEqual(invoices[4].invoice_no, 2020)
 
         invoices = DuesInvoiceRepository.get_by_membership_number(9)
-        self.assertEqual(len(invoices), 7)
+        self.assertEqual(len(invoices), 8)
 
     def test_get_max_invoice_number(self):
         """
@@ -292,6 +317,9 @@ class TestDuesInvoiceRepository(unittest.TestCase):
 
         max_number = DuesInvoiceRepository.get_max_invoice_number(2019)
         self.assertEqual(max_number, 1234)
+
+        max_number = DuesInvoiceRepository.get_max_invoice_number(2020)
+        self.assertEqual(max_number, 2020)
 
         max_number = DuesInvoiceRepository.get_max_invoice_number(None)
         self.assertEqual(max_number, 0)
@@ -326,6 +354,9 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2019)
         self.assertTrue(token_exists)
 
+        token_exists = DuesInvoiceRepository.token_exists(u'20WXYZ7890', 2020)
+        self.assertTrue(token_exists)
+
         # 2. Check token for not existing year
         token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2000)
         self.assertFalse(token_exists)
@@ -346,7 +377,9 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         4. Test 2018 with invoice, reversal invoice and reduced invoice
         5. Test 2019 with one invoice and one payment with the payment in
            another month
-        6. Test not configured year 2000
+        6. Test 2020 with one invoice and one payment with the payment in
+           another month
+        7. Test not configured year 2000
 
         TODO: DatabaseDecimal should not have to be rounded. Still, the results
         of stats are like
@@ -436,6 +469,24 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertEqual(stats[1]['amount_invoiced_reversal'], Decimal('0'))
         self.assertAlmostEqual(stats[1]['amount_paid'], Decimal('19.11'))
 
-        # 6. Test not configured year 2000
+        # 6. Test 2020 with one invoice and one payment with the payment in
+        #    another month
+        stats = DuesInvoiceRepository.get_monthly_stats(2020)
+        self.assertEqual(len(stats), 2)
+        self.assertEqual(stats[0]['month'], datetime(2020, 2, 1, 0, 0))
+        self.assertAlmostEqual(
+            stats[0]['amount_invoiced_normal'],
+            Decimal('1234.20'))
+        self.assertEqual(stats[0]['amount_invoiced_reversal'], Decimal('0'))
+        self.assertEqual(stats[0]['amount_paid'], Decimal('0'))
+
+        self.assertEqual(stats[1]['month'], datetime(2020, 11, 1, 0, 0))
+        self.assertAlmostEqual(
+            stats[1]['amount_invoiced_normal'],
+            Decimal('0'))
+        self.assertEqual(stats[1]['amount_invoiced_reversal'], Decimal('0'))
+        self.assertAlmostEqual(stats[1]['amount_paid'], Decimal('20.11'))
+
+        # 7. Test not configured year 2000
         stats = DuesInvoiceRepository.get_monthly_stats(2000)
         self.assertIsNone(stats)

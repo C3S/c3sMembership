@@ -1,14 +1,14 @@
 Hello {salutation},
 
-On Dec. 1st, 2018, the extraordinary general assembly of the C3S has
-extended the temporary membership contribution rules, in order to secure 
+On June 2, 2019, the sixth ordinary general assembly of the C3S has
+extended the temporary membership dues regulations, in order to secure
 the financial basis for the continuation of our common project:
 
   https://archive.c3s.cc/aktuell/legal/C3S_SCE_membership_dues_en.pdf
 
-For 2019, the annual membership dues for active members are therefore
+For 2020, the annual membership dues for active members are therefore
 50 Euro. The amount is less if you joined later than in the first
-quarter 2019.
+quarter 2020.
 
 Please transfer {dues_amount} Euro to the following account of the C3S SCE:
 

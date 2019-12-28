@@ -296,4 +296,5 @@ def background_archiving(dues_invoice_archiving, background_archiving_control):
         background_archiving_control.set_error()
     background_archiving_control.stop()
 
+
 background_archiving.logger = LOGGER
