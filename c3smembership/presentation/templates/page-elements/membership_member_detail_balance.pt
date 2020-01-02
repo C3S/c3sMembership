@@ -42,10 +42,15 @@
     <tr>
         <?python
             balanced = (balance == 0.0)
+            negative_balance = (-balance < 0.0)
+            positive_balance = (-balance > 0.0)
         ?>
         <th>Account balance</th>
-        <th tal:condition="not balanced" class="alert alert-danger">
+        <th tal:condition="not balanced and negative_balance" class="alert alert-danger">
             ${-balance}
+        </th>
+        <th tal:condition="not balanced and positive_balance" class="alert alert-warning">
+            +${-balance}
         </th>
         <th tal:condition="balanced" class="alert alert-success">
             ${-balance}
