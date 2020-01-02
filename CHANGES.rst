@@ -17,6 +17,20 @@ Next Release
   This has been resolved by closing sessions properly. Cleanup like commented
   code and use unittest assertions.
 
+- Fix membership listing validation. The maximum and default date of the
+  listing by date form and as well the year list of the listing by year form
+  were generated on application start and not dynamically during form
+  rendering. This led to the fact that with the turn of the year from 2019 to
+  2020 the new year did not appear in the year list and the current date could
+  not be entered because it was considered in the past. Now the dates are
+  handled dynamically during form rendering.
+
+- Show positive balance in yellow. Balances not equal to zero have been shown
+  as red before. This makes it hard to identify rare cases of positive
+  balances. Therefore, these are now shown in yellow instead of red.
+  Furthermore, the amount is prefixed with a plus sign. Negative balances stay
+  red.
+
 
 
 1.28.2
