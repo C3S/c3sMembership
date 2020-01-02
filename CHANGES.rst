@@ -2,10 +2,20 @@ Next Release
 ============
 
 
-Add membership dues 2020. As for the previous years the source code has been
-copied, pasted and adjusted for the new year. This is quite a tedious job which
-is caused by the insufficient design for the first year and the lack of proper
-redesign until today.
+- Add membership dues 2020. As for the previous years the source code has been
+  copied, pasted and adjusted for the new year. This is quite a tedious job
+  which is caused by the insufficient design for the first year and the lack of
+  proper redesign until today.
+
+- Rename function to avoid nosetest issue. Nosetests ignores our setup.cfg in
+  some conditions, which results in the execution of the function in question
+  as test, then causing a following test to fail. renaming the function
+  prevents this.
+
+- Fix inconsistent database session use in tests. Database sessions were not
+  always closed and therefore apparently closed before opening as a workaround.
+  This has been resolved by closing sessions properly. Cleanup like commented
+  code and use unittest assertions.
 
 
 
