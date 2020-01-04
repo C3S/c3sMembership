@@ -15,6 +15,8 @@ This module holds code for Membership Dues.
    - set a new reduced amount
    - send email with update: reversal invoice and new invoice
 """
+
+import babel.numbers
 from datetime import (
     datetime,
     date,
@@ -85,6 +87,17 @@ def make_random_string():
         random.choice(
             string.ascii_uppercase
         ) for x in range(10))
+
+
+def get_euro_string(euro_amount):
+    """
+    Get the Euro string of the Euro amount
+
+    The Euro amount can be a Decimal or float. It will be formatted as a Euro
+    string with decimal comma and thousand separator dot. The Euro string does
+    not contain any Euro sign.
+    """
+    return babel.numbers.format_currency(euro_amount, 'EUR')[:-2]
 
 
 @view_config(
@@ -536,13 +549,13 @@ def make_invoice_pdf_pdflatex(invoice):
         'personalMShipNo': unicode(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
-        'account': unicode(
+        'account': get_euro_string(
             -member.dues15_balance - member.dues16_balance -
             member.dues17_balance - member.dues18_balance -
             member.dues20_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else dues_start,
-        'duesAmount': unicode(invoice.invoice_amount),
+        'duesAmount': get_euro_string(invoice.invoice_amount),
         'lang': 'de',
         'pdfBackground': bg_pdf,
     }
@@ -838,7 +851,7 @@ def make_reversal_pdf_pdflatex(invoice):
         'personalMShipNo': unicode(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
-        'duesAmount': unicode(invoice.invoice_amount),
+        'duesAmount': get_euro_string(invoice.invoice_amount),
         'origInvoiceRef': ('C3S-dues{0}-{1}'.format(
             YEAR,
             str(invoice.preceding_invoice_no).zfill(4))),
