@@ -97,7 +97,9 @@ def get_euro_string(euro_amount):
     string with decimal comma and thousand separator dot. The Euro string does
     not contain any Euro sign.
     """
-    return babel.numbers.format_currency(euro_amount, 'EUR')[:-2]
+    euro_string = babel.numbers.format_currency(euro_amount, 'EUR',
+                                                locale='de_DE')
+    return euro_string.replace(u'\u20ac', '').replace(u'\xa0', '')
 
 
 @view_config(
