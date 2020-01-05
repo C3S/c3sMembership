@@ -1,5 +1,5 @@
-Next Release
-============
+1.29
+====
 
 
 - Add membership dues 2020. As for the previous years the source code has been
