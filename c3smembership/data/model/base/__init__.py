@@ -19,14 +19,15 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 import sqlalchemy.types as types
-from zope.sqlalchemy import ZopeTransactionExtension
+from zope.sqlalchemy import register
 
 
 # pylint: disable=invalid-name
 Base = declarative_base()
 
 
-DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
+DBSession = scoped_session(sessionmaker(autoflush=True))
+register(DBSession)
 
 
 def hash_password(password):
