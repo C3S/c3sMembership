@@ -554,7 +554,7 @@ def make_invoice_pdf_pdflatex(invoice):
         'account': get_euro_string(
             -member.dues15_balance - member.dues16_balance -
             member.dues17_balance - member.dues18_balance -
-            member.dues20_balance),
+            member.dues19_balance - member.dues20_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else dues_start,
         'duesAmount': get_euro_string(invoice.invoice_amount),

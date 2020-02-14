@@ -1,3 +1,11 @@
+Next Release
+============
+
+
+Fix dues balance calculation for invoice note.
+
+
+
 1.29
 ====
 
