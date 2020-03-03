@@ -1,5 +1,5 @@
-Next Release
-============
+1.29.1
+======
 
 
 - Fix dues balance calculation for invoice note.
