@@ -875,3 +875,32 @@ class TestDues20Views(unittest.TestCase):
         self.assertEqual(m1.dues20_balance, D('0'))
         # and the account is balanced.
         self.assertEqual(m1.dues20_balanced, True)
+
+        # Test no payment amount entered
+        request = testing.DummyRequest(
+            matchdict={'member_id': 1},
+            POST={
+                'amount': u'',
+                'payment_date': '2020-09-13',
+            }
+        )
+        response = dues20_notice(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue('detail' in response.location)
+        self.assertTrue('#dues20' in response.location)
+        self.assertTrue('Invalid amount to pay' in request.session.pop_flash(
+            'dues20notice_message_to_staff')[0])
+
+        # Test no payment date entered
+        request = testing.DummyRequest(
+            matchdict={'member_id': 1},
+            POST={
+                'amount': u'12.34',
+                'payment_date': u'',
+            }
+        )
+        response = dues20_notice(request)
+        self.assertTrue('detail' in response.location)
+        self.assertTrue('#dues20' in response.location)
+        self.assertTrue('Invalid date for payment' in request.session.pop_flash(
+            'dues20notice_message_to_staff')[0])

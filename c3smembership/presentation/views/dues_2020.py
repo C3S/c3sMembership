@@ -22,7 +22,7 @@ from datetime import (
     date,
     timedelta,
 )
-from decimal import Decimal
+from decimal import (Decimal, InvalidOperation)
 import logging
 import os
 import random
@@ -887,7 +887,7 @@ def dues20_notice(request):
     try:
         paid_amount = Decimal(request.POST['amount'])
         assert not paid_amount.is_signed()
-    except (KeyError, AssertionError):  # pragma: no cover
+    except (KeyError, AssertionError, InvalidOperation):  # pragma: no cover
         request.session.flash(
             (u"Invalid amount to pay: '{}' "
              u"Use the dot ('.') as decimal mark, e.g. '23.42'".format(

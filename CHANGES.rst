@@ -2,7 +2,9 @@ Next Release
 ============
 
 
-Fix dues balance calculation for invoice note.
+- Fix dues balance calculation for invoice note.
+
+- Fix empty dues amount error handling.
 
 
 
