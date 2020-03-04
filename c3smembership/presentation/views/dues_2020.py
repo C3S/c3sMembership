@@ -46,6 +46,10 @@ from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
 )
+from c3smembership.presentation.view_processing.colander_validation import (
+    ColanderMatchdictValidator,
+)
+from c3smembership.presentation.schemas.member import MemberIdMatchdict
 from c3smembership.presentation.views.dues_texts import (
     make_dues20_invoice_email,
     make_dues_invoice_investing_email,
@@ -104,8 +108,12 @@ def get_euro_string(euro_amount):
 
 @view_config(
     permission='manage',
-    route_name='send_dues20_invoice_email')
-def send_dues20_invoice_email(request, m_id=None):
+    route_name='send_dues20_invoice_email',
+    pre_processor=ColanderMatchdictValidator(
+        MemberIdMatchdict(error_route='dues')
+    ),
+)
+def send_dues20_invoice_email(request, member_id=None):
     """
     Send email to a member to prompt her to pay the membership dues.
     - For normal members, also send link to invoice.
@@ -126,21 +134,15 @@ def send_dues20_invoice_email(request, m_id=None):
     If this function gets called the second time for a member,
     no new invoice is produced, but the same mail sent again.
     """
-    # either we are given a member id via url or function parameter
-    member_id = request.matchdict.get('member_id')
-    if member_id is None:
-        member_id = m_id
 
-    member = C3sMember.get_by_id(member_id)
-    if member is None:
-        request.session.flash(
-            "member with id {} not found in DB!".format(member_id),
-            'warning')
-        return HTTPFound(request.route_url('dues'))
+    if member_id is not None:
+        member = C3sMember.get_by_id(member_id)
+    else:
+        member = request.validated_matchdict['member']
 
     if not member.membership_accepted:
         request.session.flash(
-            "member {} not accepted by the board!".format(member_id),
+            "member {} not accepted by the board!".format(member.id),
             'warning')
         return HTTPFound(request.route_url('dues'))
 
@@ -303,7 +305,7 @@ def send_dues20_invoice_batch(request):
     request.referrer = 'dues'
 
     for member in invoicees:
-        send_dues20_invoice_email(request=request, m_id=member.id)
+        send_dues20_invoice_email(request=request, member_id=member.id)
         emails_sent += 1
         membership_numbers_sent.append(member.membership_number)
 

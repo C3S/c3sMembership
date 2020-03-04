@@ -30,7 +30,6 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues20invoice import Dues20Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
@@ -241,6 +240,7 @@ class TestDues20Views(unittest.TestCase):
             'member_id': '1',
         }
         req.referrer = 'detail'
+        req.validated_matchdict = {'member': C3sMember.get_by_id(1)}
         res = send_dues20_invoice_email(req)
         self.assertTrue(res.status_code == 302)
         self.assertTrue('http://example.com/' in res.headers['Location'])
@@ -264,18 +264,6 @@ class TestDues20Views(unittest.TestCase):
             'Verwendungszweck: C3S-dues2020-0001' in mailer.outbox[0].body)
 
         """
-        now we try to get an id that does not exist
-        """
-        req2 = testing.DummyRequest()
-        req2.matchdict = {
-            'member_id': '1234',
-        }
-        req2.referrer = 'detail'
-        res2 = send_dues20_invoice_email(req2)
-        self.assertTrue(res2.status_code == 302)
-        self.assertTrue('http://example.com/' in res2.headers['Location'])
-
-        """
         what if we call that function (and send email) twice?
         test that no second invoice is created in DB.
         """
@@ -284,6 +272,7 @@ class TestDues20Views(unittest.TestCase):
             'member_id': '1',
         }
         req3.referrer = 'detail'
+        req3.validated_matchdict = {'member': C3sMember.get_by_id(1)}
         res3 = send_dues20_invoice_email(req3)
         self.assertTrue(res3.status_code == 302)
         self.assertTrue('http://example.com/' in res3.headers['Location'])
@@ -314,6 +303,7 @@ class TestDues20Views(unittest.TestCase):
             'member_id': '2',
         }
         req_en_normal.referrer = 'detail'
+        req_en_normal.validated_matchdict = {'member': C3sMember.get_by_id(2)}
         res_en_normal = send_dues20_invoice_email(req_en_normal)
         self.assertTrue(res_en_normal.status_code == 302)
         self.assertEqual(len(mailer.outbox), 3)
@@ -329,6 +319,7 @@ class TestDues20Views(unittest.TestCase):
             'member_id': '3',
         }
         req_de_investing.referrer = 'detail'
+        req_de_investing.validated_matchdict = {'member': C3sMember.get_by_id(3)}
         res_de_investing = send_dues20_invoice_email(req_de_investing)
         self.assertTrue(res_de_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 4)
@@ -344,6 +335,7 @@ class TestDues20Views(unittest.TestCase):
             'member_id': '4',
         }
         req_en_investing.referrer = 'detail'
+        req_en_investing.validated_matchdict = {'member': C3sMember.get_by_id(4)}
         res_en_investing = send_dues20_invoice_email(req_en_investing)
         self.assertTrue(res_en_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 5)
@@ -359,6 +351,7 @@ class TestDues20Views(unittest.TestCase):
             'member_id': '5',
         }
         req_de_legalentity.referrer = 'detail'
+        req_de_legalentity.validated_matchdict = {'member': C3sMember.get_by_id(5)}
         res_de_legalentity = send_dues20_invoice_email(req_de_legalentity)
         self.assertTrue(res_de_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 6)
@@ -374,6 +367,7 @@ class TestDues20Views(unittest.TestCase):
             'member_id': '6',
         }
         req_en_legalentity.referrer = 'detail'
+        req_en_legalentity.validated_matchdict = {'member': C3sMember.get_by_id(6)}
         res_en_legalentity = send_dues20_invoice_email(req_en_legalentity)
         self.assertTrue(res_en_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 7)
@@ -545,14 +539,6 @@ class TestDues20Views(unittest.TestCase):
         from c3smembership.presentation.views.dues_2020 import dues20_listing
         req_list = testing.DummyRequest()
         resp_list = dues20_listing(req_list)
-        # {'count': 5,
-        #   'invoices': [
-        #       <c3smembership.models.Dues20Invoice object at 0x7f95df761a50>,
-        #       <c3smembership.models.Dues20Invoice object at 0x7f95df761690>,
-        #       <c3smembership.models.Dues20Invoice object at 0x7f95df820a50>,
-        #       <c3smembership.models.Dues20Invoice object at 0x7f95df761c90>,
-        #       <c3smembership.models.Dues20Invoice object at 0x7f95df761c10>],
-        #   '_today': datetime.date(2020, 9, 1)}
         assert(resp_list['count'] == 2)
 
     def test_dues20_reduction(self):
@@ -825,8 +811,8 @@ class TestDues20Views(unittest.TestCase):
         req0 = testing.DummyRequest(
             matchdict={'member_id': m1.id})
         req0.referrer = 'detail'
-        resp0 = send_dues20_invoice_email(req0)
-        resp0  # tame flymake
+        req0.validated_matchdict = {'member': m1}
+        send_dues20_invoice_email(req0)
 
         partial_payment_amount = D('10')
 
