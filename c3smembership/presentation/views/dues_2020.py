@@ -177,11 +177,9 @@ def send_dues20_invoice_email(request, m_id=None):
             # create a new one, if the new one already exists in the database
             randomstring = make_random_string()  # pragma: no cover
 
-        invoice_no = member.dues20_invoice_no
-        if invoice_no is None:
-            max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(YEAR)
-            new_invoice_no = int(max_invoice_no) + 1
-            DBSession.flush()
+        max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(YEAR)
+        new_invoice_no = int(max_invoice_no) + 1
+        DBSession.flush()
 
         dues_amount, dues_code, dues_description = DUES_CALCULATOR.calculate(
             member)
@@ -190,12 +188,12 @@ def send_dues20_invoice_email(request, m_id=None):
         # and persist invoice info for bookkeeping
         # store some info in DB/member table
         member.dues20_invoice = True
-        member.dues20_invoice_no = new_invoice_no  # irrelevant for investing
         member.dues20_invoice_date = datetime.now()
-        member.dues20_token = randomstring
-        member.dues20_start = dues_code
 
-        if 'normal' in member.membership_type:  # only for normal members
+        if 'normal' in member.membership_type:
+            member.dues20_invoice_no = new_invoice_no
+            member.dues20_token = randomstring
+            member.dues20_start = dues_code
             member.set_dues20_amount(dues_amount)
             # store some more info about invoice in invoice table
             invoice = Dues20Invoice(
@@ -214,11 +212,7 @@ def send_dues20_invoice_email(request, m_id=None):
             DBSession.add(invoice)
         DBSession.flush()
 
-    # now: prepare that email
-    # only normal (not investing) members *have to* pay the dues.
-    # only the normal members get an invoice link and PDF produced for them.
-    # only investing legalentities are asked for more support.
-    if 'investing' not in member.membership_type:
+    if 'normal' in member.membership_type:
         dues_description = DUES_CALCULATOR.get_description(
             DUES_CALCULATOR.calculate_quarter(member),
             member.locale)
