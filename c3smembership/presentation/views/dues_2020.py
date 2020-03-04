@@ -115,24 +115,86 @@ def get_euro_string(euro_amount):
 )
 def send_dues20_invoice_email(request, member_id=None):
     """
-    Send email to a member to prompt her to pay the membership dues.
-    - For normal members, also send link to invoice.
-    - For investing members that are legal entities,
-      ask for additional support depending on yearly turnover.
+    Calculate dues, create invoice and send invoice emails
 
-    This view function works both if called via URL, e.g. /dues_invoice/123
-    and if called as a function with a member id as parameter.
-    The latter is useful for batch processing.
+    Args:
+        request: The Pyramid request containing a matchdict with set member_id.
+        member_id: Optional. The member ID in case the view is called as a#
+            method.
 
-    When this function is used for the first time for one member,
-    some database fields are filled:
-    - Invoice number
-    - Invoice amount (calculated from date of membership approval by the board)
-    - Invoice token
-    Also, the database table of invoices (and cancellations) is appended.
+    Input: Member
 
-    If this function gets called the second time for a member,
-    no new invoice is produced, but the same mail sent again.
+    Output:
+
+    - Dues data stored in database
+    - Invoice data stored in database
+    - Email sent to member
+
+    Input validation: Member must exist. The matchdict member_id must
+    correspond to an existing member.
+
+    Business validation:
+
+    - 1 Membership within the dues year
+
+      - 1.1 Membership started before the end of the dues year
+      - 1.2 Membership ended after the beginning of the dues year
+
+    - 2 User must be logged in as staff
+
+    Business logic:
+
+    - 1 Store that dues email was sent and when it was sent all members
+
+      - 1.1 For normal members
+      - 1.2 For investing members
+
+    - 2 Due calculation for normal members
+
+      - 2.1 Calculate quarterly dues
+      - 2.2 Store dues data
+      - 2.3 Store invoice data
+      - 2.4 Generate invoice PDF
+
+    - 3 No dues calculation for investing members
+    - 4 Send email depending on membership type and entity type
+
+      - 4.1 Normal members get email with invoice link
+      - 4.2 Investing members get email
+
+        - 4.2.1 For legal entities with request for amount based on turnover
+        - 4.2.2 For natural persons with request for normal amount
+
+      - 4.3 Send email in German if member language is German
+      - 4.4 Send email in English for other member languages than German
+      - 4.5 Email is sent to member's email address
+
+    Implementation logic: (TODO: Not yet fully aligned with business logic)
+
+    - 1 Create token
+    - 2 Create new invoice number
+    - 3 Calculate dues using QuarterlyDuesCalculator
+    - 4 For normal members write dues to database
+    - 5 For normal members write invoice to database
+    - 6 Send email depending on membership type
+
+      - 6.1 Normal
+
+        - 6.1.1 Get dues description using QuarterlyDuesCalculator
+        - 6.1.2 Get invoice URL
+        - 6.1.3 Create email text
+        - 6.1.4 Create email
+
+      - 6.2 Investing
+
+        - 6.2.1 Depending on person type
+
+          - 6.2.1.1 Legal entity: Get email text for legal entity
+          - 6.2.1.2 Natural person: Get email text for natural person
+
+        -  6.2.2 Create email
+
+    - 7 Send email
     """
 
     if member_id is not None:
@@ -164,20 +226,14 @@ def send_dues20_invoice_email(request, member_id=None):
             'warning')
         return get_memberhip_listing_redirect(request)
 
-    # check if invoice no already exists.
-    #     if yes: just send that email again!
-    #     also: offer staffers to cancel this invoice
-
+    # Get invoice if it exists already
     if member.dues20_invoice is True:
         invoice = DuesInvoiceRepository.get_by_number(
             member.dues20_invoice_no, YEAR)
     else:
-        # make dues token and ...
         randomstring = make_random_string()
-        # check if dues token is already used
         while DuesInvoiceRepository.token_exists(randomstring, YEAR):
-            # create a new one, if the new one already exists in the database
-            randomstring = make_random_string()  # pragma: no cover
+            randomstring = make_random_string()
 
         max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(YEAR)
         new_invoice_no = int(max_invoice_no) + 1
@@ -185,10 +241,6 @@ def send_dues20_invoice_email(request, member_id=None):
 
         dues_amount, dues_code, dues_description = DUES_CALCULATOR.calculate(
             member)
-
-        # now we have enough info to update the member info
-        # and persist invoice info for bookkeeping
-        # store some info in DB/member table
         member.dues20_invoice = True
         member.dues20_invoice_date = datetime.now()
 
@@ -197,7 +249,6 @@ def send_dues20_invoice_email(request, member_id=None):
             member.dues20_token = randomstring
             member.dues20_start = dues_code
             member.set_dues20_amount(dues_amount)
-            # store some more info about invoice in invoice table
             invoice = Dues20Invoice(
                 invoice_no=member.dues20_invoice_no,
                 invoice_no_string=(
@@ -254,13 +305,11 @@ def send_dues20_invoice_email(request, member_id=None):
             body=email_body,
         )
 
-    # print to console or send mail
     if 'true' in request.registry.settings['testing.mail_to_console']:
-        print(message.body.encode('utf-8'))  # pragma: no cover
+        print(message.body.encode('utf-8'))
     else:
         send_message(request, message)
 
-    # now choose where to redirect
     if 'detail' in request.referrer:
         return HTTPFound(
             request.route_url(

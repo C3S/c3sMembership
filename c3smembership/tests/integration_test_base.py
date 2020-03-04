@@ -41,6 +41,7 @@ class IntegrationTestCaseBase(TestCase):
         'c3smembership.notification_sender': 'membership@example.com',
         'c3smembership.url': 'http://membership.example.com',
         'testing.mail_to_console': 'false',
+        'available_languages': 'en de',
     }
 
     @classmethod
@@ -63,6 +64,7 @@ class IntegrationTestCaseBase(TestCase):
         else:
             # Reuse test app
             cls.testapp = IntegrationTestCaseBase.TESTAPP
+            cls.app = IntegrationTestCaseBase.APP
             cls.testapp.reset()
             # Setup new database for new test case
             cls.__set_up_database()
