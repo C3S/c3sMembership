@@ -20,13 +20,18 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
     """
     @classmethod
     def setUpClass(cls):
+        """
+        Set up the MembershipDuesIntegration class for testing
+
+        Create test records
+        """
         super(MembershipDuesIntegration, cls).setUpClass()
         db_session = cls.get_db_session()
 
         cls.normal_de = C3sMember(
             firstname=u'Ada Musiziert',
             lastname=u'Traumhaft ÄÖÜ',
-            email=u'devNull@example.com',
+            email=u'normal_de@example.com',
             address1=u'ada addr one',
             address2=u'ada addr two',
             postcode=u'12345',
@@ -48,7 +53,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         cls.normal_en = C3sMember(
             firstname=u'James',
             lastname=u'Musician',
-            email=u'dummy@example.com',
+            email=u'normal_en@example.com',
             address1=u'james addr 1',
             address2=u'james appartment 2',
             postcode=u'12345',
@@ -57,7 +62,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
             locale=u'en',
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'NORMAL_DE',
+            email_confirm_code=u'NORMAL_EN',
             password=u'jamesrandompassword',
             date_of_submission=date.today(),
             membership_type=u'normal',
@@ -67,10 +72,32 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         )
         db_session.add(cls.normal_en)
 
+        cls.normal_fr = C3sMember(
+            firstname=u'Jean',
+            lastname=u'Bélanger',
+            email=u'normal_fr@example.com',
+            address1=u'jean addr 1',
+            address2=u'jean appartment 2',
+            postcode=u'12345',
+            city=u'Jeantown',
+            country=u'Jeancountry',
+            locale=u'fr',
+            date_of_birth=date.today(),
+            email_is_confirmed=False,
+            email_confirm_code=u'NORMAL_FR',
+            password=u'jeanrandompassword',
+            date_of_submission=date.today(),
+            membership_type=u'normal',
+            member_of_colsoc=True,
+            name_of_colsoc=u'',
+            num_shares=u'3',
+        )
+        db_session.add(cls.normal_fr)
+
         cls.investing_de = C3sMember(
             firstname=u'Herman',
             lastname=u'Investorius',
-            email=u'dummy@example.com',
+            email=u'investing_de@example.com',
             address1=u'addr one4',
             address2=u'addr two4',
             postcode=u'12344',
@@ -79,7 +106,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
             locale=u'de',
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'cls.INVESTING_DE',
+            email_confirm_code=u'INVESTING_DE',
             password=u'arandompasswor4',
             date_of_submission=date.today(),
             membership_type=u'investing',
@@ -92,7 +119,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         cls.investing_en = C3sMember(
             firstname=u'Britany',
             lastname=u'Investing',
-            email=u'dummy@example.com',
+            email=u'investing_en@example.com',
             address1=u'aone5',
             address2=u'atwo5',
             postcode=u'12355',
@@ -101,7 +128,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
             locale=u'en',
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'cls.INVESTING_EN',
+            email_confirm_code=u'INVESTING_EN',
             password=u'arandompasswor5',
             date_of_submission=date.today(),
             membership_type=u'investing',
@@ -111,10 +138,32 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         )
         db_session.add(cls.investing_en)
 
+        cls.investing_es = C3sMember(
+            firstname=u'José',
+            lastname=u'Sanchez',
+            email=u'investing_es@example.com',
+            address1=u'aone5',
+            address2=u'atwo5',
+            postcode=u'12355',
+            city=u'Footown M45',
+            country=u'Foocountr5',
+            locale=u'es',
+            date_of_birth=date.today(),
+            email_is_confirmed=False,
+            email_confirm_code=u'INVESTING_ES',
+            password=u'joserandompasswor5',
+            date_of_submission=date.today(),
+            membership_type=u'investing',
+            member_of_colsoc=False,
+            name_of_colsoc=u'',
+            num_shares=u'60',
+        )
+        db_session.add(cls.investing_es)
+
         cls.legal_entity_de = C3sMember(
             firstname=u'Deutscher',
             lastname=u'Musikverlag',
-            email=u'verlag@compa.ny',
+            email=u'legal_entity_de@example.com',
             address1=u'foo bulevard',
             address2=u'123-345',
             postcode=u'98765',
@@ -123,7 +172,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
             locale=u'de',
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'VERLAG_DE',
+            email_confirm_code=u'LEGAL_ENTITY_DE',
             password=u'arandompasswor6',
             date_of_submission=date.today(),
             membership_type=u'investing',
@@ -131,13 +180,14 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
             name_of_colsoc=u'',
             num_shares=u'60',
         )
+        cls.legal_entity_de.is_legalentity = True
         db_session.add(cls.legal_entity_de)
 
         cls.legal_entity_en = C3sMember(
-            firstname=u'Francoise',
+            firstname=u'English',
             lastname=u'Company',
-            email=u'foo@compa.ny',
-            address1=u'foo bulevard',
+            email=u'legal_entity_en@example.com',
+            address1=u'foo boulevard',
             address2=u'123-345',
             postcode=u'98765',
             city=u'Foo',
@@ -145,7 +195,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
             locale=u'en',
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'COMPANY_EN',
+            email_confirm_code=u'LOGAL_ENTITY_EN',
             password=u'arandompasswor6',
             date_of_submission=date.today(),
             membership_type=u'investing',
@@ -153,9 +203,57 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
             name_of_colsoc=u'',
             num_shares=u'60',
         )
+        cls.legal_entity_en.is_legalentity = True
         db_session.add(cls.legal_entity_en)
 
+        cls.legal_entity_cz = C3sMember(
+            firstname=u'Czech',
+            lastname=u'Company',
+            email=u'legal_entity_cz@example.com',
+            address1=u'foo boulevard',
+            address2=u'123-345',
+            postcode=u'98765',
+            city=u'Foo',
+            country=u'Bar',
+            locale=u'cz',
+            date_of_birth=date.today(),
+            email_is_confirmed=False,
+            email_confirm_code=u'LOGAL_ENTITY_CZ',
+            password=u'czrandompasswor6',
+            date_of_submission=date.today(),
+            membership_type=u'investing',
+            member_of_colsoc=False,
+            name_of_colsoc=u'',
+            num_shares=u'60',
+        )
+        cls.legal_entity_cz.is_legalentity = True
+        db_session.add(cls.legal_entity_cz)
+
         db_session.flush()
+
+    def _send_invoice(self, member_id):
+        """
+        Send the invoice by calling the TestApp URL
+        """
+        response = self.testapp.get('/dues20_invoice/{}'.format(member_id),
+                                    headers={'Referer': 'test'},
+                                    status=302)
+        return response.follow()
+
+    def _reset_member(self,
+                      member,
+                      membership_date=date(2020, 3, 1),
+                      membership_accepted=True,
+                      membership_loss_date=None):
+        """
+        Reset a member for a test case
+        """
+        member.membership_date = membership_date
+        member.membership_accepted = membership_accepted
+        member.membership_loss_date = membership_loss_date
+        member.dues20_invoice = False
+        member.dues20_invoice_date = None
+        self.get_db_session().flush()
 
     def test_send_invoice_email_iv(self):
         """
@@ -171,10 +269,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.normal_de.dues20_invoice = False
         db_session.flush()
 
-        response = self.testapp.get('/dues20_invoice/1234',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        response = self._send_invoice(1234)
 
         self.assertFalse(self.normal_de.dues20_invoice)
         self.assert_flash(response, 'danger', 'Member ID 1234 does not exist')
@@ -192,121 +287,90 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         - 2 User must be logged in as staff
         """
-        db_session = self.get_db_session()
-
         # 1 Membership within the dues year
         # 1.1 Membership started before the end of the dues year
 
         # Success in case membership began before the beginning of the year
         self._mock_mailer()
-        self.normal_de.membership_date = date(2019, 12, 31)
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = None
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de, membership_date=date(2019, 12, 31))
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        response = self._send_invoice(self.normal_de.id)
 
         self.assertTrue(self.normal_de.dues20_invoice)
 
         # Success in case membership began during the year
         self._mock_mailer()
-        self.normal_de.membership_date = date(2020, 3, 1)
-        self.normal_de.membership_number = '123'
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = None
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de, membership_date=date(2020, 3, 1))
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        response = self._send_invoice(self.normal_de.id)
 
         self.assertTrue(self.normal_de.dues20_invoice)
 
         # Error in case membership started after the end of the dues year
-        self.normal_de.membership_date = date(2021, 1, 1)
-        self.normal_de.membership_accepted = True
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de, membership_date=date(2021, 1, 1))
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        response = self._send_invoice(self.normal_de.id)
 
         self.assertFalse(self.normal_de.dues20_invoice)
         self.assert_flash(
             response, 'warning',
-            'Member 1 was not a member in 2020. Therefore, you cannot send an invoice for 2020'
-        )
+            'Member 1 was not a member in 2020. Therefore, you cannot send an '
+            'invoice for 2020')
+
+        # Error in case membership has not started
+        self._reset_member(self.normal_de,
+                           membership_date=None,
+                           membership_accepted=False)
+
+        response = self._send_invoice(self.normal_de.id)
+
+        self.assertFalse(self.normal_de.dues20_invoice)
+        self.assert_flash(response, 'warning', 'not accepted by the board')
 
         # 1.2 Membership ended after the beginning of the dues year
 
         # Success in case membership ended during the year
         self._mock_mailer()
-        self.normal_de.membership_date = date(2020, 3, 1)
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = date(2020, 12, 31)
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de,
+                           membership_date=date(2020, 3, 1),
+                           membership_accepted=True,
+                           membership_loss_date=date(2020, 12, 31))
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        response = self._send_invoice(self.normal_de.id)
 
         self.assertTrue(self.normal_de.dues20_invoice)
 
         # Success in case membership ended after the end of the year
         self._mock_mailer()
-        self.normal_de.membership_date = date(2020, 3, 1)
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = date(2020, 7, 31)
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de,
+                           membership_date=date(2020, 3, 1),
+                           membership_loss_date=date(2020, 7, 31))
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        response = self._send_invoice(self.normal_de.id)
 
         self.assertTrue(self.normal_de.dues20_invoice)
 
         # Error in case membership ended before the beginning of the year
-        self.normal_de.membership_date = date(2015, 2, 3)
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = date(2019, 12, 31)
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de,
+                           membership_date=date(2015, 2, 3),
+                           membership_loss_date=date(2019, 12, 31))
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        response = self._send_invoice(self.normal_de.id)
 
         self.assertFalse(self.normal_de.dues20_invoice)
         self.assert_flash(
             response, 'warning',
-            'Member 1 was not a member in 2020. Therefore, you cannot send an invoice for 2020'
-        )
+            'Member 1 was not a member in 2020. Therefore, you cannot send an '
+            'invoice for 2020')
 
         # 2 User must be logged in as staff
         # Success if user is logged in as staff
         self._mock_mailer()
-        self.normal_de.membership_date = date(2020, 3, 1)
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = date(2020, 7, 31)
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de,
+                           membership_date=date(2020, 3, 1),
+                           membership_loss_date=date(2020, 7, 31))
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
+        response = self._send_invoice(self.normal_de.id)
 
         # Failure if user is not logged in
         self.log_out()
@@ -350,17 +414,9 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         # 1 Store that dues email was sent and when it was sent all members
         # 1.1 For normal members
         self._mock_mailer()
-        self.normal_de.membership_date = date(2020, 3, 1)
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = None
-        self.normal_de.dues20_invoice = False
-        self.normal_de.dues20_invoice_date = None
-        db_session.flush()
+        self._reset_member(self.normal_de)
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        self._send_invoice(self.normal_de.id)
 
         self.assertTrue(self.normal_de.dues20_invoice)
         self.assertEqual(self.normal_de.dues20_invoice_date.date(),
@@ -368,18 +424,9 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         # 1.2 For investing members
         self._mock_mailer()
-        self.investing_de.membership_date = date(2020, 3, 1)
-        self.investing_de.membership_accepted = True
-        self.investing_de.membership_loss_date = None
-        self.investing_de.dues20_invoice = False
-        self.investing_de.dues20_invoice_date = None
-        db_session.flush()
+        self._reset_member(self.investing_de)
 
-        response = self.testapp.get('/dues20_invoice/{}'.format(
-            self.investing_de.id),
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        self._send_invoice(self.investing_de.id)
 
         self.assertTrue(self.investing_de.dues20_invoice)
         self.assertEqual(self.investing_de.dues20_invoice_date.date(),
@@ -387,16 +434,9 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         # 2 Due calculation for normal members
         self._mock_mailer()
-        self.normal_de.membership_date = date(2020, 3, 1)
-        self.normal_de.membership_accepted = True
-        self.normal_de.membership_loss_date = None
-        self.normal_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.normal_de)
 
-        response = self.testapp.get('/dues20_invoice/1',
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        self._send_invoice(self.normal_de.id)
 
         # 2.1 Calculate quarterly dues
         self.assertEqual(self.normal_de.dues20_amount, Decimal('50.0'))
@@ -410,10 +450,10 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertEqual(self.normal_de.dues20_start, 'q1_2020')
         self.assertFalse(self.normal_de.dues20_reduced)
         self.assertTrue(self.normal_de.dues20_amount_reduced.is_nan())
-        self.assertEquals(self.normal_de.dues20_balance, Decimal('50.0'))
+        self.assertEqual(self.normal_de.dues20_balance, Decimal('50.0'))
         self.assertFalse(self.normal_de.dues20_balanced)
         self.assertFalse(self.normal_de.dues20_paid)
-        self.assertEquals(self.normal_de.dues20_amount_paid, Decimal('0.0'))
+        self.assertEqual(self.normal_de.dues20_amount_paid, Decimal('0.0'))
         self.assertIsNone(self.normal_de.dues20_paid_date)
 
         # 2.3 Store invoice data
@@ -440,29 +480,122 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         # 3 No dues calculation for investing members
         self._mock_mailer()
-        self.investing_de.membership_date = date(2020, 3, 1)
-        self.investing_de.membership_accepted = True
-        self.investing_de.membership_loss_date = None
-        self.investing_de.dues20_invoice = False
-        db_session.flush()
+        self._reset_member(self.investing_de)
 
-        response = self.testapp.get('/dues20_invoice/{}'.format(
-            self.investing_de.id),
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        response = response.follow()
+        self._send_invoice(self.investing_de.id)
 
         self.assertTrue(self.investing_de.dues20_invoice)
         self.assertEqual(self.investing_de.dues20_invoice_date.date(),
                          date.today())
+
         # 3 Send email depending on membership type and entity type
         # 3.1 Normal members get email with invoice link
+        # English
+        mailer = self._mock_mailer()
+        self._reset_member(self.normal_en)
+
+        self._send_invoice(self.normal_en.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('You will find the invoice here:' in message.body)
+        self.assertTrue('/dues20_invoice_no/{}/C3S-dues20-'.format(
+            self.normal_en.dues20_token) in message.body)
+
+        # German
+        mailer = self._mock_mailer()
+        self._reset_member(self.normal_de)
+
+        self._send_invoice(self.normal_de.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue(
+            'Die Rechnung findest Du unter folgendem Link:' in message.body)
+        self.assertTrue('/dues20_invoice_no/{}/C3S-dues20-'.format(
+            self.normal_de.dues20_token) in message.body)
+
+        # French -> gets English email
+        mailer = self._mock_mailer()
+        self._reset_member(self.normal_fr)
+
+        self._send_invoice(self.normal_fr.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('You will find the invoice here:' in message.body)
+        self.assertTrue('/dues20_invoice_no/{}/C3S-dues20-'.format(
+            self.normal_fr.dues20_token) in message.body)
+
         # 3.2 Investing members get email
         # 3.2.1 For legal entities with request for amount based on turnover
+        # English
+        mailer = self._mock_mailer()
+        self._reset_member(self.legal_entity_en)
+
+        self._send_invoice(self.legal_entity_en.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('is an investing member' in message.body)
+
+        # German
+        mailer = self._mock_mailer()
+        self._reset_member(self.legal_entity_de)
+
+        self._send_invoice(self.legal_entity_de.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('investierendes Mitglied ist' in message.body)
+
+        # Czech -> gets English email
+        mailer = self._mock_mailer()
+        self._reset_member(self.legal_entity_cz)
+
+        self._send_invoice(self.legal_entity_cz.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('is an investing member' in message.body)
+
         # 3.2.2 For natural persons with request for normal amount
+        # English
+        mailer = self._mock_mailer()
+        self._reset_member(self.investing_en)
+
+        self._send_invoice(self.investing_en.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('Since you are an investing member' in message.body)
+
+        # German
+        mailer = self._mock_mailer()
+        self._reset_member(self.investing_de)
+
+        self._send_invoice(self.investing_de.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('Da Du investierendes Mitglied bist' in message.body)
+
+        # Spanish -> gets English email
+        mailer = self._mock_mailer()
+        self._reset_member(self.investing_es)
+
+        self._send_invoice(self.investing_es.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('Since you are an investing member' in message.body)
+
         # 3.3 Send emails in German if member language is German
+        # Languages are tested with invoice sending
+
         # 3.4 Send email in English for other member languages than German
+        # Languages are tested with invoice sending
+
         # 3.5 Email is sent to member's email address
+        mailer = self._mock_mailer()
+        self._reset_member(self.normal_en)
+
+        self._send_invoice(self.normal_en.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertEqual(len(message.send_to), 1)
+        self.assertTrue(self.normal_en.email in message.send_to)
 
     def _mock_mailer(self):
         mailer = Mock()
@@ -471,7 +604,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.app.registry.get_mailer = get_mailer
         return mailer
 
-    def _get_mock_mailer_message(self, mailer):
+    @staticmethod
+    def _get_mock_mailer_message(mailer):
         call = mailer.send.call_args_list.pop()
         call_tuple = call[0]
         message = call_tuple[0]
