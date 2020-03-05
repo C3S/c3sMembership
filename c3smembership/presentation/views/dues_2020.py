@@ -200,29 +200,9 @@ def send_dues20_invoice_email(request, member_id=None):
     else:
         member = request.validated_matchdict['member']
 
-    if not member.membership_accepted:
-        request.session.flash(
-            "member {} not accepted by the board!".format(member.id),
-            'warning')
-        return HTTPFound(request.route_url('dues'))
-
-    if 'normal' not in member.membership_type and \
-            'investing' not in member.membership_type:
-        request.session.flash(
-            'The membership type of member {0} is not specified! The '
-            'membership type must either be "normal" or "investing" in order '
-            'to be able to send an invoice email.'.format(member.id),
-            'warning')
-        return get_memberhip_listing_redirect(request)
-    if member.membership_date >= date(YEAR+1, 1, 1) or (
-                member.membership_loss_date is not None
-                and member.membership_loss_date < date(YEAR, 1, 1)
-            ):
-        request.session.flash(
-            'Member {0} was not a member in {1}. Therefore, you cannot send '
-            'an invoice for {1}.'.format(member.id, YEAR),
-            'warning')
-        return get_memberhip_listing_redirect(request)
+    validation_result = send_invoice_email_validation(request, member)
+    if validation_result is not None:
+        return validation_result
 
     # Get invoice if it exists already
     if member.dues20_invoice is True:
@@ -318,6 +298,36 @@ def send_dues20_invoice_email(request, member_id=None):
         return HTTPFound(request.route_url('dues'))
     else:
         return get_memberhip_listing_redirect(request, member.id)
+
+
+def send_invoice_email_validation(request, member):
+    """
+    Perform business validation for dues calculation and email sending
+    """
+    if not member.membership_accepted:
+        request.session.flash(
+            "member {} not accepted by the board!".format(member.id),
+            'warning')
+        return HTTPFound(request.route_url('dues'))
+
+    if 'normal' not in member.membership_type and \
+            'investing' not in member.membership_type:
+        request.session.flash(
+            'The membership type of member {0} is not specified! The '
+            'membership type must either be "normal" or "investing" in order '
+            'to be able to send an invoice email.'.format(member.id),
+            'warning')
+        return get_memberhip_listing_redirect(request)
+
+    if member.membership_date >= date(YEAR+1, 1, 1) or (
+                member.membership_loss_date is not None
+                and member.membership_loss_date < date(YEAR, 1, 1)
+            ):
+        request.session.flash(
+            'Member {0} was not a member in {1}. Therefore, you cannot send '
+            'an invoice for {1}.'.format(member.id, YEAR),
+            'warning')
+        return get_memberhip_listing_redirect(request)
 
 
 @view_config(
