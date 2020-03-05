@@ -167,6 +167,7 @@ def send_dues_email(request, year, member, invoice):
         print(message.body.encode('utf-8'))
     else:
         send_message(request, message)
+    record_dues_email_sent(year, member)
 
 
 def create_dues_email_normal(request, year, member, invoice):

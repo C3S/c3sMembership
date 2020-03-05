@@ -194,12 +194,11 @@ def send_dues20_invoice_email(request, member_id=None):
 
     invoice = calculate_dues_create_invoice(YEAR, member)
     send_dues_email(request, YEAR, member, invoice)
-    record_dues_email_sent(YEAR, member)
 
-    return send_invoice_email_referring(request, member)
+    return send_invoice_email_redirect(request, member)
 
 
-def send_invoice_email_referring(request, member):
+def send_invoice_email_redirect(request, member):
     if 'detail' in request.referrer:
         return HTTPFound(
             request.route_url(
