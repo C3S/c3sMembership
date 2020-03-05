@@ -382,31 +382,33 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         Business logic:
 
-        - 1 Store that dues email was sent and when it was sent all members
+        - 1 Due calculation for normal members
 
-          - 1.1 For normal members
-          - 1.2 For investing members
+          - 1.1 Calculate quarterly dues
+          - 1.2 Store dues data
+          - 1.3 Store invoice data
+          - 1.4 Generate invoice PDF
 
-        - 2 Due calculation for normal members
+        - 2 No dues calculation for investing members
+        - 3 Send email depending on membership type and entity type
 
-          - 2.1 Calculate quarterly dues
-          - 2.2 Store dues data
-          - 2.3 Store invoice data
-          - 2.4 Generate invoice PDF
+          - 3.1 Normal members get email with invoice link
+          - 3.2 Investing members get email
 
-        - 3 No dues calculation for investing members
-        - 4 Send email depending on membership type and entity type
-
-          - 4.1 Normal members get email with invoice link
-          - 4.2 Investing members get email
-
-            - 4.2.1 For legal entities with request for amount based on
+            - 3.2.1 For legal entities with request for amount based on
               turnover
-            - 4.2.2 For natural persons with request for normal amount
+            - 3.2.2 For natural persons with request for normal amount
 
-          - 4.3 Send emails in German if member language is German
-          - 4.4 Send email in English for other member languages than German
-          - 4.5 Email is sent to member's email address
+          - 3.3 Send emails in German if member language is German
+          - 3.4 Send email in English for other member languages than German
+          - 3.5 Email is sent to member's email address
+
+        - 4 Store that and when dues were calculated and email was sent
+
+          - 4.1 For normal members
+          - 4.2 For investing members
+
+        - 5 If called again only resend email but only calculate dues once
         """
         self.log_in()
         db_session = self.get_db_session()
@@ -432,16 +434,16 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertEqual(self.investing_de.dues20_invoice_date.date(),
                          date.today())
 
-        # 2 Due calculation for normal members
+        # 1 Due calculation for normal members
         self._mock_mailer()
         self._reset_member(self.normal_de)
 
         self._send_invoice(self.normal_de.id)
 
-        # 2.1 Calculate quarterly dues
+        # 1.1 Calculate quarterly dues
         self.assertEqual(self.normal_de.dues20_amount, Decimal('50.0'))
 
-        # 2.2 Store dues data
+        # 1.2 Store dues data
         self.assertTrue(self.normal_de.dues20_invoice)
         self.assertEqual(self.normal_de.dues20_invoice_date.date(),
                          date.today())
@@ -456,7 +458,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertEqual(self.normal_de.dues20_amount_paid, Decimal('0.0'))
         self.assertIsNone(self.normal_de.dues20_paid_date)
 
-        # 2.3 Store invoice data
+        # 1.3 Store invoice data
         invoice = db_session.query(Dues20Invoice).filter(
             Dues20Invoice.member_id == 1).first()
         self.assertIsNotNone(invoice.invoice_no)
@@ -474,11 +476,11 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertIsNone(invoice.preceding_invoice_no)
         self.assertIsNone(invoice.succeeding_invoice_no)
 
-        # 2.4 Generate invoice PDF
+        # 1.4 Generate invoice PDF
         # TODO: Not yet implemented at this point but only when downloading or
         # archiving
 
-        # 3 No dues calculation for investing members
+        # 2 No dues calculation for investing members
         self._mock_mailer()
         self._reset_member(self.investing_de)
 
@@ -596,6 +598,47 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         message = self._get_mock_mailer_message(mailer)
         self.assertEqual(len(message.send_to), 1)
         self.assertTrue(self.normal_en.email in message.send_to)
+
+        # 4 Store that and when dues were calculated and email was sent
+        # 4.1 For normal members
+        self._mock_mailer()
+        self._reset_member(self.normal_en)
+        self.assertFalse(self.normal_en.dues20_invoice)
+        self.assertIsNone(self.normal_en.dues20_invoice_date)
+
+        self._send_invoice(self.normal_en.id)
+
+        self.assertTrue(self.normal_en.dues20_invoice)
+        self.assertEqual(self.normal_en.dues20_invoice_date.date(),
+                         date.today())
+
+        # 4.2 For investing members
+        self._mock_mailer()
+        self._reset_member(self.investing_en)
+        self.assertFalse(self.investing_en.dues20_invoice)
+        self.assertIsNone(self.investing_en.dues20_invoice_date)
+
+        self._send_invoice(self.investing_en.id)
+
+        self.assertTrue(self.investing_en.dues20_invoice)
+        self.assertEqual(self.investing_en.dues20_invoice_date.date(),
+                         date.today())
+
+        # 5 If called again only resend email but only calculate dues once
+        mailer = self._mock_mailer()
+        self._reset_member(self.normal_en, membership_date=date(2019, 12, 31))
+        self._send_invoice(self.normal_en.id)
+        self.assertEqual(self.normal_en.dues20_amount, Decimal('50.0'))
+        self.assertEqual(self.normal_en.dues20_start, 'q1_2020')
+        self.normal_en.membership_date = date(2020, 10, 1)
+        self._mock_mailer()
+
+        self._send_invoice(self.normal_en.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('You will find the invoice here:' in message.body)
+        self.assertEqual(self.normal_en.dues20_amount, Decimal('50.0'))
+        self.assertEqual(self.normal_en.dues20_start, 'q1_2020')
 
     def _mock_mailer(self):
         mailer = Mock()

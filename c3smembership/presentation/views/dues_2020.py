@@ -144,30 +144,28 @@ def send_dues20_invoice_email(request, member_id=None):
 
     Business logic:
 
-    - 1 Store that dues email was sent and when it was sent all members
+    - 1 Due calculation for normal members
 
-      - 1.1 For normal members
-      - 1.2 For investing members
+      - 1.1 Calculate quarterly dues
+      - 1.2 Store dues data
+      - 1.3 Store invoice data
+      - 1.4 Generate invoice PDF
 
-    - 2 Due calculation for normal members
+    - 2 No dues calculation for investing members
+    - 3 Send email depending on membership type and entity type
 
-      - 2.1 Calculate quarterly dues
-      - 2.2 Store dues data
-      - 2.3 Store invoice data
-      - 2.4 Generate invoice PDF
+      - 3.1 Normal members get email with invoice link
+      - 3.2 Investing members get email
 
-    - 3 No dues calculation for investing members
-    - 4 Send email depending on membership type and entity type
+        - 3.2.1 For legal entities with request for amount based on turnover
+        - 3.2.2 For natural persons with request for normal amount
 
-      - 4.1 Normal members get email with invoice link
-      - 4.2 Investing members get email
+      - 3.3 Send email in German if member language is German
+      - 3.4 Send email in English for other member languages than German
+      - 3.5 Email is sent to member's email address
 
-        - 4.2.1 For legal entities with request for amount based on turnover
-        - 4.2.2 For natural persons with request for normal amount
-
-      - 4.3 Send email in German if member language is German
-      - 4.4 Send email in English for other member languages than German
-      - 4.5 Email is sent to member's email address
+    - 4 Store that and when dues were calculated and email was sent
+    - 5 If called again only resend email but only calculate dues once
 
     Implementation logic: (TODO: Not yet fully aligned with business logic)
 
