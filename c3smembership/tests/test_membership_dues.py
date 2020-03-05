@@ -231,30 +231,6 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         db_session.flush()
 
-    def _send_invoice(self, member_id):
-        """
-        Send the invoice by calling the TestApp URL
-        """
-        response = self.testapp.get('/dues20_invoice/{}'.format(member_id),
-                                    headers={'Referer': 'test'},
-                                    status=302)
-        return response.follow()
-
-    def _reset_member(self,
-                      member,
-                      membership_date=date(2020, 3, 1),
-                      membership_accepted=True,
-                      membership_loss_date=None):
-        """
-        Reset a member for a test case
-        """
-        member.membership_date = membership_date
-        member.membership_accepted = membership_accepted
-        member.membership_loss_date = membership_loss_date
-        member.dues20_invoice = False
-        member.dues20_invoice_date = None
-        self.get_db_session().flush()
-
     def test_send_invoice_email_iv(self):
         """
         Test input validation (iv) of dues calculation and email sending
@@ -640,7 +616,36 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertEqual(self.normal_en.dues20_amount, Decimal('50.0'))
         self.assertEqual(self.normal_en.dues20_start, 'q1_2020')
 
+    def _send_invoice(self, member_id):
+        """
+        Send the invoice by calling the TestApp URL
+        """
+        response = self.testapp.get('/dues20_invoice/{}'.format(member_id),
+                                    headers={'Referer': 'test'},
+                                    status=302)
+        return response.follow()
+
+    def _reset_member(self,
+                      member,
+                      membership_date=date(2020, 3, 1),
+                      membership_accepted=True,
+                      membership_loss_date=None):
+        """
+        Reset a member for a test case
+        """
+        member.membership_date = membership_date
+        member.membership_accepted = membership_accepted
+        member.membership_loss_date = membership_loss_date
+        member.dues20_invoice = False
+        member.dues20_invoice_date = None
+        self.get_db_session().flush()
+
     def _mock_mailer(self):
+        """
+        Mock the mailer
+
+        Let registry.get_mailer return a mock mailer
+        """
         mailer = Mock()
         get_mailer = Mock()
         get_mailer.side_effect = [mailer]
@@ -649,6 +654,9 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
     @staticmethod
     def _get_mock_mailer_message(mailer):
+        """
+        Get the message from the mock mailer
+        """
         call = mailer.send.call_args_list.pop()
         call_tuple = call[0]
         message = call_tuple[0]
