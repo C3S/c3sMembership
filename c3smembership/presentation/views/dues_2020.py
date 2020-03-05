@@ -50,7 +50,7 @@ from c3smembership.presentation.view_processing.colander_validation import (
     ColanderMatchdictValidator,
 )
 from c3smembership.presentation.schemas.member import MemberIdMatchdict
-from c3smembership.presentation.views.dues_texts import (
+from c3smembership.business.dues_texts import (
     make_dues20_invoice_email,
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,

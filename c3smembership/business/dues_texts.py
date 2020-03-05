@@ -9,7 +9,7 @@ from c3smembership.mail_utils import (
 )
 
 
-def make_dues_invoice_email(member, invoice, invoice_url, invoice_quarter):
+def make_dues15_invoice_email(member, invoice, invoice_url, invoice_quarter):
     """
     Create email subject and body for an invoice notification for full
     members.
@@ -99,52 +99,18 @@ def make_dues20_invoice_email(member, invoice, invoice_url, invoice_quarter):
     Create email subject and body for an invoice notification for full
     members.
     """
-    return (
-        get_template_text('dues_invoice_subject', member.locale),
-        get_template_text('dues_invoice_body', member.locale).format(
-            salutation=get_salutation(member),
-            dues_amount=str(member.dues20_amount),
-            invoice_url=invoice_url,
-            invoice_quarter=invoice_quarter,
-            invoice_number=invoice.invoice_no_string,
-            membership_number=member.membership_number,
-            footer=get_email_footer(member.locale)))
+    return (get_template_text('dues_invoice_subject', member.locale),
+            get_template_text('dues_invoice_body', member.locale).format(
+                salutation=get_salutation(member),
+                dues_amount=str(member.dues20_amount),
+                invoice_url=invoice_url,
+                invoice_quarter=invoice_quarter,
+                invoice_number=invoice.invoice_no_string,
+                membership_number=member.membership_number,
+                footer=get_email_footer(member.locale)))
 
 
-def make_dues_invoice_investing_email(member):
-    """
-    Create email subject and body for an invoice notification for investing
-    members.
-    """
-    return (
-        get_template_text('dues_invoice_investing_subject', member.locale),
-        get_template_text(
-            'dues_invoice_investing_body',
-            member.locale
-        ).format(
-            salutation=get_salutation(member),
-            membership_number=member.membership_number,
-            footer=get_email_footer(member.locale)))
-
-
-def make_dues_invoice_legalentity_email(member):
-    """
-    Create email subject and body for an invoice notification for legal entity
-    members.
-    """
-    return (
-        get_template_text('dues_invoice_legalentity_subject', member.locale),
-        get_template_text(
-            'dues_invoice_legalentity_body',
-            member.locale
-        ).format(
-            salutation=get_salutation(member),
-            legal_entity_name=member.lastname,
-            membership_number=member.membership_number,
-            footer=get_email_footer(member.locale)))
-
-
-def make_dues_reduction_email(member, invoice, invoice_url, reversal_url):
+def make_dues15_reduction_email(member, invoice, invoice_url, reversal_url):
     """
     Create email subject and body for an invoice reduction.
     """
@@ -250,3 +216,31 @@ def make_dues_exemption_email(member, reversal_url):
             salutation=get_salutation(member),
             reversal_invoice_url=reversal_url,
             footer=get_email_footer(member.locale)))
+
+
+def make_dues_invoice_investing_email(member):
+    """
+    Create email subject and body for an invoice notification for investing
+    members.
+    """
+    return (get_template_text('dues_invoice_investing_subject', member.locale),
+            get_template_text('dues_invoice_investing_body',
+                              member.locale).format(
+                                  salutation=get_salutation(member),
+                                  membership_number=member.membership_number,
+                                  footer=get_email_footer(member.locale)))
+
+
+def make_dues_invoice_legalentity_email(member):
+    """
+    Create email subject and body for an invoice notification for legal entity
+    members.
+    """
+    return (get_template_text('dues_invoice_legalentity_subject',
+                              member.locale),
+            get_template_text('dues_invoice_legalentity_body',
+                              member.locale).format(
+                                  salutation=get_salutation(member),
+                                  legal_entity_name=member.lastname,
+                                  membership_number=member.membership_number,
+                                  footer=get_email_footer(member.locale)))

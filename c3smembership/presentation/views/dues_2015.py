@@ -32,17 +32,16 @@ from pyramid.view import view_config
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues15invoice import Dues15Invoice
-from c3smembership.data.repository.member_repository import MemberRepository
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
-from c3smembership.mail_utils import send_message
-from .dues_texts import (
-    make_dues_invoice_email,
+from c3smembership.business.dues_texts import (
+    make_dues15_invoice_email,
+    make_dues15_reduction_email,
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,
-    make_dues_reduction_email,
     make_dues_exemption_email,
 )
+from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
 )
@@ -253,7 +252,7 @@ def send_dues15_invoice_email(request, m_id=None):
                 i=str(member.dues15_invoice_no).zfill(4)
             )
         )
-        email_subject, email_body = make_dues_invoice_email(
+        email_subject, email_body = make_dues15_invoice_email(
             member,
             invoice,
             invoice_url,
@@ -745,7 +744,7 @@ def dues15_reduction(request):
                 i=str(new_invoice_no + 1).zfill(4)
             )
         )
-        email_subject, email_body = make_dues_reduction_email(
+        email_subject, email_body = make_dues15_reduction_email(
             member,
             new_invoice,
             invoice_url,

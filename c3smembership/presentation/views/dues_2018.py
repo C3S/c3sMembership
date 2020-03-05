@@ -37,15 +37,15 @@ from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 from c3smembership.mail_utils import send_message
-from c3smembership.presentation.views.membership_listing import (
-    get_memberhip_listing_redirect
-)
-from c3smembership.presentation.views.dues_texts import (
+from c3smembership.business.dues_texts import (
     make_dues18_invoice_email,
+    make_dues18_reduction_email,
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,
-    make_dues18_reduction_email,
     make_dues_exemption_email,
+)
+from c3smembership.presentation.views.membership_listing import (
+    get_memberhip_listing_redirect
 )
 from c3smembership.tex_tools import TexTools
 

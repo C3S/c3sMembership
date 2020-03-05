@@ -35,19 +35,18 @@ from pyramid.view import view_config
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.dues17invoice import Dues17Invoice
-from c3smembership.data.repository.member_repository import MemberRepository
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
+from c3smembership.business.dues_texts import (
+    make_dues17_invoice_email,
+    make_dues17_reduction_email,
+    make_dues_invoice_investing_email,
+    make_dues_invoice_legalentity_email,
+    make_dues_exemption_email,
+)
 from c3smembership.mail_utils import send_message
 from c3smembership.presentation.views.membership_listing import (
     get_memberhip_listing_redirect
-)
-from c3smembership.presentation.views.dues_texts import (
-    make_dues17_invoice_email,
-    make_dues_invoice_investing_email,
-    make_dues_invoice_legalentity_email,
-    make_dues17_reduction_email,
-    make_dues_exemption_email,
 )
 from c3smembership.tex_tools import TexTools
 
