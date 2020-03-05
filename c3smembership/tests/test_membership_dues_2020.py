@@ -199,12 +199,6 @@ class TestDues20Views(unittest.TestCase):
         DBSession.remove()
         testing.tearDown()
 
-    def test_random_string(self):
-        from c3smembership.presentation.views.dues_2020 import \
-            make_random_string
-        res = make_random_string()
-        assert len(res) == 10
-
     def test_send_dues20_invoice_email_single(self):
         """
         test the send_dues20_invoice_email view

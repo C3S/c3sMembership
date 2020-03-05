@@ -25,9 +25,7 @@ from datetime import (
 from decimal import (Decimal, InvalidOperation)
 import logging
 import os
-import random
 import shutil
-import string
 import subprocess
 import tempfile
 
@@ -36,6 +34,9 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid_mailer.message import Message
 
+from c3smembership.business.dues import (record_dues_email_sent,
+                                         calculate_dues_create_invoice,
+                                         send_dues_email)
 from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
@@ -51,9 +52,6 @@ from c3smembership.presentation.view_processing.colander_validation import (
 )
 from c3smembership.presentation.schemas.member import MemberIdMatchdict
 from c3smembership.business.dues_texts import (
-    make_dues20_invoice_email,
-    make_dues_invoice_investing_email,
-    make_dues_invoice_legalentity_email,
     make_dues20_reduction_email,
     make_dues_exemption_email,
 )
@@ -81,16 +79,6 @@ LATEX_TEMPLATES = {
 
 YEAR = 2020
 DUES_CALCULATOR = QuarterlyDuesCalculator(Decimal('50'), YEAR)
-
-
-def make_random_string():
-    """
-    a random string used as dues token
-    """
-    return u''.join(
-        random.choice(
-            string.ascii_uppercase
-        ) for x in range(10))
 
 
 def get_euro_string(euro_amount):
@@ -204,90 +192,14 @@ def send_dues20_invoice_email(request, member_id=None):
     if validation_result is not None:
         return validation_result
 
-    # Get invoice if it exists already
-    if member.dues20_invoice is True:
-        invoice = DuesInvoiceRepository.get_by_number(
-            member.dues20_invoice_no, YEAR)
-    else:
-        randomstring = make_random_string()
-        while DuesInvoiceRepository.token_exists(randomstring, YEAR):
-            randomstring = make_random_string()
+    invoice = calculate_dues_create_invoice(YEAR, member)
+    send_dues_email(request, YEAR, member, invoice)
+    record_dues_email_sent(YEAR, member)
 
-        max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(YEAR)
-        new_invoice_no = int(max_invoice_no) + 1
-        DBSession.flush()
+    return send_invoice_email_referring(request, member)
 
-        dues_amount, dues_code, dues_description = DUES_CALCULATOR.calculate(
-            member)
-        member.dues20_invoice = True
-        member.dues20_invoice_date = datetime.now()
 
-        if 'normal' in member.membership_type:
-            member.dues20_invoice_no = new_invoice_no
-            member.dues20_token = randomstring
-            member.dues20_start = dues_code
-            member.set_dues20_amount(dues_amount)
-            invoice = Dues20Invoice(
-                invoice_no=member.dues20_invoice_no,
-                invoice_no_string=(
-                    u'C3S-dues{0}-{1}'.format(
-                        YEAR,
-                        str(member.dues20_invoice_no).zfill(4))),
-                invoice_date=member.dues20_invoice_date,
-                invoice_amount=u'' + str(member.dues20_amount),
-                member_id=member.id,
-                membership_no=member.membership_number,
-                email=member.email,
-                token=member.dues20_token,
-            )
-            DBSession.add(invoice)
-        DBSession.flush()
-
-    if 'normal' in member.membership_type:
-        dues_description = DUES_CALCULATOR.get_description(
-            DUES_CALCULATOR.calculate_quarter(member),
-            member.locale)
-        start_quarter = dues_description
-        invoice_url = (
-            request.route_url(
-                'make_dues20_invoice_no_pdf',
-                email=member.email,
-                code=member.dues20_token,
-                i=str(member.dues20_invoice_no).zfill(4)
-            )
-        )
-        email_subject, email_body = make_dues20_invoice_email(
-            member,
-            invoice,
-            invoice_url,
-            start_quarter)
-        message = Message(
-            subject=email_subject,
-            sender=request.registry.settings[
-                'c3smembership.notification_sender'],
-            recipients=[member.email],
-            body=email_body,
-        )
-    elif 'investing' in member.membership_type:
-        if member.is_legalentity:
-            email_subject, email_body = \
-                make_dues_invoice_legalentity_email(member)
-        else:
-            email_subject, email_body = \
-                make_dues_invoice_investing_email(member)
-        message = Message(
-            subject=email_subject,
-            sender=request.registry.settings[
-                'c3smembership.notification_sender'],
-            recipients=[member.email],
-            body=email_body,
-        )
-
-    if 'true' in request.registry.settings['testing.mail_to_console']:
-        print(message.body.encode('utf-8'))
-    else:
-        send_message(request, message)
-
+def send_invoice_email_referring(request, member):
     if 'detail' in request.referrer:
         return HTTPFound(
             request.route_url(
@@ -324,9 +236,9 @@ def send_invoice_email_validation(request, member):
                 and member.membership_loss_date < date(YEAR, 1, 1)
             ):
         request.session.flash(
-            'Member {0} was not a member in {1}. Therefore, you cannot send '
-            'an invoice for {1}.'.format(member.id, YEAR),
-            'warning')
+                'Member {0} was not a member in {1}. Therefore, you cannot send '
+                'an invoice for {1}.'.format(member.id, YEAR),
+                'warning')
         return get_memberhip_listing_redirect(request)
 
 
