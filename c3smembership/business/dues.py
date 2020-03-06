@@ -5,7 +5,7 @@ Handle membership dues
 # TODO: The business layer must use a data layer repository for data
 # manipulation instead of using the database session and records directly.
 
-from datetime import (date, datetime)
+from datetime import date
 from decimal import Decimal
 import random
 import string
@@ -168,7 +168,7 @@ def send_dues_invoice_email(year, member, invoice, invoice_url_creator,
         email_subject, email_body = _create_dues_email_investing(member)
 
     dues_email_sender(member.email, email_subject, email_body)
-    _record_dues_email_sent(year, member)
+    DuesInvoiceRepository.record_dues_email_sent(year, member)
 
 
 def _validate_member_dues_applicable(year, member):
@@ -242,6 +242,7 @@ class InvoiceUrlCreator(object):
     layer hands down the ability to create such an URL which can then be
     included into emails.
     """
+    # pylint: disable=too-few-public-methods
     def __call__(self, year, member, invoice):
         """
         Create an invoice URL
@@ -265,6 +266,7 @@ class DuesEmailSender(object):
     the DuesEmailSender the presentation layer hands down the ability to send
     dues emails to the business layer.
     """
+    # pylint: disable=too-few-public-methods
     def __call__(self, recipient, subject, body):
         """
         Send a dues email
@@ -309,30 +311,3 @@ def _invoice_calculated(year, member):
         2020: member.dues20_invoice,
     }
     return year_invoice_calculated[year]
-
-
-def _record_dues_email_sent(year, member):
-    """
-    Record the fact that the dues email was sent and when it was sent
-    """
-    # TODO: This is only a workaround until the data model has been cleaned up
-    # and there is an extra table to record dues per year and member.
-    invoice_date = datetime.now()
-    if year == 2015:
-        member.dues15_invoice = True
-        member.dues15_invoice_date = invoice_date
-    if year == 2016:
-        member.dues16_invoice = True
-        member.dues16_invoice_date = invoice_date
-    if year == 2017:
-        member.dues17_invoice = True
-        member.dues17_invoice_date = invoice_date
-    if year == 2018:
-        member.dues18_invoice = True
-        member.dues18_invoice_date = invoice_date
-    if year == 2019:
-        member.dues19_invoice = True
-        member.dues19_invoice_date = invoice_date
-    if year == 2020:
-        member.dues20_invoice = True
-        member.dues20_invoice_date = invoice_date

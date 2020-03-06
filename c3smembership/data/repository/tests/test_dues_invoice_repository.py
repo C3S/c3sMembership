@@ -478,6 +478,9 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertIsNone(stats)
 
     def test_create_dues_invoice(self):
+        """
+        Test the create_dues_invoice method
+        """
         self._test_create_dues_invoice(2015, 1234, u'asdf1324',
                                        Decimal('50.0'), u'LFSKJFLSDKJH')
         self._test_create_dues_invoice(2016, 3635, u'asdf3635',
@@ -520,13 +523,6 @@ class TestDuesInvoiceRepository(unittest.TestCase):
     def test_store_dues(self):
         """
         Test the store_dues method
-
-        - 2015
-        - 2016
-        - 2017
-        - 2018
-        - 2019
-        - 2020
         """
         member = C3sMember.get_by_id(1)
 
@@ -577,3 +573,63 @@ class TestDuesInvoiceRepository(unittest.TestCase):
 
         self.assertEqual(member.dues20_amount, Decimal('50.0'))
         self.assertEqual(member.dues20_start, u'q1_2020')
+
+    def test_record_dues_email_sent(self):
+        """
+        Test the record_dues_email_sent method
+        """
+        member = C3sMember.get_by_id(1)
+
+        # 2015
+        member.dues15_invoice = None
+        member.dues15_invoice_date = None
+
+        DuesInvoiceRepository.record_dues_email_sent(2015, member)
+
+        self.assertTrue(member.dues15_invoice)
+        self.assertEqual(member.dues15_invoice_date.date(), date.today())
+
+        # 2016
+        member.dues16_invoice = None
+        member.dues16_invoice_date = None
+
+        DuesInvoiceRepository.record_dues_email_sent(2016, member)
+
+        self.assertTrue(member.dues16_invoice)
+        self.assertEqual(member.dues16_invoice_date.date(), date.today())
+
+        # 2017
+        member.dues17_invoice = None
+        member.dues17_invoice_date = None
+
+        DuesInvoiceRepository.record_dues_email_sent(2017, member)
+
+        self.assertTrue(member.dues17_invoice)
+        self.assertEqual(member.dues17_invoice_date.date(), date.today())
+
+        # 2018
+        member.dues18_invoice = None
+        member.dues18_invoice_date = None
+
+        DuesInvoiceRepository.record_dues_email_sent(2018, member)
+
+        self.assertTrue(member.dues18_invoice)
+        self.assertEqual(member.dues18_invoice_date.date(), date.today())
+
+        # 2019
+        member.dues19_invoice = None
+        member.dues19_invoice_date = None
+
+        DuesInvoiceRepository.record_dues_email_sent(2019, member)
+
+        self.assertTrue(member.dues19_invoice)
+        self.assertEqual(member.dues19_invoice_date.date(), date.today())
+
+        # 2020
+        member.dues20_invoice = None
+        member.dues20_invoice_date = None
+
+        DuesInvoiceRepository.record_dues_email_sent(2020, member)
+
+        self.assertTrue(member.dues20_invoice)
+        self.assertEqual(member.dues20_invoice_date.date(), date.today())

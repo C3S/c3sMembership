@@ -304,6 +304,34 @@ class DuesInvoiceRepository(object):
             member.dues20_start = dues_calculation.code
         DBSession().flush()
 
+    @classmethod
+    def record_dues_email_sent(cls, year, member):
+        """
+        Record the fact that the dues email was sent and when it was sent
+        """
+        # TODO: This is only a workaround until the data model has been cleaned
+        # up and there is an extra table to record dues per year and member.
+        invoice_date = datetime.now()
+        if year == 2015:
+            member.dues15_invoice = True
+            member.dues15_invoice_date = invoice_date
+        if year == 2016:
+            member.dues16_invoice = True
+            member.dues16_invoice_date = invoice_date
+        if year == 2017:
+            member.dues17_invoice = True
+            member.dues17_invoice_date = invoice_date
+        if year == 2018:
+            member.dues18_invoice = True
+            member.dues18_invoice_date = invoice_date
+        if year == 2019:
+            member.dues19_invoice = True
+            member.dues19_invoice_date = invoice_date
+        if year == 2020:
+            member.dues20_invoice = True
+            member.dues20_invoice_date = invoice_date
+        DBSession().flush()
+
     @staticmethod
     def _get_dues_invoice_class(year):
         """
