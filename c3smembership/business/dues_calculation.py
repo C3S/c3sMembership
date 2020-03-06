@@ -12,6 +12,7 @@ class DuesCalculator(object):
     """
     Abstract dues calculator base class
     """
+
     # pylint: disable=too-few-public-methods
 
     def calculate(self, member):
@@ -62,7 +63,6 @@ class QuarterlyDuesCalculator(object):
         },
     }
     """Define the quarter descriptions for the locale"""
-
     def __init__(self, total_amount, year):
         """
         Initialise the QuarterlyDuesCalculator instance
@@ -114,9 +114,8 @@ class QuarterlyDuesCalculator(object):
                 quarterly_factor = self._QUARTERLY_FACTORS[quarter]
                 amount = self._total_amount * quarterly_factor
                 description = self.get_description(quarter, member.locale)
-                code = u'{quarter}_{year}'.format(
-                    quarter=quarter,
-                    year=self._year)
+                code = u'{quarter}_{year}'.format(quarter=quarter,
+                                                  year=self._year)
         return (amount, code, description)
 
     def calculate_quarter(self, member):
