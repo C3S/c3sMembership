@@ -261,6 +261,34 @@ class DuesInvoiceRepository(object):
 
         return invoice
 
+    @classmethod
+    def store_dues(self, year, member, dues_calculation):
+        """
+        Store the dues
+
+        TODO: This is only a workaround until the data model has been cleaned
+        up and there is an extra table to record dues per year and member.
+        """
+        if year == 2015:
+            member.set_dues15_amount(dues_calculation.amount)
+            member.dues15_start = dues_calculation.code
+        if year == 2016:
+            member.set_dues16_amount(dues_calculation.amount)
+            member.dues16_start = dues_calculation.code
+        if year == 2017:
+            member.set_dues17_amount(dues_calculation.amount)
+            member.dues17_start = dues_calculation.code
+        if year == 2018:
+            member.set_dues18_amount(dues_calculation.amount)
+            member.dues18_start = dues_calculation.code
+        if year == 2019:
+            member.set_dues19_amount(dues_calculation.amount)
+            member.dues19_start = dues_calculation.code
+        if year == 2020:
+            member.set_dues20_amount(dues_calculation.amount)
+            member.dues20_start = dues_calculation.code
+        DBSession().flush()
+
     @staticmethod
     def _get_dues_invoice_class(year):
         """

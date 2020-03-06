@@ -28,6 +28,8 @@ from c3smembership.data.model.base.dues20invoice import Dues20Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
+from c3smembership.business.dues_calculation import DuesCalculation
+
 
 class TestDuesInvoiceRepository(unittest.TestCase):
     """
@@ -480,8 +482,8 @@ class TestDuesInvoiceRepository(unittest.TestCase):
                                        Decimal('50.0'), u'LFSKJFLSDKJH')
         self._test_create_dues_invoice(2016, 3635, u'asdf3635',
                                        Decimal('25.0'), u'VLMKEKMLVKELK')
-        self._test_create_dues_invoice(2017, 8, u'dfg8',
-                                       Decimal('12.34'), u'LMVKVFKS')
+        self._test_create_dues_invoice(2017, 8, u'dfg8', Decimal('12.34'),
+                                       u'LMVKVFKS')
         self._test_create_dues_invoice(2018, 1919, u'fjgdlkfgj1919',
                                        Decimal('0.01'), u'MVLKSFKSLMV')
         self._test_create_dues_invoice(2019, 1111, u'asdf1111',
@@ -514,3 +516,64 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertEqual(invoice.membership_no, member.membership_number)
         self.assertEqual(invoice.email, member.email)
         self.assertEqual(invoice.token, invoice_token)
+
+    def test_store_dues(self):
+        """
+        Test the store_dues method
+
+        - 2015
+        - 2016
+        - 2017
+        - 2018
+        - 2019
+        - 2020
+        """
+        member = C3sMember.get_by_id(1)
+
+        # 2015
+        dues_calculation = DuesCalculation(Decimal('12.5'), u'q4_2015')
+
+        DuesInvoiceRepository.store_dues(2015, member, dues_calculation)
+
+        self.assertEqual(member.dues15_amount, Decimal('12.5'))
+        self.assertEqual(member.dues15_start, u'q4_2015')
+
+        # 2016
+        dues_calculation = DuesCalculation(Decimal('50.0'), u'q1_2016')
+
+        DuesInvoiceRepository.store_dues(2016, member, dues_calculation)
+
+        self.assertEqual(member.dues16_amount, Decimal('50.0'))
+        self.assertEqual(member.dues16_start, u'q1_2016')
+
+        # 2017
+        dues_calculation = DuesCalculation(Decimal('37.5'), u'q2_2017')
+
+        DuesInvoiceRepository.store_dues(2017, member, dues_calculation)
+
+        self.assertEqual(member.dues17_amount, Decimal('37.5'))
+        self.assertEqual(member.dues17_start, u'q2_2017')
+
+        # 2018
+        dues_calculation = DuesCalculation(Decimal('25.0'), u'q3_2018')
+
+        DuesInvoiceRepository.store_dues(2018, member, dues_calculation)
+
+        self.assertEqual(member.dues18_amount, Decimal('25.0'))
+        self.assertEqual(member.dues18_start, u'q3_2018')
+
+        # 2019
+        dues_calculation = DuesCalculation(Decimal('12.5'), u'q4_2019')
+
+        DuesInvoiceRepository.store_dues(2019, member, dues_calculation)
+
+        self.assertEqual(member.dues19_amount, Decimal('12.5'))
+        self.assertEqual(member.dues19_start, u'q4_2019')
+
+        # 2020
+        dues_calculation = DuesCalculation(Decimal('50.0'), u'q1_2020')
+
+        DuesInvoiceRepository.store_dues(2020, member, dues_calculation)
+
+        self.assertEqual(member.dues20_amount, Decimal('50.0'))
+        self.assertEqual(member.dues20_start, u'q1_2020')
