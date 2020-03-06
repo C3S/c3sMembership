@@ -290,8 +290,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertFalse(self.normal_de.dues20_invoice)
         self.assert_flash(
             response, 'warning',
-            'Member 1 was not a member in 2020. Therefore, you cannot send an '
-            'invoice for 2020')
+            'Member 1 was not a member in 2020. Therefore, the member is not '
+            'applicable for dues in 2020.')
 
         # Error in case membership has not started
         self._reset_member(self.normal_de,
@@ -336,8 +336,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertFalse(self.normal_de.dues20_invoice)
         self.assert_flash(
             response, 'warning',
-            'Member 1 was not a member in 2020. Therefore, you cannot send an '
-            'invoice for 2020')
+            'Member 1 was not a member in 2020. Therefore, the member is not '
+            'applicable for dues in 2020.')
 
         # 2 User must be logged in as staff
         # Success if user is logged in as staff

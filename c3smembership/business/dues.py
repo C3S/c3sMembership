@@ -6,7 +6,7 @@ TODO: The business layer must use a data layer repository for data manipulation
 instead of using the database session and records directly.
 """
 
-from datetime import datetime
+from datetime import (date, datetime)
 from decimal import Decimal
 import random
 import string
@@ -39,21 +39,11 @@ from c3smembership.mail_utils import (
     send_message, )
 
 
-def make_random_string():
+class DuesNotApplicableError(ValueError):
     """
-    Generate a random string used as a dues token
+    Dues are not applicable to the member
     """
-    return u''.join(random.choice(string.ascii_uppercase) for x in range(10))
-
-
-def get_dues_calculator(year):
-    """
-    Get the dues calculator for the year
-
-    The dues calculator bases on 50 € dues per year and calculates a quarterly
-    amount.
-    """
-    return QuarterlyDuesCalculator(Decimal('50'), year)
+    pass
 
 
 def calculate_dues_create_invoice(year, member):
@@ -63,6 +53,8 @@ def calculate_dues_create_invoice(year, member):
     The invoice PDF is not created. If the dues were created before, the
     existing invoice record will be returned.
     """
+    validate_member_dues_applicable(year, member)
+
     invoice = None
     # Get invoice if it exists already
     if invoice_calculated(year, member) is True:
@@ -71,7 +63,7 @@ def calculate_dues_create_invoice(year, member):
     else:
         # Otherweise calculate dues and invoice for normal members
         if 'normal' in member.membership_type:
-            dues_calculator = get_dues_calculator(year)
+            dues_calculator = _get_dues_calculator(year)
             dues_amount, dues_code, _ = \
                 dues_calculator.calculate(member)
             invoice = create_invoice(year, member, dues_amount)
@@ -81,13 +73,47 @@ def calculate_dues_create_invoice(year, member):
     return invoice
 
 
+def is_dues_applicable(year, member):
+    """
+    Indicates whether the dues for the year are applicable to the member
+
+    Args:
+        year (int): The year of the membership dues.
+        member (C3sMember): The member for which the check is performed.
+
+    Returns:
+        (indicator, reason): Tuple of indicator (bool) and reason (unicode).
+        Indicator indicates whether the does for the year are applicable to the
+        member. In case the dues are not applicable a reason is specified.
+    """
+    if not member.membership_accepted:
+        return (False,
+                'Member {} not accepted by the board!'.format(member.id))
+
+    if member.membership_date >= date(year + 1, 1, 1) or (
+            member.membership_loss_date is not None
+            and member.membership_loss_date < date(year, 1, 1)):
+        return (
+            False,
+            'Member {0} was not a member in {1}. Therefore, the member is not '
+            'applicable for dues in {1}.'.format(member.id, year))
+
+    return True, u''
+
+
+def validate_member_dues_applicable(year, member):
+    (indicator, reason) = is_dues_applicable(year, member)
+    if not indicator:
+        raise DuesNotApplicableError(reason)
+
+
 def create_invoice(year, member, dues_amount):
     """
     Create the invoice record
 
     The invoice PDF is not created.
     """
-    randomstring = make_random_string()
+    randomstring = _make_random_string()
 
     max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(year)
     new_invoice_no = int(max_invoice_no) + 1
@@ -150,7 +176,7 @@ def store_dues(year, member, dues_amount, dues_code, invoice_no,
         member.dues20_token = invoice_token
 
 
-def send_dues_email(request, year, member, invoice):
+def send_dues_invoice_email(request, year, member, invoice):
     """
     Send the dues email depending on the membership type
 
@@ -158,7 +184,7 @@ def send_dues_email(request, year, member, invoice):
     recommendation of how much dues to pay.
     """
     if 'normal' in member.membership_type:
-        message = create_dues_email_normal(request, year, member, invoice)
+        message = _create_dues_email_normal(request, year, member, invoice)
     elif 'investing' in member.membership_type:
         message = create_dues_email_investing(request, member)
 
@@ -167,19 +193,36 @@ def send_dues_email(request, year, member, invoice):
         print(message.body.encode('utf-8'))
     else:
         send_message(request, message)
-    record_dues_email_sent(year, member)
+    _record_dues_email_sent(year, member)
 
 
-def create_dues_email_normal(request, year, member, invoice):
+def _make_random_string():
+    """
+    Generate a random string used as a dues token
+    """
+    return u''.join(random.choice(string.ascii_uppercase) for x in range(10))
+
+
+def _get_dues_calculator(year):
+    """
+    Get the dues calculator for the year
+
+    The dues calculator bases on 50 € dues per year and calculates a quarterly
+    amount.
+    """
+    return QuarterlyDuesCalculator(Decimal('50'), year)
+
+
+def _create_dues_email_normal(request, year, member, invoice):
     """
     Create the dues email for normal members
     """
-    dues_calculator = get_dues_calculator(year)
+    dues_calculator = _get_dues_calculator(year)
     dues_description = dues_calculator.get_description(
         dues_calculator.calculate_quarter(member), member.locale)
     start_quarter = dues_description
     invoice_url = get_year_invoice_url(request, year, member)
-    make_dues_invoice_email = make_year_dues_invoice_email(year)
+    make_dues_invoice_email = _make_year_dues_invoice_email(year)
     email_subject, email_body = make_dues_invoice_email(
         member, invoice, invoice_url, start_quarter)
     return Message(
@@ -309,7 +352,7 @@ def invoice_calculated(year, member):
     return year_invoice_calculated[year]
 
 
-def record_dues_email_sent(year, member):
+def _record_dues_email_sent(year, member):
     """
     Record the fact that the dues email was sent and when it was sent
 
@@ -337,7 +380,7 @@ def record_dues_email_sent(year, member):
         member.dues20_invoice_date = invoice_date
 
 
-def make_year_dues_invoice_email(year):
+def _make_year_dues_invoice_email(year):
     """
     Get the make dues invoice email method for the year
 
