@@ -168,6 +168,7 @@ class TestDuesInvoiceRepository(unittest.TestCase):
                               membership_no=member1.membership_number,
                               email=member1.email,
                               token=u'20WXYZ7890'))
+            self.db_session.flush()
 
     def tearDown(self):
         """
@@ -473,3 +474,43 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         # 7. Test not configured year 2000
         stats = DuesInvoiceRepository.get_monthly_stats(2000)
         self.assertIsNone(stats)
+
+    def test_create_dues_invoice(self):
+        self._test_create_dues_invoice(2015, 1234, u'asdf1324',
+                                       Decimal('50.0'), u'LFSKJFLSDKJH')
+        self._test_create_dues_invoice(2016, 3635, u'asdf3635',
+                                       Decimal('25.0'), u'VLMKEKMLVKELK')
+        self._test_create_dues_invoice(2017, 8, u'dfg8',
+                                       Decimal('12.34'), u'LMVKVFKS')
+        self._test_create_dues_invoice(2018, 1919, u'fjgdlkfgj1919',
+                                       Decimal('0.01'), u'MVLKSFKSLMV')
+        self._test_create_dues_invoice(2019, 1111, u'asdf1111',
+                                       Decimal('50.0'), u'KMLERKER')
+        self._test_create_dues_invoice(2020, 1010, u'asdf1010',
+                                       Decimal('50.0'), u'LVHUFSLVELF')
+
+    def _test_create_dues_invoice(self, year, invoice_number,
+                                  invoice_number_string, invoice_amount,
+                                  invoice_token):
+        member = C3sMember.get_by_id(1)
+        invoice = DuesInvoiceRepository.create_dues_invoice(
+            year, member, invoice_number, invoice_number_string,
+            invoice_amount, invoice_token)
+        self.assertEqual(invoice.invoice_no, invoice_number)
+        self.assertEqual(invoice.invoice_no_string, invoice_number_string)
+        self.assertEqual(invoice.invoice_date.date(), date.today())
+        self.assertEqual(invoice.invoice_amount, str(invoice_amount))
+        self.assertEqual(invoice.member_id, member.id)
+        self.assertEqual(invoice.membership_no, member.membership_number)
+        self.assertEqual(invoice.email, member.email)
+        self.assertEqual(invoice.token, invoice_token)
+
+        invoice = DuesInvoiceRepository.get_by_number(invoice_number, year)
+        self.assertEqual(invoice.invoice_no, invoice_number)
+        self.assertEqual(invoice.invoice_no_string, invoice_number_string)
+        self.assertEqual(invoice.invoice_date.date(), date.today())
+        self.assertEqual(invoice.invoice_amount, str(invoice_amount))
+        self.assertEqual(invoice.member_id, member.id)
+        self.assertEqual(invoice.membership_no, member.membership_number)
+        self.assertEqual(invoice.email, member.email)
+        self.assertEqual(invoice.token, invoice_token)

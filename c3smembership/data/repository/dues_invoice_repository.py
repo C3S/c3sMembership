@@ -223,6 +223,63 @@ class DuesInvoiceRepository(object):
         return result
 
     @classmethod
+    def create_dues_invoice(cls, year, member, invoice_number,
+                            invoice_number_string, invoice_amount,
+                            invoice_token):
+        dues_invoice_class = cls._get_dues_invoice_class(year)
+        invoice = dues_invoice_class(
+            invoice_no=invoice_number,
+            invoice_no_string=invoice_number_string,
+            invoice_date=datetime.now(),
+            invoice_amount=u'' + str(invoice_amount),
+            member_id=member.id,
+            membership_no=member.membership_number,
+            email=member.email,
+            token=invoice_token,
+        )
+        DBSession().add(invoice)
+
+        if year == 2015:
+            member.dues15_invoice_no = invoice_number
+            member.dues15_token = invoice_token
+        if year == 2016:
+            member.dues16_invoice_no = invoice_number
+            member.dues16_token = invoice_token
+        if year == 2017:
+            member.dues17_invoice_no = invoice_number
+            member.dues17_token = invoice_token
+        if year == 2018:
+            member.dues18_invoice_no = invoice_number
+            member.dues18_token = invoice_token
+        if year == 2019:
+            member.dues19_invoice_no = invoice_number
+            member.dues19_token = invoice_token
+        if year == 2020:
+            member.dues20_invoice_no = invoice_number
+            member.dues20_token = invoice_token
+        DBSession.flush()
+
+        return invoice
+
+    @staticmethod
+    def _get_dues_invoice_class(year):
+        """
+        Get the dues invoice class for creating a database record
+
+        TODO: This is only a workaround until the data model has been cleaned
+        up and there is an extra table to record dues per year and member.
+        """
+        year_classes = {
+            2015: Dues15Invoice,
+            2016: Dues16Invoice,
+            2017: Dues17Invoice,
+            2018: Dues18Invoice,
+            2019: Dues19Invoice,
+            2020: Dues20Invoice,
+        }
+        return year_classes[year]
+
+    @classmethod
     def token_exists(cls, token, year):
         """
         Indicates whether a token exists for a specific year

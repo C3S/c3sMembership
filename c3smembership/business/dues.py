@@ -14,12 +14,6 @@ import string
 from pyramid_mailer.message import Message
 
 from c3smembership.data.model.base import DBSession
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
-from c3smembership.data.model.base.dues16invoice import Dues16Invoice
-from c3smembership.data.model.base.dues17invoice import Dues17Invoice
-from c3smembership.data.model.base.dues18invoice import Dues18Invoice
-from c3smembership.data.model.base.dues19invoice import Dues19Invoice
-from c3smembership.data.model.base.dues20invoice import Dues20Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
@@ -35,8 +29,7 @@ from c3smembership.business.dues_texts import (
     make_dues_invoice_legalentity_email,
 )
 
-from c3smembership.mail_utils import (
-    send_message, )
+from c3smembership.mail_utils import send_message
 
 
 class DuesNotApplicableError(ValueError):
@@ -100,7 +93,7 @@ def calculate_dues_create_invoice(year, member):
             dues_calculator = _get_dues_calculator(year)
             dues_amount, dues_code, _ = \
                 dues_calculator.calculate(member)
-            invoice = create_invoice(year, member, dues_amount)
+            invoice = create_dues_invoice(year, member, dues_amount)
             store_dues(year, member, dues_amount, dues_code)
             DBSession().flush()
     return invoice
@@ -134,51 +127,37 @@ def is_dues_applicable(year, member):
     return True, u''
 
 
-def create_invoice(year, member, dues_amount):
+def create_dues_invoice(year, member, dues_amount):
     """
     Create the invoice record
 
     The invoice PDF is not created.
-    """
-    invoice_token = _make_random_string()
 
+    Args:
+        year (int): The year for which the dues invoice is created.
+        member (C3sMember): The member for which the dues invoice is created.
+        invoice_amount (Decimal): The amount for which the invoice is created.
+
+    Business logic:
+
+    - Create new invoice number by getting last per year and incrementing
+    - Create invoice number string like C3S-dues2020-1234 for invoice number
+      1234 in year 2020
+    - Generate unique invoice token to identify the invoice
+    """
     max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(year)
     new_invoice_no = int(max_invoice_no) + 1
 
-    dues_invoice_class = _get_dues_invoice_class(year)
-    invoice = dues_invoice_class(
-        invoice_no=new_invoice_no,
-        invoice_no_string=(u'C3S-dues{0}-{1}'.format(
+    invoice = DuesInvoiceRepository.create_dues_invoice(
+        year,
+        member,
+        invoice_number=new_invoice_no,
+        invoice_number_string=(u'C3S-dues{0}-{1}'.format(
             year,
             str(new_invoice_no).zfill(4))),
-        invoice_date=datetime.now(),
-        invoice_amount=u'' + str(dues_amount),
-        member_id=member.id,
-        membership_no=member.membership_number,
-        email=member.email,
-        token=invoice_token,
-    )
+        invoice_amount=dues_amount,
+        invoice_token=_make_random_string())
 
-    if year == 2015:
-        member.dues15_invoice_no = new_invoice_no
-        member.dues15_token = invoice_token
-    if year == 2016:
-        member.dues16_invoice_no = new_invoice_no
-        member.dues16_token = invoice_token
-    if year == 2017:
-        member.dues17_invoice_no = new_invoice_no
-        member.dues17_token = invoice_token
-    if year == 2018:
-        member.dues18_invoice_no = new_invoice_no
-        member.dues18_token = invoice_token
-    if year == 2019:
-        member.dues19_invoice_no = new_invoice_no
-        member.dues19_token = invoice_token
-    if year == 2020:
-        member.dues20_invoice_no = new_invoice_no
-        member.dues20_token = invoice_token
-
-    DBSession().add(invoice)
     return invoice
 
 
@@ -338,29 +317,10 @@ def _get_year_invoice_url(request, year, member):
         invoice_code = member.dues20_token
         invoice_number = member.dues20_invoice_no
 
-    return request.route_url(
-        invoice_year_route,
-        email=member.email,
-        code=invoice_code,
-        i=str(invoice_number).zfill(4))
-
-
-def _get_dues_invoice_class(year):
-    """
-    Get the dues invoice class for creating a database record
-
-    TODO: This is only a workaround until the data model has been cleaned up
-    and there is an extra table to record dues per year and member.
-    """
-    year_classes = {
-        2015: Dues15Invoice,
-        2016: Dues16Invoice,
-        2017: Dues17Invoice,
-        2018: Dues18Invoice,
-        2019: Dues19Invoice,
-        2020: Dues20Invoice,
-    }
-    return year_classes[year]
+    return request.route_url(invoice_year_route,
+                             email=member.email,
+                             code=invoice_code,
+                             i=str(invoice_number).zfill(4))
 
 
 def _get_year_invoice_number(year, member):
