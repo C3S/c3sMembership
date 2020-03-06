@@ -35,9 +35,12 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid_mailer.message import Message
 
-from c3smembership.business.dues import (calculate_dues_create_invoice,
-                                         send_dues_invoice_email,
-                                         DuesNotApplicableError)
+from c3smembership.business.dues import (
+    calculate_dues_create_invoice,
+    send_dues_invoice_email,
+    DuesNotApplicableError,
+    InvoiceUrlCreator,
+)
 from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
@@ -91,6 +94,67 @@ def get_euro_string(euro_amount):
     return euro_string.replace(u'\u20ac', '').replace(u'\xa0', '')
 
 
+class PyramidInvoiceUrlCreator(InvoiceUrlCreator):
+    """
+    Create invoice URLs according the Pyramid routes
+    """
+    def __init__(self, request):
+        """
+        Initialize the PyramidInvoiceUrlCreator object
+
+        Args:
+            request (pyramid.request.Request): The request used to craete the
+                route URLs.
+        """
+        self._request = request
+
+    def __call__(self, year, member, invoice):
+        """
+        Create an invoice URL
+
+        Args:
+            year (int): The year of the invoice.
+            member (C3sMember): The member of the invoice.
+            invoice: The invoice for which the URL is created.
+
+        Returns:
+            A string representing the invoice URL.
+        """
+        invoice_year_route = ''
+        invoice_code = ''
+        invoice_number = ''
+
+        if year == 2015:
+            invoice_year_route = 'make_dues15_invoice_no_pdf'
+            invoice_code = member.dues15_token
+            invoice_number = member.dues15_invoice_no
+        if year == 2016:
+            invoice_year_route = 'make_dues16_invoice_no_pdf'
+            invoice_code = member.dues16_token
+            invoice_number = member.dues16_invoice_no
+        if year == 2017:
+            invoice_year_route = 'make_dues17_invoice_no_pdf'
+            invoice_code = member.dues17_token
+            invoice_number = member.dues17_invoice_no
+        if year == 2018:
+            invoice_year_route = 'make_dues18_invoice_no_pdf'
+            invoice_code = member.dues18_token
+            invoice_number = member.dues18_invoice_no
+        if year == 2019:
+            invoice_year_route = 'make_dues19_invoice_no_pdf'
+            invoice_code = member.dues19_token
+            invoice_number = member.dues19_invoice_no
+        if year == 2020:
+            invoice_year_route = 'make_dues20_invoice_no_pdf'
+            invoice_code = member.dues20_token
+            invoice_number = member.dues20_invoice_no
+
+        return self._request.route_url(invoice_year_route,
+                                       email=member.email,
+                                       code=invoice_code,
+                                       i=str(invoice_number).zfill(4))
+
+
 @view_config(
     permission='manage',
     route_name='send_dues20_invoice_email',
@@ -119,7 +183,8 @@ def send_dues20_invoice_email(request, member_id=None):
 
     try:
         invoice = calculate_dues_create_invoice(YEAR, member)
-        send_dues_invoice_email(request, YEAR, member, invoice)
+        send_dues_invoice_email(request, YEAR, member, invoice,
+                                PyramidInvoiceUrlCreator(request))
     except DuesNotApplicableError as dues_not_applicable_error:
         request.session.flash(dues_not_applicable_error.message, 'warning')
         return get_memberhip_listing_redirect(request)

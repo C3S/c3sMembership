@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Handle membership dues
-
-TODO: The business layer must use a data layer repository for data manipulation
-instead of using the database session and records directly.
 """
+# TODO: The business layer must use a data layer repository for data
+# manipulation instead of using the database session and records directly.
 
 from datetime import (date, datetime)
 from decimal import Decimal
@@ -57,7 +56,7 @@ def calculate_dues_create_invoice(year, member):
       - 1.1 Calculate quarterly dues
       - 1.2 Store dues data
       - 1.3 Store invoice data
-      - 1.4 Generate invoice PDF (TODO!)
+      - 1.4 Generate invoice PDF (not implemented here yet)
 
     - 2 No dues calculation for investing members
     - 3 Send email depending on membership type and entity type
@@ -75,6 +74,8 @@ def calculate_dues_create_invoice(year, member):
     - 4 Store that and when dues were calculated and email was sent
     - 5 If called again only resend email but only calculate dues once
     """
+    # TODO: Implement PDF invoice generation
+
     _validate_member_dues_applicable(year, member)
 
     invoice = None
@@ -156,15 +157,19 @@ def create_dues_invoice(year, member, dues_amount):
     return invoice
 
 
-def send_dues_invoice_email(request, year, member, invoice):
+def send_dues_invoice_email(request, year, member, invoice,
+                            invoice_url_creator):
     """
     Send the dues email depending on the membership type
 
     Normal members get an email with the invoice URL. Investing members get a
     recommendation of how much dues to pay.
+
     """
+    # TODO: Pyramid request does not belong into the business layer.
     if 'normal' in member.membership_type:
-        message = _create_dues_email_normal(request, year, member, invoice)
+        message = _create_dues_email_normal(request, year, member, invoice,
+                                            invoice_url_creator)
     elif 'investing' in member.membership_type:
         message = _create_dues_email_investing(request, member)
 
@@ -211,15 +216,17 @@ def _get_dues_calculator(year):
     return QuarterlyDuesCalculator(Decimal('50'), year)
 
 
-def _create_dues_email_normal(request, year, member, invoice):
+def _create_dues_email_normal(request, year, member, invoice,
+                              invoice_url_creator):
     """
     Create the dues email for normal members
     """
+    # TODO: Pyramid request does not belong into the business layer.
     dues_calculator = _get_dues_calculator(year)
     dues_description = dues_calculator.get_description(
         dues_calculator.calculate_quarter(member), member.locale)
     start_quarter = dues_description
-    invoice_url = _get_year_invoice_url(request, year, member)
+    invoice_url = invoice_url_creator(year, member, invoice)
     email_subject, email_body = make_dues_invoice_email(
         member, invoice, invoice_url, start_quarter)
     return Message(
@@ -234,6 +241,7 @@ def _create_dues_email_investing(request, member):
     """
     Create the dues email for investing members
     """
+    # TODO: Pyramid request does not belong into the business layer.
     if member.is_legalentity:
         email_subject, email_body = \
             make_dues_invoice_legalentity_email(member)
@@ -248,56 +256,36 @@ def _create_dues_email_investing(request, member):
     )
 
 
-def _get_year_invoice_url(request, year, member):
+class InvoiceUrlCreator(object):
     """
-    Get the invoice url for the year
+    Create invoice URLs according to the presentation layer
 
-    TODO: This is only a workaround until the data model has been cleaned up
-    and there is an extra table to record dues per year and member.
+    The presentation layer knows how to create invoice URLs as it handles
+    these. With an implementation of the InvoiceUrlCreator the presentation
+    layer hands down the ability to create such an URL which can then be
+    included into emails.
     """
-    invoice_year_route = ''
-    invoice_code = ''
-    invoice_number = ''
+    def __call__(self, year, member, invoice):
+        """
+        Create an invoice URL
 
-    if year == 2015:
-        invoice_year_route = 'make_dues15_invoice_no_pdf'
-        invoice_code = member.dues15_token
-        invoice_number = member.dues15_invoice_no
-    if year == 2016:
-        invoice_year_route = 'make_dues16_invoice_no_pdf'
-        invoice_code = member.dues16_token
-        invoice_number = member.dues16_invoice_no
-    if year == 2017:
-        invoice_year_route = 'make_dues17_invoice_no_pdf'
-        invoice_code = member.dues17_token
-        invoice_number = member.dues17_invoice_no
-    if year == 2018:
-        invoice_year_route = 'make_dues18_invoice_no_pdf'
-        invoice_code = member.dues18_token
-        invoice_number = member.dues18_invoice_no
-    if year == 2019:
-        invoice_year_route = 'make_dues19_invoice_no_pdf'
-        invoice_code = member.dues19_token
-        invoice_number = member.dues19_invoice_no
-    if year == 2020:
-        invoice_year_route = 'make_dues20_invoice_no_pdf'
-        invoice_code = member.dues20_token
-        invoice_number = member.dues20_invoice_no
+        Args:
+            year (int): The year of the invoice.
+            member (C3sMember): The member of the invoice.
+            invoice: The invoice for which the URL is created.
 
-    # TODO: Pyramid request does not belong into the business layer!
-    return request.route_url(invoice_year_route,
-                             email=member.email,
-                             code=invoice_code,
-                             i=str(invoice_number).zfill(4))
+        Returns:
+            A string representing the invoice URL.
+        """
+        raise NotImplementedError()
 
 
 def _get_year_invoice_number(year, member):
     """
     Get the year's invoice number
-
-    TODO: This is only a workaround until the data model has been cleaned up
-    and there is an extra table to record dues per year and member.
     """
+    # TODO: This is only a workaround until the data model has been cleaned up
+    # and there is an extra table to record dues per year and member.
     year_invoice_number = {
         2015: member.dues15_invoice_no,
         2016: member.dues16_invoice_no,
@@ -312,10 +300,9 @@ def _get_year_invoice_number(year, member):
 def _invoice_calculated(year, member):
     """
     Check whether the invoice for the year was calculated
-
-    TODO: This is only a workaround until the data model has been cleaned up
-    and there is an extra table to record dues per year and member.
     """
+    # TODO: This is only a workaround until the data model has been cleaned up
+    # and there is an extra table to record dues per year and member.
     year_invoice_calculated = {
         2015: member.dues15_invoice,
         2016: member.dues16_invoice,
@@ -330,10 +317,9 @@ def _invoice_calculated(year, member):
 def _record_dues_email_sent(year, member):
     """
     Record the fact that the dues email was sent and when it was sent
-
-    TODO: This is only a workaround until the data model has been cleaned up
-    and there is an extra table to record dues per year and member.
     """
+    # TODO: This is only a workaround until the data model has been cleaned up
+    # and there is an extra table to record dues per year and member.
     invoice_date = datetime.now()
     if year == 2015:
         member.dues15_invoice = True
