@@ -601,6 +601,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
                          date.today())
 
         # 5 If called again only resend email but only calculate dues once
+        # Normal
         mailer = self._mock_mailer()
         self._reset_member(self.normal_en, membership_date=date(2019, 12, 31))
         self._send_invoice(self.normal_en.id)
@@ -615,6 +616,20 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self.assertTrue('You will find the invoice here:' in message.body)
         self.assertEqual(self.normal_en.dues20_amount, Decimal('50.0'))
         self.assertEqual(self.normal_en.dues20_start, 'q1_2020')
+
+        # Investing
+        mailer = self._mock_mailer()
+        self._reset_member(self.investing_en,
+                           membership_date=date(2019, 12, 31))
+        self._send_invoice(self.investing_en.id)
+        self.assertTrue(self.investing_en.dues20_invoice)
+        self._mock_mailer()
+
+        self._send_invoice(self.investing_en.id)
+
+        message = self._get_mock_mailer_message(mailer)
+        self.assertTrue('Since you are an investing member' in message.body)
+        self.assertTrue(self.investing_en.dues20_invoice)
 
     def _send_invoice(self, member_id):
         """

@@ -87,13 +87,13 @@ def calculate_dues_create_invoice(year, member):
     - 4 Store that and when dues were calculated and email was sent
     - 5 If called again only resend email but only calculate dues once
     """
-    validate_member_dues_applicable(year, member)
+    _validate_member_dues_applicable(year, member)
 
     invoice = None
     # Get invoice if it exists already
-    if invoice_calculated(year, member):
+    if _invoice_calculated(year, member):
         invoice = DuesInvoiceRepository.get_by_number(
-            get_year_invoice_number(year, member), year)
+            _get_year_invoice_number(year, member), year)
     else:
         # Otherweise calculate dues and invoice for normal members
         if 'normal' in member.membership_type:
@@ -101,8 +101,7 @@ def calculate_dues_create_invoice(year, member):
             dues_amount, dues_code, _ = \
                 dues_calculator.calculate(member)
             invoice = create_invoice(year, member, dues_amount)
-            store_dues(year, member, dues_amount, dues_code,
-                       invoice.invoice_no, invoice.token)
+            store_dues(year, member, dues_amount, dues_code)
             DBSession().flush()
     return invoice
 
@@ -135,7 +134,102 @@ def is_dues_applicable(year, member):
     return True, u''
 
 
-def validate_member_dues_applicable(year, member):
+def create_invoice(year, member, dues_amount):
+    """
+    Create the invoice record
+
+    The invoice PDF is not created.
+    """
+    invoice_token = _make_random_string()
+
+    max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(year)
+    new_invoice_no = int(max_invoice_no) + 1
+
+    dues_invoice_class = _get_dues_invoice_class(year)
+    invoice = dues_invoice_class(
+        invoice_no=new_invoice_no,
+        invoice_no_string=(u'C3S-dues{0}-{1}'.format(
+            year,
+            str(new_invoice_no).zfill(4))),
+        invoice_date=datetime.now(),
+        invoice_amount=u'' + str(dues_amount),
+        member_id=member.id,
+        membership_no=member.membership_number,
+        email=member.email,
+        token=invoice_token,
+    )
+
+    if year == 2015:
+        member.dues15_invoice_no = new_invoice_no
+        member.dues15_token = invoice_token
+    if year == 2016:
+        member.dues16_invoice_no = new_invoice_no
+        member.dues16_token = invoice_token
+    if year == 2017:
+        member.dues17_invoice_no = new_invoice_no
+        member.dues17_token = invoice_token
+    if year == 2018:
+        member.dues18_invoice_no = new_invoice_no
+        member.dues18_token = invoice_token
+    if year == 2019:
+        member.dues19_invoice_no = new_invoice_no
+        member.dues19_token = invoice_token
+    if year == 2020:
+        member.dues20_invoice_no = new_invoice_no
+        member.dues20_token = invoice_token
+
+    DBSession().add(invoice)
+    return invoice
+
+
+def store_dues(year, member, dues_amount, dues_code):
+    """
+    Store the dues
+
+    TODO: This is only a workaround until the data model has been cleaned up
+    and there is an extra table to record dues per year and member.
+    """
+    if year == 2015:
+        member.set_dues15_amount(dues_amount)
+        member.dues15_start = dues_code
+    if year == 2016:
+        member.set_dues16_amount(dues_amount)
+        member.dues16_start = dues_code
+    if year == 2017:
+        member.set_dues17_amount(dues_amount)
+        member.dues17_start = dues_code
+    if year == 2018:
+        member.set_dues18_amount(dues_amount)
+        member.dues18_start = dues_code
+    if year == 2019:
+        member.set_dues19_amount(dues_amount)
+        member.dues19_start = dues_code
+    if year == 2020:
+        member.set_dues20_amount(dues_amount)
+        member.dues20_start = dues_code
+
+
+def send_dues_invoice_email(request, year, member, invoice):
+    """
+    Send the dues email depending on the membership type
+
+    Normal members get an email with the invoice URL. Investing members get a
+    recommendation of how much dues to pay.
+    """
+    if 'normal' in member.membership_type:
+        message = _create_dues_email_normal(request, year, member, invoice)
+    elif 'investing' in member.membership_type:
+        message = _create_dues_email_investing(request, member)
+
+    if 'true' in request.registry.settings['testing.mail_to_console']:
+        # pylint: disable=superfluous-parens
+        print(message.body.encode('utf-8'))
+    else:
+        send_message(request, message)
+    _record_dues_email_sent(year, member)
+
+
+def _validate_member_dues_applicable(year, member):
     """
     Validate that the member is applicable for the dues of the year
 
@@ -151,95 +245,6 @@ def validate_member_dues_applicable(year, member):
     (indicator, reason) = is_dues_applicable(year, member)
     if not indicator:
         raise DuesNotApplicableError(reason)
-
-
-def create_invoice(year, member, dues_amount):
-    """
-    Create the invoice record
-
-    The invoice PDF is not created.
-    """
-    randomstring = _make_random_string()
-
-    max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(year)
-    new_invoice_no = int(max_invoice_no) + 1
-
-    dues_invoice_class = get_dues_invoice_class(year)
-    invoice = dues_invoice_class(
-        invoice_no=new_invoice_no,
-        invoice_no_string=(u'C3S-dues{0}-{1}'.format(
-            year,
-            str(new_invoice_no).zfill(4))),
-        invoice_date=datetime.now(),
-        invoice_amount=u'' + str(dues_amount),
-        member_id=member.id,
-        membership_no=member.membership_number,
-        email=member.email,
-        token=randomstring,
-    )
-
-    DBSession().add(invoice)
-    return invoice
-
-
-def store_dues(year, member, dues_amount, dues_code, invoice_no,
-               invoice_token):
-    """
-    Store the dues
-
-    TODO: This is only a workaround until the data model has been cleaned up
-    and there is an extra table to record dues per year and member.
-    """
-    if year == 2015:
-        member.set_dues15_amount(dues_amount)
-        member.dues15_start = dues_code
-        member.dues15_invoice_no = invoice_no
-        member.dues15_token = invoice_token
-    if year == 2016:
-        member.set_dues16_amount(dues_amount)
-        member.dues16_start = dues_code
-        member.dues16_invoice_no = invoice_no
-        member.dues16_token = invoice_token
-    if year == 2017:
-        member.set_dues17_amount(dues_amount)
-        member.dues17_start = dues_code
-        member.dues17_invoice_no = invoice_no
-        member.dues17_token = invoice_token
-    if year == 2018:
-        member.set_dues18_amount(dues_amount)
-        member.dues18_start = dues_code
-        member.dues18_invoice_no = invoice_no
-        member.dues18_token = invoice_token
-    if year == 2019:
-        member.set_dues19_amount(dues_amount)
-        member.dues19_start = dues_code
-        member.dues19_invoice_no = invoice_no
-        member.dues19_token = invoice_token
-    if year == 2020:
-        member.set_dues20_amount(dues_amount)
-        member.dues20_start = dues_code
-        member.dues20_invoice_no = invoice_no
-        member.dues20_token = invoice_token
-
-
-def send_dues_invoice_email(request, year, member, invoice):
-    """
-    Send the dues email depending on the membership type
-
-    Normal members get an email with the invoice URL. Investing members get a
-    recommendation of how much dues to pay.
-    """
-    if 'normal' in member.membership_type:
-        message = _create_dues_email_normal(request, year, member, invoice)
-    elif 'investing' in member.membership_type:
-        message = create_dues_email_investing(request, member)
-
-    if 'true' in request.registry.settings['testing.mail_to_console']:
-        # pylint: disable=superfluous-parens
-        print(message.body.encode('utf-8'))
-    else:
-        send_message(request, message)
-    _record_dues_email_sent(year, member)
 
 
 def _make_random_string():
@@ -267,7 +272,7 @@ def _create_dues_email_normal(request, year, member, invoice):
     dues_description = dues_calculator.get_description(
         dues_calculator.calculate_quarter(member), member.locale)
     start_quarter = dues_description
-    invoice_url = get_year_invoice_url(request, year, member)
+    invoice_url = _get_year_invoice_url(request, year, member)
     make_dues_invoice_email = _make_year_dues_invoice_email(year)
     email_subject, email_body = make_dues_invoice_email(
         member, invoice, invoice_url, start_quarter)
@@ -279,7 +284,7 @@ def _create_dues_email_normal(request, year, member, invoice):
     )
 
 
-def create_dues_email_investing(request, member):
+def _create_dues_email_investing(request, member):
     """
     Create the dues email for investing members
     """
@@ -297,54 +302,50 @@ def create_dues_email_investing(request, member):
     )
 
 
-def get_year_invoice_url(request, year, member):
+def _get_year_invoice_url(request, year, member):
     """
     Get the invoice url for the year
 
     TODO: This is only a workaround until the data model has been cleaned up
     and there is an extra table to record dues per year and member.
     """
-    year_invoice_url = ''
+    invoice_year_route = ''
+    invoice_code = ''
+    invoice_number = ''
+
     if year == 2015:
-        year_invoice_url = request.route_url(
-            'make_dues15_invoice_no_pdf',
-            email=member.email,
-            code=member.dues15_token,
-            i=str(member.dues15_invoice_no).zfill(4))
+        invoice_year_route = 'make_dues15_invoice_no_pdf'
+        invoice_code = member.dues15_token
+        invoice_number = member.dues15_invoice_no
     if year == 2016:
-        year_invoice_url = request.route_url(
-            'make_dues16_invoice_no_pdf',
-            email=member.email,
-            code=member.dues16_token,
-            i=str(member.dues16_invoice_no).zfill(4))
+        invoice_year_route = 'make_dues16_invoice_no_pdf'
+        invoice_code = member.dues16_token
+        invoice_number = member.dues16_invoice_no
     if year == 2017:
-        year_invoice_url = request.route_url(
-            'make_dues17_invoice_no_pdf',
-            email=member.email,
-            code=member.dues17_token,
-            i=str(member.dues17_invoice_no).zfill(4))
+        invoice_year_route = 'make_dues17_invoice_no_pdf'
+        invoice_code = member.dues17_token
+        invoice_number = member.dues17_invoice_no
     if year == 2018:
-        year_invoice_url = request.route_url(
-            'make_dues18_invoice_no_pdf',
-            email=member.email,
-            code=member.dues18_token,
-            i=str(member.dues18_invoice_no).zfill(4))
+        invoice_year_route = 'make_dues18_invoice_no_pdf'
+        invoice_code = member.dues18_token
+        invoice_number = member.dues18_invoice_no
     if year == 2019:
-        year_invoice_url = request.route_url(
-            'make_dues19_invoice_no_pdf',
-            email=member.email,
-            code=member.dues19_token,
-            i=str(member.dues19_invoice_no).zfill(4))
+        invoice_year_route = 'make_dues19_invoice_no_pdf'
+        invoice_code = member.dues19_token
+        invoice_number = member.dues19_invoice_no
     if year == 2020:
-        year_invoice_url = request.route_url(
-            'make_dues20_invoice_no_pdf',
-            email=member.email,
-            code=member.dues20_token,
-            i=str(member.dues20_invoice_no).zfill(4))
-    return year_invoice_url
+        invoice_year_route = 'make_dues20_invoice_no_pdf'
+        invoice_code = member.dues20_token
+        invoice_number = member.dues20_invoice_no
+
+    return request.route_url(
+        invoice_year_route,
+        email=member.email,
+        code=invoice_code,
+        i=str(invoice_number).zfill(4))
 
 
-def get_dues_invoice_class(year):
+def _get_dues_invoice_class(year):
     """
     Get the dues invoice class for creating a database record
 
@@ -362,7 +363,7 @@ def get_dues_invoice_class(year):
     return year_classes[year]
 
 
-def get_year_invoice_number(year, member):
+def _get_year_invoice_number(year, member):
     """
     Get the year's invoice number
 
@@ -380,7 +381,7 @@ def get_year_invoice_number(year, member):
     return year_invoice_number[year]
 
 
-def invoice_calculated(year, member):
+def _invoice_calculated(year, member):
     """
     Check whether the invoice for the year was calculated
 

@@ -277,19 +277,17 @@ class DuesInvoiceRepository(object):
         # collect the invoice amounts per month
         invoice_amounts_query = db_session.query(
             invoice_date_month.label('month'),
-            func.sum(expression.case(
-                [(
-                    expression.not_(year_class.is_reversal),
-                    year_class.invoice_amount)],
-                else_=Decimal('0.0'))).label('amount_invoiced_normal'),
-            func.sum(expression.case(
-                [(
-                    year_class.is_reversal,
-                    year_class.invoice_amount)],
-                else_=Decimal('0.0'))).label('amount_invoiced_reversal'),
-            expression.literal_column(
-                '\'0.0\'', DatabaseDecimal).label('amount_paid')
-        ).group_by(invoice_date_month)
+            func.sum(
+                expression.case(
+                    [(expression.not_(
+                        year_class.is_reversal), year_class.invoice_amount)],
+                    else_=Decimal('0.0'))).label('amount_invoiced_normal'),
+            func.sum(
+                expression.case(
+                    [(year_class.is_reversal, year_class.invoice_amount)],
+                    else_=Decimal('0.0'))).label('amount_invoiced_reversal'),
+            expression.literal_column('\'0.0\'', DatabaseDecimal).label(
+                'amount_paid')).group_by(invoice_date_month)
 
         # collect the payments per month
         member_payments_query = db_session.query(
@@ -304,8 +302,8 @@ class DuesInvoiceRepository(object):
             .group_by(payment_date_month)
 
         # union invoice amounts and payments
-        union_all_query = expression.union_all(
-            member_payments_query, invoice_amounts_query)
+        union_all_query = expression.union_all(member_payments_query,
+                                               invoice_amounts_query)
 
         # aggregate invoice amounts and payments by month
         result_query = db_session.query(
@@ -319,14 +317,11 @@ class DuesInvoiceRepository(object):
             .group_by(union_all_query.c.month) \
             .order_by(union_all_query.c.month)
         for month_stat in result_query.all():
-            result.append(
-                {
-                    'month': datetime(
-                        int(month_stat[0][0:4]),
-                        int(month_stat[0][5:7]),
-                        1),
-                    'amount_invoiced_normal': month_stat[1],
-                    'amount_invoiced_reversal': month_stat[2],
-                    'amount_paid': month_stat[3]
-                })
+            result.append({
+                'month': datetime(int(month_stat[0][0:4]),
+                                  int(month_stat[0][5:7]), 1),
+                'amount_invoiced_normal': month_stat[1],
+                'amount_invoiced_reversal': month_stat[2],
+                'amount_paid': month_stat[3]
+            })
         return result
