@@ -10,8 +10,6 @@ from decimal import Decimal
 import random
 import string
 
-from pyramid_mailer.message import Message
-
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
@@ -22,8 +20,6 @@ from c3smembership.business.dues_texts import (
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,
 )
-
-from c3smembership.mail_utils import send_message
 
 
 class DuesNotApplicableError(ValueError):
@@ -157,27 +153,21 @@ def create_dues_invoice(year, member, dues_amount):
     return invoice
 
 
-def send_dues_invoice_email(request, year, member, invoice,
-                            invoice_url_creator):
+def send_dues_invoice_email(year, member, invoice, invoice_url_creator,
+                            dues_email_sender):
     """
     Send the dues email depending on the membership type
 
     Normal members get an email with the invoice URL. Investing members get a
     recommendation of how much dues to pay.
-
     """
-    # TODO: Pyramid request does not belong into the business layer.
     if 'normal' in member.membership_type:
-        message = _create_dues_email_normal(request, year, member, invoice,
-                                            invoice_url_creator)
+        email_subject, email_body = _create_dues_email_normal(
+            year, member, invoice, invoice_url_creator)
     elif 'investing' in member.membership_type:
-        message = _create_dues_email_investing(request, member)
+        email_subject, email_body = _create_dues_email_investing(member)
 
-    if 'true' in request.registry.settings['testing.mail_to_console']:
-        # pylint: disable=superfluous-parens
-        print(message.body.encode('utf-8'))
-    else:
-        send_message(request, message)
+    dues_email_sender(member.email, email_subject, email_body)
     _record_dues_email_sent(year, member)
 
 
@@ -216,12 +206,10 @@ def _get_dues_calculator(year):
     return QuarterlyDuesCalculator(Decimal('50'), year)
 
 
-def _create_dues_email_normal(request, year, member, invoice,
-                              invoice_url_creator):
+def _create_dues_email_normal(year, member, invoice, invoice_url_creator):
     """
     Create the dues email for normal members
     """
-    # TODO: Pyramid request does not belong into the business layer.
     dues_calculator = _get_dues_calculator(year)
     dues_description = dues_calculator.get_description(
         dues_calculator.calculate_quarter(member), member.locale)
@@ -229,31 +217,20 @@ def _create_dues_email_normal(request, year, member, invoice,
     invoice_url = invoice_url_creator(year, member, invoice)
     email_subject, email_body = make_dues_invoice_email(
         member, invoice, invoice_url, start_quarter)
-    return Message(
-        subject=email_subject,
-        sender=request.registry.settings['c3smembership.notification_sender'],
-        recipients=[member.email],
-        body=email_body,
-    )
+    return (email_subject, email_body)
 
 
-def _create_dues_email_investing(request, member):
+def _create_dues_email_investing(member):
     """
     Create the dues email for investing members
     """
-    # TODO: Pyramid request does not belong into the business layer.
     if member.is_legalentity:
         email_subject, email_body = \
             make_dues_invoice_legalentity_email(member)
     else:
         email_subject, email_body = \
             make_dues_invoice_investing_email(member)
-    return Message(
-        subject=email_subject,
-        sender=request.registry.settings['c3smembership.notification_sender'],
-        recipients=[member.email],
-        body=email_body,
-    )
+    return email_subject, email_body
 
 
 class InvoiceUrlCreator(object):
@@ -276,6 +253,26 @@ class InvoiceUrlCreator(object):
 
         Returns:
             A string representing the invoice URL.
+        """
+        raise NotImplementedError()
+
+
+class DuesEmailSender(object):
+    """
+    Send dues emails
+
+    The presentation layer knows how to send emails. With an implementation of
+    the DuesEmailSender the presentation layer hands down the ability to send
+    dues emails to the business layer.
+    """
+    def __call__(self, recipient, subject, body):
+        """
+        Send a dues email
+
+        Args:
+            recipient (str): The recipient of the dues email
+            subject (str): The subject of the dues email
+            body (str): The body of the dues email
         """
         raise NotImplementedError()
 

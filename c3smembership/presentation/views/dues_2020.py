@@ -40,6 +40,7 @@ from c3smembership.business.dues import (
     send_dues_invoice_email,
     DuesNotApplicableError,
     InvoiceUrlCreator,
+    DuesEmailSender,
 )
 from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
 from c3smembership.data.model.base import DBSession
@@ -98,12 +99,13 @@ class PyramidInvoiceUrlCreator(InvoiceUrlCreator):
     """
     Create invoice URLs according the Pyramid routes
     """
+    # pylint: disable=too-few-public-methods
     def __init__(self, request):
         """
         Initialize the PyramidInvoiceUrlCreator object
 
         Args:
-            request (pyramid.request.Request): The request used to craete the
+            request (pyramid.request.Request): The request used to create the
                 route URLs.
         """
         self._request = request
@@ -155,6 +157,44 @@ class PyramidInvoiceUrlCreator(InvoiceUrlCreator):
                                        i=str(invoice_number).zfill(4))
 
 
+class PyramidDuesEmailSender(DuesEmailSender):
+    """
+    Send dues emails using pyramid_mailer
+    """
+    # pylint: disable=too-few-public-methods
+    def __init__(self, request):
+        """
+        Initialize the PyramidDuesEmailSender object
+
+        Args:
+            request (pyramid.request.Request): The request used to send emails.
+        """
+        self._request = request
+
+    def __call__(self, recipient, subject, body):
+        """
+        Send a dues email
+
+        Args:
+            recipient (str): The recipient of the dues email
+            subject (str): The subject of the dues email
+            body (str): The body of the dues email
+        """
+        message = Message(
+            subject=subject,
+            sender=self._request.registry.
+            settings['c3smembership.notification_sender'],
+            recipients=[recipient],
+            body=body,
+        )
+        if 'true' in self._request.registry.settings[
+                'testing.mail_to_console']:
+            # pylint: disable=superfluous-parens
+            print(message.body.encode('utf-8'))
+        else:
+            send_message(self._request, message)
+
+
 @view_config(
     permission='manage',
     route_name='send_dues20_invoice_email',
@@ -183,8 +223,9 @@ def send_dues20_invoice_email(request, member_id=None):
 
     try:
         invoice = calculate_dues_create_invoice(YEAR, member)
-        send_dues_invoice_email(request, YEAR, member, invoice,
-                                PyramidInvoiceUrlCreator(request))
+        send_dues_invoice_email(YEAR, member, invoice,
+                                PyramidInvoiceUrlCreator(request),
+                                PyramidDuesEmailSender(request))
     except DuesNotApplicableError as dues_not_applicable_error:
         request.session.flash(dues_not_applicable_error.message, 'warning')
         return get_memberhip_listing_redirect(request)
