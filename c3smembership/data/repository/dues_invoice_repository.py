@@ -226,6 +226,21 @@ class DuesInvoiceRepository(object):
     def create_dues_invoice(cls, year, member, invoice_number,
                             invoice_number_string, invoice_amount,
                             invoice_token):
+        """
+        Create dues invoice
+
+        Args:
+            year (int): The year for which the invoice is created.
+            member (C3sMember): The member for which the invoice is created.
+            invoice_number (int): The number of the invoice which identifies it
+                uniquely within the year.
+            invoice_number_string (str): The string representation of the
+                invoice number.
+            invoice_amount (Decimal): The amount of the invoice.
+            invoice_token (str): Token to uniquely identify the invoice. The
+                token can be used as a secret to invoices from being accessed
+                without permission.
+        """
         dues_invoice_class = cls._get_dues_invoice_class(year)
         invoice = dues_invoice_class(
             invoice_no=invoice_number,
@@ -257,12 +272,12 @@ class DuesInvoiceRepository(object):
         if year == 2020:
             member.dues20_invoice_no = invoice_number
             member.dues20_token = invoice_token
-        DBSession.flush()
+        DBSession().flush()
 
         return invoice
 
     @classmethod
-    def store_dues(self, year, member, dues_calculation):
+    def store_dues(cls, year, member, dues_calculation):
         """
         Store the dues
 

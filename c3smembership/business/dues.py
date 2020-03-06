@@ -290,6 +290,7 @@ def _get_year_invoice_url(request, year, member):
         invoice_code = member.dues20_token
         invoice_number = member.dues20_invoice_no
 
+    # TODO: Pyramid request does not belong into the business layer!
     return request.route_url(invoice_year_route,
                              email=member.email,
                              code=invoice_code,
