@@ -8,6 +8,23 @@ from datetime import date
 from decimal import Decimal
 
 
+class DuesCalculation(object):
+    """
+    The dues calculation for a specific member in a specific year
+
+    Example:
+
+        >>> dues_calculation = DuesCalculation(Decimal('50.0'), 'q1_2020')
+        >>> dues_calculation.amount
+        Decimal('50.0')
+        >>> dues_calculation.code
+        'q1_2020'
+    """
+    def __init__(self, amount, code):
+        self.amount = amount
+        self.code = code
+
+
 class DuesCalculator(object):
     """
     Abstract dues calculator base class
@@ -100,23 +117,19 @@ class QuarterlyDuesCalculator(object):
             member: The member for who the quarterly dues are calculated
 
         Returns:
-            amount (Decimal): The amount of quarterly dues calculated.
-            code (unicode): The code for the calculated dues.
-            description (unicode): The description of the calculated dues.
+            DuesCalculation: The amount and code of quarterly calculated dues.
         """
         amount = Decimal('0.0')
         code = None
-        description = None
 
         if member.membership_type == 'normal':
             quarter = self.calculate_quarter(member)
             if quarter is not None:
                 quarterly_factor = self._QUARTERLY_FACTORS[quarter]
                 amount = self._total_amount * quarterly_factor
-                description = self.get_description(quarter, member.locale)
                 code = u'{quarter}_{year}'.format(quarter=quarter,
                                                   year=self._year)
-        return (amount, code, description)
+        return DuesCalculation(amount, code)
 
     def calculate_quarter(self, member):
         """

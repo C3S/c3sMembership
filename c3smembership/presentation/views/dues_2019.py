@@ -167,8 +167,7 @@ def send_dues19_invoice_email(request, m_id=None):
             new_invoice_no = int(max_invoice_no) + 1
             DBSession.flush()
 
-        dues_amount, dues_code, dues_description = DUES_CALCULATOR.calculate(
-            member)
+        dues_calculation = DUES_CALCULATOR.calculate(member)
 
         # now we have enough info to update the member info
         # and persist invoice info for bookkeeping
@@ -177,10 +176,10 @@ def send_dues19_invoice_email(request, m_id=None):
         member.dues19_invoice_no = new_invoice_no  # irrelevant for investing
         member.dues19_invoice_date = datetime.now()
         member.dues19_token = randomstring
-        member.dues19_start = dues_code
+        member.dues19_start = dues_calculation.code
 
         if 'normal' in member.membership_type:  # only for normal members
-            member.set_dues19_amount(dues_amount)
+            member.set_dues19_amount(dues_calculation.amount)
             # store some more info about invoice in invoice table
             invoice = Dues19Invoice(
                 invoice_no=member.dues19_invoice_no,

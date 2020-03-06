@@ -52,22 +52,19 @@ class QuarterlyDuesCalculatorTest(TestCase):
         member.locale = 'en'
         member.membership_type = 'normal'
 
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('50.0'))
-        self.assertEqual(code, u'q1_2016')
-        self.assertEqual(description, u'whole year 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('50.0'))
+        self.assertEqual(dues_calculation.code, u'q1_2016')
 
         member.membership_date = date(2016, 1, 1)
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('50.0'))
-        self.assertEqual(code, u'q1_2016')
-        self.assertEqual(description, u'whole year 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('50.0'))
+        self.assertEqual(dues_calculation.code, u'q1_2016')
 
         member.membership_date = date(2016, 3, 31)
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('50.0'))
-        self.assertEqual(code, u'q1_2016')
-        self.assertEqual(description, u'whole year 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('50.0'))
+        self.assertEqual(dues_calculation.code, u'q1_2016')
 
         # 2. Test quarter 2
         member = mock.Mock()
@@ -75,16 +72,14 @@ class QuarterlyDuesCalculatorTest(TestCase):
         member.membership_type = 'normal'
         member.membership_date = date(2016, 4, 1)
 
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('37.5'))
-        self.assertEqual(code, u'q2_2016')
-        self.assertEqual(description, u'from second quarter 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('37.5'))
+        self.assertEqual(dues_calculation.code, u'q2_2016')
 
         member.membership_date = date(2016, 6, 30)
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('37.5'))
-        self.assertEqual(code, u'q2_2016')
-        self.assertEqual(description, u'from second quarter 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('37.5'))
+        self.assertEqual(dues_calculation.code, u'q2_2016')
 
         # 3. Test quarter 3
         member = mock.Mock()
@@ -92,16 +87,14 @@ class QuarterlyDuesCalculatorTest(TestCase):
         member.membership_type = 'normal'
         member.membership_date = date(2016, 7, 1)
 
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('25.0'))
-        self.assertEqual(code, u'q3_2016')
-        self.assertEqual(description, u'from third quarter 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('25.0'))
+        self.assertEqual(dues_calculation.code, u'q3_2016')
 
         member.membership_date = date(2016, 9, 30)
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('25.0'))
-        self.assertEqual(code, u'q3_2016')
-        self.assertEqual(description, u'from third quarter 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('25.0'))
+        self.assertEqual(dues_calculation.code, u'q3_2016')
 
         # 4. Test quarter 4
         member = mock.Mock()
@@ -109,16 +102,14 @@ class QuarterlyDuesCalculatorTest(TestCase):
         member.membership_type = 'normal'
         member.membership_date = date(2016, 10, 1)
 
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('12.5'))
-        self.assertEqual(code, u'q4_2016')
-        self.assertEqual(description, u'from fourth quarter 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('12.5'))
+        self.assertEqual(dues_calculation.code, u'q4_2016')
 
         member.membership_date = date(2016, 12, 31)
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('12.5'))
-        self.assertEqual(code, u'q4_2016')
-        self.assertEqual(description, u'from fourth quarter 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('12.5'))
+        self.assertEqual(dues_calculation.code, u'q4_2016')
 
     def test_calculate_after_the_year(self):
         """
@@ -130,10 +121,9 @@ class QuarterlyDuesCalculatorTest(TestCase):
         member.membership_type = 'normal'
         member.membership_date = date(2017, 1, 1)
 
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('0.0'))
-        self.assertIsNone(code)
-        self.assertIsNone(description)
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('0.0'))
+        self.assertIsNone(dues_calculation.code)
 
     def test_calculate_validation(self):
         """
@@ -156,10 +146,9 @@ class QuarterlyDuesCalculatorTest(TestCase):
         member.membership_date = date(2015, 12, 31)
         member.locale = 'de'
 
-        amount, code, description = calculator.calculate(member)
-        self.assertEqual(amount, Decimal('50.0'))
-        self.assertEqual(code, u'q1_2016')
-        self.assertEqual(description, u'für das ganze Jahr 2016')
+        dues_calculation = calculator.calculate(member)
+        self.assertEqual(dues_calculation.amount, Decimal('50.0'))
+        self.assertEqual(dues_calculation.code, u'q1_2016')
 
     def test_get_description(self):
         """

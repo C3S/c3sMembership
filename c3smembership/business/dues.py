@@ -91,10 +91,10 @@ def calculate_dues_create_invoice(year, member):
         # Otherweise calculate dues and invoice for normal members
         if 'normal' in member.membership_type:
             dues_calculator = _get_dues_calculator(year)
-            dues_amount, dues_code, _ = \
-                dues_calculator.calculate(member)
-            invoice = create_dues_invoice(year, member, dues_amount)
-            store_dues(year, member, dues_amount, dues_code)
+            dues_calculation = dues_calculator.calculate(member)
+            invoice = create_dues_invoice(year, member,
+                                          dues_calculation.amount)
+            store_dues(year, member, dues_calculation)
             DBSession().flush()
     return invoice
 
@@ -161,7 +161,7 @@ def create_dues_invoice(year, member, dues_amount):
     return invoice
 
 
-def store_dues(year, member, dues_amount, dues_code):
+def store_dues(year, member, dues_calculation):
     """
     Store the dues
 
@@ -169,23 +169,23 @@ def store_dues(year, member, dues_amount, dues_code):
     and there is an extra table to record dues per year and member.
     """
     if year == 2015:
-        member.set_dues15_amount(dues_amount)
-        member.dues15_start = dues_code
+        member.set_dues15_amount(dues_calculation.amount)
+        member.dues15_start = dues_calculation.code
     if year == 2016:
-        member.set_dues16_amount(dues_amount)
-        member.dues16_start = dues_code
+        member.set_dues16_amount(dues_calculation.amount)
+        member.dues16_start = dues_calculation.code
     if year == 2017:
-        member.set_dues17_amount(dues_amount)
-        member.dues17_start = dues_code
+        member.set_dues17_amount(dues_calculation.amount)
+        member.dues17_start = dues_calculation.code
     if year == 2018:
-        member.set_dues18_amount(dues_amount)
-        member.dues18_start = dues_code
+        member.set_dues18_amount(dues_calculation.amount)
+        member.dues18_start = dues_calculation.code
     if year == 2019:
-        member.set_dues19_amount(dues_amount)
-        member.dues19_start = dues_code
+        member.set_dues19_amount(dues_calculation.amount)
+        member.dues19_start = dues_calculation.code
     if year == 2020:
-        member.set_dues20_amount(dues_amount)
-        member.dues20_start = dues_code
+        member.set_dues20_amount(dues_calculation.amount)
+        member.dues20_start = dues_calculation.code
 
 
 def send_dues_invoice_email(request, year, member, invoice):
