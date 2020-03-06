@@ -19,12 +19,7 @@ from c3smembership.data.repository.dues_invoice_repository import \
 
 from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
 from c3smembership.business.dues_texts import (
-    make_dues15_invoice_email,
-    make_dues16_invoice_email,
-    make_dues17_invoice_email,
-    make_dues18_invoice_email,
-    make_dues19_invoice_email,
-    make_dues20_invoice_email,
+    make_dues_invoice_email,
     make_dues_invoice_investing_email,
     make_dues_invoice_legalentity_email,
 )
@@ -225,7 +220,6 @@ def _create_dues_email_normal(request, year, member, invoice):
         dues_calculator.calculate_quarter(member), member.locale)
     start_quarter = dues_description
     invoice_url = _get_year_invoice_url(request, year, member)
-    make_dues_invoice_email = _make_year_dues_invoice_email(year)
     email_subject, email_body = make_dues_invoice_email(
         member, invoice, invoice_url, start_quarter)
     return Message(
@@ -359,21 +353,3 @@ def _record_dues_email_sent(year, member):
     if year == 2020:
         member.dues20_invoice = True
         member.dues20_invoice_date = invoice_date
-
-
-def _make_year_dues_invoice_email(year):
-    """
-    Get the make dues invoice email method for the year
-
-    TODO: This is only a workaround until the data model has been cleaned up
-    and there is an extra table to record dues per year and member.
-    """
-    year_make_email = {
-        2015: make_dues15_invoice_email,
-        2016: make_dues16_invoice_email,
-        2017: make_dues17_invoice_email,
-        2018: make_dues18_invoice_email,
-        2019: make_dues19_invoice_email,
-        2020: make_dues20_invoice_email,
-    }
-    return year_make_email[year]

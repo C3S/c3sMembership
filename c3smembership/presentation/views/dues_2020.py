@@ -51,7 +51,7 @@ from c3smembership.presentation.view_processing.colander_validation import (
     ColanderMatchdictValidator, )
 from c3smembership.presentation.schemas.member import MemberIdMatchdict
 from c3smembership.business.dues_texts import (
-    make_dues20_reduction_email,
+    make_dues_reduction_email,
     make_dues_exemption_email,
 )
 from c3smembership.tex_tools import TexTools
@@ -579,7 +579,7 @@ def dues20_reduction(request):
                                          email=member.email,
                                          code=member.dues20_token,
                                          i=str(new_invoice_no + 1).zfill(4)))
-        email_subject, email_body = make_dues20_reduction_email(
+        email_subject, email_body = make_dues_reduction_email(
             member, new_invoice, invoice_url, reversal_url)
 
     message = Message(
