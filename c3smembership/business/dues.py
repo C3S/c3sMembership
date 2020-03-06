@@ -52,6 +52,40 @@ def calculate_dues_create_invoice(year, member):
 
     The invoice PDF is not created. If the dues were created before, the
     existing invoice record will be returned.
+
+    Business validation:
+
+    - 1 Membership within the dues year
+
+      - 1.1 Membership started before the end of the dues year
+      - 1.2 Membership ended after the beginning of the dues year
+
+    - 2 User must be logged in as staff
+
+    Business logic:
+
+    - 1 Due calculation for normal members
+
+      - 1.1 Calculate quarterly dues
+      - 1.2 Store dues data
+      - 1.3 Store invoice data
+      - 1.4 Generate invoice PDF (TODO!)
+
+    - 2 No dues calculation for investing members
+    - 3 Send email depending on membership type and entity type
+
+      - 3.1 Normal members get email with invoice link
+      - 3.2 Investing members get email
+
+        - 3.2.1 For legal entities with request for amount based on turnover
+        - 3.2.2 For natural persons with request for normal amount
+
+      - 3.3 Send email in German if member language is German
+      - 3.4 Send email in English for other member languages than German
+      - 3.5 Email is sent to member's email address
+
+    - 4 Store that and when dues were calculated and email was sent
+    - 5 If called again only resend email but only calculate dues once
     """
     validate_member_dues_applicable(year, member)
 
