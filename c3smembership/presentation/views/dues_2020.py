@@ -16,7 +16,6 @@ This module holds code for Membership Dues.
    - send email with update: reversal invoice and new invoice
 """
 
-import babel.numbers
 from datetime import (
     datetime,
     date,
@@ -28,6 +27,8 @@ import os
 import shutil
 import subprocess
 import tempfile
+
+import babel.numbers
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
@@ -127,13 +128,16 @@ def send_dues20_invoice_email(request, member_id=None):
 
 
 def send_invoice_email_redirect(request, member):
-    if 'detail' in request.referrer:
+    """
+    Perform redirect after invoice email sending according to the referer.
+    """
+    if 'detail' in request.referer:
         return HTTPFound(
             request.route_url('detail', member_id=member.id) + '#dues20')
-    if 'dues' in request.referrer:
+    if 'dues' in request.referer:
         return HTTPFound(request.route_url('dues'))
-    else:
-        return get_memberhip_listing_redirect(request, member.id)
+
+    return get_memberhip_listing_redirect(request, member.id)
 
 
 @view_config(permission='manage', route_name='send_dues20_invoice_batch')
@@ -295,8 +299,8 @@ def get_dues20_archive_invoice(invoice):
     invoice_archive_filename = get_dues20_archive_invoice_filename(invoice)
     if os.path.isfile(invoice_archive_filename):
         return open(invoice_archive_filename, 'rb')
-    else:
-        return None
+
+    return None
 
 
 def create_pdf(tex_vars, tpl_tex, invoice):
@@ -375,36 +379,23 @@ def make_invoice_pdf_pdflatex(invoice):
         DUES_CALCULATOR.calculate_quarter(member), member.locale)
 
     tex_vars = {
-        'personalFirstname':
-        member.firstname,
-        'personalLastname':
-        member.lastname,
-        'personalAddressOne':
-        member.address1,
-        'personalAddressTwo':
-        member.address2,
-        'personalPostCode':
-        member.postcode,
-        'personalCity':
-        member.city,
-        'personalMShipNo':
-        unicode(member.membership_number),
-        'invoiceNo':
-        invoice_no,
-        'invoiceDate':
-        invoice_date,
+        'personalFirstname': member.firstname,
+        'personalLastname': member.lastname,
+        'personalAddressOne': member.address1,
+        'personalAddressTwo': member.address2,
+        'personalPostCode': member.postcode,
+        'personalCity': member.city,
+        'personalMShipNo': unicode(member.membership_number),
+        'invoiceNo': invoice_no,
+        'invoiceDate': invoice_date,
         'account':
-        get_euro_string(-member.dues15_balance - member.dues16_balance -
-                        member.dues17_balance - member.dues18_balance -
-                        member.dues19_balance - member.dues20_balance),
-        'duesStart':
-        is_altered_str if (invoice.is_altered) else dues_start,
-        'duesAmount':
-        get_euro_string(invoice.invoice_amount),
-        'lang':
-        'de',
-        'pdfBackground':
-        bg_pdf,
+            get_euro_string(-member.dues15_balance - member.dues16_balance -
+                            member.dues17_balance - member.dues18_balance -
+                            member.dues19_balance - member.dues20_balance),
+        'duesStart': is_altered_str if (invoice.is_altered) else dues_start,
+        'duesAmount': get_euro_string(invoice.invoice_amount),
+        'lang': 'de',
+        'pdfBackground': bg_pdf,
     }
 
     return create_pdf(tex_vars, tpl_tex, invoice)
@@ -419,6 +410,7 @@ def dues20_listing(request):
     a listing of all invoices.
     shall show both active/valid and cancelled/invalid invoices.
     """
+    # pylint: disable=unused-argument
     dues20_invoices = DuesInvoiceRepository.get_all([YEAR])
     return {
         'count': len(dues20_invoices),
@@ -540,8 +532,8 @@ def dues20_reduction(request):
     )
     reversal_invoice.preceding_invoice_no = old_invoice.invoice_no
     reversal_invoice.is_reversal = True
-    DBSession.add(reversal_invoice)
-    DBSession.flush()
+    DBSession().add(reversal_invoice)
+    DBSession().flush()
     old_invoice.succeeding_invoice_no = new_invoice_no
 
     # check if this is an exemption (reduction to zero)
@@ -567,12 +559,12 @@ def dues20_reduction(request):
         new_invoice.is_altered = True
         new_invoice.preceding_invoice_no = reversal_invoice.invoice_no
         reversal_invoice.succeeding_invoice_no = new_invoice_no + 1
-        DBSession.add(new_invoice)
+        DBSession().add(new_invoice)
 
         # in the members record, store the current invoice no
         member.dues20_invoice_no = new_invoice_no + 1
 
-        DBSession.flush()  # persist newer invoices
+        DBSession().flush()  # persist newer invoices
 
     reversal_url = (request.route_url(
         'make_dues20_reversal_invoice_pdf',
@@ -667,33 +659,21 @@ def make_reversal_pdf_pdflatex(invoice):
 
     # set variables for tex command
     tex_vars = {
-        'personalFirstname':
-        member.firstname,
-        'personalLastname':
-        member.lastname,
-        'personalAddressOne':
-        member.address1,
-        'personalAddressTwo':
-        member.address2,
-        'personalPostCode':
-        member.postcode,
-        'personalCity':
-        member.city,
-        'personalMShipNo':
-        unicode(member.membership_number),
-        'invoiceNo':
-        invoice_no,
-        'invoiceDate':
-        invoice_date,
-        'duesAmount':
-        get_euro_string(invoice.invoice_amount),
-        'origInvoiceRef':
-        ('C3S-dues{0}-{1}'.format(YEAR,
-                                  str(invoice.preceding_invoice_no).zfill(4))),
-        'lang':
-        'de',
-        'pdfBackground':
-        bg_pdf,
+        'personalFirstname': member.firstname,
+        'personalLastname': member.lastname,
+        'personalAddressOne': member.address1,
+        'personalAddressTwo': member.address2,
+        'personalPostCode': member.postcode,
+        'personalCity': member.city,
+        'personalMShipNo': unicode(member.membership_number),
+        'invoiceNo': invoice_no,
+        'invoiceDate': invoice_date,
+        'duesAmount': get_euro_string(invoice.invoice_amount),
+        'origInvoiceRef': ('C3S-dues{0}-{1}'.format(
+            YEAR,
+            str(invoice.preceding_invoice_no).zfill(4))),
+        'lang': 'de',
+        'pdfBackground': bg_pdf,
     }
 
     return create_pdf(tex_vars, tpl_tex, invoice)

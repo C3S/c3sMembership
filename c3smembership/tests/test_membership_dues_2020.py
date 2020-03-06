@@ -227,13 +227,14 @@ class TestDues20Views(unittest.TestCase):
 
         self.config.add_route('dues', '/')
         self.config.add_route('detail', '/')
+        self.config.add_route('membership_listing_backend', '/')
         self.config.add_route('make_dues20_invoice_no_pdf', '/')
 
         req = testing.DummyRequest()
         req.matchdict = {
             'member_id': '1',
         }
-        req.referrer = 'detail'
+        req.referer = 'detail'
         req.validated_matchdict = {'member': C3sMember.get_by_id(1)}
         res = send_dues20_invoice_email(req)
         self.assertTrue(res.status_code == 302)
@@ -265,7 +266,7 @@ class TestDues20Views(unittest.TestCase):
         req3.matchdict = {
             'member_id': '1',
         }
-        req3.referrer = 'detail'
+        req3.referer = 'detail'
         req3.validated_matchdict = {'member': C3sMember.get_by_id(1)}
         res3 = send_dues20_invoice_email(req3)
         self.assertTrue(res3.status_code == 302)
@@ -296,7 +297,7 @@ class TestDues20Views(unittest.TestCase):
         req_en_normal.matchdict = {
             'member_id': '2',
         }
-        req_en_normal.referrer = 'detail'
+        req_en_normal.referer = 'detail'
         req_en_normal.validated_matchdict = {'member': C3sMember.get_by_id(2)}
         res_en_normal = send_dues20_invoice_email(req_en_normal)
         self.assertTrue(res_en_normal.status_code == 302)
@@ -312,7 +313,7 @@ class TestDues20Views(unittest.TestCase):
         req_de_investing.matchdict = {
             'member_id': '3',
         }
-        req_de_investing.referrer = 'detail'
+        req_de_investing.referer = 'detail'
         req_de_investing.validated_matchdict = {'member': C3sMember.get_by_id(3)}
         res_de_investing = send_dues20_invoice_email(req_de_investing)
         self.assertTrue(res_de_investing.status_code == 302)
@@ -328,7 +329,7 @@ class TestDues20Views(unittest.TestCase):
         req_en_investing.matchdict = {
             'member_id': '4',
         }
-        req_en_investing.referrer = 'detail'
+        req_en_investing.referer = 'detail'
         req_en_investing.validated_matchdict = {'member': C3sMember.get_by_id(4)}
         res_en_investing = send_dues20_invoice_email(req_en_investing)
         self.assertTrue(res_en_investing.status_code == 302)
@@ -344,7 +345,7 @@ class TestDues20Views(unittest.TestCase):
         req_de_legalentity.matchdict = {
             'member_id': '5',
         }
-        req_de_legalentity.referrer = 'detail'
+        req_de_legalentity.referer = 'detail'
         req_de_legalentity.validated_matchdict = {'member': C3sMember.get_by_id(5)}
         res_de_legalentity = send_dues20_invoice_email(req_de_legalentity)
         self.assertTrue(res_de_legalentity.status_code == 302)
@@ -360,7 +361,7 @@ class TestDues20Views(unittest.TestCase):
         req_en_legalentity.matchdict = {
             'member_id': '6',
         }
-        req_en_legalentity.referrer = 'detail'
+        req_en_legalentity.referer = 'detail'
         req_en_legalentity.validated_matchdict = {'member': C3sMember.get_by_id(6)}
         res_en_legalentity = send_dues20_invoice_email(req_en_legalentity)
         self.assertTrue(res_en_legalentity.status_code == 302)
@@ -386,6 +387,7 @@ class TestDues20Views(unittest.TestCase):
         self.config.add_route('detail', '/detail/')
         self.config.add_route('error', '/error')
         self.config.add_route('dues', '/dues')
+        self.config.add_route('membership_listing_backend', '/')
 
         # have to accept their membersip first
         m1 = C3sMember.get_by_id(1)  # german normal member
@@ -406,7 +408,7 @@ class TestDues20Views(unittest.TestCase):
         assert(_number_of_invoices_before_batch == 0)
 
         req = testing.DummyRequest()
-        req.referrer = 'toolbox'
+        req.referer = 'toolbox'
         res = send_dues20_invoice_batch(req)
 
         # check number of invoices: should be 2
@@ -421,7 +423,7 @@ class TestDues20Views(unittest.TestCase):
                 # lots of values missing
             },
         )
-        req.referrer = 'toolbox'
+        req_post.referer = 'toolbox'
         res = send_dues20_invoice_batch(req_post)
 
         self.assertTrue(
@@ -551,7 +553,7 @@ class TestDues20Views(unittest.TestCase):
         self.config.add_route('error', '/error')
         self.config.add_route('dues', '/dues')
         req = testing.DummyRequest()
-        req.referrer = 'dues'
+        req.referer = 'dues'
         from c3smembership.presentation.views.dues_2020 import (
             send_dues20_invoice_batch,
         )
@@ -804,7 +806,7 @@ class TestDues20Views(unittest.TestCase):
         )
         req0 = testing.DummyRequest(
             matchdict={'member_id': m1.id})
-        req0.referrer = 'detail'
+        req0.referer = 'detail'
         req0.validated_matchdict = {'member': m1}
         send_dues20_invoice_email(req0)
 

@@ -91,7 +91,7 @@ def calculate_dues_create_invoice(year, member):
 
     invoice = None
     # Get invoice if it exists already
-    if invoice_calculated(year, member) is True:
+    if invoice_calculated(year, member):
         invoice = DuesInvoiceRepository.get_by_number(
             get_year_invoice_number(year, member), year)
     else:
@@ -136,6 +136,18 @@ def is_dues_applicable(year, member):
 
 
 def validate_member_dues_applicable(year, member):
+    """
+    Validate that the member is applicable for the dues of the year
+
+    Args:
+        year (int): The year for which the dues applicability is validated.
+        member (C3sMember): The member for which the dues applicability is
+            valildate.
+
+    Raises:
+        DuesNotApplicableError in case the member is not applicable for the
+        dues of the year.
+    """
     (indicator, reason) = is_dues_applicable(year, member)
     if not indicator:
         raise DuesNotApplicableError(reason)
