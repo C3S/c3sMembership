@@ -67,9 +67,6 @@ from c3smembership.presentation.views.membership_certificate import (
 )
 from c3smembership.data.repository.general_assembly_repository import \
     GeneralAssemblyRepository
-from c3smembership.presentation.views.membership_listing import (
-    get_memberhip_listing_redirect
-)
 
 
 DEBUG = False
@@ -144,10 +141,9 @@ def general_assembly_invitation(request):
                 'member_details',
                 membership_number=member.membership_number,
                 _anchor='general-assembly'))
-    else:
-        return HTTPFound(request.route_url(
-            'membership_listing_backend',
-            _anchor='member_{id}'.format(id=member.id)))
+    return HTTPFound(request.route_url(
+        'membership_listing_backend',
+        _anchor='member_{id}'.format(id=member.id)))
 
 
 def make_bcga_invitation_email(member, url):
@@ -191,10 +187,7 @@ def send_invitation(request, member, general_assembly_number):
         member: The member to which the invitation is sent.
     """
     if not member.is_member():
-        request.session.flash(
-            'Invitations can only be sent to members.',
-            'danger')
-        return get_memberhip_listing_redirect(request, member.id)
+        raise ValueError('Invitations can only be sent to members.')
 
     invitation = GeneralAssemblyRepository.get_member_invitation(
         member.membership_number,

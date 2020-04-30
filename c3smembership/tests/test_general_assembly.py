@@ -10,8 +10,9 @@ import unittest
 import mock
 from pyramid import testing
 from pyramid_mailer import get_mailer
-from sqlalchemy import engine_from_config
 import transaction
+
+from sqlalchemy import engine_from_config
 
 from c3smembership.data.model.base import (
     DBSession,
@@ -263,7 +264,7 @@ class TestInvitation(unittest.TestCase):
             .today.side_effect = [date(2018, 1, 1)]
         res = general_assembly_invitation(req)
 
-        self.assertEquals(res.status_code, 302)
+        self.assertEqual(res.status_code, 302)
         self.assertTrue('/members/' in res.location)
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
@@ -289,7 +290,7 @@ class TestInvitation(unittest.TestCase):
             .today.side_effect = [date(2018, 1, 1)]
         res = general_assembly_invitation(req)
 
-        self.assertEquals(res.status_code, 302)
+        self.assertEqual(res.status_code, 302)
         self.assertTrue('/memberships' in res.location)
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
@@ -369,7 +370,7 @@ class TestInvitation(unittest.TestCase):
 
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
-        self.assertEquals(len(invitees), 4)
+        self.assertEqual(len(invitees), 4)
         res = batch_invite(req)
 
         _messages = req.session.peek_flash('success')
@@ -378,7 +379,7 @@ class TestInvitation(unittest.TestCase):
             in _messages[0])
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
-        self.assertEquals(len(invitees), 3)
+        self.assertEqual(len(invitees), 3)
 
         # without matchdict
         general_assembly = mock.Mock()
@@ -390,7 +391,7 @@ class TestInvitation(unittest.TestCase):
         res = batch_invite(req)
         invitees = GeneralAssemblyRepository.get_invitees(
             CURRENT_GENERAL_ASSEMBLY, 1000)
-        self.assertEquals(len(invitees), 0)
+        self.assertEqual(len(invitees), 0)
         self.assertEqual(res.status_code, 302)
         _messages = req.session.peek_flash('success')
         self.assertTrue(
