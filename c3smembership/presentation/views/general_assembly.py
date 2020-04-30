@@ -45,7 +45,6 @@ from pyramid.view import view_config
 from pyramid_mailer.message import Message
 
 from c3smembership.mail_utils import (
-    get_template_text,
     get_email_footer,
     get_salutation,
     send_message,
@@ -72,9 +71,8 @@ from c3smembership.data.repository.general_assembly_repository import \
 DEBUG = False
 LOG = logging.getLogger(__name__)
 URL_PATTERN = '{ticketing_url}/lu/{token}/{email}'
-CURRENT_GENERAL_ASSEMBLY = 7
-BODY_TEMPLATE = 'bcga2019_invite_body'
-SUBJECT_TEMPLATE = 'bcga2019_invite_subject'
+INVITATION_TEXT_PREVIEW_LENGTH = 250
+TRUNCATE_CHARACTERS = [' ', '\r', '\n']
 
 
 @view_config(
@@ -94,6 +92,58 @@ def general_assemblies(request):
     return {'general_assemblies': assemblies}
 
 
+def truncate_value(value, length, truncate_characters):
+    """
+    Truncate a string after length on defined characters
+
+    The string is truncated at the first appearance of a defined truncate
+    character in order to not truncate in between words or HTML tags.
+
+    Truncate characters are
+
+    Args:
+        value: String. The value to be truncated.
+        length: Integeger. The length after which the value is truncated.
+        truncate_characters: Array of characters. The characters at which the
+            value is truncated.
+
+    Returns:
+        The value truncated at the first appearance of a truncate character
+        after the specified length.
+    """
+    pos = length
+    while value[pos] not in truncate_characters:
+        pos += 1
+    return value[:pos]
+
+
+def get_invitation_display_texts(invitation_text, length):
+    """
+    Get the invitation text and preview text to display
+
+    The display text has line breaks replaced by a HTML BR tag.
+
+    Args:
+        invitation_text: String. The text for which the display text and its
+            preview is returned.
+        length: Integer. The number of characters after which the text is
+            truncated at a suitable character to create the preview.
+
+    Returns:
+        Set of invitation text and invitation text preview
+    """
+    if not invitation_text:
+        return (u'', u'')
+    invitation_text = invitation_text.replace('\n', '\x3Cbr />')
+    invitation_text_preview = invitation_text
+    if len(invitation_text_preview) > length:
+        invitation_text_preview = truncate_value(
+            invitation_text_preview,
+            length,
+            TRUNCATE_CHARACTERS)
+    return invitation_text, invitation_text_preview
+
+
 @view_config(
     renderer='c3smembership.presentation:templates/pages/'
              'general_assembly.pt',
@@ -108,10 +158,26 @@ def general_assembly_view(request):
     Show general assembly
     """
     assembly = request.validated_matchdict['general_assembly']
+
+    invitation_text_en, invitation_text_en_preview = \
+        get_invitation_display_texts(
+            assembly.invitation_text_en,
+            INVITATION_TEXT_PREVIEW_LENGTH)
+    invitation_text_de, invitation_text_de_preview = \
+        get_invitation_display_texts(
+            assembly.invitation_text_de,
+            INVITATION_TEXT_PREVIEW_LENGTH)
+
     return {
         'number': assembly.number,
         'name': assembly.name,
         'date': assembly.date,
+        'invitation_subject_en': assembly.invitation_subject_en,
+        'invitation_text_en': invitation_text_en,
+        'invitation_text_en_preview': invitation_text_en_preview,
+        'invitation_subject_de': assembly.invitation_subject_de,
+        'invitation_text_de': invitation_text_de,
+        'invitation_text_de_preview': invitation_text_de_preview,
     }
 
 
@@ -146,37 +212,6 @@ def general_assembly_invitation(request):
         _anchor='member_{id}'.format(id=member.id)))
 
 
-def make_bcga_invitation_email(member, url):
-    """
-    Create email subject and body for an invitation email for members.
-
-    Returns:
-        Tuple: message subject and body in users language.
-    """
-    if DEBUG:  # pragma: no cover
-        print(u"the member: {}".format(member))
-        print(u"the member.locale: {}".format(member.locale))
-        print(u"the url: {}".format(url))
-        print(u"the subject: {}".format(
-            get_template_text(SUBJECT_TEMPLATE, member.locale)))
-        print(u"the salutation: {}".format(get_salutation(member)))
-        print(u"the footer: {}".format(get_email_footer(member.locale)))
-        print(u"the body: {}".format(
-            get_template_text(BODY_TEMPLATE, member.locale).format(
-                salutation=get_salutation(member),
-                invitation_url=url,
-                footer=get_email_footer(member.locale))))
-    return (
-        get_template_text(SUBJECT_TEMPLATE, member.locale).rstrip(
-            '\n'),  # remove newline (\n) from mail subject
-        get_template_text(BODY_TEMPLATE, member.locale).format(
-            salutation=get_salutation(member),
-            invitation_url=url,
-            footer=get_email_footer(member.locale)
-        )
-    )
-
-
 def send_invitation(request, member, general_assembly_number):
     """
     Sends an invitation email to the member and records the invitation.
@@ -206,7 +241,16 @@ def send_invitation(request, member, general_assembly_number):
             email=member.email)
         LOG.info("mailing event invitation to to member id %s", member.id)
 
-        email_subject, email_body = make_bcga_invitation_email(member, url)
+        email_subject = assembly.invitation_subject_de if \
+            member.locale == 'de' else assembly.invitation_subject_en
+        invitation_text = assembly.invitation_text_de if \
+            member.locale == 'de' else assembly.invitation_text_en
+        email_body = invitation_text.format(
+            salutation=get_salutation(member),
+            invitation_url=url,
+            footer=get_email_footer(member.locale)
+        )
+
         message = Message(
             subject=email_subject,
             sender=request.registry.settings[
@@ -305,7 +349,11 @@ def general_assembly_create(request):
             request.registry.general_assembly_invitation \
                 .create_general_assembly(
                     appstruct['general_assembly']['name'],
-                    appstruct['general_assembly']['date'])
+                    appstruct['general_assembly']['date'],
+                    appstruct['general_assembly']['invitation_subject_en'],
+                    appstruct['general_assembly']['invitation_text_en'],
+                    appstruct['general_assembly']['invitation_subject_de'],
+                    appstruct['general_assembly']['invitation_text_de'])
             return HTTPFound(request.route_url('general_assemblies'))
         except deform.ValidationFailure as validationfailure:
             return {'form': validationfailure.render()}
@@ -341,7 +389,11 @@ def general_assembly_edit(request):
                 .edit_general_assembly(
                     assembly.number,
                     appstruct['general_assembly']['name'],
-                    appstruct['general_assembly']['date'])
+                    appstruct['general_assembly']['date'],
+                    appstruct['general_assembly']['invitation_subject_en'],
+                    appstruct['general_assembly']['invitation_text_en'],
+                    appstruct['general_assembly']['invitation_subject_de'],
+                    appstruct['general_assembly']['invitation_text_de'])
             return HTTPFound(request.route_url(
                 'general_assembly', number=assembly.number))
         except deform.ValidationFailure as validationfailure:
@@ -353,5 +405,9 @@ def general_assembly_edit(request):
         form.set_appstruct({'general_assembly': {
             'number': assembly.number,
             'name': assembly.name,
-            'date': assembly.date}})
+            'date': assembly.date,
+            'invitation_subject_en': assembly.invitation_subject_en,
+            'invitation_text_en': assembly.invitation_text_en,
+            'invitation_subject_de': assembly.invitation_subject_de,
+            'invitation_text_de': assembly.invitation_text_de}})
         return {'form': form.render()}

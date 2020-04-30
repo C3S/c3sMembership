@@ -262,7 +262,9 @@ class GeneralAssemblyRepository(object):
             .first()
 
     @classmethod
-    def create_general_assembly(cls, number, name, date):
+    def create_general_assembly(cls, number, name, date, invitation_subject_en,
+                                invitation_text_en, invitation_subject_de,
+                                invitation_text_de):
         """
         Create a general assembly
 
@@ -272,8 +274,18 @@ class GeneralAssemblyRepository(object):
             name: String. The name of the general assembly.
             date: `datetime.date`. The date at which the general assembly takes
                 place.
+            invitation_subject_en: String. The invitation subject sent to a
+                member in English.
+            invitation_text_en: String. The invitation text sent to a member
+                in English.
+            invitation_subject_de: String. The invitation subject sent to a
+                member in German.
+            invitation_text_de: String. The invitation text sent to a member
+                in German.
         """
-        assembly = GeneralAssembly(number, name, date)
+        assembly = GeneralAssembly(number, name, date, invitation_subject_en,
+                                   invitation_text_en, invitation_subject_de,
+                                   invitation_text_de)
         # pylint: disable=no-member
         DBSession.add(assembly)
         DBSession.flush()
@@ -287,7 +299,9 @@ class GeneralAssemblyRepository(object):
         return DBSession.query(func.max(GeneralAssembly.number)).scalar()
 
     @classmethod
-    def edit_general_assembly(cls, number, name, date):
+    def edit_general_assembly(cls, number, name, date, invitation_subject_en,
+                              invitation_text_en, invitation_subject_de,
+                              invitation_text_de):
         """
         Edit a general assembly
 
@@ -296,6 +310,14 @@ class GeneralAssemblyRepository(object):
             name: String. The edited name of the general assembly.
             date: `datetime.date`. The edited date at which the general
                 assembly takes place.
+            invitation_subject_en: String. The invitation subject sent to a
+                member in English.
+            invitation_text_en: String. The invitation text sent to a member
+                in English.
+            invitation_subject_de: String. The invitation subject sent to a
+                member in German.
+            invitation_text_de: String. The invitation text sent to a member
+                in German.
 
         Raises:
             ValueError: In case the a general assembly with the number given
@@ -307,5 +329,9 @@ class GeneralAssemblyRepository(object):
                 'A general assembly with this number does not exist.')
         assembly.name = name
         assembly.date = date
+        assembly.invitation_subject_en = invitation_subject_en
+        assembly.invitation_text_en = invitation_text_en
+        assembly.invitation_subject_de = invitation_subject_de
+        assembly.invitation_text_de = invitation_text_de
         # pylint: disable=no-member
         DBSession.flush()

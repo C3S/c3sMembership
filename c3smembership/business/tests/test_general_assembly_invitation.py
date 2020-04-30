@@ -239,13 +239,15 @@ class GeneralAssemblyInvitationTest(TestCase):
         gai.date.today.side_effect = [date(2018, 11, 17)]
 
         gai.create_general_assembly(
-            u'New general assembly', date(2018, 11, 18))
+            u'New general assembly', date(2018, 11, 18), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         general_assembly_repository.general_assembly_max_number \
             .assert_called_with()
         general_assembly_repository.create_general_assembly.assert_called_with(
-            11, u'New general assembly', date(2018, 11, 18))
+            11, u'New general assembly', date(2018, 11, 18), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         # 2. Create a general assembly for today
         general_assembly_repository.general_assembly_max_number.side_effect = [
@@ -253,19 +255,22 @@ class GeneralAssemblyInvitationTest(TestCase):
         gai.date.today.side_effect = [date(2018, 11, 20)]
 
         gai.create_general_assembly(
-            u'Another general assembly', date(2018, 11, 20))
+            u'Another general assembly', date(2018, 11, 20), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         general_assembly_repository.general_assembly_max_number \
             .assert_called_with()
         general_assembly_repository.create_general_assembly.assert_called_with(
-            22, u'Another general assembly', date(2018, 11, 20))
+            22, u'Another general assembly', date(2018, 11, 20), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         # 3. Try creating a general assembly in the past
         gai.date.today.side_effect = [date(2018, 11, 19)]
         with self.assertRaises(ValueError) as raise_context:
             gai.create_general_assembly(
-                u'New general assembly', date(2018, 11, 18))
+                u'New general assembly', date(2018, 11, 18), u'Assembly',
+                u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
         self.assertEqual(
             str(raise_context.exception),
             'The general assembly must take place in the future.')
@@ -285,31 +290,43 @@ class GeneralAssemblyInvitationTest(TestCase):
 
         # 1. Edit a general assembly in the future and verify the calls
         general_assembly_repository.get_general_assembly.side_effect = [
-            GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22))]
+            GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22),
+                            u'Assembly', u'Hello {salutation}!',
+                            u'Versammlung', u'Hallo {salutation}!')
+        ]
         gai.date.today.side_effect = [date(2019, 1, 21)]
         gai.edit_general_assembly(
-            1, u'New general assembly name', date(2019, 1, 23))
+            1, u'New general assembly name', date(2019, 1, 23), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         general_assembly_repository.edit_general_assembly.assert_called_with(
-            1, u'New general assembly name', date(2019, 1, 23))
+            1, u'New general assembly name', date(2019, 1, 23), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         # 2. Edit a general assembly for today
         general_assembly_repository.get_general_assembly.side_effect = [
-            GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22))]
+            GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22),
+                            u'Assembly', u'Hello {salutation}!',
+                            u'Versammlung', u'Hallo {salutation}!')
+        ]
         gai.date.today.side_effect = [date(2019, 1, 21)]
         gai.edit_general_assembly(
-            1, u'New general assembly name', date(2019, 1, 21))
+            1, u'New general assembly name', date(2019, 1, 21), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         general_assembly_repository.edit_general_assembly.assert_called_with(
-            1, u'New general assembly name', date(2019, 1, 21))
+            1, u'New general assembly name', date(2019, 1, 21), u'Assembly',
+            u'Hello {salutation}!', u'Versammlung', u'Hallo {salutation}!')
 
         # 3. Try editing a general assembly in the past
         gai.date.today.side_effect = [date(2019, 1, 21)]
         with self.assertRaises(ValueError) as raise_context:
             gai.edit_general_assembly(
-                1, u'New general assembly name', date(2019, 1, 20))
+                1, u'New general assembly name', date(2019, 1, 20),
+                u'Assembly', u'Hello {salutation}!', u'Versammlung',
+                u'Hallo {salutation}!')
         self.assertEqual(
             str(raise_context.exception),
             'The general assembly must take place in the future.')
@@ -320,7 +337,9 @@ class GeneralAssemblyInvitationTest(TestCase):
 
         with self.assertRaises(ValueError) as raise_context:
             gai.edit_general_assembly(
-                1, u'New general assembly name', date(2019, 1, 22))
+                1, u'New general assembly name', date(2019, 1, 22),
+                u'Assembly', u'Hello {salutation}!', u'Versammlung',
+                u'Hallo {salutation}!')
         self.assertEqual(
             str(raise_context.exception),
             'The general assembly does not exist.')

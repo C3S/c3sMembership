@@ -28,7 +28,6 @@ from c3smembership.business.general_assembly_invitation import \
     GeneralAssemblyInvitation
 from c3smembership.presentation.views.general_assembly import (
     batch_invite,
-    CURRENT_GENERAL_ASSEMBLY,
     general_assembly_invitation,
 )
 
@@ -40,6 +39,7 @@ GENERAL_ASSEMBLY_NUMBER_2016 = 4
 GENERAL_ASSEMBLY_NUMBER_2017 = 5
 GENERAL_ASSEMBLY_NUMBER_2018 = 6
 GENERAL_ASSEMBLY_NUMBER_2018_2 = 7
+CURRENT_GENERAL_ASSEMBLY = GENERAL_ASSEMBLY_NUMBER_2018_2
 
 
 def init_db():
@@ -67,31 +67,45 @@ def init_db():
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2014,
             u'1. ordentliche Generalversammlung',
-            date(2014, 8, 23)))
+            date(2014, 8, 23),
+            u'Assembly 2014', u'Hello {salutation}!',
+            u'Versammlung 2014', u'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2015,
             u'2. ordentliche Generalversammlung',
-            date(2015, 6, 13)))
+            date(2015, 6, 13),
+            u'Assembly 2015', u'Hello {salutation}!',
+            u'Versammlung 2015', u'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2015_2,
             u'Außerordentliche Generalversammlung',
-            date(2015, 7, 16)))
+            date(2015, 7, 16),
+            u'Assembly 2015-2', u'Hello {salutation}!',
+            u'Versammlung 2015-2', u'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2016,
             u'3. ordentliche Generalversammlung',
-            date(2016, 4, 17)))
+            date(2016, 4, 17),
+            u'Assembly 2016', u'Hello {salutation}!',
+            u'Versammlung 2016', u'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2017,
             u'4. ordentliche Generalversammlung',
-            date(2017, 4, 2)))
+            date(2017, 4, 2),
+            u'Assembly 2017', u'Hello {salutation}!',
+            u'Versammlung 2017', u'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2018,
             u'5. ordentliche Generalversammlung',
-            date(2018, 6, 3)))
+            date(2018, 6, 3),
+            u'Assembly 2018', u'Hello {salutation}!',
+            u'Versammlung 2018', u'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2018_2,
             u'Außerordentliche Generalversammlung',
-            date(2018, 12, 1)))
+            date(2018, 12, 1),
+            u'Assembly 2018-2', u'Hello {salutation}!',
+            u'Versammlung 2018-2', u'Hallo {salutation}!'))
 
         # German person
         member1 = C3sMember(
@@ -305,7 +319,7 @@ class TestInvitation(unittest.TestCase):
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
-        self.assertTrue(u'Einladung' in mailer.outbox[0].subject)
+        self.assertTrue(u'Versammlung' in mailer.outbox[0].subject)
         self.assertTrue(member1.firstname
                         in mailer.outbox[0].body)
         # Token not in email template for current general assembly of
@@ -334,7 +348,7 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 3)
-        self.assertTrue(u'Invitation' in mailer.outbox[2].subject)
+        self.assertTrue(u'Assembly' in mailer.outbox[2].subject)
         self.assertTrue(member2.firstname
                         in mailer.outbox[2].body)
         # Token not in email template for current general assembly of

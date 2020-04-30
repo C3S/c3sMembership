@@ -142,7 +142,9 @@ class GeneralAssemblyInvitation(object):
         """
         return self._general_assembly_repository.get_general_assemblies()
 
-    def create_general_assembly(self, name, assembly_date):
+    def create_general_assembly(self, name, assembly_date,
+                                invitation_subject_en, invitation_text_en,
+                                invitation_subject_de, invitation_text_de):
         """
         Create a general assembly
 
@@ -153,6 +155,14 @@ class GeneralAssemblyInvitation(object):
             name: String. The name of the general assembly.
             assembly_date: `datetime.date`. The date at which the general
                 assembly takes place.
+            invitation_subject_en: String. The invitation subject sent to a
+                member in English.
+            invitation_text_en: String. The invitation text sent to a member
+                in English.
+            invitation_subject_de: String. The invitation subject sent to a
+                member in German.
+            invitation_text_de: String. The invitation text sent to a member
+                in German.
 
         Raises:
             ValueError: In case date is in the past
@@ -161,7 +171,8 @@ class GeneralAssemblyInvitation(object):
             raise ValueError(
                 'The general assembly must take place in the future.')
         self._general_assembly_repository.create_general_assembly(
-            self.get_next_number(), name, assembly_date)
+            self.get_next_number(), name, assembly_date, invitation_subject_en,
+            invitation_text_en, invitation_subject_de, invitation_text_de)
 
     def get_next_number(self):
         """
@@ -177,7 +188,9 @@ class GeneralAssemblyInvitation(object):
             max_number = 0
         return (max_number + 1)
 
-    def edit_general_assembly(self, number, name, assembly_date):
+    def edit_general_assembly(self, number, name, assembly_date,
+                              invitation_subject_en, invitation_text_en,
+                              invitation_subject_de, invitation_text_de):
         """
         Edit a general assembly
 
@@ -187,8 +200,16 @@ class GeneralAssemblyInvitation(object):
         Args:
             number: Integer. The number of the general assembly to be edited.
             name: String. The edited name of the general assembly.
-            assembly_date: `datetime.date`. The edited date at which the general
-                assembly takes place.
+            assembly_date: `datetime.date`. The edited date at which the
+                general assembly takes place.
+            invitation_subject_en: String. The invitation subject sent to a
+                member in English.
+            invitation_text_en: String. The invitation text sent to a member
+                in English.
+            invitation_subject_de: String. The invitation subject sent to a
+                member in German.
+            invitation_text_de: String. The invitation text sent to a member
+                in German.
 
         Raises:
             ValueError: In case date is in the past
@@ -202,7 +223,8 @@ class GeneralAssemblyInvitation(object):
             raise ValueError(
                 'The general assembly does not exist.')
         self._general_assembly_repository.edit_general_assembly(
-            number, name, assembly_date)
+            number, name, assembly_date, invitation_subject_en, invitation_text_en,
+            invitation_subject_de, invitation_text_de)
 
     def get_latest_general_assembly(self):
         """

@@ -12,6 +12,9 @@ from c3smembership.presentation.schemas.member import MemberNode
 from c3smembership.presentation.view_processing import ValidationNode
 
 
+TEXTAREA_ROW_COUNT = 7
+
+
 class GeneralAssemblySchemaGroup(colander.Schema):
     """
     General assembly creation and editing schema.
@@ -34,6 +37,28 @@ class GeneralAssemblySchemaGroup(colander.Schema):
             min_err=u'${val} is in the past. The general assembly must take '
                     u'place in the future.'),
         default=datetime.date.today())
+    invitation_subject_en = colander.SchemaNode(
+        colander.String(),
+        title=u'Invitation email subject in English',
+        oid='invitation_subject_en')
+    invitation_text_en = colander.SchemaNode(
+        colander.String(),
+        widget=deform.widget.TextAreaWidget(rows=TEXTAREA_ROW_COUNT),
+        title=u'Invitation email text in English',
+        description=u'The placeholders {salutation}, {invitation_url} and '
+                    u'{footer} can be used.',
+        oid='invitation_text_en')
+    invitation_subject_de = colander.SchemaNode(
+        colander.String(),
+        title=u'Invitation email subject in German',
+        oid='invitation_subject_de')
+    invitation_text_de = colander.SchemaNode(
+        colander.String(),
+        widget=deform.widget.TextAreaWidget(rows=TEXTAREA_ROW_COUNT),
+        title=u'Invitation email text in German',
+        description=u'The placeholders {salutation}, {invitation_url} and '
+                    u'{footer} can be used.',
+        oid='invitation_text_de')
 
 
 class GeneralAssemblySchema(colander.Schema):

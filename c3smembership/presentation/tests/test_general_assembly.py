@@ -68,6 +68,10 @@ class TestGeneralAssembly(unittest.TestCase):
         general_assembly.number = 123
         general_assembly.name = 'my first general assembly'
         general_assembly.date = datetime.date(2018, 12, 15)
+        general_assembly.invitation_subject_en = u'Assembly'
+        general_assembly.invitation_text_en = u'Hello {salutation}!'
+        general_assembly.invitation_subject_de = u'Versammlung'
+        general_assembly.invitation_text_de = u'Hallo {salutation}!'
         request = testing.DummyRequest(
             validated_matchdict={'general_assembly': general_assembly})
 
@@ -76,6 +80,10 @@ class TestGeneralAssembly(unittest.TestCase):
         self.assertEqual(result['date'], datetime.date(2018, 12, 15))
         self.assertEqual(result['number'], 123)
         self.assertEqual(result['name'], 'my first general assembly')
+        self.assertEqual(result['invitation_subject_en'], u'Assembly')
+        self.assertEqual(result['invitation_text_en'], u'Hello {salutation}!')
+        self.assertEqual(result['invitation_subject_de'], u'Versammlung')
+        self.assertEqual(result['invitation_text_de'], u'Hallo {salutation}!')
 
     # pylint: disable=invalid-name
     @mock.patch.object(
@@ -124,7 +132,11 @@ class TestGeneralAssembly(unittest.TestCase):
         self.assertTrue('memberships#member_789' in result.location)
 
     @classmethod
-    def _get_create_general_assembly_post(cls, assembly_name, assembly_date):
+    def _get_create_general_assembly_post(cls, assembly_name, assembly_date,
+                                          invitation_subject_en,
+                                          invitation_text_en,
+                                          invitation_subject_de,
+                                          invitation_text_de):
         POST = MultiDict()
         POST.add('__formid__', u'deform')
         POST.add('__start__', u'general_assembly:mapping')
@@ -132,6 +144,10 @@ class TestGeneralAssembly(unittest.TestCase):
         POST.add('__start__', u'date:mapping')
         POST.add('date', unicode(assembly_date.strftime('%Y-%m-%d')))
         POST.add('__end__', u'date:mapping')
+        POST.add('invitation_subject_en', invitation_subject_en)
+        POST.add('invitation_text_en', invitation_text_en)
+        POST.add('invitation_subject_de', invitation_subject_de)
+        POST.add('invitation_text_de', invitation_text_de)
         POST.add('__end__', u'general_assembly:mapping')
         POST.add('submit', u'submit')
         return POST
@@ -161,7 +177,11 @@ class TestGeneralAssembly(unittest.TestCase):
         request = testing.DummyRequest(
             post=self._get_create_general_assembly_post(
                 'New general assembly',
-                assembly_date))
+                assembly_date,
+                u'Assembly',
+                u'Hello {salutation}!',
+                u'Versammlung',
+                u'Hallo {salutation}!'))
         test_config = testing.setUp(request=request)
         test_config.add_route('general_assemblies', 'general_assemblies')
         request.registry.general_assembly_invitation = mock.Mock()
@@ -174,7 +194,11 @@ class TestGeneralAssembly(unittest.TestCase):
         request.registry.general_assembly_invitation \
             .create_general_assembly.assert_called_with(
                 u'New general assembly',
-                assembly_date)
+                assembly_date,
+                u'Assembly',
+                u'Hello {salutation}!',
+                u'Versammlung',
+                u'Hallo {salutation}!')
         testing.tearDown()
 
         # 3. Submit with date in the past
@@ -182,7 +206,11 @@ class TestGeneralAssembly(unittest.TestCase):
         request = testing.DummyRequest(
             post=self._get_create_general_assembly_post(
                 'New general assembly',
-                assembly_date))
+                assembly_date,
+                u'Assembly',
+                u'Hello {salutation}!',
+                u'Versammlung',
+                u'Hallo {salutation}!'))
         request.registry.general_assembly_invitation = mock.Mock()
         request.registry.general_assembly_invitation \
             .get_next_number.side_effect = [12345]
@@ -263,7 +291,11 @@ class TestGeneralAssembly(unittest.TestCase):
         request = testing.DummyRequest(
             post=self._get_create_general_assembly_post(
                 'assembly name',
-                datetime.date.today()),
+                datetime.date.today(),
+                u'Assembly',
+                u'Hello {salutation}!',
+                u'Versammlung',
+                u'Hallo {salutation}!'),
             validated_matchdict={'general_assembly': general_assembly})
         test_config = testing.setUp(request=request)
         test_config.add_route('general_assembly', 'general_assembly')
@@ -274,7 +306,11 @@ class TestGeneralAssembly(unittest.TestCase):
 
         request.registry.general_assembly_invitation \
             .edit_general_assembly.assert_called_with(
-                1, u'assembly name', datetime.date.today())
+                1, u'assembly name', datetime.date.today(),
+                u'Assembly',
+                u'Hello {salutation}!',
+                u'Versammlung',
+                u'Hallo {salutation}!')
         self.assertEqual(result.status_code, 302)
         self.assertEqual(
             result.location, 'http://example.com/general_assembly')

@@ -1,3 +1,11 @@
+Next Release
+============
+
+
+Add general assembly invitation subject and invitation text editing.
+
+
+
 1.29.1
 ======
 

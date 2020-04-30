@@ -32,6 +32,108 @@
                     <td>Date</td>
                     <td>${date.strftime('%d.%m.%Y')}</td>
                 </tr>
+                <tr>
+                    <td>Invitation subject in English</td>
+                    <td>${invitation_subject_en}</td>
+                </tr>
+                <tr>
+                    <td>Invitation text in English</td>
+                    <td>
+                        <p>
+                            ${structure: invitation_text_en_preview}
+                        </p>
+                        <p tal:condition="invitation_text_en_preview != invitation_text_en">
+                            <a href=""
+                                    data-toggle="modal"
+                                    data-target="#modal-invitation_text_en">
+                                Show full text
+                            </a>
+                            <div id="modal-invitation_text_en"
+                                    class="modal"
+                                    tabindex="-1"
+                                    role="dialog">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                Invitation text in English
+                                            </h5>
+                                            <button type="button"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                ${structure: invitation_text_en}
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-dismiss="modal">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Invitation subject in German</td>
+                    <td>${invitation_subject_de}</td>
+                </tr>
+                <tr>
+                    <td>Invitation text in German</td>
+                    <td>
+                        <p>
+                            ${structure: invitation_text_de_preview}
+                        </p>
+                        <p tal:condition="invitation_text_de_preview != invitation_text_de">
+                            <a href=""
+                                    data-toggle="modal"
+                                    data-target="#modal-invitation_text_de">
+                                Show full text
+                            </a>
+                            <div id="modal-invitation_text_de"
+                                    class="modal"
+                                    tabindex="-1"
+                                    role="dialog">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                Invitation text in German
+                                            </h5>
+                                            <button type="button"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                ${structure: invitation_text_de}
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-dismiss="modal">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div>
+                        </p>
+                    </td>
+                </tr>
             </tbody>
         </table>
 
