@@ -40,6 +40,7 @@ class GeneralAssemblySchemaGroup(colander.Schema):
     invitation_subject_en = colander.SchemaNode(
         colander.String(),
         title=u'Invitation email subject in English',
+        missing=u'',
         oid='invitation_subject_en')
     invitation_text_en = colander.SchemaNode(
         colander.String(),
@@ -47,10 +48,12 @@ class GeneralAssemblySchemaGroup(colander.Schema):
         title=u'Invitation email text in English',
         description=u'The placeholders {salutation}, {invitation_url} and '
                     u'{footer} can be used.',
+        missing=u'',
         oid='invitation_text_en')
     invitation_subject_de = colander.SchemaNode(
         colander.String(),
         title=u'Invitation email subject in German',
+        missing=u'',
         oid='invitation_subject_de')
     invitation_text_de = colander.SchemaNode(
         colander.String(),
@@ -58,6 +61,7 @@ class GeneralAssemblySchemaGroup(colander.Schema):
         title=u'Invitation email text in German',
         description=u'The placeholders {salutation}, {invitation_url} and '
                     u'{footer} can be used.',
+        missing=u'',
         oid='invitation_text_de')
 
 

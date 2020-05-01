@@ -158,8 +158,9 @@ class TestGeneralAssembly(unittest.TestCase):
 
         1. Call to render the empty form
         2. Submit without error
-        3. Submit with date in the past
-        4. Submit without assembly name
+        3. Submit without invitation subjects and texts
+        4. Submit with date in the past
+        5. Submit without assembly name
         """
         # 1. Call to render the empty form
         request = testing.DummyRequest(post='')
@@ -201,7 +202,37 @@ class TestGeneralAssembly(unittest.TestCase):
                 u'Hallo {salutation}!')
         testing.tearDown()
 
-        # 3. Submit with date in the past
+        # 2. Submit without error
+        assembly_date = datetime.date.today() + datetime.timedelta(days=1)
+
+        request = testing.DummyRequest(
+            post=self._get_create_general_assembly_post(
+                'New general assembly',
+                assembly_date,
+                u'',
+                u'',
+                u'',
+                u''))
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assemblies', 'general_assemblies')
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .get_next_number.side_effect = [12345]
+
+        result = general_assembly_create(request)
+
+        self.assertEqual(result.status_code, 302)
+        request.registry.general_assembly_invitation \
+            .create_general_assembly.assert_called_with(
+                u'New general assembly',
+                assembly_date,
+                u'',
+                u'',
+                u'',
+                u'')
+        testing.tearDown()
+
+        # 4. Submit with date in the past
         assembly_date = datetime.date.today() - datetime.timedelta(days=1)
         request = testing.DummyRequest(
             post=self._get_create_general_assembly_post(
@@ -226,7 +257,7 @@ class TestGeneralAssembly(unittest.TestCase):
             'future.' in result['form'])
         testing.tearDown()
 
-        # 4. Submit without assembly name
+        # 5. Submit without assembly name
         assembly_date = datetime.date.today() + datetime.timedelta(days=1)
         request = testing.DummyRequest(post={
             'submit': 'submit',
@@ -252,7 +283,8 @@ class TestGeneralAssembly(unittest.TestCase):
         1. Call for exiting general assembly
         2. Call for cancel
         3. Call for submit
-        4. Call for submit with validation failure
+        4. Edit existing and empty invitation subjects and texts
+        5. Call for submit with validation failure
         """
         # Setup
         general_assembly = mock.Mock()
@@ -315,7 +347,36 @@ class TestGeneralAssembly(unittest.TestCase):
         self.assertEqual(
             result.location, 'http://example.com/general_assembly')
 
-        # 4. Call for submit with validation failure
+        # 4. Call for submit
+        general_assembly.number = 1
+        request = testing.DummyRequest(
+            post=self._get_create_general_assembly_post(
+                'assembly name',
+                datetime.date.today(),
+                u'',
+                u'',
+                u'',
+                u''),
+            validated_matchdict={'general_assembly': general_assembly})
+        test_config = testing.setUp(request=request)
+        test_config.add_route('general_assembly', 'general_assembly')
+        request.registry.general_assembly_invitation = mock.Mock()
+        request.registry.general_assembly_invitation \
+            .edit_general_assembly.side_effect = [None]
+        result = general_assembly_edit(request)
+
+        request.registry.general_assembly_invitation \
+            .edit_general_assembly.assert_called_with(
+                1, u'assembly name', datetime.date.today(),
+                u'',
+                u'',
+                u'',
+                u'')
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(
+            result.location, 'http://example.com/general_assembly')
+
+        # 5. Call for submit with validation failure
         request = testing.DummyRequest(
             POST={
                 'submit': 'submit',
