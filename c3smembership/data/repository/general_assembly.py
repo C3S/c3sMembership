@@ -100,6 +100,7 @@ class GeneralAssemblyRepository(object):
         # pylint: disable=no-member
         member = MemberRepository.get_member(membership_number)
         assembly = cls.get_general_assembly(general_assembly_number)
+
         invitation = GeneralAssemblyInvitation(assembly, member,
                                                cls.datetime.now(), token)
         DBSession.add(invitation)

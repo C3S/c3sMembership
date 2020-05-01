@@ -134,14 +134,25 @@ class GeneralAssemblyInvitationTest(TestCase):
         """
         Test the invite_member method
 
-        1. Test general assembly in the past
-        2. Test invite member not eligible
-        3. Test member already invited
-        4. Test member invitation
+        - 1 Test general assembly in the past
+        - 2 Test invite member not eligible
+        - 3 Test member already invited
+        - 4 Test invitation subjects and texts empty
+
+          - 4.1 invitation subject EN empty
+          - 4.2 invitation text EN empty
+          - 4.3 invitation subject DE empty
+          - 4.4 invitation text DE empty
+
+        - 5 Test member invitation
         """
         general_assembly = mock.Mock()
         general_assembly.date = date(2018, 9, 15)
         general_assembly.number = 'GA1'
+        general_assembly.invitation_subject_en = u'Assembly'
+        general_assembly.invitation_text_en = u'Hello {salutation}!'
+        general_assembly.invitation_subject_de = u'Versammlung'
+        general_assembly.invitation_text_de = u'Hallo {salutation}!'
         date_dummy = mock.Mock()
         member = mock.Mock()
         member.membership_number = 'M1'
@@ -150,7 +161,7 @@ class GeneralAssemblyInvitationTest(TestCase):
         general_assembly_repository = mock.Mock()
         gai = GeneralAssemblyInvitation(general_assembly_repository)
 
-        # 1. Test general assembly in the past
+        # 1 Test general assembly in the past
         date_dummy.today.side_effect = [date(2018, 9, 16)]
         gai.date = date_dummy
 
@@ -159,7 +170,7 @@ class GeneralAssemblyInvitationTest(TestCase):
         self.assertEqual(str(raise_context.exception),
                          'The general assembly occurred in the past.')
 
-        # 2. Test invite member not eligible
+        # 2 Test invite member not eligible
         date_dummy.today.side_effect = [date(2018, 9, 15)]
         member.is_member.side_effect = [False]
 
@@ -170,7 +181,7 @@ class GeneralAssemblyInvitationTest(TestCase):
             str(raise_context.exception),
             'The member is not eligible to be invited to the general assembly')
 
-        # 3. Test member already invited
+        # 3 Test member already invited
         date_dummy.today.side_effect = [date(2018, 9, 15)]
         member.is_member.side_effect = [True]
         general_assembly_repository.get_member_invitation.side_effect = [{
@@ -186,10 +197,91 @@ class GeneralAssemblyInvitationTest(TestCase):
             str(raise_context.exception),
             'The member has already been invited to the general assembly.')
 
-        # 4. Test member invitation
+        # 4 Test invitation subjects and texts empty
+        date_dummy.today.side_effect = [date(2020, 5, 1)]
+        general_assembly_repository.get_member_invitation.side_effect = [None]
+        general_assembly.date = date(2020, 6, 24)
+
+        general_assembly.invitation_subject_en = u''
+        general_assembly.invitation_text_en = u''
+        general_assembly.invitation_subject_de = u''
+        general_assembly.invitation_text_de = u''
+
+        with self.assertRaises(ValueError) as raise_context:
+            gai.invite_member(member, general_assembly, token)
+        self.assertEqual(
+            str(raise_context.exception),
+            'Invitation subjects and texts must be entered.')
+
+        # 4.1 invitation subject EN empty
+        date_dummy.today.side_effect = [date(2020, 5, 1)]
+        general_assembly_repository.get_member_invitation.side_effect = [None]
+        general_assembly.date = date(2020, 6, 24)
+        general_assembly.invitation_subject_en = u''
+        general_assembly.invitation_text_en = u'Hello {salutation}!'
+        general_assembly.invitation_subject_de = u'Versammlung'
+        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+
+        with self.assertRaises(ValueError) as raise_context:
+            gai.invite_member(member, general_assembly, token)
+        self.assertEqual(
+            str(raise_context.exception),
+            'Invitation subjects and texts must be entered.')
+
+        # 4.2 invitation text EN empty
+        date_dummy.today.side_effect = [date(2020, 5, 1)]
+        general_assembly_repository.get_member_invitation.side_effect = [None]
+        general_assembly.date = date(2020, 6, 24)
+        general_assembly.invitation_subject_en = u'Assembly'
+        general_assembly.invitation_text_en = u''
+        general_assembly.invitation_subject_de = u'Versammlung'
+        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+
+        with self.assertRaises(ValueError) as raise_context:
+            gai.invite_member(member, general_assembly, token)
+        self.assertEqual(
+            str(raise_context.exception),
+            'Invitation subjects and texts must be entered.')
+
+        # 4.3 invitation subject DE empty
+        date_dummy.today.side_effect = [date(2020, 5, 1)]
+        general_assembly_repository.get_member_invitation.side_effect = [None]
+        general_assembly.date = date(2020, 6, 24)
+        general_assembly.invitation_subject_en = u'Assembly'
+        general_assembly.invitation_text_en = u'Hello {salutation}!'
+        general_assembly.invitation_subject_de = u''
+        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+
+        with self.assertRaises(ValueError) as raise_context:
+            gai.invite_member(member, general_assembly, token)
+        self.assertEqual(
+            str(raise_context.exception),
+            'Invitation subjects and texts must be entered.')
+
+        # 4.4 invitation text DE empty
+        date_dummy.today.side_effect = [date(2020, 5, 1)]
+        general_assembly_repository.get_member_invitation.side_effect = [None]
+        general_assembly.date = date(2020, 6, 24)
+        general_assembly.invitation_subject_en = u'Assembly'
+        general_assembly.invitation_text_en = u'Hello {salutation}!'
+        general_assembly.invitation_subject_de = u'Versammlung'
+        general_assembly.invitation_text_de = u''
+
+        with self.assertRaises(ValueError) as raise_context:
+            gai.invite_member(member, general_assembly, token)
+        self.assertEqual(
+            str(raise_context.exception),
+            'Invitation subjects and texts must be entered.')
+
+        # 5 Test member invitation
         date_dummy.today.side_effect = [date(2018, 9, 15)]
         member.is_member.side_effect = [True]
         general_assembly_repository.get_member_invitation.side_effect = [None]
+        general_assembly.date = date(2018, 9, 15)
+        general_assembly.invitation_subject_en = u'Assembly'
+        general_assembly.invitation_text_en = u'Hello {salutation}!'
+        general_assembly.invitation_subject_de = u'Versammlung'
+        general_assembly.invitation_text_de = u'Hallo {salutation}!'
 
         gai.invite_member(member, general_assembly, token)
         member.is_member.assert_called_with(date(2018, 9, 15))
@@ -368,7 +460,7 @@ class GeneralAssemblyInvitationTest(TestCase):
                                   u'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
-        call = general_assembly_repository.edit_general_assembly \
+        call = general_assembly_repository.update_general_assembly \
             .call_args_list.pop()
         call_tuple = call[0]
         general_assembly = call_tuple[0]
@@ -396,7 +488,7 @@ class GeneralAssemblyInvitationTest(TestCase):
                                   u'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
-        call = general_assembly_repository.edit_general_assembly \
+        call = general_assembly_repository.update_general_assembly \
             .call_args_list.pop()
         call_tuple = call[0]
         general_assembly = call_tuple[0]
@@ -424,7 +516,7 @@ class GeneralAssemblyInvitationTest(TestCase):
                                   u'')
 
         gai.date.today.assert_called_with()
-        call = general_assembly_repository.edit_general_assembly \
+        call = general_assembly_repository.update_general_assembly \
             .call_args_list.pop()
         call_tuple = call[0]
         general_assembly = call_tuple[0]

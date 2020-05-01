@@ -106,7 +106,7 @@ class GeneralAssemblyInvitation(object):
                                            invitation_text_en,
                                            invitation_subject_de,
                                            invitation_text_de)
-        self._general_assembly_repository.edit_general_assembly(
+        self._general_assembly_repository.update_general_assembly(
             general_assembly)
 
     def _validate_general_assembly(self, name, assembly_date):
@@ -149,9 +149,17 @@ class GeneralAssemblyInvitation(object):
                 the general assembly.
             ValueError: In case the member has already been invited to the
                 general assembly.
+            ValueError: In case at least one of the  invitation subjects and
+                texts is empty.
         """
         if general_assembly.date < self.date.today():
             raise ValueError('The general assembly occurred in the past.')
+
+        if not general_assembly.invitation_subject_en \
+                or not general_assembly.invitation_text_en \
+                or not general_assembly.invitation_subject_de \
+                or not general_assembly.invitation_text_de:
+            raise ValueError('Invitation subjects and texts must be entered.')
 
         if not member.is_member(general_assembly.date):
             raise ValueError(
