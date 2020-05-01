@@ -64,7 +64,7 @@ from c3smembership.presentation.view_processing import (
 from c3smembership.presentation.views.membership_certificate import (
     make_random_token,
 )
-from c3smembership.data.repository.general_assembly_repository import \
+from c3smembership.data.repository.general_assembly import \
     GeneralAssemblyRepository
 
 

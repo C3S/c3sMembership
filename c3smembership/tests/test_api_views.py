@@ -20,7 +20,7 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.repository.general_assembly_repository import \
+from c3smembership.data.repository.general_assembly import \
     GeneralAssemblyRepository
 
 

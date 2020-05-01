@@ -19,13 +19,12 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.general_assembly import GeneralAssembly
-from c3smembership.data.repository.general_assembly_repository import \
+from c3smembership.data.model.general_assembly import GeneralAssembly
+from c3smembership.data.repository.general_assembly import \
     GeneralAssemblyRepository
 from c3smembership.data.repository.member_repository import MemberRepository
 from c3smembership.business.member_information import MemberInformation
-from c3smembership.business.general_assembly_invitation import \
-    GeneralAssemblyInvitation
+from c3smembership.business.general_assembly import GeneralAssemblyInvitation
 from c3smembership.presentation.views.general_assembly import (
     batch_invite,
     general_assembly_invitation,

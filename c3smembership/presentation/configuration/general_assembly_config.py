@@ -3,11 +3,10 @@
 Pyramid application configuration for general assembly invitations.
 """
 
-from c3smembership.data.repository.general_assembly_repository import \
+from c3smembership.data.repository.general_assembly import \
     GeneralAssemblyRepository
 
-from c3smembership.business.general_assembly_invitation import \
-    GeneralAssemblyInvitation
+from c3smembership.business.general_assembly import GeneralAssemblyInvitation
 
 from c3smembership.presentation.configuration import Configuration
 
