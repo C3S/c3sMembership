@@ -1,5 +1,5 @@
-Next Release
-============
+1.30
+====
 
 
 Add general assembly invitation subject and invitation text editing.
