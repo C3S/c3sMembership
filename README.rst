@@ -42,7 +42,7 @@ Install development dependencies:
 
 ::
 
-   $ sudo apt-get install python-pip python-dev python2.7-dev
+   $ sudo apt-get install python-pip python-dev python2.7-dev \
       python-virtualenv libxml2-dev libxslt1-dev build-essential \
       pdftk zlib1g-dev phantomjs
 
