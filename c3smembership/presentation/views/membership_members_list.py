@@ -254,8 +254,8 @@ def member_list_print_view(request):
                 assert(member.membership_number is not None)
             except AssertionError:
                 if DEBUG:  # pragma: no cover
-                    print u"failed at id {} lastname {}".format(
-                        member.id, member.lastname)
+                    print(u"failed at id {} lastname {}".format(
+                        member.id, member.lastname))
             member_list.append(member)
             count += 1
     # sort members alphabetically

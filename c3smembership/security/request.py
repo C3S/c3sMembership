@@ -25,13 +25,11 @@ class RequestWithUserAttribute(Request):
             * **None**, if user is not known.
         """
         userid = unauthenticated_userid(self)
-        # print "--- in RequestWithUserAttribute: userid = " + str(userid)
         if userid is not None:
             # this should return None if the user doesn't exist
             # in the database
             # return dbsession.query('users').filter(user.user_id == userid)
             return Staff.check_user_or_none(userid)
-        # else: userid == None
         return userid  # pragma: no cover
 
 # /end of ### Making A 'User Object' Available as a Request Attribute

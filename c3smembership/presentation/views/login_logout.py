@@ -58,7 +58,7 @@ def login(request):
         controls = request.POST.items()
         try:
             appstruct = form.validate(controls)
-        except ValidationFailure, e_validation_failure:
+        except ValidationFailure as e_validation_failure:
             request.session.flash(
                 _(u"Please note: There were errors, "
                   "please check the form below."),

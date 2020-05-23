@@ -22,7 +22,6 @@ from datetime import (
     datetime,
 )
 import logging
-from types import NoneType
 
 import colander
 from colander import (
@@ -486,7 +485,7 @@ def success_verify_email(request):
         # get matching dataset from DB
         member = C3sMember.get_by_code(confirm_code)
 
-        if isinstance(member, NoneType):
+        if member is None:
             not_found_msg = _(
                 u"Not found. Check verification URL. "
                 "If all seems right, please use the form again.")

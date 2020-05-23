@@ -81,7 +81,7 @@ def annual_report(request):  # pragma: no cover
             start_date = date(start.year, start.month, start.day)
             end_date = date(end.year, end.month, end.day)
 
-        except ValidationFailure, validation_failure:  # pragma: no cover
+        except ValidationFailure as validation_failure:  # pragma: no cover
 
             request.session.flash(
                 _(u'Please note: There were errors, please check the form '

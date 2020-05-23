@@ -103,7 +103,7 @@ def shares_edit(request):
         try:
             appstruct = form.validate(controls)
 
-        except ValidationFailure, validation_failure:  # pragma: no cover
+        except ValidationFailure as validation_failure:  # pragma: no cover
             request.session.flash(
                 _(u'Please note: There were errors, '
                   'please check the form below.'),

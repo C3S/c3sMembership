@@ -84,7 +84,6 @@ def api_userinfo(request):
             'firstname': 'None',
             'lastname': 'None',
         }
-    # print "api found member: {} {}".format(_m.firstname, _m.lastname)
     return {
         'firstname': _m.firstname,
         'lastname': _m.lastname,

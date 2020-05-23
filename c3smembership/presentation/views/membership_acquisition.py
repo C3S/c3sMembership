@@ -497,7 +497,7 @@ def delete_afms(request):
             _last = appstruct['last']
             # pylint: disable=superfluous-parens
             assert(_first < _last)
-        except ValidationFailure, error:
+        except ValidationFailure as error:
             return {
                 'resetform': error.render()
             }

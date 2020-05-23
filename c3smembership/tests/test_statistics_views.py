@@ -135,7 +135,6 @@ class TestViews(unittest.TestCase):
 
         request.registry.share_information = ShareInformationDummy(123)
         result = stats_view(request)
-        # print result
         self.assertTrue(result['num_shares_members'] == 123)
         self.assertTrue(result['num_staff'] == 1)
         self.assertTrue(result['_number_of_datasets'] == 3)

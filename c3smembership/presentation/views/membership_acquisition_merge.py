@@ -45,7 +45,7 @@ def merge_member_view(request):
     afm_id = request.matchdict['afm_id']
     member_id = request.matchdict['mid']
     if DEBUG:  # pragma: no cover
-        print "shall merge {} to {}".format(afm_id, member_id)
+        print("shall merge {} to {}".format(afm_id, member_id))
 
     orig = C3sMember.get_by_id(member_id)
     merg = C3sMember.get_by_id(afm_id)

@@ -23,10 +23,8 @@ def stats_view(request):
     # countries_dict = C3sMember.get_countries_list()
     _cl = C3sMember.get_countries_list()
     _cl_sorted = _cl.items()
-    # print "die liste: {}".format(_cl_sorted)
     import operator
     _cl_sorted.sort(key=operator.itemgetter(1), reverse=True)
-    # print "sortiert: {}".format(_cl_sorted)
     share_information = request.registry.share_information
     return {
         # form submissions

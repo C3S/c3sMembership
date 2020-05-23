@@ -210,29 +210,23 @@ class TestDues16Views(unittest.TestCase):
             calculate_partial_dues16
         member = C3sMember.get_by_id(1)
         res = calculate_partial_dues16(member)
-        # print res
-        # print member.membership_date
         assert res == (u'q1_2016', D('50'))
 
         # english member
         member_en = C3sMember.get_by_id(2)
         res = calculate_partial_dues16(member_en)
-        # print res
         assert res == (u'q1_2016', D('50'))
 
         member_en.membership_date = date(2016, 6, 1)
         res = calculate_partial_dues16(member_en)
-        # print res
         assert res == (u'q2_2016', D('37.50'))
 
         member_en.membership_date = date(2016, 9, 1)
         res = calculate_partial_dues16(member_en)
-        # print res
         assert res == (u'q3_2016', D('25'))
 
         member_en.membership_date = date(2016, 11, 1)
         res = calculate_partial_dues16(member_en)
-        # print res
         assert res == (u'q4_2016', D('12.50'))
 
     def test_string_start_quarter_dues16(self):
@@ -246,37 +240,29 @@ class TestDues16Views(unittest.TestCase):
 
         member.dues16_start = 'q1_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('Quartal 1' in res)
         member.dues16_start = 'q2_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('Quartal 2' in res)
         member.dues16_start = 'q3_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('Quartal 3' in res)
         member.dues16_start = 'q4_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('Quartal 4' in res)
 
         member.locale = u'en'
         member.dues16_start = 'q1_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('1st quarter' in res)
         member.dues16_start = 'q2_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('2nd quarter' in res)
         member.dues16_start = 'q3_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('3rd quarter' in res)
         member.dues16_start = 'q4_2016'
         res = string_start_quarter_dues16(member)
-        # print res
         assert('4th quarter' in res)
 
     def test_send_dues16_invoice_email_single(self):
@@ -321,26 +307,18 @@ class TestDues16Views(unittest.TestCase):
 
         _number_of_invoices_2 = len(DuesInvoiceRepository.get_all([2016]))
         assert(_number_of_invoices == _number_of_invoices_2 == 0)
-        # print("_number_of_invoices: {}".format(_number_of_invoices))
 
         m1 = C3sMember.get_by_id(1)
         m1.membership_accepted = True
 
         res = send_dues16_invoice_email(req)
-        # print('#'*60)
-        # print res
-        # print('#'*60)
 
         _number_of_invoices_3 = len(DuesInvoiceRepository.get_all([2016]))
-        # print("_number_of_invoices 3: {}".format(_number_of_invoices_3))
         assert(_number_of_invoices_3 == 1)
 
         # check for outgoing email
         mailer = get_mailer(req)
-        # print mailer
-        # print mailer.outbox
         self.assertEqual(len(mailer.outbox), 1)
-        # print mailer.outbox[0].body
         self.assertTrue(
             'Verwendungszweck: C3S-dues2016-0001' in mailer.outbox[0].body)
 
@@ -377,11 +355,9 @@ class TestDues16Views(unittest.TestCase):
         self.assertTrue(
             (u'Dein Mitgliedsbeitrag ab Quartal 1 beträgt also 50 Euro.')
             in mailer.outbox[0].body)
-        # print(mailer.outbox[0].body)
         self.assertTrue(
             (u'Dein Mitgliedsbeitrag ab Quartal 1 beträgt also 50 Euro.')
             in mailer.outbox[1].body)
-        # print(mailer.outbox[1].body)
 
         """
         send email to
@@ -400,7 +376,6 @@ class TestDues16Views(unittest.TestCase):
         res_en_normal = send_dues16_invoice_email(req_en_normal)
         self.assertTrue(res_en_normal.status_code == 302)
         self.assertEqual(len(mailer.outbox), 3)
-        # print(mailer.outbox[2].body)
         self.assertTrue(
             (u'Please transfer 50 Euro')
             in mailer.outbox[2].body)
@@ -416,7 +391,6 @@ class TestDues16Views(unittest.TestCase):
         res_de_investing = send_dues16_invoice_email(req_de_investing)
         self.assertTrue(res_de_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 4)
-        # print(mailer.outbox[3].body)
         self.assertTrue(
             (u'Da Du investierendes Mitglied bist')
             in mailer.outbox[3].body)
@@ -432,7 +406,6 @@ class TestDues16Views(unittest.TestCase):
         res_en_investing = send_dues16_invoice_email(req_en_investing)
         self.assertTrue(res_en_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 5)
-        # print(mailer.outbox[4].body)
         self.assertTrue(
             (u'Since you are an investing member')
             in mailer.outbox[4].body)
@@ -448,7 +421,6 @@ class TestDues16Views(unittest.TestCase):
         res_de_legalentity = send_dues16_invoice_email(req_de_legalentity)
         self.assertTrue(res_de_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 6)
-        # print(mailer.outbox[5].body)
         self.assertTrue(
             (u'')
             in mailer.outbox[5].body)
@@ -464,7 +436,6 @@ class TestDues16Views(unittest.TestCase):
         res_en_legalentity = send_dues16_invoice_email(req_en_legalentity)
         self.assertTrue(res_en_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 7)
-        # print(mailer.outbox[6].body)
         self.assertTrue(
             (u'Da Musikverlag investierendes Mitglied ist')
             in mailer.outbox[6].body)
@@ -504,18 +475,15 @@ class TestDues16Views(unittest.TestCase):
         # check number of invoices: should be 0
         _number_of_invoices_before_batch = len(
             DuesInvoiceRepository.get_all([2016]))
-        # print("_number_of_invoices_before_batch: {}".format(
         #    _number_of_invoices_before_batch))
         assert(_number_of_invoices_before_batch == 0)
 
         req = testing.DummyRequest()
         req.referrer = 'toolbox'
         res = send_dues16_invoice_batch(req)
-        # print res
 
         # check number of invoices: should be 2
         _number_of_invoices_batch = len(DuesInvoiceRepository.get_all([2016]))
-        # print("number of invoices after batch: {}".format(
         #    _number_of_invoices_batch))
         assert(_number_of_invoices_batch == 2)
 
@@ -538,7 +506,6 @@ class TestDues16Views(unittest.TestCase):
         # this will respond with a redirect and tell
         # that there are no invitees left
         res2 = send_dues16_invoice_batch(req)
-        # print res2
         self.assertEquals(res2.status, '302 Found')
         self.assertEquals(res2.status_code, 302)
         assert(
@@ -631,8 +598,6 @@ class TestDues16Views(unittest.TestCase):
         }
         res = make_dues16_invoice_no_pdf(req2)
         # m1.
-        # print("length of the result: {}".format(len(res.body)))
-        # print("headers of the result: {}".format((res.headers)))
         assert(60000 < len(res.body) < 80000)
         assert('application/pdf' in res.headers['Content-Type'])
 
@@ -642,7 +607,6 @@ class TestDues16Views(unittest.TestCase):
         from c3smembership.presentation.views.dues_2016 import dues16_listing
         req_list = testing.DummyRequest()
         resp_list = dues16_listing(req_list)
-        # print resp_list
         # {'count': 5,
         #   'invoices': [
         #       <c3smembership.models.Dues16Invoice object at 0x7f95df761a50>,
@@ -684,7 +648,6 @@ class TestDues16Views(unittest.TestCase):
         _m1_amount_reduced = m1.dues16_amount_reduced  # is Decimal('0')
         _number_of_invoices_before_reduction = len(
             DuesInvoiceRepository.get_all([2016]))
-        # print("_number_of_invoices_before_reduction: {}".format(
         #    _number_of_invoices_before_reduction))
         # we have 2 invoices as of now
         self.assertEqual(len(DuesInvoiceRepository.get_all([2016])), 2)
@@ -767,8 +730,6 @@ class TestDues16Views(unittest.TestCase):
             _number_of_invoices_before_reduction + 1, 2016)
         _new_inv = DuesInvoiceRepository.get_by_number(
             _number_of_invoices_before_reduction + 2, 2016)
-        # print(_rev_inv.invoice_amount)
-        # print(type(_rev_inv.invoice_amount))
         assert(_rev_inv.invoice_amount == D('-50'))
         assert(_new_inv.invoice_amount == D('42'))
 
@@ -807,7 +768,6 @@ class TestDues16Views(unittest.TestCase):
         res_reduce = dues16_reduction(req_reduce)
         #############################################################
         # try to reduce to zero (edge case coverage)
-        # print("------------- reduction to zero ahead!!!")
         req_reduce = testing.DummyRequest(
             post={
                 'confirmed': 'yes',
@@ -915,8 +875,6 @@ class TestDues16Views(unittest.TestCase):
             'no': u'0003',
         }
         res = make_dues16_reversal_invoice_pdf(req2)
-        # print("length of the result: {}".format(len(res.body)))
-        # print("headers of the result: {}".format((res.headers)))
         assert(60000 < len(res.body) < 80000)
         assert('application/pdf' in res.headers['Content-Type'])
 
