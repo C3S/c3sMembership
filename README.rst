@@ -24,9 +24,7 @@ Documentation
 -------------
 
 There is plenty of documentation under /docs, both in this repository and in
-the running app (if you have sphinx to compile the docs to HTML):
-
-::
+the running app (if you have sphinx to compile the docs to HTML)::
 
    cd docs
    make html
@@ -38,9 +36,7 @@ https://yes.c3s.cc/docs/
 Setup
 -----
 
-Install development dependencies:
-
-::
+Install development dependencies::
 
    $ sudo apt-get install python-pip python-dev python2.7-dev \
       python-virtualenv libxml2-dev libxslt1-dev build-essential \
@@ -51,54 +47,52 @@ Fonts: The .odt files for the membership application in pdftk require the font
 Signika which can be downloaded at:
 https://www.google.com/fonts/specimen/Signika
 
-Install LaTeX pdf compilation dependencies:
-
-::
+Install LaTeX pdf compilation dependencies::
 
    $ sudo apt-get install texlive-latex-base texlive-latex-recommended \
       texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra pgf \
       texlive-lang-german texlive-luatex
 
-Setup the virtual environment:
-
-::
+Setup the virtual environment::
 
    $ virtualenv -p python2 env
-   $ env/bin/python setup.py develop
+
+Activate the virtual environment::
+
+   $ source env/bin/activate
+
+Install c3sMembership::
+
+   $ python setup.py develop
 
 You might have to update the version of setuptools in your virtual environment
-to get a recent version, then repeat the step above:
-
-::
+to get a recent version, then repeat the step above::
 
    > mock requires setuptools>=17.1. Aborting installation
    > error: Setup script exited with 1
 
-   $ env/bin/pip install -U setuptools
+   $ pip install -U setuptools
 
-Install documentation compilation dependencies
-
-::
+Install documentation compilation dependencies::
 
    $ sudo apt-get install graphviz openjdk-7-jre-headless
    $ mkdir utils
    $ wget 'http://downloads.sourceforge.net/project/plantuml/plantuml.jar' \
       -O utils/plantuml.jar
-   $ env/bin/pip install sphinx sphinxcontrib-plantuml
+   $ pip install sphinx sphinxcontrib-plantuml
 
-Create an initial database:
+Create an initial database::
 
-::
-
-   $ env/bin/initialize_c3sMembership_db development.ini
+   $ initialize_c3sMembership_db development.ini
 
 
 Run in development mode
 -----------------------
 
-::
+Run::
 
-   $ env/bin/pserve development.ini --reload
+   $ source env/bin/activate
+   $ pserve development.ini --reload
 
 The app will rebuild templates and reload code whenever there are changes by
 using --reload.
@@ -107,29 +101,30 @@ using --reload.
 Run in production mode
 ----------------------
 
-::
+Run::
 
+   $ source env/bin/activate
    $ pserve production.ini start
 
 
 Running automated tests
 -----------------------
 
-::
+Make sure to activate the virtual environment::
 
-   $ env/bin/nosetests
+   $ source env/bin/activate
+   $ nosetests
 
 
 Database migration
 ------------------
 
-Migrate database if database model changed (changed models.py?):
+Migrate database if database model changed (changed models.py?)::
 
-::
-
+   $ source env/bin/activate
    $ # Backup database
    $ cp c3sMembership.db c3sMembership.db.$(date "+%Y-%m-%d_%H-%M-%S")
    $ # Upgrade database
-   $ env/bin/alembic upgrade head
+   $ alembic upgrade head
 
 See https://yes.c3s.cc/docs/development/changes_branches_releases.html#the-production-branch
