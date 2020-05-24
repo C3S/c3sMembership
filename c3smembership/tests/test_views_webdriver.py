@@ -71,8 +71,12 @@ class SeleniumTestBase(unittest.TestCase):
         """
         if os.path.isfile('webdrivertest.db'):
             call(['rm', 'webdrivertest.db'], stdout=open(os.devnull, 'w'))
+
+        # Call initialize_c3sMembership_db from the environment. In case of
+        # problems make sure the virtual environment is activated and
+        # initialize_c3sMembership_db is found.
         call(
-            ['env/bin/initialize_c3sMembership_db', 'webdrivertest.ini'],
+            ['initialize_c3sMembership_db', 'webdrivertest.ini'],
             stdout=open(os.devnull, 'w'))
 
     def setUp(self):
