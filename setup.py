@@ -53,6 +53,7 @@ TEST_REQUIREMENTS = [
 ]
 
 DOCS_REQUIRE = [
+    'docutils==0.12.0',  # Pin for Sphinx incompatibility with 0.13.1
     'sphinx==1.3.3',  # for generating the documentation
     'sphinxcontrib-plantuml',
 ]
