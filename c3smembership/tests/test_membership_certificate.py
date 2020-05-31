@@ -32,7 +32,7 @@ from c3smembership.presentation.views.membership_certificate import (
 )
 
 
-MIN_PDF_SIZE = 40000
+MIN_PDF_SIZE = 20000
 MAX_PDF_SIZE = 120000
 
 

@@ -15,6 +15,10 @@ from integration_test_base import IntegrationTestCaseBase
 from c3smembership.data.model.base.c3smember import C3sMember
 
 
+PDF_SIZE_MIN = 20000
+PDF_SIZE_MAX = 120000
+
+
 class MembershipCertificateInt(IntegrationTestCaseBase):
     """
     Integration testing of the membership_acquisition module
@@ -120,8 +124,8 @@ class MembershipCertificateInt(IntegrationTestCaseBase):
             token=self.member.certificate_token),
                                     status=200)
 
-        self.assertTrue(len(response.body) > 50000)
-        self.assertTrue(len(response.body) < 100000)
+        self.assertTrue(len(response.body) > PDF_SIZE_MIN)
+        self.assertTrue(len(response.body) < PDF_SIZE_MAX)
 
         # 2 Success, member with recent certificate email
         wrong_member_id = 999999
@@ -201,8 +205,8 @@ class MembershipCertificateInt(IntegrationTestCaseBase):
                 member_id=self.member.id),
             status=200)
 
-        self.assertTrue(len(response.body) > 50000)
-        self.assertTrue(len(response.body) < 100000)
+        self.assertTrue(len(response.body) > PDF_SIZE_MIN)
+        self.assertTrue(len(response.body) < PDF_SIZE_MAX)
 
         # 2 Failure, logged in, member does not exist
         self.reset_member() \

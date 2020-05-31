@@ -35,6 +35,10 @@ from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
 
+PDF_SIZE_MIN = 20000
+PDF_SIZE_MAX = 120000
+
+
 def _initTestingDB():
     """
     Set up a database for these tests: have some test data.
@@ -598,7 +602,7 @@ class TestDues17Views(unittest.TestCase):
         }
         res = make_dues17_invoice_no_pdf(req2)
         # m1.
-        assert(60000 < len(res.body) < 100000)
+        assert(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
         assert('application/pdf' in res.headers['Content-Type'])
 
         """
@@ -876,7 +880,7 @@ class TestDues17Views(unittest.TestCase):
             'no': u'0003',
         }
         res = make_dues17_reversal_invoice_pdf(req2)
-        assert(60000 < len(res.body) < 100000)
+        assert(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
         assert('application/pdf' in res.headers['Content-Type'])
 
     def test_dues17_notice(self):
