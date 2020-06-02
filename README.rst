@@ -57,21 +57,15 @@ Setup the virtual environment::
 
    $ virtualenv -p python2 env
 
-Activate the virtual environment::
+Activate the virtual environment and update pip and setuptools::
 
    $ source env/bin/activate
+   $ pip install --upgrade pip setuptools
+   $ pip install -r requirements.txt
 
 Install c3sMembership::
 
    $ python setup.py develop
-
-You might have to update the version of setuptools in your virtual environment
-to get a recent version, then repeat the step above::
-
-   > mock requires setuptools>=17.1. Aborting installation
-   > error: Setup script exited with 1
-
-   $ pip install -U setuptools
 
 Install documentation compilation dependencies::
 
