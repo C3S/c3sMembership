@@ -174,8 +174,8 @@ def gen_cert(member):
 
     sign_meik = os.path.abspath(
         os.path.join(certificate_path, 'sign_meik.png'))
-    sign_julian = os.path.abspath(
-        os.path.join(certificate_path, 'sign_julian.png'))
+    sign_sarah = os.path.abspath(
+        os.path.join(certificate_path, 'sign_sarah.png'))
 
     # a temporary directory for the latex run
     tempdir = tempfile.mkdtemp()
@@ -255,7 +255,7 @@ def gen_cert(member):
 \\def\\txtBlkConfirmDate{%s}
 \\def\\signDate{%s}
 \\def\\signMeik{%s}
-\\def\\signJulian{%s}
+\\def\\signSarah{%s}
 \\def\\txtBlkCEO{%s}
 \\def\\txtBlkMembershipNum{%s}
     ''' % (
@@ -277,7 +277,7 @@ def gen_cert(member):
             if member.locale == 'de'
             else date.today()),
         sign_meik,
-        sign_julian,
+        sign_sarah,
         exec_dir,
         mship_num_text
     )
