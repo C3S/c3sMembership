@@ -1,3 +1,21 @@
+Next Release
+============
+
+
+- Pin docutils due to Sphinx incompatibility
+
+- Fix documentation
+
+- Rely on virtual environment for sphinx-build
+
+- Fix PDF generation testing
+
+- Fix README to always activate the virtual environment
+
+- Remove hard-coded path for database initialization during test
+
+
+
 1.30
 ====
 
