@@ -92,7 +92,7 @@
                     <abbr title="Barcamp and general assembly invitation for general assembly ${latest_general_assembly.number} &quot;${latest_general_assembly.name}&quot; on ${latest_general_assembly.date}">BC &amp; GA<br />Invitation</abbr>
                 </th>
                 <th>
-                    Dues 2020<br/>Invoice
+                    Dues 2021<br/>Invoice
                 </th>
                 <th>
                     Certificate
@@ -156,14 +156,14 @@
                     </span>
                 </td>
                 <td class="icons">
-                    <div tal:omit-tag="" tal:condition="not member.membership_date > date(2020, 12, 13) and (member.membership_loss_date is None or member.membership_loss_date > date(2020, 12, 31))">
-                        <a tal:condition="member.dues20_invoice is False"
-                                href="${request.route_url('send_dues20_invoice_email', member_id=member.id)}"
+                    <div tal:omit-tag="" tal:condition="not member.membership_date > date(2021, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(2020, 12, 31))">
+                        <a tal:condition="member.dues21_invoice is False"
+                                href="${request.route_url('send_dues21_invoice_email', member_id=member.id)}"
                                 title="Dues invoice not sent yet. Click to send!"
                                 class="fas fa-envelope text-danger"></a>
-                        <a tal:condition="member.dues20_invoice is True"
-                                href="${request.route_url('send_dues20_invoice_email', member_id=member.id)}"
-                                title="Invoice sent at ${member.dues20_invoice_date.strftime('%d.%m.%Y %H:%M')}"
+                        <a tal:condition="member.dues21_invoice is True"
+                                href="${request.route_url('send_dues21_invoice_email', member_id=member.id)}"
+                                title="Invoice sent at ${member.dues21_invoice_date.strftime('%d.%m.%Y %H:%M')}"
                                 class="fas fa-envelope text-success"></a>
                     </div>
                 </td>

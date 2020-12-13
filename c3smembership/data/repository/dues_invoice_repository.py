@@ -28,6 +28,7 @@ from c3smembership.data.model.base.dues17invoice import Dues17Invoice
 from c3smembership.data.model.base.dues18invoice import Dues18Invoice
 from c3smembership.data.model.base.dues19invoice import Dues19Invoice
 from c3smembership.data.model.base.dues20invoice import Dues20Invoice
+from c3smembership.data.model.base.dues21invoice import Dues21Invoice
 
 
 class DuesInvoiceRepository(object):
@@ -47,6 +48,7 @@ class DuesInvoiceRepository(object):
         2018: Dues18Invoice,
         2019: Dues19Invoice,
         2020: Dues20Invoice,
+        2021: Dues21Invoice,
     }
     _PAYMENT_FIELDS = {
         2015: {
@@ -72,6 +74,10 @@ class DuesInvoiceRepository(object):
         2020: {
             'paid_date': C3sMember.dues20_paid_date,
             'amount_paid': C3sMember.dues20_amount_paid,
+        },
+        2021: {
+            'paid_date': C3sMember.dues21_paid_date,
+            'amount_paid': C3sMember.dues21_amount_paid,
         },
     }
 
@@ -272,6 +278,9 @@ class DuesInvoiceRepository(object):
         if year == 2020:
             member.dues20_invoice_no = invoice_number
             member.dues20_token = invoice_token
+        if year == 2021:
+            member.dues21_invoice_no = invoice_number
+            member.dues21_token = invoice_token
         DBSession().flush()
 
         return invoice
@@ -302,6 +311,9 @@ class DuesInvoiceRepository(object):
         if year == 2020:
             member.set_dues20_amount(dues_calculation.amount)
             member.dues20_start = dues_calculation.code
+        if year == 2021:
+            member.set_dues21_amount(dues_calculation.amount)
+            member.dues21_start = dues_calculation.code
         DBSession().flush()
 
     @classmethod
@@ -330,6 +342,9 @@ class DuesInvoiceRepository(object):
         if year == 2020:
             member.dues20_invoice = True
             member.dues20_invoice_date = invoice_date
+        if year == 2021:
+            member.dues21_invoice = True
+            member.dues21_invoice_date = invoice_date
         DBSession().flush()
 
     @staticmethod
@@ -347,6 +362,7 @@ class DuesInvoiceRepository(object):
             2018: Dues18Invoice,
             2019: Dues19Invoice,
             2020: Dues20Invoice,
+            2021: Dues21Invoice,
         }
         return year_classes[year]
 

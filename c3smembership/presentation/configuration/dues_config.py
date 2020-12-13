@@ -270,6 +270,29 @@ class DuesConfig(Configuration):
             ('dues20_notice', '/dues20_notice/{member_id}'),
             ('dues20_listing', '/dues20_listing'),
 
+            # membership dues 2021
+            (
+                'dues21_invoice_pdf_backend',
+                '/dues21_invoice/C3S-dues21-{invoice_number}.pdf'
+            ),
+            (
+                'dues21_reversal_pdf_backend',
+                '/dues21_reversal/C3S-dues21-{invoice_number}-S.pdf'
+            ),
+            ('send_dues21_invoice_email', '/dues21_invoice/{member_id}'),
+            ('send_dues21_invoice_batch', '/dues21_invoice_batch'),
+            (
+                'make_dues21_invoice_no_pdf',
+                '/dues21_invoice_no/{code}/C3S-dues21-{i}.pdf'
+            ),
+            ('dues21_reduction', '/dues21_reduction/{member_id}'),
+            (
+                'make_dues21_reversal_invoice_pdf',
+                '/dues21_reversal/{code}/C3S-dues21-{no}-S.pdf'
+            ),
+            ('dues21_notice', '/dues21_notice/{member_id}'),
+            ('dues21_listing', '/dues21_listing'),
+
             # Archiving
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),
             (

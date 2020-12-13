@@ -41,6 +41,8 @@ def get_member_details(request, member):
         member.membership_number, [2019])
     invoices20 = DuesInvoiceRepository.get_by_membership_number(
         member.membership_number, [2020])
+    invoices21 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2021])
     general_assembly_invitations = sorted(
         request.registry.general_assembly_invitation.get_member_invitations(
             member),
@@ -227,6 +229,36 @@ def get_member_details(request, member):
             'dues_invoice_pdf_backend': 'dues20_invoice_pdf_backend',
             'dues_reversal_pdf_backend': 'dues20_reversal_pdf_backend',
             'dues_notice_message_to_staff': 'dues20notice_message_to_staff',
+        })
+    if (member.membership_date < date(2021, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2021, 1, 1))):
+        dues.append({
+            'year': '2021',
+            'year_short': '21',
+            'invoices': invoices21,
+            'email_sent': member.dues21_invoice,
+            'email_sent_timestamp': member.dues21_invoice_date,
+            'has_invoice': len(invoices21) > 0,
+            'dues_start': member.dues21_start,
+            'dues_amount': member.dues21_amount,
+            'is_reduced': member.dues21_reduced,
+            'reduced_amount': member.dues21_amount_reduced,
+            'is_balanced': member.dues21_balanced,
+            'amount_paid': member.dues21_amount_paid,
+            'payment_received': member.dues21_paid,
+            'paid_date': member.dues21_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues21_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues21_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues21_listing'),
+            'dues_notice_route': request.route_url(
+                'dues21_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues21_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues21_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues21notice_message_to_staff',
         })
 
     return {

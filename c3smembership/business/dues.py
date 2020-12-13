@@ -292,6 +292,7 @@ def _get_year_invoice_number(year, member):
         2018: member.dues18_invoice_no,
         2019: member.dues19_invoice_no,
         2020: member.dues20_invoice_no,
+        2021: member.dues21_invoice_no,
     }
     return year_invoice_number[year]
 
@@ -309,5 +310,6 @@ def _invoice_calculated(year, member):
         2018: member.dues18_invoice,
         2019: member.dues19_invoice,
         2020: member.dues20_invoice,
+        2021: member.dues21_invoice,
     }
     return year_invoice_calculated[year]
