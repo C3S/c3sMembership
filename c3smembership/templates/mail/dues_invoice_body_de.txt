@@ -1,14 +1,14 @@
 Hallo {salutation},
 
-am 2. Juni 2019 hat die sechste ordentliche Generalversammlung der C3S SCE
+am 28. Juni 2020 hat die siebte ordentliche Generalversammlung der C3S SCE
 eine Verlängerung der vorläufigen Beitragsordnung beschlossen. Sie sieht
 weiterhin Mitgliedsbeiträge für ordentliche Mitglieder vor, damit wir unsere
 laufenden Kosten decken können.
 
   https://archive.c3s.cc/aktuell/legal/C3S_SCE_membership_dues_de.pdf
 
-Der Mitgliedsbeitrag 2020 für ordentliche Mitglieder beträgt demnach
-50 Euro. Er ist niedriger, falls du später als im 1. Quartal 2020
+Der Mitgliedsbeitrag 2021 für ordentliche Mitglieder beträgt demnach
+50 Euro. Er ist niedriger, falls du später als im 1. Quartal 2021
 beigetreten bist.
 
 Dein Mitgliedsbeitrag {invoice_quarter} beträgt also {dues_amount} Euro.
