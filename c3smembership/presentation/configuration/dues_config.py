@@ -36,9 +36,13 @@ from c3smembership.presentation.views.dues_2019 import (
     make_invoice_pdf_pdflatex as make_invoice_2019,
     make_reversal_pdf_pdflatex as make_reversal_2019,
 )
-from c3smembership.presentation.views.dues_2019 import (
+from c3smembership.presentation.views.dues_2020 import (
     make_invoice_pdf_pdflatex as make_invoice_2020,
     make_reversal_pdf_pdflatex as make_reversal_2020,
+)
+from c3smembership.presentation.views.dues_2021 import (
+    make_invoice_pdf_pdflatex as make_invoice_2021,
+    make_reversal_pdf_pdflatex as make_reversal_2021,
 )
 from c3smembership.presentation.views.payment_list import \
     payment_content_size_provider
@@ -93,6 +97,10 @@ class DuesConfig(Configuration):
             2020,
             make_invoice_2020,
             make_reversal_2020)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2021,
+            make_invoice_2021,
+            make_reversal_2021)
 
         # Payments
         self.config.registry.payment_information = PaymentInformation(
