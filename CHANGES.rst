@@ -1,5 +1,5 @@
-Next Release
-============
+1.31
+====
 
 
 - Add membership dues 2021. As for the previous years the source code has been
@@ -18,6 +18,9 @@ Next Release
 - Fix README to always activate the virtual environment
 
 - Remove hard-coded path for database initialization during test
+
+- Small changes regarding signatures due to change of a managing director. Yes,
+  still hard-coded. Shame on us.
 
 
 
