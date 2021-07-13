@@ -257,7 +257,7 @@ def edit_member(request):
         )
         membership_type = colander.SchemaNode(
             colander.String(),
-            title=_(u'Type of Membership (C3S Statute § 4)'),
+            title=_(u'Type of Membership (C3S Statute §5)'),
             description=_(u'Please choose the type of membership.'),
             widget=deform.widget.RadioChoiceWidget(
                 values=(

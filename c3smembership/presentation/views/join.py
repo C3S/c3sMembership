@@ -79,7 +79,7 @@ def join_c3s(request):
         membership_type = colander.SchemaNode(
             colander.String(),
             title=_(u'I want to become a ... '
-                    u'(choose membership type, see C3S SCE statute sec. 4)'),
+                    u'(choose membership type, see C3S SCE statute §5)'),
             description=_(u'choose the type of membership.'),
             widget=deform.widget.RadioChoiceWidget(
                 values=(
@@ -132,7 +132,7 @@ def join_c3s(request):
             colander.Integer(),
             title=_(u"I want to buy the following number "
                     u"of Shares (50€ each, up to 3000€, see "
-                    u"C3S statute sec. 5)"),
+                    u"C3S statute §6)"),
             description=_(
                 u'You can choose any amount of shares between 1 and 60.'),
             default="1",

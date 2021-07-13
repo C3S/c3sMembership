@@ -168,17 +168,17 @@ The acquisition of membership must be approved by the administrative board
 (art. 14(1) [EU_CR_1435_2003_SCE]_).
 
 - Only natural persons can become full members, legal bodies can only become
-  investor members (§ 4 I, II [C3S_Statute]_).
+  investor members (§ 5 I, II [C3S_Statute]_).
 - A signed and fully filled membership application is required
-  (§ 4 III [C3S_Statute]_).
+  (§ 5 III [C3S_Statute]_).
 - The membership application must be admitted by the administrative board
-  (§ 4 III [C3S_Statute]_).
-- The acquisiton of at least one share is required for becoming a member (§ 5 II
+  (§ 5 III [C3S_Statute]_).
+- The acquisiton of at least one share is required for becoming a member (§ 6 II
   1 [C3S_Statute]_) or the transfer of at least one share from an existing
-  member (§ 5 II 1 [C3S_Statute]_, § 9 [C3S_Statute]_).
-- The share must be paid for acquiring membership (§ 5 I 2 [C3S_Statute]_).
-- A member can sign up to 60 shares (§ 5 II 2 [C3S_Statute]_).
-- The nominal value of one share is 50 € (§ 5 I 1 [C3S_Statute]_).
+  member (§ 6 II 1 [C3S_Statute]_, § 10 [C3S_Statute]_).
+- The share must be paid for acquiring membership (§ 6 I 2 [C3S_Statute]_).
+- A member can sign up to 60 shares (§ 6 II 2 [C3S_Statute]_).
+- The nominal value of one share is 50 € (§ 6 I 1 [C3S_Statute]_).
 - The acquisition of shares must be documented in the membership list no later
   than in the month following that in which the acquisition occurred (Art. 14(5)
   [EU_CR_1435_2003_SCE]_).
@@ -212,25 +212,25 @@ Upon Resignation
 
 Membership shall be lost upon resignation (art. 15(1) [EU_CR_1435_2003_SCE]_).
 
-A member can resign from the C3S membership (§ 65 I [GenG]_, § 8
+A member can resign from the C3S membership (§ 65 I [GenG]_, § 9
 [C3S_Statute]_). The following criteria must be met:
 
 - The member must deliver a written and signed membership resignation
-  statement (§ 65 II 1 [GenG]_, § 8 I 1 [C3S_Statute]_).
+  statement (§ 65 II 1 [GenG]_, § 9 I 1 [C3S_Statute]_).
 
 Implications of the membership resignation are:
 
 - The resignation becomes effective at the end of the following fiscal year
-  (§ 8 I 2 [C3S_Statute]_, § 65 II [GenG]_).
+  (§ 9 I 2 [C3S_Statute]_, § 65 II [GenG]_).
 - In extraordinary situations the resignation can become effective at the end
   of the fiscal year three months after the resignation statement if the
   ordinary notice period is unreasonable in the personal and economic
   circumstances of the member (§ 65 III [GenG]_).
 - All mandatory and voluntary shares are terminated when the resignation
-  becomes effective (§ 8 I 3 [C3S_Statute]_).
+  becomes effective (§ 9 I 3 [C3S_Statute]_).
 - The reimbursement value of signed shares depends on the decision of the
-  administrative board before drawing the balance sheet (§ 22 III
-  [C3S_Statute]_).
+  administrative board before drawing the balance sheet (§ 25 III
+  [C3S_Statute]_) 
 - Outstanding membership fees can be subtracted from the shares' reimbursement
   value.
 - The date when the membership resignation becomes effective must be recoreded
@@ -241,7 +241,7 @@ Implications of the membership resignation are:
 
 - *Describe the business process.*
 - *§ 67a [GenG]_*
-
+- *Check the meaning of § 25. There are no shares mentioned there.*
 
 
 Upon Expulsion
@@ -262,7 +262,7 @@ Upon Transfer of All Shares
 
 Membership shall be lost upon the transfer of all shares held to a member or a
 natural person or legal entity which has acquired membership (art. 15(1)
-[EU_CR_1435_2003_SCE]_, § 4 IV c [C3S_Statute]_).
+[EU_CR_1435_2003_SCE]_, § 5 IV c [C3S_Statute]_).
 
 In case a member transfers all shares the membership is lost without the
 necessity to go through the process of winding up membership (§ 76 I 1 [GenG]_).
@@ -279,7 +279,7 @@ Upon Winding-up
 
 
 Membership shall be lost upon winding-up in the case of a member that is not a
-natural person (Art. 15(1) [EU_CR_1435_2003_SCE]_, § 77a [GenG]_, § 4 IV d
+natural person (Art. 15(1) [EU_CR_1435_2003_SCE]_, § 77a [GenG]_, § 5 IV d
 [C3S_Statute]_).
 
 
@@ -289,7 +289,7 @@ Upon Death
 
 
 Membership shall be lost upon death (art. 15(1) [EU_CR_1435_2003_SCE]_, § 77
-[GenG]_, § 4 IV d [C3S_Statute]_).
+[GenG]_, § 5 IV d [C3S_Statute]_).
 
 **TODO:** *Elaborate.*
 
@@ -300,7 +300,7 @@ Upon Bankruptcy
 
 
 Membership shall be lost upon bankruptcy (art. 15(1) [EU_CR_1435_2003_SCE]_, §§
-66a, 77a [GenG]_, § 4 IV d [C3S_Statute]_).
+66a, 77a [GenG]_, § 5 IV d [C3S_Statute]_).
 
 **TODO:** *Elaborate.*
 
@@ -345,7 +345,7 @@ Shares can be transferred from one member to another member.
 
 Requirements for transferring shares:
 
-- Any number of shares which the member owns can be transferred (§ 9
+- Any number of shares which the member owns can be transferred (§ 10
   [C3S_Statute]_).
 
   - The member must transfer at least one share.
@@ -356,7 +356,7 @@ Requirements for transferring shares:
     upon transfer of all shares.
 
 - Consent of the administrative board is required for the transfer to become
-  valid (§ 9 [C3S_Statute]_).
+  valid (§ 10 [C3S_Statute]_).
 - A written statement of the transferring member signed by the giving must be
   given (§ 76 I 1 [GenG]_). **TODO:** *Must the acquiring member sign the
   statement? Compare § 76 I 1 [GenG]_ "durch schriftliche Vereinbarung". The
@@ -367,7 +367,7 @@ Requirements for transferring shares:
   [GenG]_).
 - The member must be immediately informed about the fact that the shares
   transfer was documented in the membership list (§ 69 [GenG]_).
-- The acquirer of the shares must be a member or must become a member (§ 9
+- The acquirer of the shares must be a member or must become a member (§ 10
   [C3S_Statute]_).
 
   - A share transfer can be initiated from a member to an acquirer which is not
@@ -396,19 +396,19 @@ must be met:
 
 Implications of the shares termination are:
 
-- The notice period is one year at the end of the fiscal year (§ 8 I 2, 3
+- The notice period is one year at the end of the fiscal year (§ 9 I 2, 3
   [C3S_Statute]_, § 65 II [GenG]_).
 - In extraordinary situations the termination can become effective at the end
   of the fiscal year three months after the termination statement if the
   ordinary notice period is unreasonable in the personal and economic
   circumstances of the member (§ 65 III [GenG]_).
 - The reimbursement value of signed shares depends on the decision of the
-  administrative board before drawing the balance sheet (§ 22 III
+  administrative board before drawing the balance sheet (§ 25 III
   [C3S_Statute]_).
 - The date when the shares termination becomes effective must be recorded in the
   membership list and the member must be notified about this event and the
   number of remaining shares immediately (§ 69 [GenG]_).
-- Transfer of all shares is a membership resignation (§ 4 IV c [C3S_Statute]_).
+- Transfer of all shares is a membership resignation (§ 5 IV c [C3S_Statute]_).
 - The termination of shares must be documented in the membership list no later
   than in the month following that in which the termination occurred (Art. 14(5)
   [EU_CR_1435_2003_SCE]_).
@@ -416,6 +416,7 @@ Implications of the shares termination are:
 **TODO:**
 
 - *Describe the business process.*
+- *Check the meaning of § 25. There are no shares mentioned there.*
 
 
 
@@ -487,25 +488,25 @@ Legal requirements:
 
 - The SCE shall hold a general meeting at least once each calendar year within
   six months of the end of its financial year (Art. 54(1)
-  [EU_CR_1435_2003_SCE]_, § 48 I 3 [GenG]_, § 13 III 1 [C3S_Statute]_).
+  [EU_CR_1435_2003_SCE]_, § 48 I 3 [GenG]_, § 14 III 1 [C3S_Statute]_).
 - The administrative board convenes the general assembly (Art. 54(2)
-  [EU_CR_1435_2003_SCE]_, § 44 I [GenG]_, § 13 II 1 [C3S_Statute]_).
+  [EU_CR_1435_2003_SCE]_, § 44 I [GenG]_, § 14 II 1 [C3S_Statute]_).
 - All persons who are eligible to participate are direcly informed by the
-  administrative board (Art. 56(1) [EU_CR_1435_2003_SCE]_, § 13 II 1
+  administrative board (Art. 56(1) [EU_CR_1435_2003_SCE]_, § 14 II 1
   [C3S_Statute]_). **TODO:** *"The general assembly is convened [...] by
   directly informing all persons who are eligible to participate, or by means of
-  a notice in the form required in § 25 [...]" (§ 13 II 1 [C3S_Statute]_). This
+  a notice in the form required in § 28 [...]" (§ 14 II 1 [C3S_Statute]_). This
   could mean that the publication via Musikforum could be sufficient and that
   the direct information sent to all members is not necessary.*
 - The notice period for a general assembly is 30 days between the date of
   dispatch of the notice and the date of the opening of the general assembly
-  (Art. 56(3) [EU_CR_1435_2003_SCE]_, § 13 II 1 [C3S_Statute]_).
+  (Art. 56(3) [EU_CR_1435_2003_SCE]_, § 14 II 1 [C3S_Statute]_).
 - In urgent cases the notice period can be reduced to 15 days (Art. 56(3)
-  [EU_CR_1435_2003_SCE]_, § 13 II 1 [C3S_Statute]_).
+  [EU_CR_1435_2003_SCE]_, § 14 II 1 [C3S_Statute]_).
 - Each full member has the right to attend the general assembly and take part in
-  its decision-making process (§ 7 I c [C3S_Statute]_).
+  its decision-making process (§ 8 I c [C3S_Statute]_).
 - Each non-user member has the right to attend the general assembly as an
-  observer (§ 7 II a [C3S_Statute]_).
+  observer (§ 8 II a [C3S_Statute]_).
 - The notice must contain (Art. 56(2) [EU_CR_1435_2003_SCE]_):
 
   - the name and registered office of the SCE,
