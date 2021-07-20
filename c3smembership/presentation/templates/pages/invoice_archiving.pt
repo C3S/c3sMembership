@@ -58,12 +58,12 @@
                         class="btn btn-primary">
                     Start archiving ${archiving_stats_sums['not_archived']} invoices
                 </a>
-                <button tal:condition="archiving_stats_sums['not_archived'] == 0" class="btn btn-primary" disabled>
+                <button tal:condition="archiving_stats_sums['not_archived'] == 0" class="btn btn-primary" disabled="">
                     No invoices to archive
                 </button>
             </span>
             <button tal:condition="background_archiving_active"
-                    class="btn btn-primary" disabled>
+                    class="btn btn-primary" disabled="">
                 Generating ${background_archiving_count}/${background_archiving_total} &hellip;
             </button>
         </p>
