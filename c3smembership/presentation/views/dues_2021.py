@@ -430,14 +430,17 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     tex_cmd = u'"' + tex_cmd + '"'
 
     # make latex show ß correctly in pdf:
+    # not necessary since latex version 2018-04
     tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
 
+    cmd = [
+        'pdflatex', '-jobname', filename, '-output-directory', path,
+        '-interaction', 'nonstopmode', '-halt-on-error',
+        tex_cmd.encode('utf-8')
+    ]
+
     subprocess.call(
-        [
-            'pdflatex', '-jobname', filename, '-output-directory', path,
-            '-interaction', 'nonstopmode', '-halt-on-error',
-            tex_cmd.encode('latin_1')
-        ],
+        cmd,
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
         cwd=PDFLATEX_DIR)

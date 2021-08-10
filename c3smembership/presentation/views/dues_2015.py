@@ -514,7 +514,6 @@ def make_invoice_pdf_pdflatex(invoice):
     tex_cmd += '\\input{%s}' % tpl_tex
     tex_cmd = u'"'+tex_cmd+'"'
 
-    # XXX: try to find out, why utf-8 doesn't work on debian
     subprocess.call(
         [
             'pdflatex',
@@ -522,7 +521,7 @@ def make_invoice_pdf_pdflatex(invoice):
             '-output-directory', path,
             '-interaction', 'nonstopmode',
             '-halt-on-error',
-            tex_cmd.encode('latin_1')
+            tex_cmd.encode('utf-8')
         ],
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
@@ -881,7 +880,6 @@ def make_reversal_pdf_pdflatex(invoice):
     tex_cmd += '\\input{%s}' % tpl_tex
     tex_cmd = u'"'+tex_cmd+'"'
 
-    # XXX: try to find out, why utf-8 doesn't work on debian
     subprocess.call(
         [
             'pdflatex',
@@ -889,7 +887,7 @@ def make_reversal_pdf_pdflatex(invoice):
             '-output-directory', path,
             '-interaction', 'nonstopmode',
             '-halt-on-error',
-            tex_cmd.encode('latin_1')
+            tex_cmd.encode('utf-8')
         ],
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
