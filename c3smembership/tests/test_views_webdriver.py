@@ -32,12 +32,13 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.remote_connection import LOGGER
 from webdriver_utils import Server
-
+from selenium.webdriver.chrome.options import Options
 
 LOGGER.setLevel(logging.WARNING)
 
-# this setting controls whether the browser will be visible (1) or not (0)
-IS_VISIBLE = 1
+# this setting controls whether the browser will be visible or not
+options = Options()
+options.headless = True
 
 # configuration of testing framework
 CFG = {
@@ -87,7 +88,7 @@ class SeleniumTestBase(unittest.TestCase):
             wrapper='StopableWSGIServer'
         )
 
-        self.driver = webdriver.PhantomJS()
+        self.driver = webdriver.Chrome(options=options)
         self.driver.delete_all_cookies()
         # Sleep one second to let the webdriver initialize in order to try to
         # fix the issue that webdriver tests are breaking unpredictably on

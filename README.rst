@@ -40,8 +40,11 @@ Install development dependencies::
 
    $ sudo apt-get install python-pip python-dev python2.7-dev \
       python-virtualenv libxml2-dev libxslt1-dev build-essential \
-      pdftk zlib1g-dev phantomjs
+      pdftk zlib1g-dev chromium
 
+For Tests: Download chromedriver binary for your Chromium version: 
+https://chromedriver.chromium.org/downloads
+Put it in your $PATH
 
 Fonts: The .odt files for the membership application in pdftk require the font
 Signika which can be downloaded at:
@@ -50,8 +53,8 @@ https://www.google.com/fonts/specimen/Signika
 Install LaTeX pdf compilation dependencies::
 
    $ sudo apt-get install texlive-latex-base texlive-latex-recommended \
-      texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra pgf \
-      texlive-lang-german texlive-luatex
+      texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra 
+      texlive-pictures texlive-lang-german texlive-luatex
 
 Setup the virtual environment::
 
@@ -69,11 +72,12 @@ Install c3sMembership::
 
 Install documentation compilation dependencies::
 
-   $ sudo apt-get install graphviz openjdk-7-jre-headless
+   $ sudo apt-get install graphviz default-jdk-headless
    $ mkdir utils
    $ wget 'http://downloads.sourceforge.net/project/plantuml/plantuml.jar' \
       -O utils/plantuml.jar
    $ pip install sphinx sphinxcontrib-plantuml
+
 
 Create an initial database::
 
