@@ -177,6 +177,25 @@ def gen_cert(member):
     sign_sarah = os.path.abspath(
         os.path.join(certificate_path, 'sign_sarah.png'))
 
+    # check if all needed files are there
+    for f in [
+        'Urkunde_Hintergrund_blank.pdf',
+        'sign_meik.png',
+        'sign_sarah.png',
+        'urkunde_footer_de.tex',
+        'urkunde_footer_de.tex',
+        'urkunde_footer_en.tex',
+        'urkunde_footer_en.tex'
+    ]:
+        response = Response(
+            'Resource not found: '
+            'missing file(s) in certificates folder; please create your '
+            'own corporate design and change gen_cert() in '
+            'membership_vertificate.py so proper PDFs can be generated.')
+        )
+        response.status_int = 404
+        return response
+
     # a temporary directory for the latex run
     tempdir = tempfile.mkdtemp()
 

@@ -10,6 +10,7 @@ from datetime import (
 )
 import unittest
 
+import os.path
 from mock import Mock
 from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
@@ -144,6 +145,22 @@ class TestMembershipCertificateViews(unittest.TestCase):
     """
     tests for the membership certificate views
     """
+
+    def check4PDFelements(self):
+        for f in [
+            'Urkunde_Hintergrund_blank.pdf',
+            'sign_meik.png',
+            'sign_sarah.png',
+            'urkunde_footer_de.tex',
+            'urkunde_footer_de.tex',
+            'urkunde_footer_en.tex',
+            'urkunde_footer_en.tex'
+        ]:
+            self.assertTrue(os.path.isfile(os.path.join('certificates', f)),
+                'missing file(s) in certificates folder; please create your '
+                'own corporate design and change gen_cert() in '
+                'membership_vertificate.py so proper PDFs can be generated')
+
     def setUp(self):
         self.config = testing.setUp()
         self.config.set_session_factory(session_factory_from_settings({}))
@@ -298,6 +315,10 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         test the certificate download view (english)
         """
+
+        # assure files for PDF creation are present
+        self.check4PDFelements()
+
         member2 = C3sMember.get_by_id(2)
         request = testing.DummyRequest()
         request.validated_matchdict = {
@@ -333,6 +354,10 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
         test the certificate download view (german)
         """
+
+        # assure files for PDF creation are present
+        self.check4PDFelements()
+
         member1 = C3sMember.get_by_id(1)
         request = testing.DummyRequest()
         request.validated_matchdict = {
@@ -389,8 +414,12 @@ class TestMembershipCertificateViews(unittest.TestCase):
 
     def test_generate_cert_founder(self):
         """
-        test the certificate download view (german)
+        test the certificate download view (founder, german)
         """
+
+        # assure files for PDF creation are present
+        self.check4PDFelements()
+
         request = testing.DummyRequest()
         member = C3sMember.get_by_id(3)
         request.validated_matchdict = {
@@ -432,6 +461,10 @@ class TestMembershipCertificateViews(unittest.TestCase):
         test the certificate generation with awkward characters in datasets
         because LaTeX interprets some characters as special characters.
         """
+
+        # assure files for PDF creation are present
+        self.check4PDFelements()
+
         member1 = C3sMember.get_by_id(1)
         request = testing.DummyRequest()
         request.validated_matchdict = {
@@ -471,6 +504,10 @@ class TestMembershipCertificateViews(unittest.TestCase):
         3. Validation failure, membership not granted
         4. Validation success
         """
+
+        # 0. assure files for PDF creation are present
+        self.check4PDFelements()
+
         member = Mock()
         member_information = Mock()
         self.config.registry.member_information = member_information
@@ -525,6 +562,9 @@ class TestMembershipCertificateViews(unittest.TestCase):
         request.validated_matchdict = {
             'member': C3sMember.get_by_id(1)
         }
+
+        # assure files for PDF creation are present
+        self.check4PDFelements()    
 
         result = generate_certificate_staff(request)
         self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)

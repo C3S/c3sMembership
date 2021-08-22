@@ -1,0 +1,32 @@
+
+{
+    // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+    // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+    // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "c3sMembership pserve",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/env/bin/pserve",
+            "args": [
+                "${workspaceFolder}/development.ini",
+                "--reload"
+            ],
+            "pyramid": true,
+            "jinja": true
+        },
+        {
+            "name": "Nosetests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/env/bin/nosetests",
+            "args": [
+                "-v",
+                "-cover-no-test",
+                // "c3smembership/tests/test_membership_certificate_integration.py:MembershipCertificateInt.test_certificate_pdf"
+            ]
+        }
+    ]
+}
