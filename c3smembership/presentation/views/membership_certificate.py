@@ -192,7 +192,6 @@ def gen_cert(member):
             'missing file(s) in certificates folder; please create your '
             'own corporate design and change gen_cert() in '
             'membership_vertificate.py so proper PDFs can be generated.')
-        )
         response.status_int = 404
         return response
 
