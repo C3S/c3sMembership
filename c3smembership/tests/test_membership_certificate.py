@@ -147,7 +147,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
     """
 
     def check4PDFelements(self):
-        for f in [
+        for filen in [
             'Urkunde_Hintergrund_blank.pdf',
             'sign_meik.png',
             'sign_sarah.png',
@@ -156,7 +156,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
             'urkunde_footer_en.tex',
             'urkunde_footer_en.tex'
         ]:
-            self.assertTrue(os.path.isfile(os.path.join('certificates', f)),
+            self.assertTrue(os.path.isfile(os.path.join('certificate', filen)),
                 'missing file(s) in certificates folder; please create your '
                 'own corporate design and change gen_cert() in '
                 'membership_vertificate.py so proper PDFs can be generated')

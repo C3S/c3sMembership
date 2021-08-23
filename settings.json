@@ -1,0 +1,16 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--disable=E0401"
+    ],
+    "python.linting.pycodestyleEnabled": false,
+    "python.linting.flake8Enabled": false,
+    "python.linting.flake8Args": [
+        "--disable=F401"
+    ],
+    "editor.rulers": [ 79, 119 ],
+    "python.linting.enabled": true,
+    "search.exclude": {
+        "docs/_build": true
+    }
+}
