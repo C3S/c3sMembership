@@ -12,5 +12,7 @@
     "python.linting.enabled": true,
     "search.exclude": {
         "docs/_build": true
-    }
+    },
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true
 }
