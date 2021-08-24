@@ -71,7 +71,7 @@ Activate the virtual environment and update pip and setuptools::
    $ pip install --upgrade pip setuptools
    $ pip install -r requirements.txt
 
-Make sure chromedriver can be found in your path, e.g.:
+Make sure chromedriver can be found in your path, e.g.::
 
    $ mv chromedriver env/bin
 
