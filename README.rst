@@ -42,12 +42,17 @@ Install development dependencies::
       python-virtualenv libxml2-dev libxslt1-dev build-essential \
       pdftk zlib1g-dev chromium
 
-For Tests: Download chromedriver binary for your Chromium version: 
-https://chromedriver.chromium.org/downloads
-Put it in your $PATH
+Clone the repo and cd into the c3sMembership folder.
+
+For nosetests to work, Determine your ``chromium --version`` and download the chromedriver with the fitting
+version number from https://sites.google.com/chromium.org/driver/downloads. E.g. for chromium 90 enter::
+
+   $ wget https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip
+   $ unzip chromedriver_linux64.zip
+   $ rm chromedriver_linux64.zip
 
 Fonts: The .odt files for the membership application in pdftk require the font
-Signika which can be downloaded at:
+Signika which can be downloaded from:
 https://www.google.com/fonts/specimen/Signika
 
 Install LaTeX pdf compilation dependencies::
@@ -65,6 +70,10 @@ Activate the virtual environment and update pip and setuptools::
    $ source env/bin/activate
    $ pip install --upgrade pip setuptools
    $ pip install -r requirements.txt
+
+Make sure chromedriver can be found in your path, e.g.:
+
+   $ mv chromedriver env/bin
 
 Install c3sMembership::
 
