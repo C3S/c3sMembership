@@ -55,6 +55,13 @@ Fonts: The .odt files for the membership application in pdftk require the font
 Signika which can be downloaded from:
 https://www.google.com/fonts/specimen/Signika
 
+Our membership software is bilingual, currently English and German.
+So make sure you have the German locale installed::
+
+   $ sudo apt-get install -y locales
+   $ sudo sed -i 's/^# *\(de_DE.UTF-8\)/\1/' /etc/locale.gen
+   $ sudo locale-gen
+
 Install LaTeX pdf compilation dependencies::
 
    $ sudo apt-get install texlive-latex-base texlive-latex-recommended \
