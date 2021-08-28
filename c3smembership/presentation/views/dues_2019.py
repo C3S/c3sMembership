@@ -467,7 +467,7 @@ def create_pdf(tex_vars, tpl_tex, invoice):
             '-output-directory', path,
             '-interaction', 'nonstopmode',
             '-halt-on-error',
-            tex_cmd.encode('latin_1')
+            tex_cmd.encode('utf-8')
         ],
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
