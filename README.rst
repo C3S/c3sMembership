@@ -51,6 +51,11 @@ version number from https://sites.google.com/chromium.org/driver/downloads. E.g.
    $ unzip chromedriver_linux64.zip
    $ rm chromedriver_linux64.zip
 
+Make sure chromedriver can be found in your path, e.g.::
+
+   $ echo $PATH
+   $ mv chromedriver ~/bin  # or 'sudo mv chromedriver /usr/bin' for system-wide availability
+
 Fonts: The .odt files for the membership application in pdftk require the font
 Signika which can be downloaded from:
 https://www.google.com/fonts/specimen/Signika
@@ -65,7 +70,7 @@ So make sure you have the German locale installed::
 Install LaTeX pdf compilation dependencies::
 
    $ sudo apt-get install texlive-latex-base texlive-latex-recommended \
-      texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra 
+      texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra \
       texlive-pictures texlive-lang-german texlive-luatex
 
 Setup the virtual environment::
@@ -78,9 +83,8 @@ Activate the virtual environment and update pip and setuptools::
    $ pip install --upgrade pip setuptools
    $ pip install -r requirements.txt
 
-Make sure chromedriver can be found in your path, e.g.::
-
-   $ mv chromedriver env/bin
+If your experience problems with the ``distribute`` package like
+``ImportError: No module named _markerlib``, try ``easy_install distribute``.
 
 Install c3sMembership::
 
@@ -93,7 +97,6 @@ Install documentation compilation dependencies::
    $ wget 'http://downloads.sourceforge.net/project/plantuml/plantuml.jar' \
       -O utils/plantuml.jar
    $ pip install sphinx sphinxcontrib-plantuml
-
 
 Create an initial database::
 
