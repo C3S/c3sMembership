@@ -14,5 +14,15 @@
         "docs/_build": true
     },
     "python.terminal.activateEnvironment": true,
-    "python.terminal.activateEnvInCurrentTerminal": true
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true,
+    "python.testing.nosetestsEnabled": true,
+    "python.testing.noseTestArgs": [
+        "--all-modules",
+        "--traverse-namespace",
+        "--ignore-files=venv",
+        "./c3smembership/tests"
+    ],
+    "python.testing.autoTestDiscoverOnSaveEnabled": true
 }

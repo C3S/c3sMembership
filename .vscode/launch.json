@@ -21,10 +21,16 @@
             "name": "Nosetests",
             "type": "python",
             "request": "launch",
+            "debugOptions": [
+                "WaitOnAbnormalExit",
+                "WaitOnNormalExit",
+                "RedirectOutput"
+            ],
             "program": "${workspaceFolder}/env/bin/nosetests",
             "args": [
                 "-v",
                 "-cover-no-test",
+                "${file}",  // currently selected file
                 // "c3smembership/tests/test_membership_certificate_integration.py:MembershipCertificateInt.test_certificate_pdf"
             ]
         }
