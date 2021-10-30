@@ -476,6 +476,29 @@ class C3sMember(Base):
         DatabaseDecimal(12, 2), default=Decimal('0'))
     dues21_paid_date = Column(DateTime())
 
+    # membership dues for 2022
+    dues22_invoice = Column(Boolean, default=False)
+    dues22_invoice_date = Column(DateTime())
+    dues22_invoice_no = Column(Integer())
+    dues22_token = Column(Unicode(10))
+    dues22_start = Column(Unicode(255))
+    dues22_amount = Column(
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    dues22_reduced = Column(Boolean, default=False)
+    _dues22_amount_reduced = Column(
+        'dues22_amount_reduced',
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    # balance
+    _dues22_balance = Column(
+        'dues22_balance',
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues22_balanced = Column(Boolean, default=True)
+    # payment
+    dues22_paid = Column(Boolean, default=False)
+    dues22_amount_paid = Column(
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues22_paid_date = Column(DateTime())
+
     # privacy
     privacy_consent = Column(DateTime(), nullable=True)
 
@@ -808,6 +831,47 @@ class C3sMember(Base):
             and \
             self.dues21_amount_reduced != self.dues21_amount
 
+    @hybrid_property
+    def dues22_balance(self):
+        """
+        Get the 2022 dues balance, i.e. amount due subtracted by amount paid.
+        """
+        return self._dues22_balance
+
+    @dues22_balance.setter
+    def dues22_balance(self, dues22_balance):
+        """
+        Set the 2022 dues balance.
+
+        If balance is set to 0 the balanced flag is set to True.
+        """
+        self._dues22_balance = dues22_balance
+        self.dues22_balanced = self._dues22_balance == Decimal('0')
+
+    @hybrid_property
+    def dues22_amount_reduced(self):
+        """
+        Get the reduced amount for 2022 dues.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This gets the amount the dues was reduced to.
+        """
+        return self._dues22_amount_reduced
+
+    @dues22_amount_reduced.setter
+    def dues22_amount_reduced(self, dues22_amount_reduced):
+        """
+        Set the reduced 2018 dues amount.
+
+        The originally calculated dues amount can be reduced on member's
+        request. This sets the amount the dues was reduced to.
+        """
+        self._dues22_amount_reduced = dues22_amount_reduced
+        self.dues22_reduced = \
+            not math.isnan(self.dues22_amount_reduced) \
+            and \
+            self.dues22_amount_reduced != self.dues22_amount
+
     @classmethod
     def get_by_code(cls, email_confirm_code):
         """
@@ -1054,6 +1118,39 @@ class C3sMember(Base):
             and_(
                 cls.membership_accepted == True,
                 cls.dues21_invoice == False,
+                cls.membership_date < date(invoice_year+1, 1, 1),
+                cls.membership_type.in_([u'normal', u'investing']),
+                or_(
+                    cls.membership_loss_date == None,
+                    cls.membership_loss_date >= date(invoice_year, 1, 1),
+                ),
+            )).slice(0, num).all()
+
+    @classmethod
+    def get_dues22_invoicees(cls, num):
+        """
+        Get a given number *n* of members to send dues invoices to.
+
+        Queries the database for members, where
+
+        * members are accepted
+        * members have not received their dues invoice email yet
+
+        Args:
+          num is the number *n* of C3sMembers to return
+
+        Returns:
+          a list of *n* member objects
+        """
+
+        # In SqlAlchemy the True comparison must be done as "a == True" and not
+        # in the python default way "a is True". Therefore:
+        # pylint: disable=singleton-comparison
+        invoice_year = 2022
+        return DBSession.query(cls).filter(
+            and_(
+                cls.membership_accepted == True,
+                cls.dues22_invoice == False,
                 cls.membership_date < date(invoice_year+1, 1, 1),
                 cls.membership_type.in_([u'normal', u'investing']),
                 or_(
@@ -1848,6 +1945,40 @@ class C3sMember(Base):
             self.dues21_amount_reduced = reduced_amount
         else:
             self.dues21_amount_reduced = Decimal('NaN')
+
+    def set_dues22_payment(self, paid_amount, paid_date):
+        if math.isnan(self.dues22_amount_paid):
+            dues22_amount_paid = Decimal('0')
+        else:
+            dues22_amount_paid = self.dues22_amount_paid
+
+        self.dues22_paid = True
+        self.dues22_amount_paid = dues22_amount_paid + paid_amount
+        self.dues22_paid_date = paid_date
+        self.dues22_balance = self.dues22_balance - paid_amount
+
+    def set_dues22_amount(self, dues_amount):
+        if math.isnan(self.dues22_amount) \
+                or not isinstance(self.dues22_amount, Decimal):
+            dues22_amount = Decimal('0')
+        else:
+            dues22_amount = self.dues22_amount
+
+        self.dues22_balance = self.dues22_balance - dues22_amount + Decimal(
+            dues_amount)  # what they actually have to pay
+        self.dues22_amount = dues_amount  # what they have to pay (calc'ed)
+
+    def set_dues22_reduced_amount(self, reduced_amount):
+        if reduced_amount != self.dues22_amount:
+            previous_amount_in_balance = (
+                self.dues22_amount_reduced
+                if self.dues22_reduced
+                else self.dues22_amount)
+            self.dues22_balance = self.dues22_balance - \
+                previous_amount_in_balance + reduced_amount
+            self.dues22_amount_reduced = reduced_amount
+        else:
+            self.dues22_amount_reduced = Decimal('NaN')
 
     def get_url_safe_name(self):
         """

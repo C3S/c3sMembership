@@ -44,6 +44,10 @@ from c3smembership.presentation.views.dues_2021 import (
     make_invoice_pdf_pdflatex as make_invoice_2021,
     make_reversal_pdf_pdflatex as make_reversal_2021,
 )
+from c3smembership.presentation.views.dues_2022 import (
+    make_invoice_pdf_pdflatex as make_invoice_2022,
+    make_reversal_pdf_pdflatex as make_reversal_2022,
+)
 from c3smembership.presentation.views.payment_list import \
     payment_content_size_provider
 
@@ -101,6 +105,10 @@ class DuesConfig(Configuration):
             2021,
             make_invoice_2021,
             make_reversal_2021)
+        self.config.registry.dues_invoice_archiving.configure_year(
+            2022,
+            make_invoice_2022,
+            make_reversal_2022)
 
         # Payments
         self.config.registry.payment_information = PaymentInformation(
@@ -300,6 +308,29 @@ class DuesConfig(Configuration):
             ),
             ('dues21_notice', '/dues21_notice/{member_id}'),
             ('dues21_listing', '/dues21_listing'),
+
+            # membership dues 2022
+            (
+                'dues22_invoice_pdf_backend',
+                '/dues22_invoice/C3S-dues22-{invoice_number}.pdf'
+            ),
+            (
+                'dues22_reversal_pdf_backend',
+                '/dues22_reversal/C3S-dues22-{invoice_number}-S.pdf'
+            ),
+            ('send_dues22_invoice_email', '/dues22_invoice/{member_id}'),
+            ('send_dues22_invoice_batch', '/dues22_invoice_batch'),
+            (
+                'make_dues22_invoice_no_pdf',
+                '/dues22_invoice_no/{code}/C3S-dues22-{i}.pdf'
+            ),
+            ('dues22_reduction', '/dues22_reduction/{member_id}'),
+            (
+                'make_dues22_reversal_invoice_pdf',
+                '/dues22_reversal/{code}/C3S-dues22-{no}-S.pdf'
+            ),
+            ('dues22_notice', '/dues22_notice/{member_id}'),
+            ('dues22_listing', '/dues22_listing'),
 
             # Archiving
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),
