@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-07-14 22:15+0200\n"
+"POT-Creation-Date: 2021-11-01 12:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -428,6 +428,7 @@ msgid "Membership Requirements"
 msgstr "Voraussetzungen der Mitgliedschaft"
 
 #: c3smembership/presentation/templates/pages/join_check_data.pt:56
+#: c3smembership/presentation/views/membership_member_edit.py:260
 msgid "Type of Membership"
 msgstr "Art der Mitgliedschaft"
 
@@ -845,14 +846,12 @@ msgstr "Mitgliedsbeiträge 2019"
 #. Default: 2020
 #: c3smembership/presentation/templates/pages/statistics.pt:409
 #, fuzzy
-#| msgid "stats-dues-2019"
 msgid "stats-dues-2020"
 msgstr "Mitgliedsbeiträge 2019"
 
 #. Default: 2021
 #: c3smembership/presentation/templates/pages/statistics.pt:473
 #, fuzzy
-#| msgid "stats-dues-2019"
 msgid "stats-dues-2021"
 msgstr "Mitgliedsbeiträge 2019"
 
@@ -886,10 +885,8 @@ msgid "No"
 msgstr "Nein"
 
 #: c3smembership/presentation/views/join.py:81
-msgid ""
-"I want to become a ... (choose membership type, see C3S SCE statute sec. "
-"4)"
-msgstr "Ich möchte ... (Art der Mitgliedschaft auswählen, siehe Satzung § 4)"
+msgid "I want to become a ... (choose membership type, see C3S SCE statute §5)"
+msgstr "Ich möchte ... (Art der Mitgliedschaft auswählen, siehe Satzung §5)"
 
 #: c3smembership/presentation/views/join.py:83
 msgid "choose the type of membership."
@@ -943,10 +940,10 @@ msgstr ""
 #: c3smembership/presentation/views/join.py:133
 msgid ""
 "I want to buy the following number of Shares (50€ each, up to 3000€, see "
-"C3S statute sec. 5)"
+"C3S statute §6)"
 msgstr ""
 "Ich erwerbe die folgende Anzahl Anteile (50 € pro Anteil, höchstens 3000 "
-"€, Satzung § 5):"
+"€, Satzung §6):"
 
 #: c3smembership/presentation/views/join.py:136
 msgid "You can choose any amount of shares between 1 and 60."
@@ -1157,10 +1154,6 @@ msgstr "Natürliche Person"
 msgid "Legal Entity"
 msgstr "Juristische Person"
 
-#: c3smembership/presentation/views/membership_member_edit.py:260
-msgid "Type of Membership (C3S Statute § 4)"
-msgstr "Art der Mitgliedschaft (§ 4 C3S-Satzung)"
-
 #: c3smembership/presentation/views/membership_member_edit.py:261
 msgid "Please choose the type of membership."
 msgstr "Wähle die Art der Mitgliedschaft."
@@ -1244,4 +1237,5 @@ msgstr "PDF erzeugen"
 
 #~ msgid "E-Mail"
 #~ msgstr "E-Mail"
+
 

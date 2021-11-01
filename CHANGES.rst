@@ -2,10 +2,12 @@ Next Release
 ============
 
 
-Add membership dues 2021. As for the previous years the source code has been
-copied, pasted and adjusted for the new year. This is quite a tedious job which
-is caused by the insufficient design for the first year and the lack of proper
-redesign until today.
+- Add membership dues 2021. As for the previous years the source code has been
+  copied, pasted and adjusted for the new year. This is quite a tedious job
+  which is caused by the insufficient design for the first year and the lack of
+  proper redesign until today.
+
+- Update C3S statute references.
 
 
 
