@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: c3smembership 1.31\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-07-14 22:15+0200\n"
+"POT-Creation-Date: 2021-11-01 12:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -417,6 +417,7 @@ msgid "Membership Requirements"
 msgstr ""
 
 #: c3smembership/presentation/templates/pages/join_check_data.pt:56
+#: c3smembership/presentation/views/membership_member_edit.py:260
 msgid "Type of Membership"
 msgstr ""
 
@@ -823,7 +824,7 @@ msgid "No"
 msgstr ""
 
 #: c3smembership/presentation/views/join.py:81
-msgid "I want to become a ... (choose membership type, see C3S SCE statute sec. 4)"
+msgid "I want to become a ... (choose membership type, see C3S SCE statute §5)"
 msgstr ""
 
 #: c3smembership/presentation/views/join.py:83
@@ -861,7 +862,7 @@ msgstr ""
 #: c3smembership/presentation/views/join.py:133
 msgid ""
 "I want to buy the following number of Shares (50€ each, up to 3000€, see C3S "
-"statute sec. 5)"
+"statute §6)"
 msgstr ""
 
 #: c3smembership/presentation/views/join.py:136
@@ -1052,10 +1053,6 @@ msgstr ""
 
 #: c3smembership/presentation/views/membership_member_edit.py:252
 msgid "Legal Entity"
-msgstr ""
-
-#: c3smembership/presentation/views/membership_member_edit.py:260
-msgid "Type of Membership (C3S Statute § 4)"
 msgstr ""
 
 #: c3smembership/presentation/views/membership_member_edit.py:261

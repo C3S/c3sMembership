@@ -70,7 +70,7 @@ def new_member(request):
         )
         membership_type = colander.SchemaNode(
             colander.String(),
-            title=(u'Art der Mitgliedschaft (lt. Satzung, §5)'),
+            title=(u'Art der Mitgliedschaft'),
             description=u'Bitte die Art der Mitgliedschaft auswählen.',
             widget=deform.widget.RadioChoiceWidget(
                 values=(
