@@ -20,13 +20,16 @@
                     Noch nicht berechnet und verschickt. <br/>
                     Jetzt berechnen &amp; versenden: Klick!
                 </a>
-                <a tal:condition="d['email_sent']"
+                <a tal:condition="d['email_sent'] and d['year'] == latest_dues_year"
                         href="${d['send_email_route']}"
                         title="gesendet ${d['email_sent_timestamp'].strftime('am %d.%m.%Y um %H:%M')}"
                         class="btn btn-success">
                     gesendet ${d['email_sent_timestamp'].strftime('am %d.%m.%Y um %H:%M')}.
                     Klicken zum wiederholten versenden.
                 </a>
+                <div tal:condition="d['email_sent'] and d['year'] != latest_dues_year" tal:omit-tag="">
+                    gesendet ${d['email_sent_timestamp'].strftime('am %d.%m.%Y um %H:%M')}
+                </div>
             </td>
         </tr>
         <!--! reduction / exemption -->

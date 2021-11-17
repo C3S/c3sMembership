@@ -300,6 +300,7 @@ def get_member_details(request, member):
         'member': member,
         'shares': shares,
         'general_assembly_invitations': general_assembly_invitations,
+        'latest_dues_year': '2022',
     }
 
 
