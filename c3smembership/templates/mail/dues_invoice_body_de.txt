@@ -11,9 +11,7 @@ Der Mitgliedsbeitrag 2022 für ordentliche Mitglieder beträgt demnach
 50 Euro. Er ist niedriger, falls du später als im 1. Quartal 2022
 beigetreten bist.
 
-Dein Mitgliedsbeitrag {invoice_quarter} beträgt also {dues_amount} Euro.
-
-Bitte überweise den Betrag auf folgendes Konto der C3S SCE:
+Bitte überweise {dues_amount} Euro auf folgendes Konto der C3S SCE:
 
   Verwendungszweck: {invoice_number}, Mitglied Nr. {membership_number}
   IBAN: DE79 8309 4495 0003 2643 78

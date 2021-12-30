@@ -1,3 +1,11 @@
+1.32.1
+======
+
+
+Harmonize dues invoice email templates.
+
+
+
 1.32
 ====
 
