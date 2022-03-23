@@ -24,9 +24,13 @@ selenium/webdriver makes the browser do things.
 
 import logging
 import os
+import glob
 from subprocess import call
 import time
+from datetime import datetime
 import unittest
+import unicodedata
+import re
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -35,6 +39,9 @@ from webdriver_utils import Server
 from selenium.webdriver.chrome.options import Options
 
 LOGGER.setLevel(logging.WARNING)
+
+# regex to match ascii
+re_ascii = re.compile(r"[^A-Za-z0-9_.,-]")
 
 # this setting controls whether the browser will be visible or not
 options = Options()
@@ -51,6 +58,26 @@ CFG = {
     },
 }
 SERVER = Server()
+
+
+# Delete screenshots on each run of nosetests before the tests.
+def delete_screenshots():
+    """
+    Deletes all screenshots of previous selenium tests.
+
+    Deletes all `.png` files in the `./screenshot` folder.
+
+    Returns:
+        None.
+    """
+    if not int(os.environ.get("SELENIUM_SCREENSHOTS", 0)):
+        return
+    path = os.path.join('screenshots', '*.png')
+    for screenshot in glob.glob(path):
+        os.unlink(screenshot)
+
+
+delete_screenshots()
 
 
 class SeleniumTestBase(unittest.TestCase):
@@ -88,7 +115,15 @@ class SeleniumTestBase(unittest.TestCase):
             wrapper='StopableWSGIServer'
         )
 
-        self.driver = webdriver.Chrome(options=options)
+        selenium_grid_url = os.environ.get("SELENIUM_GRID_URL", False)
+        if selenium_grid_url:
+            self.driver = webdriver.Remote(
+                command_executor=selenium_grid_url, options=options)
+            self.url = "http://%s:%s" % (
+                os.environ.get("HOSTNAME", "server"), CFG['app']['port'])
+        else:
+            self.driver = webdriver.Chrome(options=options)
+            self.url = "http://0.0.0.0:%s" % CFG['app']['port']
         self.driver.delete_all_cookies()
         # Sleep one second to let the webdriver initialize in order to try to
         # fix the issue that webdriver tests are breaking unpredictably on
@@ -99,6 +134,71 @@ class SeleniumTestBase(unittest.TestCase):
         self.driver.close()
         self.driver.quit()
         SERVER.disconnect()
+
+    def screenshot(self, name=''):
+        """
+        Takes a screenshot of the current browser client viewport.
+
+        Screenshots may be switched on/off by envvar SELENIUM_SCREENSHOTS=1/0.
+
+        Screenshots will be saved in `./screenshots`.
+        The directory will be created, if it not exists.
+
+        The filename will be a concatenation of:
+
+        - time of execution
+        - test classname
+        - test method
+        - name if provided
+
+        Args:
+            filename (Optional[str]): Additional name postfix for the file.
+        """
+        if not int(os.environ.get("SELENIUM_SCREENSHOTS", 0)):
+            return
+        # create path
+        path = "screenshots"
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        # concat filename
+        testtime = datetime.utcnow().strftime('%y%m%d.%H%M%S.%f')[:-4]
+        testclass = self.__class__.__name__
+        if testclass.startswith("Test"):
+            testclass = testclass[4:]
+        testmethod = self._testMethodName
+        if testmethod.startswith("test_"):
+            testmethod = testmethod[5:]
+        testmethod = [word.title() for word in testmethod.split('_')]
+        if testmethod and unicode(testmethod[0]).isnumeric():
+            testmethod[0] += "-"
+        testmethod = ''.join(testmethod)
+        filename = [testtime, testclass, testmethod]
+        if name:
+            filename.append(name)
+        filename = "-".join(filename)
+        # sanitize filename (taken from werkzeug.utils.secure_filename)
+        filename = unicodedata.normalize("NFKD", unicode(filename))
+        filename = filename.encode("ascii", "ignore").decode("ascii")
+        for sep in os.path.sep, os.path.altsep:
+            if sep:
+                filename = filename.replace(sep, " ")
+        filename = str(
+            re_ascii.sub("", "_".join(filename.split()))
+        ).strip("._-")
+        # resize window
+        original_size = self.driver.get_window_size()
+        required_width = self.driver.execute_script(
+            'return document.body.parentNode.scrollWidth')
+        required_height = self.driver.execute_script(
+            'return document.body.parentNode.scrollHeight')
+        self.driver.set_window_size(required_width, required_height)
+        # make screenshot
+        self.driver.find_element_by_tag_name('body').screenshot(
+            os.path.join(path, filename + '.png')
+        )
+        # reset window size
+        self.driver.set_window_size(
+            original_size['width'], original_size['height'])
 
 
 class JoinFormTests(SeleniumTestBase):
@@ -117,7 +217,8 @@ class JoinFormTests(SeleniumTestBase):
         """
         self.assertEqual(self.driver.get_cookies(), [])
         # load the page with the form, choose german
-        self.driver.get("http://0.0.0.0:6544?de")
+        self.driver.get(self.url + "?de")
+        self.screenshot("page-loaded")
 
         self.failUnless(
             u'Mitgliedschaftsantrag' in self.driver.page_source)
@@ -151,7 +252,9 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.find_element_by_name('privacy_consent').click()
         self.driver.find_element_by_name('num_shares').send_keys('7')
 
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.failUnless(
             u'Nach Anfordern der Bestätigungsmail' in self.driver.page_source)
@@ -166,6 +269,7 @@ class JoinFormTests(SeleniumTestBase):
 
         # back to the form
         self.driver.find_element_by_id('back').click()
+        self.screenshot("form-back")
 
         self.assertEqual(self.driver.find_element_by_name(
             'lastname').get_attribute('value'), 'Scheid')
@@ -200,7 +304,9 @@ class JoinFormTests(SeleniumTestBase):
         # change a detail
         self.driver.find_element_by_name('address2').send_keys(' plus')
         # ok, all data checked, submit again
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.assertTrue('Bitte beachten: Es gab Fehler. Bitte Eingaben unten '
                         'korrigieren.' in self.driver.page_source)
@@ -218,12 +324,15 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.find_element_by_name('password-confirm').send_keys(
             'foobar')
 
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
         self.assertTrue(
             'Bitte beachten: Es gab fehler' not in self.driver.page_source)
         self.assertTrue('addr two plus' in self.driver.page_source)
 
         self.driver.find_element_by_id('next').click()
+        self.screenshot("form-next")
 
         page = self.driver.page_source
 
@@ -244,7 +353,8 @@ class JoinFormTests(SeleniumTestBase):
         """
         self.assertEqual(self.driver.get_cookies(), [])
         # load the page with the form
-        self.driver.get("http://0.0.0.0:6544?en")
+        self.driver.get(self.url + "?en")
+        self.screenshot("page-loaded")
 
         self.failUnless(
             u'Application for Membership' in self.driver.page_source)
@@ -279,7 +389,9 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.find_element_by_name('privacy_consent').click()
         self.driver.find_element_by_name('num_shares').send_keys('7')
 
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         # self.driver.get_screenshot_as_file('test_form_submission_en.png')
 
@@ -297,6 +409,7 @@ class JoinFormTests(SeleniumTestBase):
         # TODO: check save to DB/randomstring: views.py 784-865
         # TODO: check re-edit of form: views.py 877-880 XXX
         self.driver.find_element_by_id('back').click()
+        self.screenshot("form-back")
         # back to the form
         self.assertEqual(self.driver.find_element_by_name(
             'lastname').get_attribute('value'), 'Scheid')
@@ -331,7 +444,9 @@ class JoinFormTests(SeleniumTestBase):
         # change a detail
         self.driver.find_element_by_name('address2').send_keys(' plus')
         # ok, all data checked, submit again
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.assertTrue('Please note: There were errors, please check the '
                         'form below.' in self.driver.page_source)
@@ -352,7 +467,9 @@ class JoinFormTests(SeleniumTestBase):
             'Bitte beachten: Es gab fehler' not in self.driver.page_source)
         self.assertTrue('addr two plus' in self.driver.page_source)
 
+        self.screenshot("form-edited")
         self.driver.find_element_by_id('next').click()
+        self.screenshot("form-sent")
 
         page = self.driver.page_source
 
@@ -389,8 +506,9 @@ class EmailVerificationTests(SeleniumTestBase):
         If the password matches the email address, a link to a PDF is given.
         Thus, an half-ready application must be present in the DB.
         """
-        url = "http://0.0.0.0:6544/verify/uat.yes@example.com/ABCDEFGHIJ?de"
+        url = self.url + "/verify/uat.yes@example.com/ABCDEFGHIJ?de"
         self.driver.get(url)
+        self.screenshot("page-loaded")
 
         self.assertTrue(
             u'Bitte gib Dein Passwort ein, um' in self.driver.page_source)
@@ -402,7 +520,9 @@ class EmailVerificationTests(SeleniumTestBase):
         # try with empty or wrong password -- must fail
         self.driver.find_element_by_name(
             'password').send_keys('')
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
         self.assertTrue(
             'Bitte das Passwort eingeben.' in self.driver.page_source)
 
@@ -410,7 +530,9 @@ class EmailVerificationTests(SeleniumTestBase):
         # wrong password
         self.driver.find_element_by_name(
             'password').send_keys('schmoo')
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.assertTrue(
             'Bitte das Passwort eingeben.' in self.driver.page_source)
@@ -418,7 +540,9 @@ class EmailVerificationTests(SeleniumTestBase):
 
         # try correct password
         self.driver.find_element_by_name('password').send_keys('berries')
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.assertTrue('Lade Dein PDF...' in self.driver.page_source)
         self.assertTrue(
@@ -432,8 +556,9 @@ class EmailVerificationTests(SeleniumTestBase):
         If the password matches the email address, a link to a PDF is given.
         Thus, an half-ready application must be present in the DB.
         """
-        url = "http://0.0.0.0:6544/verify/uat.yes@example.com/ABCDEFGHIJ?en"
+        url = self.url + "/verify/uat.yes@example.com/ABCDEFGHIJ?en"
         self.driver.get(url)
+        self.screenshot("page-loaded")
 
         # check text on page
         self.assertTrue(
@@ -445,7 +570,9 @@ class EmailVerificationTests(SeleniumTestBase):
         # empty password
         self.driver.find_element_by_name(
             'password').send_keys('')
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.assertTrue(
             'Please enter your password.' in self.driver.page_source)
@@ -453,14 +580,18 @@ class EmailVerificationTests(SeleniumTestBase):
         # wrong password
         self.driver.find_element_by_name(
             'password').send_keys('schmoo')
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.assertTrue(
             'Please enter your password.' in self.driver.page_source)
 
         # try correct password
         self.driver.find_element_by_name('password').send_keys('berries')
+        self.screenshot("form-edited")
         self.driver.find_element_by_name('submit').click()
+        self.screenshot("form-sent")
 
         self.assertTrue('Load your PDF' in self.driver.page_source)
         self.assertTrue(

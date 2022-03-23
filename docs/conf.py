@@ -52,6 +52,8 @@ extensions = [
 
 # command for generating PlantUML diagrams
 plantuml = 'java -jar ../utils/plantuml.jar'
+if os.path.isfile("/opt/plantuml.jar"):
+    plantuml = 'java -jar /opt/plantuml.jar'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
