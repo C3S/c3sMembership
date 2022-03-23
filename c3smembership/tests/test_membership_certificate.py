@@ -155,9 +155,9 @@ class TestMembershipCertificateViews(unittest.TestCase):
                 'sign_meik.png',
                 'sign_sarah.png',
                 'urkunde_footer_de.tex',
-                'urkunde_footer_de.tex',
                 'urkunde_footer_en.tex',
-                'urkunde_footer_en.tex'
+                'urkunde_header_de.tex',
+                'urkunde_header_en.tex'
             ]:
             self.assertTrue(os.path.isfile(os.path.join('certificate', filen)),
                 'missing file(s) in certificates folder; please create your '
@@ -492,7 +492,6 @@ class TestMembershipCertificateViews(unittest.TestCase):
         # # need to get the date right!
         member.certificate_email_date = datetime.now(
         ) - timedelta(weeks=1)
-
         result = generate_certificate(request)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
