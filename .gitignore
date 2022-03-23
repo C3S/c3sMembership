@@ -26,7 +26,4 @@ static_docs/
 # ignore local test settings
 nosetests.xml
 
-# certificate files are in a separate private repository
-certificate/
-
 .coveragerc

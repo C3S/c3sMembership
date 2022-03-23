@@ -1,0 +1,18 @@
+\documentclass[a4paper,12pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{wallpaper}
+
+\newcommand{\nix}{}
+\newcommand{\checkIfSet}[3]{%
+  \ifcsname #1\endcsname%
+    \ifx\#1\nix%
+      #3%
+    \else%
+      #2%
+    \fi%
+  \else%
+    #3%
+  \fi%
+}%

@@ -1,0 +1,58 @@
+\documentclass[12pt, paper = a4]{scrlttr2}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\newcommand{\nix}{}
+\newcommand{\checkIfSet}[3]{%
+  \ifcsname #1\endcsname%
+    \ifx\#1\nix%
+      #3%
+    \else%
+      #2%
+    \fi%
+  \else%
+    #3%
+  \fi%
+}%
+
+\begin{document}
+
+\textbf{STORNO} \\
+\\
+\\
+\textbf{invoiceNo} \\
+\checkIfSet{invoiceNo}{\invoiceNo} \\
+\\
+\textbf{invoiceDate} \\
+\checkIfSet{invoiceDate}{\invoiceDate} \\
+\\
+\textbf{origInvoiceRef} \\
+\checkIfSet{origInvoiceRef}{\origInvoiceRef} \\
+\\
+\textbf{duesAmount} \\
+\checkIfSet{duesAmount}{\duesAmount} \\
+\\
+\textbf{personalFirstname} \\
+\checkIfSet{personalFirstname}{\personalFirstname} \\
+\\
+\textbf{personalLastname} \\
+\checkIfSet{personalLastname}{\personalLastname} \\
+\\
+\textbf{personalAddressOne} \\
+\checkIfSet{personalAddressOne}{\personalAddressOne} \\
+\\
+\textbf{personalAddressTwo} \\
+\checkIfSet{personalAddressTwo}{\personalAddressTwo} \\
+\\
+\textbf{personalPostalCode} \\
+\checkIfSet{personalPostalCode}{\personalPostalCode} \\
+\\
+\textbf{personalCity} \\
+\checkIfSet{personalCity}{\personalCity} \\
+\\
+\textbf{personalMShipNo} \\
+\checkIfSet{personalMShipNo}{\personalMShipNo} \\
+\\
+
+\end{document}
