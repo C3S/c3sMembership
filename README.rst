@@ -88,7 +88,7 @@ If your experience problems with the ``distribute`` package like
 
 Install c3sMembership::
 
-   $ python setup.py develop
+   $ pip install -e .
 
 Install documentation compilation dependencies::
 
