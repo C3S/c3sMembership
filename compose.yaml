@@ -34,6 +34,18 @@ services:
       SELENIUM_GRID_URL: ${SELENIUM_GRID_URL}
       SELENIUM_SCREENSHOTS: ${SELENIUM_SCREENSHOTS}
 
+  mail:
+    image: mailhog/mailhog
+    entrypoint: ["/bin/sh", "-c", "MailHog &>/dev/null"]
+    profiles:
+      - development
+    networks:
+      - frontend
+    ports:
+      - "${DOCKER_PORTMAP_IP}:${DOCKER_PORTMAP_PORT_MAILHOG}:8025"
+    logging:
+      driver: none
+
   tests:
     build:
       context: .
@@ -78,16 +90,4 @@ services:
       - .:/code
     environment:
       ENVIRONMENT: ${ENVIRONMENT}
-
-  mail:
-    image: mailhog/mailhog
-    entrypoint: ["/bin/sh", "-c", "MailHog &>/dev/null"]
-    profiles:
-      - development
-    networks:
-      - frontend
-    ports:
-      - "${DOCKER_PORTMAP_IP}:${DOCKER_PORTMAP_PORT_MAILHOG}:8025"
-    logging:
-      driver: none
 

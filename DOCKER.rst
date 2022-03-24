@@ -2,6 +2,41 @@ Docker Setup for c3sMembership
 ==============================
 
 
+Services
+--------
+
++---------------+-------------------------+-----------------+-------------+
+| Service       | Description             | Profiles        | Ports       |
++===============+=========================+=================+=============+
+| server        | Pyramid App             | | production    | 80: http    |
+|               |                         | | staging       |             |
+|               |                         | | development   |             |
++---------------+-------------------------+-----------------+-------------+
+| mail          | Mailhog Test Mailserver | development     | 8025: http  |
++---------------+-------------------------+-----------------+-------------+
+| tests         | Pyramid App             | testing         |             |
++---------------+-------------------------+-----------------+-------------+
+| browser       | Selenium Chrome Browser | testing         |             |
++---------------+-------------------------+-----------------+-------------+
+| documentation | Sphinx Build Service    | documentation   |             |
++---------------+-------------------------+-----------------+-------------+
+
+
+Files
+-----
+
+    .
+    ├── .env.example            # environment variables
+    ├── compose.yaml            # service definitions for docker containers
+    ├── Dockerfile              # build instructions for docker images
+    │
+    ├── docker-entrypoint.sh    # entrypoint for docker commands
+    ├── docker_development.ini  # pyramid config file for docker environment
+    ├── requirements.sh         # sorts pip requirements by application context
+    │
+    └── DOCKER.rst              # this readme
+
+
 Dependencies
 ------------
 
@@ -101,6 +136,10 @@ Run specific tests verbose, cancel and drop into pdb on first error:
     docker compose run --rm tests bash
     > nosetests -v -x --pdb \
         c3smembership/tests/test_initialization.py:TestDBInitialization.test_main_correct
+
+Inspect screenshots of selenium tests:
+
+    ls screenshots
 
 Build docs:
 
