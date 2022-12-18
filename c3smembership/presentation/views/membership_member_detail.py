@@ -45,6 +45,8 @@ def get_member_details(request, member):
         member.membership_number, [2021])
     invoices22 = DuesInvoiceRepository.get_by_membership_number(
         member.membership_number, [2022])
+    invoices23 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2023])
     general_assembly_invitations = sorted(
         request.registry.general_assembly_invitation.get_member_invitations(
             member),
@@ -293,6 +295,37 @@ def get_member_details(request, member):
             'dues_notice_message_to_staff': 'dues22notice_message_to_staff',
         })
 
+    if (member.membership_date < date(2023, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2023, 1, 1))):
+        dues.append({
+            'year': '2023',
+            'year_short': '23',
+            'invoices': invoices23,
+            'email_sent': member.dues23_invoice,
+            'email_sent_timestamp': member.dues23_invoice_date,
+            'has_invoice': len(invoices23) > 0,
+            'dues_start': member.dues23_start,
+            'dues_amount': member.dues23_amount,
+            'is_reduced': member.dues23_reduced,
+            'reduced_amount': member.dues23_amount_reduced,
+            'is_balanced': member.dues23_balanced,
+            'amount_paid': member.dues23_amount_paid,
+            'payment_received': member.dues23_paid,
+            'paid_date': member.dues23_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues23_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues23_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues23_listing'),
+            'dues_notice_route': request.route_url(
+                'dues23_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues23_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues23_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues23notice_message_to_staff',
+        })
+
     return {
         'dues': dues,
         'date': date,
@@ -300,7 +333,7 @@ def get_member_details(request, member):
         'member': member,
         'shares': shares,
         'general_assembly_invitations': general_assembly_invitations,
-        'latest_dues_year': '2022',
+        'latest_dues_year': '2023',
     }
 
 

@@ -47,6 +47,7 @@ from c3smembership.data.model.base.dues19invoice import Dues19Invoice
 from c3smembership.data.model.base.dues20invoice import Dues20Invoice
 from c3smembership.data.model.base.dues21invoice import Dues21Invoice
 from c3smembership.data.model.base.dues22invoice import Dues22Invoice
+from c3smembership.data.model.base.dues23invoice import Dues23Invoice
 from c3smembership.data.model.general_assembly import GeneralAssembly
 from c3smembership.data.model.general_assembly import GeneralAssemblyInvitation
 
