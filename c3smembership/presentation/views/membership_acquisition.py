@@ -279,7 +279,7 @@ def regenerate_pdf(request):
     }
     LOG.info(
         "%s regenerated the PDF for code %s",
-        request.authenticated_userid(request),
+        request.authenticated_userid,
         code)
     return generate_pdf(request, appstruct)
 

@@ -532,7 +532,7 @@ def edit_member(request):
             else:
                 LOG.info(
                     u'%s changes %s of id %s to %s',
-                    request.authenticated_userid(request),
+                    request.authenticated_userid,
                     attribute_name,
                     member.id,
                     attribute_value

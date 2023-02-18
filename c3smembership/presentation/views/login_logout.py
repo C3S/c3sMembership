@@ -37,7 +37,7 @@ def login(request):
 
     If a person is already logged in, she is forwarded to the dashboard.
     """
-    logged_in = request.authenticated_userid(request)
+    logged_in = request.authenticated_userid
 
     LOG.info("login by %s", logged_in)
 

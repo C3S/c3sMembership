@@ -357,7 +357,7 @@ def member_details(request):
     """
     member = request.validated_matchdict['member']
 
-    logged_in = request.authenticated_userid(request)
+    logged_in = request.authenticated_userid
     LOG.info(
         'member details of membership number %s checked by %s',
         member.membership_number,
@@ -387,7 +387,7 @@ def member_detail(request):
     """
     member = request.validated_matchdict['member']
 
-    logged_in = request.authenticated_userid(request)
+    logged_in = request.authenticated_userid
     LOG.info('member details of id %s checked by %s', member.id, logged_in)
 
     return get_member_details(request, member)

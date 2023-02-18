@@ -23,7 +23,7 @@ class RequestWithUserAttribute(Request):
             * **id**, if user is known.
             * **None**, if user is not known.
         """
-        userid = self.unauthenticated_userid(self)
+        userid = self.unauthenticated_userid
         if userid is not None:
             # this should return None if the user doesn't exist
             # in the database

@@ -73,7 +73,7 @@ def staff_view(request):
 
 best,
 your membership tool''' % (_staffer.login,
-                           request.authenticated_userid(request)))
+                           request.authenticated_userid))
             message = Message(
                 subject='[C3S Yes] staff was deleted.',
                 sender=request.registry.settings[
@@ -112,7 +112,7 @@ the password of %s was changed by %s.
 
 best,
 your membership tool''' % (existing.login,
-                           request.authenticated_userid(request)))
+                           request.authenticated_userid))
             message = Message(
                 subject='[C3S Yes] staff password changed.',
                 sender=request.registry.settings[
@@ -137,7 +137,7 @@ your membership tool''' % (existing.login,
 
 best,
 your membership tool''' % (staffer.login,
-                           request.authenticated_userid(request)))
+                           request.authenticated_userid))
             message = Message(
                 subject='[C3S Yes] staff was added.',
                 sender=request.registry.settings[
