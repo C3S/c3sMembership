@@ -53,7 +53,7 @@ services:
       args: *buildargs
     user: ${UID}:${GID}
     entrypoint: docker-entrypoint.sh
-    command: nosetests -x -v
+    command: pytest -x -v
     profiles:
       - testing
     depends_on:
