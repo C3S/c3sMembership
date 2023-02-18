@@ -41,7 +41,7 @@ REQUIRES = [
 TEST_REQUIREMENTS = [
     'coverage',  # Get code test coverage for nose
     'mock',  # Creating mock objects for unit testing
-    'nose',  # Execute unit testing
+    'pytest',  # Execute unit testing
     'pylint==1.9.5',  # Code linting
     'pyquery',  # HTML element querying
     'selenium==3.14.1',  # 4.0.0a1 causes issues by not finding elements
