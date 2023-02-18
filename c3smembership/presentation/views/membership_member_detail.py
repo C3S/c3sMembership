@@ -8,7 +8,6 @@ import logging
 from datetime import date
 from decimal import Decimal
 
-from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
 from c3smembership.data.repository.dues_invoice_repository import \
@@ -358,7 +357,7 @@ def member_details(request):
     """
     member = request.validated_matchdict['member']
 
-    logged_in = authenticated_userid(request)
+    logged_in = request.authenticated_userid(request)
     LOG.info(
         'member details of membership number %s checked by %s',
         member.membership_number,
@@ -388,7 +387,7 @@ def member_detail(request):
     """
     member = request.validated_matchdict['member']
 
-    logged_in = authenticated_userid(request)
+    logged_in = request.authenticated_userid(request)
     LOG.info('member details of id %s checked by %s', member.id, logged_in)
 
     return get_member_details(request, member)
