@@ -479,7 +479,9 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     if os.path.isfile(aux):
         os.unlink(aux)
 
-    archive_dues19_invoice(receipt_pdf, invoice)
+    # archive
+    if os.fstat(receipt_pdf.fileno()).st_size:
+        archive_dues19_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
 

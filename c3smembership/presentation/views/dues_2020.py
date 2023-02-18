@@ -445,11 +445,9 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     if os.path.isfile(aux):
         os.unlink(aux)
 
-    # TODO: If the compilation fails, the invoice is still copied to archive.
-    # In this case it is most likely empty and afterwards cannot be regenerated
-    # as it already exists. The fix has to implement proper error handling. If
-    # the generation fails the invoice must not be archived.
-    archive_dues20_invoice(receipt_pdf, invoice)
+    # archive
+    if os.fstat(receipt_pdf.fileno()).st_size:
+        archive_dues20_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
 

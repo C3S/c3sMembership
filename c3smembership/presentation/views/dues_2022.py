@@ -436,12 +436,14 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     # make latex show ß correctly in pdf:
     tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
 
+    cmd = [
+        'pdflatex', '-jobname', filename, '-output-directory', path,
+        '-interaction', 'nonstopmode', '-halt-on-error',
+        tex_cmd.encode('utf-8')
+    ]
+
     subprocess.call(
-        [
-            'pdflatex', '-jobname', filename, '-output-directory', path,
-            '-interaction', 'nonstopmode', '-halt-on-error',
-            tex_cmd.encode('latin_1')
-        ],
+        cmd,
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
         cwd=PDFLATEX_DIR)
@@ -451,11 +453,9 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     if os.path.isfile(aux):
         os.unlink(aux)
 
-    # TODO: If the compilation fails, the invoice is still copied to archive.
-    # In this case it is most likely empty and afterwards cannot be regenerated
-    # as it already exists. The fix has to implement proper error handling. If
-    # the generation fails the invoice must not be archived.
-    archive_dues22_invoice(receipt_pdf, invoice)
+    # archive
+    if os.fstat(receipt_pdf.fileno()).st_size:
+        archive_dues22_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
 

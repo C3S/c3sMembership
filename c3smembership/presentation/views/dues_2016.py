@@ -591,7 +591,9 @@ def make_invoice_pdf_pdflatex(invoice):
     if os.path.isfile(aux):
         os.unlink(aux)
 
-    archive_dues16_invoice(receipt_pdf, invoice)
+    # archive
+    if os.fstat(receipt_pdf.fileno()).st_size:
+        archive_dues16_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
 
@@ -964,7 +966,9 @@ def make_reversal_pdf_pdflatex(invoice):
     if os.path.isfile(aux):
         os.unlink(aux)
 
-    archive_dues16_invoice(receipt_pdf, invoice)
+    # archive
+    if os.fstat(receipt_pdf.fileno()).st_size:
+        archive_dues16_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
 
