@@ -67,6 +67,8 @@ def stats_view(request):
         'dues19_stats': DuesInvoiceRepository.get_monthly_stats(2019),
         'dues20_stats': DuesInvoiceRepository.get_monthly_stats(2020),
         'dues21_stats': DuesInvoiceRepository.get_monthly_stats(2021),
+        'dues22_stats': DuesInvoiceRepository.get_monthly_stats(2022),
+        'dues23_stats': DuesInvoiceRepository.get_monthly_stats(2023),
 
         # staff figures
         'num_staff': len(Staff.get_all())

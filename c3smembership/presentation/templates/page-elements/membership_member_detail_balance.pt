@@ -45,6 +45,16 @@
         <td>${-member.dues21_balance}</td>
     </tr>
     <tr>
+        <?python balance += member.dues22_balance ?>
+        <td>Membership dues 2022</td>
+        <td>${-member.dues22_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues23_balance ?>
+        <td>Membership dues 2023</td>
+        <td>${-member.dues23_balance}</td>
+    </tr>
+    <tr>
         <?python
             balanced = (balance == 0.0)
             negative_balance = (-balance < 0.0)
