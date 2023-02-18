@@ -103,7 +103,7 @@ class MembershipApplicationTest(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.assertTrue('login' in res.body)
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -120,7 +120,7 @@ class MembershipApplicationTest(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Dashboard' in res.body)
+        self.assertTrue('Dashboard' in res.body)
 
     @classmethod
     def _response_to_bare_text(cls, res):

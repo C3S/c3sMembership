@@ -206,7 +206,7 @@ class MemberTestsBase(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.assertTrue('login' in res.body)
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -226,7 +226,7 @@ class MemberTestsBase(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Acquisition of membership' in res.body)
+        self.assertTrue('Acquisition of membership' in res.body)
 
 
 class MakeMergeMemberTests(MemberTestsBase):
@@ -257,7 +257,7 @@ class MakeMergeMemberTests(MemberTestsBase):
 
         res = self.testapp.get(
             '/make_member/{afm_id}'.format(afm_id=afm_id), status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
 
         self._login()
 
@@ -354,8 +354,8 @@ class MakeMergeMemberTests(MemberTestsBase):
         # we are redirected to members details page
         res3 = res2.follow()
         # this now is a member!
-        self.failUnless('Member details' in res3.body)
-        self.failUnless(
+        self.assertTrue('Member details' in res3.body)
+        self.assertTrue(
             'Membership accepted  Yes' in self._response_to_bare_text(res3))
 
     def test_merge_member_view(self):
@@ -381,7 +381,7 @@ class MakeMergeMemberTests(MemberTestsBase):
                 afm_id=afm.id,
                 mid=member.id),
             status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
 
         # authenticate/authorize
         self._login()
@@ -417,7 +417,7 @@ class MembershipListTests(MemberTestsBase):
         _bad_date = '2016-02-111111'
         res = self.testapp.reset()
         res = self.testapp.get('/aml-' + _date + '.pdf', status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
 
         self._login()
 
@@ -452,7 +452,7 @@ class MembershipListTests(MemberTestsBase):
         '''
         res = self.testapp.reset()
         res = self.testapp.get('/aml', status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
 
         self._login()
 
@@ -478,7 +478,7 @@ class MembershipListTests(MemberTestsBase):
         res = self.testapp.get('/memberships', status=403)
         #  must find out how the machdict could be set right,
         #  so it is not None --> keyerror
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
 
         self._login()
 

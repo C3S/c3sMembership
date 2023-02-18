@@ -858,9 +858,9 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
         my_membership_signee_class = self._get_target_class()
 
         members = my_membership_signee_class.member_listing("id")
-        self.failUnless(members[0].firstname == u"SomeFirstnäme")
-        self.failUnless(members[1].firstname == u"SomeFirstnäme")
-        self.failUnless(members[2].firstname == u"SomeFirstname")
+        self.assertTrue(members[0].firstname == u"SomeFirstnäme")
+        self.assertTrue(members[1].firstname == u"SomeFirstnäme")
+        self.assertTrue(members[2].firstname == u"SomeFirstname")
         self.assertEqual(len(members.all()), 3)
 
     def test_member_listing_exception(self):
@@ -896,16 +896,16 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
                 0, 100, 'id', 'schmoo')
         members = my_membership_signee_class.nonmember_listing(
             0, 100, 'id')
-        self.failUnless(members[0].firstname == u'SomeFirstnäme')
-        self.failUnless(members[1].firstname == u'SomeFirstnäme')
-        self.failUnless(members[2].firstname == u'SomeFirstname')
+        self.assertTrue(members[0].firstname == u'SomeFirstnäme')
+        self.assertTrue(members[1].firstname == u'SomeFirstnäme')
+        self.assertTrue(members[2].firstname == u'SomeFirstname')
         for member in members:
             self.assertTrue(not member.membership_accepted)
         members = my_membership_signee_class.nonmember_listing(
             0, 100, 'id', 'desc')
-        self.failUnless(members[0].firstname == u'SomeFirstname')
-        self.failUnless(members[1].firstname == u'SomeFirstnäme')
-        self.failUnless(members[2].firstname == u'SomeFirstnäme')
+        self.assertTrue(members[0].firstname == u'SomeFirstname')
+        self.assertTrue(members[1].firstname == u'SomeFirstnäme')
+        self.assertTrue(members[2].firstname == u'SomeFirstnäme')
         for member in members:
             self.assertTrue(not member.membership_accepted)
 
@@ -925,14 +925,14 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
                 0, 100, 'id', 'schmoo')
         members = my_membership_signee_class.nonmember_listing(
             0, 100, 'id')
-        self.failUnless(members[0].firstname == u'SomeFirstnäme')
-        self.failUnless(members[1].firstname == u'SomeFirstnäme')
-        self.failUnless(members[2].firstname == u'SomeFirstname')
+        self.assertTrue(members[0].firstname == u'SomeFirstnäme')
+        self.assertTrue(members[1].firstname == u'SomeFirstnäme')
+        self.assertTrue(members[2].firstname == u'SomeFirstname')
         result2 = my_membership_signee_class.nonmember_listing(
             0, 100, 'id', 'desc')
-        self.failUnless(result2[0].firstname == u'SomeFirstname')
-        self.failUnless(result2[1].firstname == u'SomeFirstnäme')
-        self.failUnless(result2[2].firstname == u'SomeFirstnäme')
+        self.assertTrue(result2[0].firstname == u'SomeFirstname')
+        self.assertTrue(result2[1].firstname == u'SomeFirstnäme')
+        self.assertTrue(result2[2].firstname == u'SomeFirstnäme')
 
     def test_get_num_members_accepted(self):
         """

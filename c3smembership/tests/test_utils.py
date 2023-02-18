@@ -178,16 +178,16 @@ class TestUtilities(unittest.TestCase):
         )
         result = make_mail_body(member)
 
-        self.failUnless(u'Jöhn test_mail_body' in result)
-        self.failUnless(u'Döe' in result)
-        self.failUnless(u'postcode:                       12345 xyz' in result)
-        self.failUnless(u'Town' in result)
-        self.failUnless(u'devnull@example.com' in result)
-        self.failUnless(u'af' in result)
-        self.failUnless(u'number of shares                23' in result)
-        self.failUnless(
+        self.assertTrue(u'Jöhn test_mail_body' in result)
+        self.assertTrue(u'Döe' in result)
+        self.assertTrue(u'postcode:                       12345 xyz' in result)
+        self.assertTrue(u'Town' in result)
+        self.assertTrue(u'devnull@example.com' in result)
+        self.assertTrue(u'af' in result)
+        self.assertTrue(u'number of shares                23' in result)
+        self.assertTrue(
             u'member of coll. soc.:           yes' in result)
-        self.failUnless(u'that\'s it.. bye!' in result)
+        self.assertTrue(u'that\'s it.. bye!' in result)
 
     def test_create_accountant_mail(self):
         """
@@ -219,11 +219,11 @@ class TestUtilities(unittest.TestCase):
 
         self.assertTrue(isinstance(result, Message))
         self.assertTrue('yes@example.com' in result.recipients)
-        self.failUnless('-BEGIN PGP MESSAGE-' in result.body,
+        self.assertTrue('-BEGIN PGP MESSAGE-' in result.body,
                         'something missing in the mail body!')
-        self.failUnless('-END PGP MESSAGE-' in result.body,
+        self.assertTrue('-END PGP MESSAGE-' in result.body,
                         'something missing in the mail body!')
-        self.failUnless(
+        self.assertTrue(
             '[C3S] Yes! a new member' in result.subject,
             'something missing in the mail subject!')
         self.assertEqual('yes@example.com', result.sender,

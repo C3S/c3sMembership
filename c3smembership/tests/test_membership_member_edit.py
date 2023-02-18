@@ -143,7 +143,7 @@ class EditMemberTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/edit/1', status=403)
-        self.failUnless('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res.body)
 
         self.__login()
 
@@ -327,7 +327,7 @@ class EditMemberTests(unittest.TestCase):
         res = self.testapp.get(
             '/edit/{0}'.format(member_id),
             status=200)
-        self.failUnless('Edit member' in res.body)
+        self.assertTrue('Edit member' in res.body)
         return res
 
     def __login(self):
@@ -335,7 +335,7 @@ class EditMemberTests(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.assertTrue('login' in res.body)
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -354,7 +354,7 @@ class EditMemberTests(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.failUnless('Acquisition of membership' in res.body)
+        self.assertTrue('Acquisition of membership' in res.body)
 
     @classmethod
     def __get_field_by_id(cls, form, field_id):
