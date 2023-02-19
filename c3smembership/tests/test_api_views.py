@@ -91,9 +91,9 @@ class TestApiViews(unittest.TestCase):
         """
         # try a GET -- must fail
         res = self.testapp.get('/lm', status=405)
-        self.assertTrue('405 Method Not Allowed' in res.body)
+        self.assertTrue('405 Method Not Allowed' in res)
         self.assertTrue('The method GET is not allowed for this resource.'
-                        in res.body)
+                        in res)
 
         # try a PUT -- fails under certain conditions
         with self.assertRaises(ValueError):
@@ -124,8 +124,8 @@ class TestApiViews(unittest.TestCase):
         res = self.testapp.put_json(
             '/lm', dict(token='foo'), headers=_auth_info, status=200)
         # body: {"lastname": "None", "firstname": "None"}
-        self.assertTrue(json.loads(res.body)['firstname'], "None")
-        self.assertTrue(json.loads(res.body)['lastname'], "None")
+        self.assertTrue(res.json['firstname'], "None")
+        self.assertTrue(res.json['lastname'], "None")
 
         self.testapp.reset()
 
@@ -135,8 +135,7 @@ class TestApiViews(unittest.TestCase):
         res2 = self.testapp.put_json(
             '/lm', dict(token='MEMBERS_TOKEN'),
             headers=_auth_info, status=200)
-        self.assertTrue(json.loads(res2.body)['firstname'], member1.firstname)
-        self.assertTrue(json.loads(res2.body)['lastname'], member1.lastname)
-        self.assertTrue(json.loads(res2.body)['email'], member1.email)
-        self.assertTrue(
-            json.loads(res2.body)['mtype'], member1.membership_type)
+        self.assertTrue(res2.json['firstname'], member1.firstname)
+        self.assertTrue(res2.json['lastname'], member1.lastname)
+        self.assertTrue(res2.json['email'], member1.email)
+        self.assertTrue(res2.json['mtype'], member1.membership_type)

@@ -118,7 +118,7 @@ class IntegrationTestCaseBase(TestCase):
         response = self.testapp.get('/login')
         if response.status_code == 200:
             # Fill out login form
-            self.assertTrue('login' in response.body)
+            self.assertTrue('login' in response)
             form = response.form
             form['login'] = 'rut'
             form['password'] = 'berries'
@@ -167,7 +167,7 @@ class IntegrationTestCaseBase(TestCase):
                 message must be exactly equal, if False message must be a part
                 of the flash message.
         """
-        matches = re.findall(self.FLASH_REGEX, response.body)
+        matches = re.findall(self.FLASH_REGEX, response)
         for match in matches:
             match_queue = match[0]
             match_message = match[1]

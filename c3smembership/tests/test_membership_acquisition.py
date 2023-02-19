@@ -165,7 +165,7 @@ class MembershipAcqIntegration(IntegrationTestCaseBase):
         # 1. Generate PDF
         response = self.testapp.get(
             '/re_C3S_SCE_AFM_ABCDEFGFOO.pdf', status=200)
-        self.assertTrue(100000 < len(response.body) < 500000)
+        self.assertTrue(100000 < len(response) < 500000)
 
         # 2. Validation fails if the code is not found
         self.assert_get_redirect_flash(

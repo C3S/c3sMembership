@@ -103,7 +103,7 @@ class MembershipApplicationTest(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.assertTrue('login' in res.body)
+        self.assertTrue('login' in res)
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -120,7 +120,7 @@ class MembershipApplicationTest(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.assertTrue('Dashboard' in res.body)
+        self.assertTrue('Dashboard' in res)
 
     @classmethod
     def _response_to_bare_text(cls, res):
@@ -213,7 +213,7 @@ class MembershipApplicationTest(unittest.TestCase):
             match.group('url'),
             status=200)
 
-        self.assertTrue('password in order to verify your email' in res.body)
+        self.assertTrue('password in order to verify your email' in res)
         res.form['password'] = 'worst password ever chosen'
         res = res.form.submit('submit', status=200)
 

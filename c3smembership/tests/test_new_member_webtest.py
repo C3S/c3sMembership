@@ -68,7 +68,7 @@ class NewMemberTests(unittest.TestCase):
 
     def _login(self):
         res = self.testapp.get('/login', status=200)
-        self.assertTrue('login' in res.body)
+        self.assertTrue('login' in res)
         res.form['login'] = 'rut'
         res.form['password'] = 'berries'
         res.form.submit('submit', status=302)
@@ -145,7 +145,7 @@ class NewMemberTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/new_member', status=403)
-        self.assertTrue('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res)
 
         # so login first
         self._login()
@@ -157,17 +157,17 @@ class NewMemberTests(unittest.TestCase):
         res = form.submit('submit', status=302)
         res4 = res.follow()
 
-        self.assertTrue('Membership application details' in res4.body)
-        self.assertTrue('SomeFirstname' in res4.body)
-        self.assertTrue('SomeLastname' in res4.body)
-        self.assertTrue('some@shri.de' in res4.body)
-        self.assertTrue('addr one' in res4.body)
-        self.assertTrue('addr two' in res4.body)
-        self.assertTrue('12345' in res4.body)
-        self.assertTrue('DE' in res4.body)
-        self.assertTrue('normal' in res4.body)
-        self.assertTrue('23' in res4.body)
-        self.assertTrue('<td>No.</td>' in res4.body)  # Email is confirmed
+        self.assertTrue('Membership application details' in res4)
+        self.assertTrue('SomeFirstname' in res4)
+        self.assertTrue('SomeLastname' in res4)
+        self.assertTrue('some@shri.de' in res4)
+        self.assertTrue('addr one' in res4)
+        self.assertTrue('addr two' in res4)
+        self.assertTrue('12345' in res4)
+        self.assertTrue('DE' in res4)
+        self.assertTrue('normal' in res4)
+        self.assertTrue('23' in res4)
+        self.assertTrue('<td>No.</td>' in res4)  # Email is confirmed
 
         # now, there is a member with id=1 in DB
         res = self.testapp.get('/new_member?id=1', status=200)
@@ -180,15 +180,15 @@ class NewMemberTests(unittest.TestCase):
         res = form.submit('submit', status=302)
         res4 = res.follow()
 
-        self.assertTrue('Membership application details' in res4.body)
-        self.assertTrue('SomeLegalentity' in res4.body)
-        self.assertTrue('SomeLegalName' in res4.body)
-        self.assertTrue('legal@example.de' in res4.body)
-        self.assertTrue('addr one' in res4.body)
-        self.assertTrue('addr two' in res4.body)
-        self.assertTrue('12345' in res4.body)
-        self.assertTrue('' in res4.body)
-        self.assertTrue('DE' in res4.body)
-        self.assertTrue('investing' in res4.body)
-        self.assertTrue('42' in res4.body)
-        self.assertTrue('<td>Yes</td>' in res4.body)  # Email is confirmed
+        self.assertTrue('Membership application details' in res4)
+        self.assertTrue('SomeLegalentity' in res4)
+        self.assertTrue('SomeLegalName' in res4)
+        self.assertTrue('legal@example.de' in res4)
+        self.assertTrue('addr one' in res4)
+        self.assertTrue('addr two' in res4)
+        self.assertTrue('12345' in res4)
+        self.assertTrue('' in res4)
+        self.assertTrue('DE' in res4)
+        self.assertTrue('investing' in res4)
+        self.assertTrue('42' in res4)
+        self.assertTrue('<td>Yes</td>' in res4)  # Email is confirmed

@@ -143,7 +143,7 @@ class EditMemberTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/edit/1', status=403)
-        self.assertTrue('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res)
 
         self.__login()
 
@@ -211,8 +211,8 @@ class EditMemberTests(unittest.TestCase):
         Validate that the resource in res is the details page
         """
         self.assertTrue(
-            'Member details' in res.body or
-            'Membership application details' in res.body)
+            'Member details' in res or
+            'Membership application details' in res)
 
     def __validate_successful_submit(self, res):
         """
@@ -231,7 +231,7 @@ class EditMemberTests(unittest.TestCase):
         if body_content_parts is not None:
             for body_content_part in body_content_parts:
                 self.assertTrue(body_content_part.decode(
-                    'utf-8') in res.body.decode('utf-8'))
+                    'utf-8') in res.decode('utf-8'))
 
     @classmethod
     def __validate_submit_error(cls, res):
@@ -327,7 +327,7 @@ class EditMemberTests(unittest.TestCase):
         res = self.testapp.get(
             '/edit/{0}'.format(member_id),
             status=200)
-        self.assertTrue('Edit member' in res.body)
+        self.assertTrue('Edit member' in res)
         return res
 
     def __login(self):
@@ -335,7 +335,7 @@ class EditMemberTests(unittest.TestCase):
         Log into the membership backend
         """
         res = self.testapp.get('/login', status=200)
-        self.assertTrue('login' in res.body)
+        self.assertTrue('login' in res)
         form = res.form
         form['login'] = 'rut'
         form['password'] = 'berries'
@@ -354,7 +354,7 @@ class EditMemberTests(unittest.TestCase):
         """
         Validate that res is the dashboard
         """
-        self.assertTrue('Acquisition of membership' in res.body)
+        self.assertTrue('Acquisition of membership' in res)
 
     @classmethod
     def __get_field_by_id(cls, form, field_id):

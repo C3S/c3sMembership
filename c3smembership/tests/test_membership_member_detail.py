@@ -71,7 +71,7 @@ class MemberDetailIntegration(IntegrationTestCaseBase):
         membership_member_detail.LOG = logger
 
         # 1.1. At least contain name and address
-        body = response.body.decode('utf8')
+        body = response.decode('utf8')
         self.assertTrue(self.member.firstname in body)
         self.assertTrue('SomeFirstnäme' in body)
         self.assertTrue(self.member.lastname in body)
@@ -132,7 +132,7 @@ class MemberDetailIntegration(IntegrationTestCaseBase):
         membership_member_detail.LOG = logger
 
         # 1.1. At least contain name and address
-        body = response.body.decode('utf8')
+        body = response.decode('utf8')
         self.assertTrue(self.member.firstname in body)
         self.assertTrue('SomeFirstnäme' in body)
         self.assertTrue(self.member.lastname in body)

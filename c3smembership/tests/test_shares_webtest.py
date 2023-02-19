@@ -205,9 +205,9 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        self.assertTrue('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res)
         res = self.testapp.get('/login', status=200)
-        self.assertTrue('login' in res.body)
+        self.assertTrue('login' in res)
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -215,23 +215,23 @@ class SharesTests(unittest.TestCase):
         res2 = form.submit('submit', status=302)
         # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
-        self.assertTrue('Acquisition of membership' in res3.body)
+        self.assertTrue('Acquisition of membership' in res3)
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=302)
         res2 = res.follow()
         # we were redirected to the menberships list
         # because the shares package did not exist
         self.assertTrue(
-            'This shares id was not found in the database!' in res2.body)
-        self.assertTrue('Membership tools' in res2.body)
+            'This shares id was not found in the database!' in res2)
+        self.assertTrue('Membership tools' in res2)
 
         self.make_member_with_shares()
 
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' in res)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in res)
+        self.assertTrue('ABCDEFGH' in res)
 
     def test_shares_edit(self):
         '''
@@ -240,9 +240,9 @@ class SharesTests(unittest.TestCase):
         # unauthorized access must be prevented
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        self.assertTrue('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res)
         res = self.testapp.get('/login', status=200)
-        self.assertTrue('login' in res.body)
+        self.assertTrue('login' in res)
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -250,7 +250,7 @@ class SharesTests(unittest.TestCase):
         res2 = form.submit('submit', status=302)
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
-        self.assertTrue('Acquisition of membership' in res3.body)
+        self.assertTrue('Acquisition of membership' in res3)
 
         # no member in DB, so redirecting to dashboard
         res = self.testapp.get('/shares_edit/1', status=302)
@@ -263,11 +263,11 @@ class SharesTests(unittest.TestCase):
         # lets try invalid input
         res = self.testapp.get('/shares_edit/foo', status=302)
         res2 = res.follow()
-        self.assertTrue('Members' in res2.body)
+        self.assertTrue('Members' in res2)
 
         # now try valid id
         res = self.testapp.get('/shares_edit/1', status=200)
-        self.assertTrue('Edit Details for Shares' in res.body)
+        self.assertTrue('Edit Details for Shares' in res)
 
         # now we change details, really editing that member
         form = res.form
@@ -296,9 +296,9 @@ class SharesTests(unittest.TestCase):
         '''
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/shares_edit/1', status=403)
-        self.assertTrue('Access was denied to this resource' in res.body)
+        self.assertTrue('Access was denied to this resource' in res)
         res = self.testapp.get('/login', status=200)
-        self.assertTrue('login' in res.body)
+        self.assertTrue('login' in res)
         # try valid user
         form = res.form
         form['login'] = 'rut'
@@ -307,33 +307,33 @@ class SharesTests(unittest.TestCase):
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
         self.assertTrue(
-            'Acquisition of membership' in res3.body)
+            'Acquisition of membership' in res3)
 
         self.make_member_with_shares()
 
         # now look at a shares package
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('SomeFirstnäme SomeLastnäme' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' in res)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in res)
+        self.assertTrue('ABCDEFGH' in res)
 
         # try to delete a non-existing package
         res = self.testapp.get('/shares_delete/123', status=302)
         res2 = res.follow()
         self.assertTrue(
-            'This shares package 123 was not found in the DB.' in res2.body)
+            'This shares package 123 was not found in the DB.' in res2)
 
         # try to delete an existing package
         res = self.testapp.get('/shares_delete/1', status=302)
         res2 = res.follow()
         self.assertTrue(
-            'This shares package 1 still has a member owning it.' in res2.body)
+            'This shares package 1 still has a member owning it.' in res2)
         res = self.testapp.get('/delete/1', status=302)
         res2 = res.follow()
 
         res = self.testapp.get('/shares_detail/1', status=200)
-        self.assertTrue('<h1>Details for Shares #1</h1>' in res.body)
-        self.assertTrue('ABCDEFGH' in res.body)
+        self.assertTrue('<h1>Details for Shares #1</h1>' in res)
+        self.assertTrue('ABCDEFGH' in res)
 
     @classmethod
     def __get_field_id_dict(cls, form):
