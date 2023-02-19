@@ -1,8 +1,8 @@
-from pyramid.security import (
+from pyramid.authorization import (
     Allow,
     # Deny,
 )
-from pyramid.security import ALL_PERMISSIONS
+from pyramid.authorization import ALL_PERMISSIONS
 
 
 def groupfinder(userid, request):
