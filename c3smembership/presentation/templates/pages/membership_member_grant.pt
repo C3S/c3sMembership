@@ -57,7 +57,7 @@
         </p>
         <h2>Similar memberships</h2>
 
-        <div tal:condition="len(same_mships_lastn) is not 0">
+        <div tal:condition="len(same_mships_lastn)">
             <h3>Same lastname</h3>
             <ul>
                 <li tal:repeat="sim same_mships_lastn">
@@ -79,7 +79,7 @@
         </div>
 
         <!--! firstname -->
-        <div tal:condition="len(same_mships_firstn) is not 0">
+        <div tal:condition="len(same_mships_firstn)">
             <h3>Same firstname</h3>
             <ul>
                 <li tal:repeat="sim same_mships_firstn">
@@ -101,7 +101,7 @@
         </div>
 
         <!--! email -->
-        <div tal:condition="len(same_mships_email) is not 0">
+        <div tal:condition="len(same_mships_email)">
             <h4>Same  email address</h4>
             <ul>
                 <li tal:repeat="sim same_mships_email">
@@ -122,7 +122,7 @@
         </div>
 
         <!--! date of birth -->
-        <div tal:condition="len(same_mships_dob) is not 0">
+        <div tal:condition="len(same_mships_dob)">
             <h4>Same date of birth</h4>
             <ul>
                 <li tal:repeat="sim same_mships_dob">
