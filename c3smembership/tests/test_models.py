@@ -1225,7 +1225,7 @@ class StaffTests(unittest.TestCase):
         _staffer2_id = staffer2.id
         _staffer1_id = staffer1.id
 
-        self.assertTrue(staffer2.password is not '')
+        self.assertTrue(staffer2.password != '')
 
         self.assertEqual(
             Staff.get_by_id(_staffer1_id),

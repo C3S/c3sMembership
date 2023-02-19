@@ -317,7 +317,7 @@ class MakeMergeMemberTests(MemberTestsBase):
         self.assertEqual(member1.membership_date, date(1970, 1, 1))
         # this member holds no shares yet
         member1.shares = []
-        self.assertTrue(len(member1.shares) is 0)
+        self.assertTrue(len(member1.shares) == 0)
         # now, use that form to supply a "membership_accepted_date"
         form = res.form
         form['membership_date'] = date.today().strftime('%Y-%m-%d')
@@ -325,7 +325,7 @@ class MakeMergeMemberTests(MemberTestsBase):
 
         # check whether member1 is now an accepted member
         self.assertTrue(member1.membership_accepted is True)
-        self.assertTrue(member1.membership_number is 1)
+        self.assertTrue(member1.membership_number == 1)
         self.assertTrue(member1.membership_date is not None)
         self.assertTrue(member1.signature_received)
         self.assertEqual(
