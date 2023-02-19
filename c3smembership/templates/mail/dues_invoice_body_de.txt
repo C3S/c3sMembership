@@ -1,19 +1,17 @@
 Hallo {salutation},
 
-am 28. Juni 2020 hat die siebte ordentliche Generalversammlung der C3S SCE
+am 26. Juni 2022 hat die ordentliche Generalversammlung der C3S SCE
 eine Verlängerung der vorläufigen Beitragsordnung beschlossen. Sie sieht
 weiterhin Mitgliedsbeiträge für ordentliche Mitglieder vor, damit wir unsere
 laufenden Kosten decken können.
 
   https://archive.c3s.cc/aktuell/legal/C3S_SCE_membership_dues_de.pdf
 
-Der Mitgliedsbeitrag 2021 für ordentliche Mitglieder beträgt demnach
-50 Euro. Er ist niedriger, falls du später als im 1. Quartal 2021
+Der Mitgliedsbeitrag 2023 für ordentliche Mitglieder beträgt demnach
+50 Euro. Er ist niedriger, falls du später als im 1. Quartal 2023
 beigetreten bist.
 
-Dein Mitgliedsbeitrag {invoice_quarter} beträgt also {dues_amount} Euro.
-
-Bitte überweise den Betrag auf folgendes Konto der C3S SCE:
+Bitte überweise {dues_amount} Euro auf folgendes Konto der C3S SCE:
 
   Verwendungszweck: {invoice_number}, Mitglied Nr. {membership_number}
   IBAN: DE79 8309 4495 0003 2643 78

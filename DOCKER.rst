@@ -125,17 +125,15 @@ Run tests:
 Run tests multiple times from within the container:
 
     docker compose run --rm tests bash
-    > nosetests -v -x
+    > pytest -v -x
 
-Run specific tests verbose, cancel and drop into pdb on first error:
+Run specific tests verbose, cancel on first error:
 
     docker compose run --rm tests \
-        nosetests -v -x --pdb \
-            c3smembership/tests/test_initialization.py:TestDBInitialization.test_main_correct
+        pytest -v -x c3smembership/tests/test_initialization.py -k test_main_correct
 
     docker compose run --rm tests bash
-    > nosetests -v -x --pdb \
-        c3smembership/tests/test_initialization.py:TestDBInitialization.test_main_correct
+    > pytests -v -x c3smembership/tests/test_initialization.py -k test_main_correct --pdb
 
 Inspect screenshots of selenium tests:
 

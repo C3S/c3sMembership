@@ -33,6 +33,7 @@ class SqliteDecimal(types.TypeDecorator):
     when a database is used which supports it.
     """
     impl = types.String
+    cache_ok = False
 
     def load_dialect_impl(self, dialect):
         return dialect.type_descriptor(types.VARCHAR(100))

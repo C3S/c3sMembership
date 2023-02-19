@@ -6,6 +6,8 @@ Tests the c3smembership.presentation.multiple_form_renderer module.
 import unittest
 import mock
 
+from deform import ValidationFailure
+
 from c3smembership.presentation import multiple_form_renderer
 from c3smembership.presentation.multiple_form_renderer import (
     IFormValidationEvent,
@@ -143,6 +145,12 @@ class TestMultipleFormRenderer(unittest.TestCase):
     """
     Tests the MultipleFormRenderer class.
     """
+
+    def tearDown(self):
+        """
+        Restore multiple_form_renderer.ValidationFailure
+        """
+        multiple_form_renderer.ValidationFailure = ValidationFailure
 
     @classmethod
     def create_form(cls, form_id, validate_appstruct=None):

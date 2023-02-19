@@ -2,7 +2,6 @@
 # docs.pylonsproject.org/projects/pyramid_cookbook/dev/authentication.html
 from pyramid.decorator import reify
 from pyramid.request import Request
-from pyramid.security import unauthenticated_userid
 from c3smembership.data.model.base.staff import Staff
 
 
@@ -24,7 +23,7 @@ class RequestWithUserAttribute(Request):
             * **id**, if user is known.
             * **None**, if user is not known.
         """
-        userid = unauthenticated_userid(self)
+        userid = self.unauthenticated_userid
         if userid is not None:
             # this should return None if the user doesn't exist
             # in the database

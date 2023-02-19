@@ -23,7 +23,7 @@ class TestMembershipMemberDetail(TemplateTestCase):
         super(TestMembershipMemberDetail, self).__init__(
             methodName,
             (
-                '../templates/page-elements/'
+                'c3smembership:presentation/templates/page-elements/'
                 'membership_member_detail_general_assembly.pt'
             ),
             [(

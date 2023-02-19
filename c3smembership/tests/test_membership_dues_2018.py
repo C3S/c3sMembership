@@ -357,10 +357,10 @@ class TestDues18Views(unittest.TestCase):
         """
         self.assertEqual(len(mailer.outbox), 2)
         self.assertTrue(
-            (u'Dein Mitgliedsbeitrag für das ganze Jahr beträgt also 50 Euro.')
+            (u'50 Euro. Er ist niedriger, falls du später als im 1. Quartal')
             in mailer.outbox[0].body)
         self.assertTrue(
-            (u'Dein Mitgliedsbeitrag für das ganze Jahr beträgt also 50 Euro.')
+            (u'50 Euro. Er ist niedriger, falls du später als im 1. Quartal')
             in mailer.outbox[1].body)
 
         """

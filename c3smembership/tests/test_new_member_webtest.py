@@ -68,7 +68,7 @@ class NewMemberTests(unittest.TestCase):
 
     def _login(self):
         res = self.testapp.get('/login', status=200)
-        self.failUnless('login' in res.body)
+        self.assertTrue('login' in res.body)
         res.form['login'] = 'rut'
         res.form['password'] = 'berries'
         res.form.submit('submit', status=302)

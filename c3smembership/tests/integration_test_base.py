@@ -118,7 +118,7 @@ class IntegrationTestCaseBase(TestCase):
         response = self.testapp.get('/login')
         if response.status_code == 200:
             # Fill out login form
-            self.failUnless('login' in response.body)
+            self.assertTrue('login' in response.body)
             form = response.form
             form['login'] = 'rut'
             form['password'] = 'berries'

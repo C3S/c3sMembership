@@ -20,7 +20,6 @@ import deform
 from deform import ValidationFailure
 from pyramid_mailer.message import Message
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
 from c3smembership.mail_utils import (
@@ -280,7 +279,7 @@ def regenerate_pdf(request):
     }
     LOG.info(
         "%s regenerated the PDF for code %s",
-        authenticated_userid(request),
+        request.authenticated_userid,
         code)
     return generate_pdf(request, appstruct)
 

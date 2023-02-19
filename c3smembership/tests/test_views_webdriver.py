@@ -220,7 +220,7 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.get(self.url + "?de")
         self.screenshot("page-loaded")
 
-        self.failUnless(
+        self.assertTrue(
             u'Mitgliedschaftsantrag' in self.driver.page_source)
 
         # check for cookie -- should be 'de' for germen
@@ -256,7 +256,7 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.find_element_by_name('submit').click()
         self.screenshot("form-sent")
 
-        self.failUnless(
+        self.assertTrue(
             u'Nach Anfordern der Bestätigungsmail' in self.driver.page_source)
 
         # TODO: check contents of success page XXX
@@ -356,7 +356,7 @@ class JoinFormTests(SeleniumTestBase):
         self.driver.get(self.url + "?en")
         self.screenshot("page-loaded")
 
-        self.failUnless(
+        self.assertTrue(
             u'Application for Membership' in self.driver.page_source)
 
         # check for cookie -- should be 'en' for english
@@ -395,7 +395,7 @@ class JoinFormTests(SeleniumTestBase):
 
         # self.driver.get_screenshot_as_file('test_form_submission_en.png')
 
-        self.failUnless(
+        self.assertTrue(
             'Click the button to have an email' in self.driver.page_source)
 
         # TODO: check contents of success page XXX

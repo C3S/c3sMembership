@@ -198,6 +198,8 @@ class PaginationContextFoundSubscriberTest(TestCase):
             def __call__(self, request, content_size_provider):
                 raise self._exception
 
+        config = testing.setUp()
+        config.add_route('some_route', '/')
 
         content_size_provider_mock = ContentSizeProviderMock(100)
 

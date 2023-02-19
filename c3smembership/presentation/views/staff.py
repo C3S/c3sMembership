@@ -13,7 +13,6 @@ from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import authenticated_userid
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.gnupg_encrypt import encrypt_with_gnupg
@@ -74,7 +73,7 @@ def staff_view(request):
 
 best,
 your membership tool''' % (_staffer.login,
-                           authenticated_userid(request)))
+                           request.authenticated_userid))
             message = Message(
                 subject='[C3S Yes] staff was deleted.',
                 sender=request.registry.settings[
@@ -113,7 +112,7 @@ the password of %s was changed by %s.
 
 best,
 your membership tool''' % (existing.login,
-                           authenticated_userid(request)))
+                           request.authenticated_userid))
             message = Message(
                 subject='[C3S Yes] staff password changed.',
                 sender=request.registry.settings[
@@ -138,7 +137,7 @@ your membership tool''' % (existing.login,
 
 best,
 your membership tool''' % (staffer.login,
-                           authenticated_userid(request)))
+                           request.authenticated_userid))
             message = Message(
                 subject='[C3S Yes] staff was added.',
                 sender=request.registry.settings[

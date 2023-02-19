@@ -14,7 +14,6 @@ from colander import (
 import deform
 from deform import ValidationFailure
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import authenticated_userid
 from pyramid.view import view_config
 
 from c3smembership.data.model.base.c3smember import C3sMember
@@ -533,7 +532,7 @@ def edit_member(request):
             else:
                 LOG.info(
                     u'%s changes %s of id %s to %s',
-                    authenticated_userid(request),
+                    request.authenticated_userid,
                     attribute_name,
                     member.id,
                     attribute_value

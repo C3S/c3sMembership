@@ -9,7 +9,6 @@ import deform
 from deform import ValidationFailure
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import (
-    authenticated_userid,
     forget,
     remember,
 )
@@ -38,7 +37,7 @@ def login(request):
 
     If a person is already logged in, she is forwarded to the dashboard.
     """
-    logged_in = authenticated_userid(request)
+    logged_in = request.authenticated_userid
 
     LOG.info("login by %s", logged_in)
 

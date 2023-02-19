@@ -44,7 +44,7 @@ Install development dependencies::
 
 Clone the repo and cd into the c3sMembership folder.
 
-For nosetests to work, Determine your ``chromium --version`` and download the chromedriver with the fitting
+For selenium tests to work, Determine your ``chromium --version`` and download the chromedriver with the fitting
 version number from https://sites.google.com/chromium.org/driver/downloads. E.g. for chromium 90 enter::
 
    $ wget https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip
@@ -130,7 +130,7 @@ Running automated tests
 Make sure to activate the virtual environment::
 
    $ source env/bin/activate
-   $ nosetests
+   $ pytest
 
 
 Database migration

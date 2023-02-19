@@ -148,8 +148,8 @@ class PyramidInvoiceUrlCreator(InvoiceUrlCreator):
             invoice_number = member.dues19_invoice_no
         if year == 2020:
             invoice_year_route = 'make_dues20_invoice_no_pdf'
-            invoice_code = member.dues21_token
-            invoice_number = member.dues21_invoice_no
+            invoice_code = member.dues20_token
+            invoice_number = member.dues20_invoice_no
         if year == 2021:
             invoice_year_route = 'make_dues21_invoice_no_pdf'
             invoice_code = member.dues21_token
@@ -231,7 +231,7 @@ def send_dues21_invoice_email(request, member_id=None):
                                 PyramidInvoiceUrlCreator(request),
                                 PyramidDuesEmailSender(request))
     except DuesNotApplicableError as dues_not_applicable_error:
-        request.session.flash(dues_not_applicable_error.message, 'warning')
+        request.session.flash(str(dues_not_applicable_error), 'warning')
         return get_memberhip_listing_redirect(request)
 
     return send_invoice_email_redirect(request, member)
@@ -450,11 +450,9 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     if os.path.isfile(aux):
         os.unlink(aux)
 
-    # TODO: If the compilation fails, the invoice is still copied to archive.
-    # In this case it is most likely empty and afterwards cannot be regenerated
-    # as it already exists. The fix has to implement proper error handling. If
-    # the generation fails the invoice must not be archived.
-    archive_dues21_invoice(receipt_pdf, invoice)
+    # archive
+    if os.fstat(receipt_pdf.fileno()).st_size:
+        archive_dues21_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
 
@@ -504,7 +502,8 @@ def make_invoice_pdf_pdflatex(invoice):
         'account':
             get_euro_string(-member.dues15_balance - member.dues16_balance -
                             member.dues17_balance - member.dues18_balance -
-                            member.dues19_balance - member.dues21_balance),
+                            member.dues19_balance - member.dues20_balance -
+                            member.dues21_balance),
         'duesStart': is_altered_str if (invoice.is_altered) else dues_start,
         'duesAmount': get_euro_string(invoice.invoice_amount),
         'lang': 'de',

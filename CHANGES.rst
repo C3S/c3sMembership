@@ -1,3 +1,32 @@
+1.33
+====
+
+
+Add membership dues 2022.
+
+
+
+1.32.1
+======
+
+
+Harmonize dues invoice email templates.
+
+
+
+1.32
+====
+
+
+- Add membership dues 2021. As for the previous years the source code has been
+  copied, pasted and adjusted for the new year. This is quite a tedious job
+  which is caused by the insufficient design for the first year and the lack of
+  proper redesign until today.
+
+- Update C3S statute references.
+
+
+
 1.31
 ====
 
