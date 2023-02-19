@@ -32,7 +32,6 @@ PRODUCTION=(
     python-gnupg
     requests
     slate
-    unicodecsv
     zope.sqlalchemy
 )
 STAGING=()

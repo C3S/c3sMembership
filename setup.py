@@ -33,7 +33,6 @@ REQUIRES = [
     'SQLAlchemy>=1.3.0',  # Object-relational mapper
     # Transaction management, e.g. for database transactions
     'transaction>=2.4.0',
-    # 'unicodecsv==0.9.4',  # Create CSV file
     'zope.sqlalchemy>=1.2',  # TODO: Can it be replaced by SQLAlchemy?
 ]
 # for the translations machinery using transifex you also need to

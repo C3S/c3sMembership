@@ -142,10 +142,10 @@ def generate_csv(member):
     to ease import of new data sets
     """
     from datetime import date
-    import unicodecsv
+    import csv
 
-    csv = tempfile.TemporaryFile()
-    csvw = unicodecsv.writer(csv, encoding='utf-8')
+    csvf = tempfile.TemporaryFile()
+    csvw = csv.writer(csvf, encoding='utf-8')
     fields = (
         date.today().strftime("%Y-%m-%d"),
         'pending...',
@@ -167,8 +167,8 @@ def generate_csv(member):
 
     csvw.writerow(fields)
 
-    csv.seek(0)
-    return csv.readline()
+    csvf.seek(0)
+    return csvf.readline()
 
 
 def make_mail_body(member):
