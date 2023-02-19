@@ -10,7 +10,7 @@ ARG DEBUGGER_PTVSD
 #--- BASE ---------------------------------------------------------------------
 
 ### production
-FROM debian:bullseye-slim AS base_production
+FROM debian:bookworm-slim AS base_production
 # set workdir
 ARG WORKDIR
 ENV WORKDIR $WORKDIR
@@ -66,16 +66,20 @@ FROM base AS python_production
 RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y --no-install-recommends \
         curl \
-        python2.7 \
-        python-is-python2 \
+        python3 \
+        python3-venv \
+        python3-distutils \
+        python3-pip  \
+        python-is-python3 \
     && rm -rf /var/lib/apt/lists/*
-# install pip
-RUN curl -s https://bootstrap.pypa.io/pip/2.7/get-pip.py | python
+# upgrade pip
+RUN python -m pip install --upgrade pip
 # create virtual environment
-RUN pip install virtualenv
-RUN python -m virtualenv /opt/venv
+RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 ENV VIRTUAL_ENV=/opt/venv
+# install wheel
+RUN pip install wheel
 
 ### staging
 FROM python_production AS python_staging
@@ -134,7 +138,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         default-jdk-headless \
         git \
         graphviz \
-        python2.7-dev \
+        python3.11-dev \
+        # pip: cffi \
+            libffi-dev \
         # pip: lxml \
             libxml2-dev \
             libxslt1-dev \
@@ -153,7 +159,6 @@ RUN curl -L 'http://downloads.sourceforge.net/project/plantuml/plantuml.jar' \
 
 ### production
 FROM compile AS pyramid_production_compiled
-RUN easy_install distribute
 COPY requirements_production.txt /requirements_production.txt
 RUN pip install -r /requirements_production.txt
 

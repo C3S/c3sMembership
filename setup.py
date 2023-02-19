@@ -13,27 +13,27 @@ CHANGES = open(os.path.join(HERE, 'CHANGES.rst')).read()
 VERSION = open(os.path.join(HERE, 'VERSION')).read()
 
 REQUIRES = [
-    'alembic==0.8.10',  # database schema migration
+    'alembic',  # database schema migration
     'Babel',  # Internationalization for XML page templates and Python files
     'bcrypt',  # Password hashing. TODO: Use bcrypt instead?
     'colander>=1.7.0',  # Schema validation
-    'cornice==0.17',  # API tools
+    'cornice',  # API tools
     'deform>=2.0.7',  # HTML forms from colander schemas
-    'fdfgen==0.11.0',  # Filling PDF forms
+    'fdfgen',  # Filling PDF forms
     # Stick to lingua 1.5 for now. TODO: learn to use 2.1/2.3
     'lingua==1.5',  # Internationalization
     'pyramid>=1.7',  # Web framework
     'pyramid_beaker',  # Create a Pyramid session factory from settings
     'pyramid_chameleon',  # Templating for Chameleon page templates
     'pyramid_debugtoolbar',  # Developer debug toolbar
-    'pyramid_mailer==0.14.1',  # Send emails
+    'pyramid_mailer',  # Send emails
     # Pyramid transaction management, used for development
     'pyramid_tm>=2.2.1',
     'python-gnupg>=0.4.4',  # GPG encryption
     'SQLAlchemy>=1.3.0',  # Object-relational mapper
     # Transaction management, e.g. for database transactions
     'transaction>=2.4.0',
-    'unicodecsv==0.9.4',  # Create CSV file
+    # 'unicodecsv==0.9.4',  # Create CSV file
     'zope.sqlalchemy>=1.2',  # TODO: Can it be replaced by SQLAlchemy?
 ]
 # for the translations machinery using transifex you also need to
@@ -42,14 +42,14 @@ TEST_REQUIREMENTS = [
     'coverage',  # Get code test coverage for nose
     'mock',  # Creating mock objects for unit testing
     'pytest',  # Execute unit testing
-    'pylint==1.9.5',  # Code linting
+    'pylint',  # Code linting
     'pyquery',  # HTML element querying
     'selenium==3.14.1',  # 4.0.0a1 causes issues by not finding elements
     'webtest',  # Run web applications for unit testing
 
     # Dependency compatibility
     # waitress is required by webtest but version 1.3.0 causes issues
-    'waitress==0.8.9',
+    'waitress',
 ]
 
 DOCS_REQUIRE = [
