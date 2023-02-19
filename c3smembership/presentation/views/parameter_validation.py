@@ -12,7 +12,7 @@ from c3smembership.presentation.parameter_validation import (
 def parameter_validation_view(exc, request):
     """
     """
-    message = 'Failed validation: {0}'.format(exc.message)
+    message = 'Failed validation: {0}'.format(str(exc))
     request.response.status = 400
     return {
         'validation_failure_message': message,

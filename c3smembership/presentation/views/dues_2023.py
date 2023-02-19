@@ -239,7 +239,7 @@ def send_dues23_invoice_email(request, member_id=None):
                                 PyramidInvoiceUrlCreator(request),
                                 PyramidDuesEmailSender(request))
     except DuesNotApplicableError as dues_not_applicable_error:
-        request.session.flash(dues_not_applicable_error.message, 'warning')
+        request.session.flash(str(dues_not_applicable_error), 'warning')
         return get_memberhip_listing_redirect(request)
 
     return send_invoice_email_redirect(request, member)
