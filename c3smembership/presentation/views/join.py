@@ -74,28 +74,28 @@ def join_c3s(request):
         """
         Basic member information.
         """
-        yes_no = ((u'yes', _(u'Yes')),
-                  (u'no', _(u'No')))
+        yes_no = (('yes', _('Yes')),
+                  ('no', _('No')))
         membership_type = colander.SchemaNode(
             colander.String(),
-            title=_(u'I want to become a ... '
-                    u'(choose membership type, see C3S SCE statute §5)'),
-            description=_(u'choose the type of membership.'),
+            title=_('I want to become a ... '
+                    '(choose membership type, see C3S SCE statute §5)'),
+            description=_('choose the type of membership.'),
             widget=deform.widget.RadioChoiceWidget(
                 values=(
                     (
-                        u'normal',
-                        _(u'FULL member. Full members have to be natural '
-                          u'persons who register at least three works they '
-                          u'created themselves with C3S. This applies to '
-                          u'composers, lyricists and remixers. They get a '
-                          u'vote.')),
+                        'normal',
+                        _('FULL member. Full members have to be natural '
+                          'persons who register at least three works they '
+                          'created themselves with C3S. This applies to '
+                          'composers, lyricists and remixers. They get a '
+                          'vote.')),
                     (
-                        u'investing',
-                        _(u'INVESTING member. Investing members can be '
-                          u'natural or legal entities or private companies '
-                          u'that do not register works with C3S. They do '
-                          u'not get a vote, but may counsel.'))
+                        'investing',
+                        _('INVESTING member. Investing members can be '
+                          'natural or legal entities or private companies '
+                          'that do not register works with C3S. They do '
+                          'not get a vote, but may counsel.'))
                 ),
             ),
             oid='membership_type'
@@ -103,21 +103,21 @@ def join_c3s(request):
         member_of_colsoc = colander.SchemaNode(
             colander.String(),
             title=_(
-                u'Currently, I am a member of (at least) one other '
-                u'collecting society.'),
+                'Currently, I am a member of (at least) one other '
+                'collecting society.'),
             validator=colander.OneOf([x[0] for x in yes_no]),
             widget=deform.widget.RadioChoiceWidget(values=yes_no),
             oid="other_colsoc",
         )
         name_of_colsoc = colander.SchemaNode(
             colander.String(),
-            title=_(u'If so, which one(s)? Please separate multiple '
-                    u'collecting societies by comma.'),
+            title=_('If so, which one(s)? Please separate multiple '
+                    'collecting societies by comma.'),
             description=_(
-                u'Please tell us which collecting societies '
-                u'you are a member of. '
-                u'If more than one, please separate them by comma.'),
-            missing=unicode(''),
+                'Please tell us which collecting societies '
+                'you are a member of. '
+                'If more than one, please separate them by comma.'),
+            missing=str(''),
             oid="colsoc_name",
         )
 
@@ -130,19 +130,19 @@ def join_c3s(request):
         """
         num_shares = colander.SchemaNode(
             colander.Integer(),
-            title=_(u"I want to buy the following number "
-                    u"of Shares (50€ each, up to 3000€, see "
-                    u"C3S statute §6)"),
+            title=_("I want to buy the following number "
+                    "of Shares (50€ each, up to 3000€, see "
+                    "C3S statute §6)"),
             description=_(
-                u'You can choose any amount of shares between 1 and 60.'),
+                'You can choose any amount of shares between 1 and 60.'),
             default="1",
             widget=TextInputSliderWidget(
                 size=3, css_class='num_shares_input'),
             validator=colander.Range(
                 min=1,
                 max=60,
-                min_err=_(u'You need at least one share of 50 €.'),
-                max_err=_(u'You may choose 60 shares at most (3000 €).'),
+                min_err=_('You need at least one share of 50 €.'),
+                max_err=_('You may choose 60 shares at most (3000 €).'),
             ),
             oid="num_shares")
 
@@ -153,7 +153,7 @@ def join_c3s(request):
         if not value:
             # raise without additional error message as the description
             # already explains the necessity of the checkbox
-            raise Invalid(node, u'')
+            raise Invalid(node, '')
 
     class TermsInfo(colander.Schema):
         """
@@ -161,46 +161,46 @@ def join_c3s(request):
         """
 
         got_statute = colander.SchemaNode(
-            colander.Bool(true_val=u'yes'),
+            colander.Bool(true_val='yes'),
             title=_(
-                u'I acknowledge that the statutes and membership dues '
-                u'regulations determine periodic contributions '
-                u'for full members.'),
+                'I acknowledge that the statutes and membership dues '
+                'regulations determine periodic contributions '
+                'for full members.'),
             label=_(
-                u'An electronic copy of the statute of the '
-                u'C3S SCE has been made available to me (see link below).'),
+                'An electronic copy of the statute of the '
+                'C3S SCE has been made available to me (see link below).'),
             description=_(
-                u'You must confirm to have access to the statute.'),
+                'You must confirm to have access to the statute.'),
             widget=deform.widget.CheckboxWidget(),
             validator=empty_message_validator,
             required=True,
             oid='got_statute',
         )
         got_dues_regulations = colander.SchemaNode(
-            colander.Bool(true_val=u'yes'),
-            title=(u''),
+            colander.Bool(true_val='yes'),
+            title=(''),
             label=_(
-                u'An electronic copy of the temporary membership dues '
-                u'regulations of the C3S SCE has been made available to me '
-                u'(see link below).'),
+                'An electronic copy of the temporary membership dues '
+                'regulations of the C3S SCE has been made available to me '
+                '(see link below).'),
             description=_(
-                u'You must confirm to have access to the temporary '
-                u'membership dues regulations.'),
+                'You must confirm to have access to the temporary '
+                'membership dues regulations.'),
             widget=deform.widget.CheckboxWidget(),
             validator=empty_message_validator,
             required=True,
             oid='got_dues_regulations',
         )
         privacy_consent = colander.SchemaNode(
-            colander.Bool(true_val=u'yes'),
-            title=_(u'Privacy'),
+            colander.Bool(true_val='yes'),
+            title=_('Privacy'),
             label=_(
-                u'I hereby agree to my personal data entered in this form '
-                u'being stored and processed for the purpose of membership '
-                u'management. I have taken notice of the data privacy '
-                u'statement. '
-                u'https://www.c3s.cc/en/datenschutz/#dsgvo-membership (see '
-                u'link below)'),
+                'I hereby agree to my personal data entered in this form '
+                'being stored and processed for the purpose of membership '
+                'management. I have taken notice of the data privacy '
+                'statement. '
+                'https://www.c3s.cc/en/datenschutz/#dsgvo-membership (see '
+                'link below)'),
             widget=deform.widget.CheckboxWidget(),
             validator=empty_message_validator,
             required=True,
@@ -218,16 +218,16 @@ def join_c3s(request):
         #     title=_(u'Personal Data'),
         # )
         person = PersonalDataJoin(
-            title=_(u'Personal Data'),
+            title=_('Personal Data'),
         )
         membership_info = MembershipInfo(
-            title=_(u'Membership Data')
+            title=_('Membership Data')
         )
         shares = Shares(
-            title=_(u'Shares')
+            title=_('Shares')
         )
         acknowledge_terms = TermsInfo(
-            title=_(u'Acknowledgement')
+            title=_('Acknowledgement')
         )
 
     schema = MembershipForm()
@@ -235,8 +235,8 @@ def join_c3s(request):
     form = deform.Form(
         schema.bind(date=date),
         buttons=[
-            deform.Button('reset', _(u'Reset'), type='reset'),
-            deform.Button('submit', _(u'Next'))
+            deform.Button('reset', _('Reset'), type='reset'),
+            deform.Button('submit', _('Next'))
         ],
         use_ajax=True,
         renderer=ZPT_RENDERER
@@ -248,7 +248,7 @@ def join_c3s(request):
 
     # if the form has been used and SUBMITTED, check contents
     if 'submit' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = form.validate(controls)
 
@@ -259,8 +259,8 @@ def join_c3s(request):
 
         except ValidationFailure as validation_failure:
             request.session.flash(
-                _(u'Please note: There were errors, '
-                  u'please check the form below.'),
+                _('Please note: There were errors, '
+                  'please check the form below.'),
                 'message_above_form',
                 allow_duplicate=False)
 
@@ -272,10 +272,10 @@ def join_c3s(request):
                 form['person']['password'].error = Invalid(
                     None,
                     _(
-                        u'Please re-enter your password. For security '
-                        u'reasons your password is not cached and therefore '
-                        u'needs to be re-entered in case of validation '
-                        u'issues.'
+                        'Please re-enter your password. For security '
+                        'reasons your password is not cached and therefore '
+                        'needs to be re-entered in case of validation '
+                        'issues.'
                     ))
                 validation_failure = ValidationFailure(form, None, form.error)
 
@@ -337,8 +337,8 @@ def send_mail_confirmation_mail(
     Send the confirmation email including the application form
     """
     if 'de' in member.locale.lower():
-        email_subject = u'C3S: E-Mail-Adresse bestätigen und Formular abrufen'
-        email_body = u'''
+        email_subject = 'C3S: E-Mail-Adresse bestätigen und Formular abrufen'
+        email_body = '''
 Hallo {} {}!
 
 bitte benutze diesen Link um deine E-Mail-Adresse zu bestätigen
@@ -351,8 +351,8 @@ Danke!
 Dein C3S Team
         '''
     else:
-        email_subject = u'C3S: confirm your email address and load your PDF'
-        email_body = u'''
+        email_subject = 'C3S: confirm your email address and load your PDF'
+        email_body = '''
 Hello {} {}!
 
 please use this link to verify your email address
@@ -406,7 +406,7 @@ def success_check_email(request):
             """
             import random
             import string
-            return u''.join(
+            return ''.join(
                 random.choice(
                     string.ascii_uppercase + string.digits
                 ) for x in range(10))
@@ -432,7 +432,7 @@ def success_check_email(request):
             date_of_submission=datetime.now(),
             membership_type=appstruct['membership_info']['membership_type'],
             member_of_colsoc=(
-                appstruct['membership_info']['member_of_colsoc'] == u'yes'),
+                appstruct['membership_info']['member_of_colsoc'] == 'yes'),
             name_of_colsoc=appstruct['membership_info']['name_of_colsoc'],
             num_shares=appstruct['shares']['num_shares'],
             privacy_consent=appstruct['membership_info']['privacy_consent'],
@@ -487,7 +487,7 @@ def success_verify_email(request):
 
         if member is None:
             not_found_msg = _(
-                u"Not found. Check verification URL. "
+                "Not found. Check verification URL. "
                 "If all seems right, please use the form again.")
             return {
                 'correct': False,
@@ -501,7 +501,7 @@ def success_verify_email(request):
         except AttributeError:
             correct = False
             request.session.flash(
-                _(u'Wrong Password!'),
+                _('Wrong Password!'),
                 'message_above_login')
 
         if (member.email == user_email) and correct:
@@ -530,7 +530,7 @@ def success_verify_email(request):
                 'date_of_submission': member.date_of_submission,
                 'membership_type': member.membership_type,
                 'member_of_colsoc':
-                    u'yes' if member.member_of_colsoc else u'no',
+                    'yes' if member.member_of_colsoc else 'no',
                 'name_of_colsoc': member.name_of_colsoc,
                 'num_shares': member.num_shares,
             }
@@ -548,7 +548,7 @@ def success_verify_email(request):
                 'result_msg': _("Success. Load your PDF!")
             }
     request.session.flash(
-        _(u"Please enter your password."),
+        _("Please enter your password."),
         'message_above_login',
         allow_duplicate=False
     )

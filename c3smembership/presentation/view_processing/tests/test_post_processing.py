@@ -55,4 +55,4 @@ class TestMultiPostProcessor(TestCase):
         proc2.side_effect = [None]
         processor = MultiPostProcessor([proc1, proc2])
         result = processor('response', 'context', 'request')
-        self.assertEquals(result, 'proc1 result')
+        self.assertEqual(result, 'proc1 result')

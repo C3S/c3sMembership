@@ -37,7 +37,7 @@ class IntegrationTestCaseBase(TestCase):
         r'(?P<message>.*)\s*</div>')
     SETTINGS = {
         'sqlalchemy.url': 'sqlite:///:memory:',
-        'api_auth_token': u"SECRETAUTHTOKEN",
+        'api_auth_token': "SECRETAUTHTOKEN",
         'c3smembership.notification_sender': 'membership@example.com',
         'c3smembership.url': 'http://membership.example.com',
         'testing.mail_to_console': 'false',
@@ -98,12 +98,12 @@ class IntegrationTestCaseBase(TestCase):
         """
         with transaction.manager:
             db_session = cls.get_db_session()
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             db_session.add(accountants_group)
             staffer = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer.groups = [accountants_group]
             db_session.add(accountants_group)

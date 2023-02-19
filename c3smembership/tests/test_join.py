@@ -216,7 +216,7 @@ class TestViews(unittest.TestCase):
             '[C3S] Yes! a new member')
         self.assertEqual(
             mailer.outbox[1].subject,
-            u'C3S: E-Mail-Adresse bestätigen und Formular abrufen')
+            'C3S: E-Mail-Adresse bestätigen und Formular abrufen')
 
         verif_link = "https://yes.c3s.cc/verify/bar@shri.de/"
         self.assertTrue("Hallo foo bar!" in mailer.outbox[1].body)
@@ -298,23 +298,23 @@ class TestViews(unittest.TestCase):
 
     @classmethod
     def _fill_form_valid_natural(cls, form):
-        form['firstname'] = u'SomeFirstname'
-        form['lastname'] = u'SomeLastname'
-        form['email'] = u'some@shri.de'
-        form['password'] = u'jG2NVfOn0BroGrAXR7wy'
-        form['password-confirm'] = u'jG2NVfOn0BroGrAXR7wy'
-        form['address1'] = u"addr one"
-        form['address2'] = u"addr two"
-        form['postcode'] = u"12345"
-        form['city'] = u"Footown Meeh"
-        form['country'].value__set(u"DE")
-        form['year'] = unicode(date.today().year-40)
+        form['firstname'] = 'SomeFirstname'
+        form['lastname'] = 'SomeLastname'
+        form['email'] = 'some@shri.de'
+        form['password'] = 'jG2NVfOn0BroGrAXR7wy'
+        form['password-confirm'] = 'jG2NVfOn0BroGrAXR7wy'
+        form['address1'] = "addr one"
+        form['address2'] = "addr two"
+        form['postcode'] = "12345"
+        form['city'] = "Footown Meeh"
+        form['country'].value__set("DE")
+        form['year'] = str(date.today().year-40)
         form['month'] = '1'
         form['day'] = '1'
-        form['membership_type'].value__set(u'normal')
-        form['other_colsoc'].value__set(u'no')
-        form['name_of_colsoc'] = u"GEMA"
-        form['num_shares'] = u'23'
+        form['membership_type'].value__set('normal')
+        form['other_colsoc'].value__set('no')
+        form['name_of_colsoc'] = "GEMA"
+        form['num_shares'] = '23'
         form['got_statute'].value__set(True)
         form['got_dues_regulations'].value__set(True)
         form['privacy_consent'].value__set(True)
@@ -335,13 +335,13 @@ class TestViews(unittest.TestCase):
         db_session = DBSession()
         Base.metadata.create_all(engine)
         with transaction.manager:
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             db_session.add(accountants_group)
             db_session.flush()
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             db_session.add(accountants_group)
@@ -353,7 +353,7 @@ class TestViews(unittest.TestCase):
         # sucess for valid entry
         res = testapp.get('/', status=200)
         form = self._fill_form_valid_natural(res.form)
-        res = form.submit(u'submit', status=302)
+        res = form.submit('submit', status=302)
         res = res.follow()
         self.assertTrue('information below to be correct' in res.body)
 
@@ -361,10 +361,10 @@ class TestViews(unittest.TestCase):
         res = testapp.get('/', status=200)
         form = self._fill_form_valid_natural(res.form)
         join.date = DummyDate(date(2018, 4, 29))
-        form['year'] = u'2000'
-        form['month'] = u'04'
-        form['day'] = u'29'
-        res = form.submit(u'submit', status=302)
+        form['year'] = '2000'
+        form['month'] = '04'
+        form['day'] = '29'
+        res = form.submit('submit', status=302)
         res = res.follow()
         self.assertTrue('information below to be correct' in res.body)
 
@@ -372,11 +372,11 @@ class TestViews(unittest.TestCase):
         res = testapp.get('/', status=200)
         form = self._fill_form_valid_natural(res.form)
         join.date = DummyDate(date(2018, 4, 29))
-        form['year'] = u'2000'
-        form['month'] = u'04'
-        form['day'] = u'30'
+        form['year'] = '2000'
+        form['month'] = '04'
+        form['day'] = '30'
 
-        res = form.submit(u'submit', status=200)
+        res = form.submit('submit', status=200)
 
         self.assertTrue('underaged person is currently not' in res.body)
 
@@ -384,13 +384,13 @@ class TestViews(unittest.TestCase):
         res = testapp.get('/', status=200)
         form = self._fill_form_valid_natural(res.form)
         form['got_dues_regulations'].value__set(False)
-        res = form.submit(u'submit', status=200)
+        res = form.submit('submit', status=200)
 
         # failure for dues regulations not checked
         res = testapp.get('/', status=200)
         form = self._fill_form_valid_natural(res.form)
         form['got_dues_regulations'].value__set(False)
-        res = form.submit(u'submit', status=200)
+        res = form.submit('submit', status=200)
 
         # teardown
         db_session.close()
@@ -408,7 +408,7 @@ class TestViews(unittest.TestCase):
         result = success_verify_email(request)
         self.assertEqual(
             request.session.peek_flash('message_above_login'),
-            [u'Please enter your password.'])
+            ['Please enter your password.'])
         self.assertEqual(result['result_msg'], 'something went wrong.')
         self.assertEqual(result['firstname'], '')
         self.assertEqual(result['lastname'], '')

@@ -44,24 +44,24 @@ class TestUtilities(unittest.TestCase):
         with transaction.manager:
             # German member
             member1 = C3sMember(
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u'addr one',
-                address2=u'addr two',
-                postcode=u'12345',
-                city=u'Footown Mäh',
-                country=u'Foocountry',
-                locale=u'DE',
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1='addr one',
+                address2='addr two',
+                postcode='12345',
+                city='Footown Mäh',
+                country='Foocountry',
+                locale='DE',
                 date_of_birth=datetime.date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAR',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAR',
+                password='arandompassword',
                 date_of_submission=datetime.date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u'GEMA',
-                num_shares=u'23',
+                name_of_colsoc='GEMA',
+                num_shares='23',
             )
             db_session = DBSession()
             db_session.add(member1)
@@ -80,19 +80,19 @@ class TestUtilities(unittest.TestCase):
         Test pdf generation and resulting pdf size
         """
         mock_appstruct = {
-            'firstname': u'Anne',
-            'lastname': u'Gilles',
-            'email': u'devnull@example.com',
-            'email_confirm_code': u'1234567890',
+            'firstname': 'Anne',
+            'lastname': 'Gilles',
+            'email': 'devnull@example.com',
+            'email_confirm_code': '1234567890',
             'date_of_birth': '1987-06-05',
             'address1': 'addr one',
             'address2': 'addr two',
-            'postcode': u'54321',
-            'city': u'Müsterstädt',
-            'country': u'some country',
+            'postcode': '54321',
+            'city': 'Müsterstädt',
+            'country': 'some country',
             'member_of_colsoc': 'member_of_colsoc',
             'name_of_colsoc': 'Foo Colsoc',
-            'membership_type': u'investing',
+            'membership_type': 'investing',
             'num_shares': '42',
             'locale': 'en',
             'date_of_submission': '2013-09-09 08:44:47.251588',
@@ -107,7 +107,7 @@ class TestUtilities(unittest.TestCase):
                 request = testing.DummyRequest()
                 result = generate_pdf(request, mock_appstruct)
 
-                self.assertEquals(result.content_type,
+                self.assertEqual(result.content_type,
                                   'application/pdf')
                 # check pdf size
                 self.assertTrue(210000 > len(result.body) > 50000)
@@ -122,18 +122,18 @@ class TestUtilities(unittest.TestCase):
 
         request = testing.DummyRequest()
         appstruct = {
-            'firstname': u'Anne',
-            'lastname': u'Gilles',
-            'address1': u'addr one',
-            'address2': u'addr two',
-            'postcode': u'54321',
-            'city': u'Müsterstädt',
-            'email': u'devnull@example.com',
-            'email_confirm_code': u'1234567890',
-            'date_of_birth': u'1987-06-05',
-            'country': u'my country',
-            'membership_type': u'investing',
-            'num_shares': u'23',
+            'firstname': 'Anne',
+            'lastname': 'Gilles',
+            'address1': 'addr one',
+            'address2': 'addr two',
+            'postcode': '54321',
+            'city': 'Müsterstädt',
+            'email': 'devnull@example.com',
+            'email_confirm_code': '1234567890',
+            'date_of_birth': '1987-06-05',
+            'country': 'my country',
+            'membership_type': 'investing',
+            'num_shares': '23',
             'locale': 'de',
             'date_of_submission': '2013-09-09 08:44:47.251588',
         }
@@ -144,7 +144,7 @@ class TestUtilities(unittest.TestCase):
                 ['which', 'pdftk'], stdout=open(os.devnull, 'w'))
             if res == 0:
                 result = generate_pdf(request, appstruct)
-                self.assertEquals(result.content_type,
+                self.assertEqual(result.content_type,
                                   'application/pdf')
                 self.assertTrue(210000 > len(result.body) > 50000)
         except subprocess.CalledProcessError:
@@ -156,62 +156,62 @@ class TestUtilities(unittest.TestCase):
         """
         dob = datetime.date(1999, 1, 1)
         member = C3sMember(
-            firstname=u'Jöhn test_mail_body',
-            lastname=u'Döe',
-            email=u'devnull@example.com',
-            password=u'very_unsecure_password',
-            address1=u'addr one',
-            address2=u'addr two',
-            postcode=u'12345 xyz',
-            city=u'Town',
-            country=u'af',
-            locale=u'en',
+            firstname='Jöhn test_mail_body',
+            lastname='Döe',
+            email='devnull@example.com',
+            password='very_unsecure_password',
+            address1='addr one',
+            address2='addr two',
+            postcode='12345 xyz',
+            city='Town',
+            country='af',
+            locale='en',
             date_of_birth=dob,
             email_is_confirmed=False,
-            email_confirm_code=u'1234567890',
-            num_shares=u'23',
+            email_confirm_code='1234567890',
+            num_shares='23',
             date_of_submission=datetime.datetime.now(),
-            membership_type=u'investing',
-            member_of_colsoc=u'yes',
-            name_of_colsoc=u'Buma',
+            membership_type='investing',
+            member_of_colsoc='yes',
+            name_of_colsoc='Buma',
             privacy_consent=datetime.datetime.now(),
         )
         result = make_mail_body(member)
 
-        self.assertTrue(u'Jöhn test_mail_body' in result)
-        self.assertTrue(u'Döe' in result)
-        self.assertTrue(u'postcode:                       12345 xyz' in result)
-        self.assertTrue(u'Town' in result)
-        self.assertTrue(u'devnull@example.com' in result)
-        self.assertTrue(u'af' in result)
-        self.assertTrue(u'number of shares                23' in result)
+        self.assertTrue('Jöhn test_mail_body' in result)
+        self.assertTrue('Döe' in result)
+        self.assertTrue('postcode:                       12345 xyz' in result)
+        self.assertTrue('Town' in result)
+        self.assertTrue('devnull@example.com' in result)
+        self.assertTrue('af' in result)
+        self.assertTrue('number of shares                23' in result)
         self.assertTrue(
-            u'member of coll. soc.:           yes' in result)
-        self.assertTrue(u'that\'s it.. bye!' in result)
+            'member of coll. soc.:           yes' in result)
+        self.assertTrue('that\'s it.. bye!' in result)
 
     def test_create_accountant_mail(self):
         """
         Test creation of email message object
         """
         member = C3sMember(
-            firstname=u'Jöhn test_create_accountant_mail',
-            lastname=u'Doe',
-            email=u'devnull@example.com',
-            password=u'very_unsecure_password',
+            firstname='Jöhn test_create_accountant_mail',
+            lastname='Doe',
+            email='devnull@example.com',
+            password='very_unsecure_password',
             address1='address part one',
             address2='address part two',
             postcode='POSTCODE',
-            city=u'Town',
-            country=u'af',
-            locale=u'en',
+            city='Town',
+            country='af',
+            locale='en',
             date_of_birth=datetime.date(1987, 6, 5),
             email_is_confirmed=False,
             email_confirm_code='ABCDEFGH',
             num_shares=7,
             date_of_submission=datetime.datetime.now(),
-            membership_type=u'normal',
-            member_of_colsoc=u'yes',
-            name_of_colsoc=u'Foo Colsoc',
+            membership_type='normal',
+            member_of_colsoc='yes',
+            name_of_colsoc='Foo Colsoc',
             privacy_consent=datetime.datetime.now(),
         )
         result = create_accountant_mail(

@@ -21,47 +21,47 @@ class GeneralAssemblySchemaGroup(colander.Schema):
     """
     number = colander.SchemaNode(
         colander.Integer(),
-        title=u'Number',
+        title='Number',
         oid='number',
         widget=deform.widget.TextInputWidget(readonly=True),
         missing=None)
     name = colander.SchemaNode(
         colander.String(),
-        title=u'Name',
+        title='Name',
         oid='name')
     date = colander.SchemaNode(
         colander.Date(),
         title='Date',
         validator=colander.Range(
             min=datetime.date.today(),
-            min_err=u'${val} is in the past. The general assembly must take '
-                    u'place in the future.'),
+            min_err='${val} is in the past. The general assembly must take '
+                    'place in the future.'),
         default=datetime.date.today())
     invitation_subject_en = colander.SchemaNode(
         colander.String(),
-        title=u'Invitation email subject in English',
-        missing=u'',
+        title='Invitation email subject in English',
+        missing='',
         oid='invitation_subject_en')
     invitation_text_en = colander.SchemaNode(
         colander.String(),
         widget=deform.widget.TextAreaWidget(rows=TEXTAREA_ROW_COUNT),
-        title=u'Invitation email text in English',
-        description=u'The placeholders {salutation}, {invitation_url} and '
-                    u'{footer} can be used.',
-        missing=u'',
+        title='Invitation email text in English',
+        description='The placeholders {salutation}, {invitation_url} and '
+                    '{footer} can be used.',
+        missing='',
         oid='invitation_text_en')
     invitation_subject_de = colander.SchemaNode(
         colander.String(),
-        title=u'Invitation email subject in German',
-        missing=u'',
+        title='Invitation email subject in German',
+        missing='',
         oid='invitation_subject_de')
     invitation_text_de = colander.SchemaNode(
         colander.String(),
         widget=deform.widget.TextAreaWidget(rows=TEXTAREA_ROW_COUNT),
-        title=u'Invitation email text in German',
-        description=u'The placeholders {salutation}, {invitation_url} and '
-                    u'{footer} can be used.',
-        missing=u'',
+        title='Invitation email text in German',
+        description='The placeholders {salutation}, {invitation_url} and '
+                    '{footer} can be used.',
+        missing='',
         oid='invitation_text_de')
 
 
@@ -142,9 +142,9 @@ class GeneralAssemblyFormFactory(object):
         return deform.Form(
             GeneralAssemblySchema(),
             buttons=[
-                deform.Button('submit', u'Submit'),
-                deform.Button('reset', u'Reset'),
-                deform.Button('cancel', u'Cancel'),
+                deform.Button('submit', 'Submit'),
+                deform.Button('reset', 'Reset'),
+                deform.Button('cancel', 'Cancel'),
             ],
             renderer=ZPT_RENDERER,
             use_ajax=True,

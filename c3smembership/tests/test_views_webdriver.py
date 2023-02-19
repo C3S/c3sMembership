@@ -35,7 +35,7 @@ import re
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.remote_connection import LOGGER
-from webdriver_utils import Server
+from .webdriver_utils import Server
 from selenium.webdriver.chrome.options import Options
 
 LOGGER.setLevel(logging.WARNING)
@@ -169,7 +169,7 @@ class SeleniumTestBase(unittest.TestCase):
         if testmethod.startswith("test_"):
             testmethod = testmethod[5:]
         testmethod = [word.title() for word in testmethod.split('_')]
-        if testmethod and unicode(testmethod[0]).isnumeric():
+        if testmethod and str(testmethod[0]).isnumeric():
             testmethod[0] += "-"
         testmethod = ''.join(testmethod)
         filename = [testtime, testclass, testmethod]
@@ -177,7 +177,7 @@ class SeleniumTestBase(unittest.TestCase):
             filename.append(name)
         filename = "-".join(filename)
         # sanitize filename (taken from werkzeug.utils.secure_filename)
-        filename = unicodedata.normalize("NFKD", unicode(filename))
+        filename = unicodedata.normalize("NFKD", str(filename))
         filename = filename.encode("ascii", "ignore").decode("ascii")
         for sep in os.path.sep, os.path.altsep:
             if sep:
@@ -221,10 +221,10 @@ class JoinFormTests(SeleniumTestBase):
         self.screenshot("page-loaded")
 
         self.assertTrue(
-            u'Mitgliedschaftsantrag' in self.driver.page_source)
+            'Mitgliedschaftsantrag' in self.driver.page_source)
 
         # check for cookie -- should be 'de' for germen
-        self.assertEquals(self.driver.get_cookie('_LOCALE_')['value'], u'de')
+        self.assertEqual(self.driver.get_cookie('_LOCALE_')['value'], 'de')
 
         # fill out the form
         self.driver.find_element_by_name("firstname").send_keys("Christoph")
@@ -257,7 +257,7 @@ class JoinFormTests(SeleniumTestBase):
         self.screenshot("form-sent")
 
         self.assertTrue(
-            u'Nach Anfordern der Bestätigungsmail' in self.driver.page_source)
+            'Nach Anfordern der Bestätigungsmail' in self.driver.page_source)
 
         # TODO: check contents of success page XXX
         self.assertTrue('Christoph' in self.driver.page_source)
@@ -340,12 +340,12 @@ class JoinFormTests(SeleniumTestBase):
         self.assertTrue('Eine E-Mail wurde verschickt,' in page)
         self.assertTrue('Christoph Scheid!' in page)
 
-        self.assertTrue(u'Du wirst eine E-Mail' in page)
-        self.assertTrue(u'Bestätigungslink' in page)
+        self.assertTrue('Du wirst eine E-Mail' in page)
+        self.assertTrue('Bestätigungslink' in page)
 
-        self.assertTrue(u'Der Betreff der E-Mail lautet:' in page)
-        self.assertTrue(u'C3S: E-Mail-Adresse' in page)
-        self.assertTrue(u'tigen und Formular abrufen' in page)
+        self.assertTrue('Der Betreff der E-Mail lautet:' in page)
+        self.assertTrue('C3S: E-Mail-Adresse' in page)
+        self.assertTrue('tigen und Formular abrufen' in page)
 
     def test_form_submission_en(self):
         """
@@ -357,10 +357,10 @@ class JoinFormTests(SeleniumTestBase):
         self.screenshot("page-loaded")
 
         self.assertTrue(
-            u'Application for Membership' in self.driver.page_source)
+            'Application for Membership' in self.driver.page_source)
 
         # check for cookie -- should be 'en' for english
-        self.assertEquals(self.driver.get_cookie('_LOCALE_')['value'], u'en')
+        self.assertEqual(self.driver.get_cookie('_LOCALE_')['value'], 'en')
 
         # fill out the form
         self.driver.find_element_by_name("firstname").send_keys("Christoph")
@@ -478,11 +478,11 @@ class JoinFormTests(SeleniumTestBase):
         self.assertTrue('Christoph Scheid!' in page)
 
         self.assertTrue(
-            u'You will receive an email from us with ' in page)
+            'You will receive an email from us with ' in page)
 
-        self.assertTrue(u'The email subject line will read:' in page)
-        self.assertTrue(u'C3S: confirm your email address ' in page)
-        self.assertTrue(u'and load your PDF' in page)
+        self.assertTrue('The email subject line will read:' in page)
+        self.assertTrue('C3S: confirm your email address ' in page)
+        self.assertTrue('and load your PDF' in page)
 
 
 class EmailVerificationTests(SeleniumTestBase):
@@ -511,9 +511,9 @@ class EmailVerificationTests(SeleniumTestBase):
         self.screenshot("page-loaded")
 
         self.assertTrue(
-            u'Bitte gib Dein Passwort ein, um' in self.driver.page_source)
+            'Bitte gib Dein Passwort ein, um' in self.driver.page_source)
         self.assertTrue(
-            u'Deine E-Mail-Adresse zu bestätigen.' in self.driver.page_source)
+            'Deine E-Mail-Adresse zu bestätigen.' in self.driver.page_source)
         self.assertTrue(
             'Hier geht es zum PDF...' in self.driver.page_source)
 

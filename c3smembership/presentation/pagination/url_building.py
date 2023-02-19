@@ -46,11 +46,11 @@ class RequestUrlCreator(IUrlCreator):
             route_url_kwargs['_query'] = {}
 
         # keep matchdict values
-        for key, value in self._request.matchdict.items():
+        for key, value in list(self._request.matchdict.items()):
             route_url_kwargs[key] = value
 
         # keep original query parameters
-        for key, value in self._request.GET.items():
+        for key, value in list(self._request.GET.items()):
             route_url_kwargs['_query'][key] = value
 
         paging_request = pagination_request.paging_request

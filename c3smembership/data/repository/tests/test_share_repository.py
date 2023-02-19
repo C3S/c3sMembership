@@ -30,63 +30,63 @@ class TestShareRepository(unittest.TestCase):
         Base.metadata.create_all(engine)
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=35,
             )
             member2 = C3sMember(  # german
-                firstname=u'AAASomeFirstnäme',
-                lastname=u'XXXSomeLastnäme',
-                email=u'some2@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='AAASomeFirstnäme',
+                lastname='XXXSomeLastnäme',
+                email='some2@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAR',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAR',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=45,
             )
             member3 = C3sMember(
-                firstname=u'Not Approved',
-                lastname=u'Member',
-                email=u'not.approved@example.com',
-                address1=u'Some Street 123',
-                address2=u'',
-                postcode=u"12345",
-                city=u"Some City",
-                country=u"Some Country",
-                locale=u"DE",
+                firstname='Not Approved',
+                lastname='Member',
+                email='not.approved@example.com',
+                address1='Some Street 123',
+                address2='',
+                postcode="12345",
+                city="Some City",
+                country="Some Country",
+                locale="DE",
                 date_of_birth=date(1980, 1, 2),
                 email_is_confirmed=False,
-                email_confirm_code=u'NOT_APPROVED_MEMBER',
-                password=u'not_approved_member',
+                email_confirm_code='NOT_APPROVED_MEMBER',
+                password='not_approved_member',
                 date_of_submission=date(1970, 1, 1),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u'',
+                name_of_colsoc='',
                 num_shares=7,
             )
             # pylint: disable=no-member
@@ -96,37 +96,37 @@ class TestShareRepository(unittest.TestCase):
             # pylint: disable=no-member
             DBSession.add(member3)
 
-            member1.membership_number = u'member1'
+            member1.membership_number = 'member1'
             member1.membership_date = date(2013, 1, 1)
             member1.membership_accepted = True
-            member2.membership_number = u'member2'
+            member2.membership_number = 'member2'
             member2.membership_date = date(2013, 1, 1)
             member2.membership_accepted = True
             member3.payment_received_date = date(2016, 10, 11)
 
             share = Shares()
-            share.reference_code = u'share1'
+            share.reference_code = 'share1'
             share.date_of_acquisition = date(2013, 1, 2)
             share.payment_received_date = date(2012, 11, 10)
             share.number = 12
             member1.shares.append(share)
 
             share = Shares()
-            share.reference_code = u'share2'
+            share.reference_code = 'share2'
             share.date_of_acquisition = date(2014, 2, 3)
             share.payment_received_date = date(2012, 12, 31)
             share.number = 23
             member1.shares.append(share)
 
             share = Shares()
-            share.reference_code = u'share3'
+            share.reference_code = 'share3'
             share.date_of_acquisition = date(2014, 3, 4)
             share.payment_received_date = date(2014, 3, 3)
             share.number = 34
             member2.shares.append(share)
 
             share = Shares()
-            share.reference_code = u'share4'
+            share.reference_code = 'share4'
             share.date_of_acquisition = date(2015, 4, 5)
             share.payment_received_date = date(2014, 11, 15)
             share.number = 45
@@ -493,8 +493,8 @@ class TestShareRepository(unittest.TestCase):
             C3sMember.membership_number == 'member1').first()
         shares = member1.shares[0]
 
-        ShareRepository.set_reference_code(shares.id, u'test_reference_code')
-        self.assertEqual(shares.reference_code, u'test_reference_code')
+        ShareRepository.set_reference_code(shares.id, 'test_reference_code')
+        self.assertEqual(shares.reference_code, 'test_reference_code')
 
         ShareRepository.set_reference_code(shares.id, None)
         self.assertEqual(shares.reference_code, None)
@@ -539,25 +539,25 @@ class TestShareRepository(unittest.TestCase):
         """
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share1').first()
+            Shares.reference_code == 'share1').first()
         get_share = ShareRepository.get(share.id)
         self.assertEqual(get_share.id, share.id)
 
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share2').first()
+            Shares.reference_code == 'share2').first()
         get_share = ShareRepository.get(share.id)
         self.assertEqual(get_share.id, share.id)
 
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share3').first()
+            Shares.reference_code == 'share3').first()
         get_share = ShareRepository.get(share.id)
         self.assertEqual(get_share.id, share.id)
 
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share4').first()
+            Shares.reference_code == 'share4').first()
         get_share = ShareRepository.get(share.id)
         self.assertEqual(get_share.id, share.id)
 
@@ -580,7 +580,7 @@ class TestShareRepository(unittest.TestCase):
 
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share1').first()
+            Shares.reference_code == 'share1').first()
         ShareRepository.delete(share.id)
 
         count = DBSession.query(Shares).count()
@@ -597,7 +597,7 @@ class TestShareRepository(unittest.TestCase):
 
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share2').first()
+            Shares.reference_code == 'share2').first()
         ShareRepository.delete(share.id)
 
         count = DBSession.query(Shares).count()
@@ -614,7 +614,7 @@ class TestShareRepository(unittest.TestCase):
 
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share3').first()
+            Shares.reference_code == 'share3').first()
         ShareRepository.delete(share.id)
 
         count = DBSession.query(Shares).count()
@@ -631,7 +631,7 @@ class TestShareRepository(unittest.TestCase):
 
         # pylint: disable=no-member
         share = DBSession.query(Shares).filter(
-            Shares.reference_code == u'share4').first()
+            Shares.reference_code == 'share4').first()
         ShareRepository.delete(share.id)
 
         count = DBSession.query(Shares).count()

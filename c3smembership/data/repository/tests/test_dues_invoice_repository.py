@@ -51,23 +51,23 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         Base.metadata.create_all(engine)
         with transaction.manager:
             member1 = C3sMember(
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'member1@example.com',
-                address1=u'addr one',
-                address2=u'addr two',
-                postcode=u'12345',
-                city=u'Footown Mäh',
-                country=u'Foocountry',
-                locale=u'DE',
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='member1@example.com',
+                address1='addr one',
+                address2='addr two',
+                postcode='12345',
+                city='Footown Mäh',
+                country='Foocountry',
+                locale='DE',
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u'GEMA',
+                name_of_colsoc='GEMA',
                 num_shares=35,
             )
             member1.membership_number = 9
@@ -95,50 +95,50 @@ class TestDuesInvoiceRepository(unittest.TestCase):
             self.db_session.flush()
             self.db_session.add(
                 Dues15Invoice(invoice_no=2348,
-                              invoice_no_string=u'dues15-2348',
+                              invoice_no_string='dues15-2348',
                               invoice_date=date(2015, 10, 1),
                               invoice_amount=Decimal('9876.15'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'15KVNM9265'))
+                              token='15KVNM9265'))
             self.db_session.add(
                 Dues16Invoice(invoice_no=1276,
-                              invoice_no_string=u'dues16-1276',
+                              invoice_no_string='dues16-1276',
                               invoice_date=date(2016, 6, 16),
                               invoice_amount=Decimal('9876.16'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'16LLPW2254'))
+                              token='16LLPW2254'))
             self.db_session.add(
                 Dues17Invoice(invoice_no=7544,
-                              invoice_no_string=u'dues17-7544',
+                              invoice_no_string='dues17-7544',
                               invoice_date=date(2017, 7, 17),
                               invoice_amount=Decimal('9876.17'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'17WEDD8349'))
+                              token='17WEDD8349'))
             dues18invoice_original = Dues18Invoice(
                 invoice_no=9876,
-                invoice_no_string=u'dues18-9876',
+                invoice_no_string='dues18-9876',
                 invoice_date=date(2018, 1, 12),
                 invoice_amount=Decimal('9876.18'),
                 member_id=member1.id,
                 membership_no=member1.membership_number,
                 email=member1.email,
-                token=u'18SNED2845')
+                token='18SNED2845')
             self.db_session.add(dues18invoice_original)
             dues18invoice_reversal = Dues18Invoice(
                 invoice_no=9877,
-                invoice_no_string=u'dues18-9877-S',
+                invoice_no_string='dues18-9877-S',
                 invoice_date=date(2018, 9, 18),
                 invoice_amount=Decimal('-9876.18'),
                 member_id=member1.id,
                 membership_no=member1.membership_number,
                 email=member1.email,
-                token=u'18SNED2846')
+                token='18SNED2846')
             self.db_session.add(dues18invoice_reversal)
 
             dues18invoice_original.is_cancelled = True
@@ -150,62 +150,62 @@ class TestDuesInvoiceRepository(unittest.TestCase):
 
             dues18invoice_reduced = Dues18Invoice(
                 invoice_no=9878,
-                invoice_no_string=u'dues18-5678',
+                invoice_no_string='dues18-5678',
                 invoice_date=date(2018, 9, 18),
                 invoice_amount=Decimal('5678.18'),
                 member_id=member1.id,
                 membership_no=member1.membership_number,
                 email=member1.email,
-                token=u'18SNED2847')
+                token='18SNED2847')
             dues18invoice_reversal.preceding_invoice_no = '18SNED2846'
             dues18invoice_reduced.is_altered = True
 
             self.db_session.add(dues18invoice_reduced)
             self.db_session.add(
                 Dues19Invoice(invoice_no=1234,
-                              invoice_no_string=u'dues19-1234',
+                              invoice_no_string='dues19-1234',
                               invoice_date=date(2019, 2, 24),
                               invoice_amount=Decimal('1234.19'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'19WXYZ7890'))
+                              token='19WXYZ7890'))
             self.db_session.add(
                 Dues20Invoice(invoice_no=2020,
-                              invoice_no_string=u'dues20-1234',
+                              invoice_no_string='dues20-1234',
                               invoice_date=date(2020, 2, 24),
                               invoice_amount=Decimal('1234.20'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'20WXYZ7890'))
+                              token='20WXYZ7890'))
             self.db_session.add(
                 Dues21Invoice(invoice_no=2021,
-                              invoice_no_string=u'dues21-1234',
+                              invoice_no_string='dues21-1234',
                               invoice_date=date(2021, 2, 24),
                               invoice_amount=Decimal('1234.21'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'21WXYZ7890'))
+                              token='21WXYZ7890'))
             self.db_session.add(
                 Dues22Invoice(invoice_no=2022,
-                              invoice_no_string=u'dues22-1234',
+                              invoice_no_string='dues22-1234',
                               invoice_date=date(2022, 2, 24),
                               invoice_amount=Decimal('1234.22'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'22WXYZ7890'))
+                              token='22WXYZ7890'))
             self.db_session.add(
                 Dues23Invoice(invoice_no=2023,
-                              invoice_no_string=u'dues23-1234',
+                              invoice_no_string='dues23-1234',
                               invoice_date=date(2023, 2, 24),
                               invoice_amount=Decimal('1234.23'),
                               member_id=member1.id,
                               membership_no=member1.membership_number,
                               email=member1.email,
-                              token=u'23WXYZ7890'))
+                              token='23WXYZ7890'))
             self.db_session.flush()
 
     def tearDown(self):
@@ -366,36 +366,36 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         3. Check existing token for different year
         """
         # 1. Check existing tokens
-        token_exists = DuesInvoiceRepository.token_exists(u'15KVNM9265', 2015)
+        token_exists = DuesInvoiceRepository.token_exists('15KVNM9265', 2015)
         self.assertTrue(token_exists)
 
-        token_exists = DuesInvoiceRepository.token_exists(u'16LLPW2254', 2016)
+        token_exists = DuesInvoiceRepository.token_exists('16LLPW2254', 2016)
         self.assertTrue(token_exists)
 
-        token_exists = DuesInvoiceRepository.token_exists(u'17WEDD8349', 2017)
+        token_exists = DuesInvoiceRepository.token_exists('17WEDD8349', 2017)
         self.assertTrue(token_exists)
 
-        token_exists = DuesInvoiceRepository.token_exists(u'18SNED2845', 2018)
+        token_exists = DuesInvoiceRepository.token_exists('18SNED2845', 2018)
         self.assertTrue(token_exists)
 
-        token_exists = DuesInvoiceRepository.token_exists(u'18SNED2846', 2018)
+        token_exists = DuesInvoiceRepository.token_exists('18SNED2846', 2018)
         self.assertTrue(token_exists)
 
-        token_exists = DuesInvoiceRepository.token_exists(u'18SNED2847', 2018)
+        token_exists = DuesInvoiceRepository.token_exists('18SNED2847', 2018)
         self.assertTrue(token_exists)
 
-        token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2019)
+        token_exists = DuesInvoiceRepository.token_exists('19WXYZ7890', 2019)
         self.assertTrue(token_exists)
 
-        token_exists = DuesInvoiceRepository.token_exists(u'20WXYZ7890', 2020)
+        token_exists = DuesInvoiceRepository.token_exists('20WXYZ7890', 2020)
         self.assertTrue(token_exists)
 
         # 2. Check token for not existing year
-        token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2000)
+        token_exists = DuesInvoiceRepository.token_exists('19WXYZ7890', 2000)
         self.assertFalse(token_exists)
 
         # 3. Check existing token for different year
-        token_exists = DuesInvoiceRepository.token_exists(u'19WXYZ7890', 2015)
+        token_exists = DuesInvoiceRepository.token_exists('19WXYZ7890', 2015)
         self.assertFalse(token_exists)
 
     def test_get_monthly_stats(self):
@@ -517,18 +517,18 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         """
         Test the create_dues_invoice method
         """
-        self._test_create_dues_invoice(2015, 1234, u'asdf1324',
-                                       Decimal('50.0'), u'LFSKJFLSDKJH')
-        self._test_create_dues_invoice(2016, 3635, u'asdf3635',
-                                       Decimal('25.0'), u'VLMKEKMLVKELK')
-        self._test_create_dues_invoice(2017, 8, u'dfg8', Decimal('12.34'),
-                                       u'LMVKVFKS')
-        self._test_create_dues_invoice(2018, 1919, u'fjgdlkfgj1919',
-                                       Decimal('0.01'), u'MVLKSFKSLMV')
-        self._test_create_dues_invoice(2019, 1111, u'asdf1111',
-                                       Decimal('50.0'), u'KMLERKER')
-        self._test_create_dues_invoice(2020, 1010, u'asdf1010',
-                                       Decimal('50.0'), u'LVHUFSLVELF')
+        self._test_create_dues_invoice(2015, 1234, 'asdf1324',
+                                       Decimal('50.0'), 'LFSKJFLSDKJH')
+        self._test_create_dues_invoice(2016, 3635, 'asdf3635',
+                                       Decimal('25.0'), 'VLMKEKMLVKELK')
+        self._test_create_dues_invoice(2017, 8, 'dfg8', Decimal('12.34'),
+                                       'LMVKVFKS')
+        self._test_create_dues_invoice(2018, 1919, 'fjgdlkfgj1919',
+                                       Decimal('0.01'), 'MVLKSFKSLMV')
+        self._test_create_dues_invoice(2019, 1111, 'asdf1111',
+                                       Decimal('50.0'), 'KMLERKER')
+        self._test_create_dues_invoice(2020, 1010, 'asdf1010',
+                                       Decimal('50.0'), 'LVHUFSLVELF')
 
     def _test_create_dues_invoice(self, year, invoice_number,
                                   invoice_number_string, invoice_amount,
@@ -563,76 +563,76 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         member = C3sMember.get_by_id(1)
 
         # 2015
-        dues_calculation = DuesCalculation(Decimal('12.5'), u'q4_2015')
+        dues_calculation = DuesCalculation(Decimal('12.5'), 'q4_2015')
 
         DuesInvoiceRepository.store_dues(2015, member, dues_calculation)
 
         self.assertEqual(member.dues15_amount, Decimal('12.5'))
-        self.assertEqual(member.dues15_start, u'q4_2015')
+        self.assertEqual(member.dues15_start, 'q4_2015')
 
         # 2016
-        dues_calculation = DuesCalculation(Decimal('50.0'), u'q1_2016')
+        dues_calculation = DuesCalculation(Decimal('50.0'), 'q1_2016')
 
         DuesInvoiceRepository.store_dues(2016, member, dues_calculation)
 
         self.assertEqual(member.dues16_amount, Decimal('50.0'))
-        self.assertEqual(member.dues16_start, u'q1_2016')
+        self.assertEqual(member.dues16_start, 'q1_2016')
 
         # 2017
-        dues_calculation = DuesCalculation(Decimal('37.5'), u'q2_2017')
+        dues_calculation = DuesCalculation(Decimal('37.5'), 'q2_2017')
 
         DuesInvoiceRepository.store_dues(2017, member, dues_calculation)
 
         self.assertEqual(member.dues17_amount, Decimal('37.5'))
-        self.assertEqual(member.dues17_start, u'q2_2017')
+        self.assertEqual(member.dues17_start, 'q2_2017')
 
         # 2018
-        dues_calculation = DuesCalculation(Decimal('25.0'), u'q3_2018')
+        dues_calculation = DuesCalculation(Decimal('25.0'), 'q3_2018')
 
         DuesInvoiceRepository.store_dues(2018, member, dues_calculation)
 
         self.assertEqual(member.dues18_amount, Decimal('25.0'))
-        self.assertEqual(member.dues18_start, u'q3_2018')
+        self.assertEqual(member.dues18_start, 'q3_2018')
 
         # 2019
-        dues_calculation = DuesCalculation(Decimal('12.5'), u'q4_2019')
+        dues_calculation = DuesCalculation(Decimal('12.5'), 'q4_2019')
 
         DuesInvoiceRepository.store_dues(2019, member, dues_calculation)
 
         self.assertEqual(member.dues19_amount, Decimal('12.5'))
-        self.assertEqual(member.dues19_start, u'q4_2019')
+        self.assertEqual(member.dues19_start, 'q4_2019')
 
         # 2020
-        dues_calculation = DuesCalculation(Decimal('50.0'), u'q1_2020')
+        dues_calculation = DuesCalculation(Decimal('50.0'), 'q1_2020')
 
         DuesInvoiceRepository.store_dues(2020, member, dues_calculation)
 
         self.assertEqual(member.dues20_amount, Decimal('50.0'))
-        self.assertEqual(member.dues20_start, u'q1_2020')
+        self.assertEqual(member.dues20_start, 'q1_2020')
 
         # 2021
-        dues_calculation = DuesCalculation(Decimal('50.0'), u'q1_2021')
+        dues_calculation = DuesCalculation(Decimal('50.0'), 'q1_2021')
 
         DuesInvoiceRepository.store_dues(2021, member, dues_calculation)
 
         self.assertEqual(member.dues21_amount, Decimal('50.0'))
-        self.assertEqual(member.dues21_start, u'q1_2021')
+        self.assertEqual(member.dues21_start, 'q1_2021')
 
         # 2022
-        dues_calculation = DuesCalculation(Decimal('50.0'), u'q1_2022')
+        dues_calculation = DuesCalculation(Decimal('50.0'), 'q1_2022')
 
         DuesInvoiceRepository.store_dues(2022, member, dues_calculation)
 
         self.assertEqual(member.dues22_amount, Decimal('50.0'))
-        self.assertEqual(member.dues22_start, u'q1_2022')
+        self.assertEqual(member.dues22_start, 'q1_2022')
 
         # 2023
-        dues_calculation = DuesCalculation(Decimal('50.0'), u'q1_2023')
+        dues_calculation = DuesCalculation(Decimal('50.0'), 'q1_2023')
 
         DuesInvoiceRepository.store_dues(2023, member, dues_calculation)
 
         self.assertEqual(member.dues23_amount, Decimal('50.0'))
-        self.assertEqual(member.dues23_start, u'q1_2023')
+        self.assertEqual(member.dues23_start, 'q1_2023')
 
     def test_record_dues_email_sent(self):
         """

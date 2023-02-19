@@ -80,7 +80,7 @@ def make_random_string():
     """
     a random string used as dues token
     """
-    return u''.join(
+    return ''.join(
         random.choice(
             string.ascii_uppercase
         ) for x in range(10))
@@ -184,9 +184,9 @@ def send_dues19_invoice_email(request, m_id=None):
             invoice = Dues19Invoice(
                 invoice_no=member.dues19_invoice_no,
                 invoice_no_string=(
-                    u'C3S-dues2019-' + str(member.dues19_invoice_no).zfill(4)),
+                    'C3S-dues2019-' + str(member.dues19_invoice_no).zfill(4)),
                 invoice_date=member.dues19_invoice_date,
-                invoice_amount=u'' + str(member.dues19_amount),
+                invoice_amount='' + str(member.dues19_amount),
                 member_id=member.id,
                 membership_no=member.membership_number,
                 email=member.email,
@@ -241,7 +241,7 @@ def send_dues19_invoice_email(request, m_id=None):
 
     # print to console or send mail
     if 'true' in request.registry.settings['testing.mail_to_console']:
-        print(message.body.encode('utf-8'))  # pragma: no cover
+        print((message.body.encode('utf-8')))  # pragma: no cover
     else:
         send_message(request, message)
 
@@ -316,7 +316,7 @@ def get_dues19_invoice(invoice, request):
     """
     if invoice is None:
         request.session.flash(
-            u'No invoice found!',
+            'No invoice found!',
             'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
@@ -378,15 +378,15 @@ def make_dues19_invoice_no_pdf(request):
 
     if invoice is None or token_is_invalid or invoice.is_reversal:
         request.session.flash(
-            u"No invoice found!",
+            "No invoice found!",
             'warning'
         )
         return HTTPFound(request.route_url('error'))
 
     if older_than_a_year or member.dues19_paid:
         request.session.flash(
-            u'This invoice cannot be downloaded anymore. '
-            u'Please contact office@c3s.cc for further information.',
+            'This invoice cannot be downloaded anymore. '
+            'Please contact office@c3s.cc for further information.',
             'warning'
         )
         return HTTPFound(request.route_url('error'))
@@ -451,14 +451,14 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     filename = os.path.splitext(filename)[0]
 
     # generate tex command for pdflatex
-    tex_cmd = u''
-    for key, val in tex_vars.iteritems():
+    tex_cmd = ''
+    for key, val in tex_vars.items():
         tex_cmd += '\\newcommand{\\%s}{%s}' % (key, TexTools.escape(val))
     tex_cmd += '\\input{%s}' % tpl_tex
-    tex_cmd = u'"'+tex_cmd+'"'
+    tex_cmd = '"'+tex_cmd+'"'
 
     # make latex show ß correctly in pdf:
-    tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
+    tex_cmd = tex_cmd.replace('ß', '\\ss{}')
 
     subprocess.call(
         [
@@ -509,8 +509,8 @@ def make_invoice_pdf_pdflatex(invoice):
     if (not invoice.is_reversal and
             invoice.is_altered and
             invoice.preceding_invoice_no is not None):
-        is_altered_str = u'angepasst' if (
-            'de' in member.locale) else u'altered'
+        is_altered_str = 'angepasst' if (
+            'de' in member.locale) else 'altered'
 
     invoice_no = str(invoice.invoice_no).zfill(4)
     invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
@@ -527,16 +527,16 @@ def make_invoice_pdf_pdflatex(invoice):
         'personalAddressTwo': member.address2,
         'personalPostCode': member.postcode,
         'personalCity': member.city,
-        'personalMShipNo': unicode(member.membership_number),
+        'personalMShipNo': str(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
-        'account': unicode(
+        'account': str(
             -member.dues15_balance - member.dues16_balance -
             member.dues17_balance - member.dues18_balance -
             member.dues19_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else dues_start,
-        'duesAmount': unicode(invoice.invoice_amount),
+        'duesAmount': str(invoice.invoice_amount),
         'lang': 'de',
         'pdfBackground': bg_pdf,
     }
@@ -583,7 +583,7 @@ def dues19_reduction(request):
             not member.membership_accepted or
             not member.dues19_invoice):
         request.session.flash(
-            u"Member not found or not a member or no invoice to reduce",
+            "Member not found or not a member or no invoice to reduce",
             'dues19notice_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -595,8 +595,8 @@ def dues19_reduction(request):
         assert not reduced_amount.is_signed()
     except (KeyError, AssertionError):  # pragma: no cover
         request.session.flash(
-            (u"Invalid amount to reduce to: '{}' "
-             u"Use the dot ('.') as decimal mark, e.g. '23.42'".format(
+            ("Invalid amount to reduce to: '{}' "
+             "Use the dot ('.') as decimal mark, e.g. '23.42'".format(
                  request.POST['amount'])),
             'dues19_message_to_staff'  # message queue for user
         )
@@ -608,7 +608,7 @@ def dues19_reduction(request):
     reduction_confirmed = request.POST['confirmed']
     if reduction_confirmed != 'yes':
         request.session.flash(
-            u'Die Reduktion wurde nicht bestätigt.',
+            'Die Reduktion wurde nicht bestätigt.',
             'dues19_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -618,7 +618,7 @@ def dues19_reduction(request):
     if (not member.dues19_reduced  and
             member.dues19_amount == reduced_amount):
         request.session.flash(
-            u"Dieser Beitrag ist der default-Beitrag!",
+            "Dieser Beitrag ist der default-Beitrag!",
             'dues19_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -627,7 +627,7 @@ def dues19_reduction(request):
     if (member.dues19_reduced and
             reduced_amount == member.dues19_amount_reduced):
         request.session.flash(
-            u"Auf diesen Beitrag wurde schon reduziert!",
+            "Auf diesen Beitrag wurde schon reduziert!",
             'dues19_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -637,8 +637,8 @@ def dues19_reduction(request):
             reduced_amount > member.dues19_amount_reduced or
             reduced_amount > member.dues19_amount):
         request.session.flash(
-            u'Beitrag darf nicht über den berechneten oder bereits'
-            u'reduzierten Wert gesetzt werden.',
+            'Beitrag darf nicht über den berechneten oder bereits'
+            'reduzierten Wert gesetzt werden.',
             'dues19_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -668,7 +668,7 @@ def dues19_reduction(request):
     reversal_invoice = Dues19Invoice(
         invoice_no=new_invoice_no,
         invoice_no_string=(
-            u'C3S-dues2019-' + str(new_invoice_no).zfill(4)) + '-S',
+            'C3S-dues2019-' + str(new_invoice_no).zfill(4)) + '-S',
         invoice_date=datetime.today(),
         invoice_amount=reversal_invoice_amount.to_eng_string(),
         member_id=member.id,
@@ -693,9 +693,9 @@ def dues19_reduction(request):
         new_invoice = Dues19Invoice(
             invoice_no=new_invoice_no + 1,
             invoice_no_string=(
-                u'C3S-dues2019-' + str(new_invoice_no + 1).zfill(4)),
+                'C3S-dues2019-' + str(new_invoice_no + 1).zfill(4)),
             invoice_date=datetime.today(),
-            invoice_amount=u'' + str(reduced_amount),
+            invoice_amount='' + str(reduced_amount),
             member_id=member.id,
             membership_no=member.membership_number,
             email=member.email,
@@ -784,15 +784,15 @@ def make_dues19_reversal_invoice_pdf(request):
 
     if invoice is None or token_is_invalid or not invoice.is_reversal:
         request.session.flash(
-            u"No invoice found!",
+            "No invoice found!",
             'warning'
         )
         return HTTPFound(request.route_url('error'))
 
     if older_than_a_year or member.dues19_paid:
         request.session.flash(
-            u'This invoice cannot be downloaded anymore. '
-            u'Please contact office@c3s.cc for further information.',
+            'This invoice cannot be downloaded anymore. '
+            'Please contact office@c3s.cc for further information.',
             'warning'
         )
         return HTTPFound(request.route_url('error'))
@@ -829,10 +829,10 @@ def make_reversal_pdf_pdflatex(invoice):
         'personalAddressTwo': member.address2,
         'personalPostCode': member.postcode,
         'personalCity': member.city,
-        'personalMShipNo': unicode(member.membership_number),
+        'personalMShipNo': str(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
-        'duesAmount': unicode(invoice.invoice_amount),
+        'duesAmount': str(invoice.invoice_amount),
         'origInvoiceRef': ('C3S-dues2019-' +
                            str(invoice.preceding_invoice_no).zfill(4)),
         'lang': 'de',
@@ -855,7 +855,7 @@ def dues19_notice(request):
             not member.membership_accepted or
             not member.dues19_invoice):
         request.session.flash(
-            u"Member not found or not a member or no invoice to pay for",
+            "Member not found or not a member or no invoice to pay for",
             'dues19notice_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -867,8 +867,8 @@ def dues19_notice(request):
         assert not paid_amount.is_signed()
     except (KeyError, AssertionError):  # pragma: no cover
         request.session.flash(
-            (u"Invalid amount to pay: '{}' "
-             u"Use the dot ('.') as decimal mark, e.g. '23.42'".format(
+            ("Invalid amount to pay: '{}' "
+             "Use the dot ('.') as decimal mark, e.g. '23.42'".format(
                  request.POST['amount'])),
             'dues19notice_message_to_staff'  # message queue for user
         )
@@ -881,8 +881,8 @@ def dues19_notice(request):
             request.POST['payment_date'], '%Y-%m-%d')
     except (KeyError, ValueError):  # pragma: no cover
         request.session.flash(
-            (u"Invalid date for payment: '{}' "
-             u"Use YYYY-MM-DD, e.g. '2019-09-11'".format(
+            ("Invalid date for payment: '{}' "
+             "Use YYYY-MM-DD, e.g. '2019-09-11'".format(
                  request.POST['payment_date'])),
             'dues19notice_message_to_staff'  # message queue for user
         )

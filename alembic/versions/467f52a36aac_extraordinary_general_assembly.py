@@ -23,10 +23,10 @@ def upgrade():
 
     bind = op.get_bind()
     session = Session(bind=bind)
-    session.execute(u"""
+    session.execute("""
         delete from GeneralAssembly;
     """)
-    session.execute(u"""
+    session.execute("""
         insert into
             GeneralAssembly
             (
@@ -65,10 +65,10 @@ def downgrade():
 
     bind = op.get_bind()
     session = Session(bind=bind)
-    session.execute(u"""
+    session.execute("""
         delete from GeneralAssembly;
     """)
-    session.execute(u"""
+    session.execute("""
         insert into
             GeneralAssembly
             (

@@ -133,7 +133,7 @@ def get_invitation_display_texts(invitation_text, length):
         Set of invitation text and invitation text preview
     """
     if not invitation_text:
-        return (u'', u'')
+        return ('', '')
     invitation_text = invitation_text.replace('\n', '\x3Cbr />')
     invitation_text_preview = invitation_text
     if len(invitation_text_preview) > length:
@@ -315,7 +315,7 @@ def batch_invite(request):
             send_invitation(request, member, general_assembly.number)
         except ValueError as value_error:
             request.session.flash(
-                unicode(value_error.message),
+                str(value_error.message),
                 'danger')
             return HTTPFound(request.route_url(
                 'general_assembly', number=general_assembly.number))
@@ -343,7 +343,7 @@ def general_assembly_create(request):
     """
     form = GeneralAssemblyFormFactory.create()
     if 'submit' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = form.validate(controls)
             request.registry.general_assembly_invitation \
@@ -382,7 +382,7 @@ def general_assembly_edit(request):
     assembly = request.validated_matchdict['general_assembly']
     form = GeneralAssemblyFormFactory.create()
     if 'submit' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = form.validate(controls)
             request.registry.general_assembly_invitation \

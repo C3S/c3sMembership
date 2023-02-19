@@ -37,7 +37,7 @@ class AccessToken(Base):
     """
 
     # CONSTANTS
-    CHARACTERS = u'abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+    CHARACTERS = 'abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
     LENGTH = 44  # Changing the length changes the data model!
     EXPIRATION_DAYS = 14
 
@@ -85,7 +85,7 @@ class AccessToken(Base):
                 AccessToken.LENGTH.
                 If expiration_timespan is not of type timedelta.
         """
-        if not isinstance(available_characters, unicode):
+        if not isinstance(available_characters, str):
             raise TypeError(
                 'Parameter available_characters must be of type unicode.')
         if len(available_characters) < 1:
@@ -122,7 +122,7 @@ class AccessToken(Base):
             A random string token with the specified length chosen from the
             list of available characters.
         """
-        return u''.join(
+        return ''.join(
             random.choice(
                 available_characters
             ) for x in range(length))

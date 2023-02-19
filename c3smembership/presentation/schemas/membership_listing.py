@@ -55,8 +55,8 @@ def deferred_year_end_select_widget(node, keywords):
     """
     return deform.widget.SelectWidget(
         values=[(datetime.date(year, 12, 31), str(year))
-                for year in reversed(range(2013,
-                                           datetime.date.today().year))])
+                for year in reversed(list(range(2013,
+                                           datetime.date.today().year)))])
 
 
 class MembershipListingDate(colander.Schema):

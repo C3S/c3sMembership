@@ -43,14 +43,14 @@ class NewMemberTests(unittest.TestCase):
         db_session = DBSession()
         with transaction.manager:
             # a group for accountants/staff
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             db_session.add(accountants_group)
             db_session.flush()
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             db_session.add(accountants_group)
@@ -90,7 +90,7 @@ class NewMemberTests(unittest.TestCase):
             dict mapping the id to its field.
         """
         field_id_dict = {}
-        for key in form.fields.keys():
+        for key in list(form.fields.keys()):
             fields = form.fields[key]
             for field in fields:
                 field_id_dict[field.id] = field
@@ -98,44 +98,44 @@ class NewMemberTests(unittest.TestCase):
 
     def _fill_form_valid_natural(self, form):
         field_id_dict = self.__get_field_id_dict(form)
-        form['firstname'] = u'SomeFirstname'
-        form['lastname'] = u'SomeLastname'
-        form['email'] = u'some@shri.de'
-        form['address1'] = u"addr one"
-        form['address2'] = u"addr two"
-        form['postcode'] = u"12345"
-        form['city'] = u"Footown Meeh"
-        form['country'].value__set(u"DE")
-        form['locale'] = u"de"
+        form['firstname'] = 'SomeFirstname'
+        form['lastname'] = 'SomeLastname'
+        form['email'] = 'some@shri.de'
+        form['address1'] = "addr one"
+        form['address2'] = "addr two"
+        form['postcode'] = "12345"
+        form['city'] = "Footown Meeh"
+        form['country'].value__set("DE")
+        form['locale'] = "de"
         field_id_dict['date_of_birth'].value = \
-            unicode(date(date.today().year-40, 1, 1))
-        form['entity_type'].value__set(u'person')
-        form['membership_type'].value__set(u'normal')
-        form['other_colsoc'].value__set(u'no')
-        form['name_of_colsoc'] = u"GEMA"
-        form['num_shares'] = u'23'
-        form['email_is_confirmed'] = u'no'
+            str(date(date.today().year-40, 1, 1))
+        form['entity_type'].value__set('person')
+        form['membership_type'].value__set('normal')
+        form['other_colsoc'].value__set('no')
+        form['name_of_colsoc'] = "GEMA"
+        form['num_shares'] = '23'
+        form['email_is_confirmed'] = 'no'
         return form
 
     def _fill_form_valid_legal(self, form):
         field_id_dict = self.__get_field_id_dict(form)
-        form['firstname'] = u'SomeLegalentity'
-        form['lastname'] = u'SomeLegalName'
-        form['email'] = u'legal@example.de'
-        form['address1'] = u"addr one"
-        form['address2'] = u"addr two"
-        form['postcode'] = u"12345"
-        form['city'] = u"Footown Meeh"
-        form['country'].value__set(u"DE")
-        form['locale'] = u"de"
-        field_id_dict['date_of_birth'].value = unicode(
+        form['firstname'] = 'SomeLegalentity'
+        form['lastname'] = 'SomeLegalName'
+        form['email'] = 'legal@example.de'
+        form['address1'] = "addr one"
+        form['address2'] = "addr two"
+        form['postcode'] = "12345"
+        form['city'] = "Footown Meeh"
+        form['country'].value__set("DE")
+        form['locale'] = "de"
+        field_id_dict['date_of_birth'].value = str(
             date(date.today().year - 40, 1, 1))
-        form['entity_type'] = u'legalentity'
-        form['membership_type'] = u'investing'
-        form['other_colsoc'].value__set(u'no')
-        form['name_of_colsoc'] = u""
-        form['num_shares'] = u'42'
-        form['email_is_confirmed'] = u'yes'
+        form['entity_type'] = 'legalentity'
+        form['membership_type'] = 'investing'
+        form['other_colsoc'].value__set('no')
+        form['name_of_colsoc'] = ""
+        form['num_shares'] = '42'
+        form['email_is_confirmed'] = 'yes'
         return form
 
     def test_add_member(self):
@@ -154,7 +154,7 @@ class NewMemberTests(unittest.TestCase):
         res = self.testapp.get('/new_member?id=1', status=200)
         # enter valid data
         form = self._fill_form_valid_natural(res.form)
-        res = form.submit(u'submit', status=302)
+        res = form.submit('submit', status=302)
         res4 = res.follow()
 
         self.assertTrue('Membership application details' in res4.body)
@@ -177,7 +177,7 @@ class NewMemberTests(unittest.TestCase):
 
         res = self.testapp.get('/new_member', status=200)
         form = self._fill_form_valid_legal(res.form)
-        res = form.submit(u'submit', status=302)
+        res = form.submit('submit', status=302)
         res4 = res.follow()
 
         self.assertTrue('Membership application details' in res4.body)

@@ -59,7 +59,7 @@ class TestMemberNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['membership_number'],
-            u'"asdf" is not a number')
+            '"asdf" is not a number')
 
         # 3. Failure, member not found
         request \
@@ -75,7 +75,7 @@ class TestMemberNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['membership_number'],
-            u'Membership number 987 does not exist.')
+            'Membership number 987 does not exist.')
 
     def test_transform(self):
         """
@@ -139,7 +139,7 @@ class TestMemberIdNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['member_id'],
-            u'"asdf" is not a number')
+            '"asdf" is not a number')
 
         # 3. Failure, member not found
         request \
@@ -155,7 +155,7 @@ class TestMemberIdNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['member_id'],
-            u'Member ID 987 does not exist.')
+            'Member ID 987 does not exist.')
 
     def test_transform(self):
         """
@@ -231,7 +231,7 @@ class TestMemberIdIsMemberNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['member_id'],
-            u'Member with member ID 123 has not been granted membership')
+            'Member with member ID 123 has not been granted membership')
 
         # 3. No member found
         request \
@@ -248,4 +248,4 @@ class TestMemberIdIsMemberNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['member_id'],
-            u'Member ID 123 does not exist.')
+            'Member ID 123 does not exist.')

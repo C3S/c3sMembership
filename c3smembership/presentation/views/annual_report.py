@@ -66,13 +66,13 @@ def annual_report(request):  # pragma: no cover
     schema = DatesForm()
     form = deform.Form(
         schema,
-        buttons=[deform.Button('submit', _(u'Submit'))],
+        buttons=[deform.Button('submit', _('Submit'))],
     )
     # form generation complete
 
     # if the form has been used and SUBMITTED, check contents
     if 'submit' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = form.validate(controls)
 
@@ -84,8 +84,8 @@ def annual_report(request):  # pragma: no cover
         except ValidationFailure as validation_failure:  # pragma: no cover
 
             request.session.flash(
-                _(u'Please note: There were errors, please check the form '
-                  u'below.'),
+                _('Please note: There were errors, please check the form '
+                  'below.'),
                 'warning',
                 allow_duplicate=False)
             return {

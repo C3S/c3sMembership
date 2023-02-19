@@ -70,7 +70,7 @@ def upgrade():
         sa.UniqueConstraint('invoice_no'),
         sa.UniqueConstraint('invoice_no_string')
     )
-    with op.batch_alter_table(u'members', schema=None) as batch_op:
+    with op.batch_alter_table('members', schema=None) as batch_op:
         batch_op.add_column(sa.Column(
             'dues18_amount',
             SqliteDecimal(length=12, collation=2),
@@ -134,7 +134,7 @@ def upgrade():
 
 
 def downgrade():
-    with op.batch_alter_table(u'members', schema=None) as batch_op:
+    with op.batch_alter_table('members', schema=None) as batch_op:
         batch_op.drop_column('dues18_token')
         batch_op.drop_column('dues18_start')
         batch_op.drop_column('dues18_reduced')

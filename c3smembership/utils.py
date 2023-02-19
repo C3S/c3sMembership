@@ -19,45 +19,45 @@ from c3smembership.presentation.i18n import _
 
 country_codes = sorted(
     [
-        ('AT', _(u'Austria')),
-        ('BE', _(u'Belgium')),
-        ('BG', _(u'Bulgaria')),
-        ('CH', _(u'Switzerland')),
-        ('CZ', _(u'Czech Republic')),
-        ('DE', _(u'Germany')),
-        ('DK', _(u'Denmark')),
-        ('ES', _(u'Spain')),
-        ('EE', _(u'Estonia')),
-        ('FI', _(u'Finland')),
-        ('FR', _(u'France')),
-        ('GB', _(u'United Kingdom')),
-        ('GR', _(u'Greece')),
-        ('HU', _(u'Hungary')),
-        ('HR', _(u'Croatia')),
-        ('IE', _(u'Ireland')),
-        ('IS', _(u'Iceland')),
-        ('IT', _(u'Italy')),
-        ('LT', _(u'Lithuania')),
-        ('LI', _(u'Liechtenstein')),
-        ('LV', _(u'Latvia')),
-        ('LU', _(u'Luxembourg')),
-        ('MT', _(u'Malta')),
-        ('NL', _(u'Netherlands')),
-        ('NO', _(u'Norway')),
-        ('PL', _(u'Poland')),
-        ('PT', _(u'Portugal')),
-        ('SK', _(u'Slovakia')),
-        ('SI', _(u'Slovenia')),
-        ('SE', _(u'Sweden')),
-        ('XX', _(u'other'))
+        ('AT', _('Austria')),
+        ('BE', _('Belgium')),
+        ('BG', _('Bulgaria')),
+        ('CH', _('Switzerland')),
+        ('CZ', _('Czech Republic')),
+        ('DE', _('Germany')),
+        ('DK', _('Denmark')),
+        ('ES', _('Spain')),
+        ('EE', _('Estonia')),
+        ('FI', _('Finland')),
+        ('FR', _('France')),
+        ('GB', _('United Kingdom')),
+        ('GR', _('Greece')),
+        ('HU', _('Hungary')),
+        ('HR', _('Croatia')),
+        ('IE', _('Ireland')),
+        ('IS', _('Iceland')),
+        ('IT', _('Italy')),
+        ('LT', _('Lithuania')),
+        ('LI', _('Liechtenstein')),
+        ('LV', _('Latvia')),
+        ('LU', _('Luxembourg')),
+        ('MT', _('Malta')),
+        ('NL', _('Netherlands')),
+        ('NO', _('Norway')),
+        ('PL', _('Poland')),
+        ('PT', _('Portugal')),
+        ('SK', _('Slovakia')),
+        ('SI', _('Slovenia')),
+        ('SE', _('Sweden')),
+        ('XX', _('other'))
     ],
     key=lambda x: x[1]
 )
 
 locale_codes = [
-    (u'de', _(u'Deutsch')),
-    (u'en', _(u'Englisch')),
-    (u'fr', _(u'Français')),
+    ('de', _('Deutsch')),
+    ('en', _('Englisch')),
+    ('fr', _('Français')),
 ]
 
 
@@ -101,7 +101,7 @@ def generate_pdf(request, appstruct):
         ('email', appstruct['email']),
         ('country', appstruct['country']),
         ('MembershipType', '1' if appstruct[
-            'membership_type'] == u'normal' else '2'),
+            'membership_type'] == 'normal' else '2'),
         ('numshares', str(appstruct['num_shares'])),
         ('dateofbirth', dob),
         ('submitted', dos),
@@ -158,7 +158,7 @@ def generate_csv(member):
         member.postcode,
         member.city,
         member.country,
-        u'investing' if member.membership_type == u'investing' else u'normal',
+        'investing' if member.membership_type == 'investing' else 'normal',
         member.date_of_birth,
         'j' if member.member_of_colsoc == 'yes' else 'n',
         member.name_of_colsoc.replace(',', '|'),
@@ -175,7 +175,7 @@ def make_mail_body(member):
     """
     construct a multiline string to be used as the emails body
     """
-    unencrypted = u"""
+    unencrypted = """
 Yay!
 we got a membership application through the form: \n
 date of submission:             {}
@@ -253,7 +253,7 @@ def send_accountant_mail(request, member):
             [request.registry.settings['c3smembership.status_receiver']])
         if 'true' in request.registry.settings['testing.mail_to_console']:
             # pylint: disable=superfluous-parens
-            print(the_mail.body)
+            print((the_mail.body))
         else:
             mailer.send(the_mail)
     except:

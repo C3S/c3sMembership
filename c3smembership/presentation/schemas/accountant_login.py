@@ -10,11 +10,11 @@ class AccountantLogin(colander.MappingSchema):
     """
     login = colander.SchemaNode(
         colander.String(),
-        title=_(u"Username"),
+        title=_("Username"),
         oid="login")
     password = colander.SchemaNode(
         colander.String(),
         validator=colander.Length(min=5, max=100),
         widget=deform.widget.PasswordWidget(size=20),
-        title=_(u"Password"),
+        title=_("Password"),
         oid="password")

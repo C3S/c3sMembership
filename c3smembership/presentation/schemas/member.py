@@ -14,8 +14,8 @@ from c3smembership.presentation.view_processing import ValidationNode
 from c3smembership.utils import locale_codes
 
 
-COUNTRY_DEFAULT = u'DE'
-LOCALE_DEFAULT = u'de'
+COUNTRY_DEFAULT = 'DE'
+LOCALE_DEFAULT = 'de'
 
 
 @colander.deferred
@@ -38,12 +38,12 @@ def deferred_dob_validator(node, keywords):
             kw_date.today().month,
             kw_date.today().day),
         min_err=_(
-            u'Sorry, but we do not believe that the birthday you '
-            u'entered is correct.'),
+            'Sorry, but we do not believe that the birthday you '
+            'entered is correct.'),
         max_err=_(
-            u'Unfortunately, the membership application of an '
-            u'underaged person is currently not possible via our web '
-            u'form. Please send an email to office@c3s.cc.'))
+            'Unfortunately, the membership application of an '
+            'underaged person is currently not possible via our web '
+            'form. Please send an email to office@c3s.cc.'))
 
 
 class PersonalDataBase(colander.MappingSchema):
@@ -53,42 +53,42 @@ class PersonalDataBase(colander.MappingSchema):
 
     firstname = colander.SchemaNode(
         colander.String(),
-        title=_(u'First Name'),
+        title=_('First Name'),
         oid='firstname',
     )
     lastname = colander.SchemaNode(
         colander.String(),
-        title=_(u'Last Name'),
+        title=_('Last Name'),
         oid='lastname',
     )
     email = colander.SchemaNode(
         colander.String(),
-        title=_(u'Email Address'),
+        title=_('Email Address'),
         validator=colander.Email(),
         oid='email',
     )
     address1 = colander.SchemaNode(
         colander.String(),
-        title=_(u'Address Line 1'),
+        title=_('Address Line 1'),
     )
     address2 = colander.SchemaNode(
         colander.String(),
-        missing=u'',
-        title=_(u'Address Line 2'),
+        missing='',
+        title=_('Address Line 2'),
     )
     postcode = colander.SchemaNode(
         colander.String(),
-        title=_(u'Postal Code'),
+        title=_('Postal Code'),
         oid='postcode'
     )
     city = colander.SchemaNode(
         colander.String(),
-        title=_(u'City'),
+        title=_('City'),
         oid='city',
     )
     country = colander.SchemaNode(
         colander.String(),
-        title=_(u'Country'),
+        title=_('Country'),
         default=COUNTRY_DEFAULT,
         widget=deform.widget.SelectWidget(
             values=country_codes),
@@ -96,7 +96,7 @@ class PersonalDataBase(colander.MappingSchema):
     )
     date_of_birth = colander.SchemaNode(
         colander.Date(),
-        title=_(u'Date of Birth'),
+        title=_('Date of Birth'),
         widget=deform.widget.DatePartsWidget(),
         default=date(2013, 1, 1),
         validator=deferred_dob_validator,
@@ -114,9 +114,9 @@ class PersonalDataJoin(PersonalDataBase):
         colander.String(),
         validator=colander.Length(min=5, max=100),
         widget=deform.widget.CheckedPasswordWidget(size=20),
-        title=_(u'Password (to protect access to your data)'),
-        description=_(u'We need a password to protect your data. After '
-                      u'verifying your email you will have to enter it.'),
+        title=_('Password (to protect access to your data)'),
+        description=_('We need a password to protect your data. After '
+                      'verifying your email you will have to enter it.'),
         oid='password',
     )
 
@@ -130,26 +130,26 @@ class PersonalDataCreateEdit(PersonalDataBase):
     """
     date_of_birth = colander.SchemaNode(
         colander.Date(),
-        title=_(u'Date of Birth'),
+        title=_('Date of Birth'),
         default=date(1970, 1, 1),
         oid='date_of_birth',
     )
     email_is_confirmed = colander.SchemaNode(
         colander.String(),
-        title=_(u'Email Address Confirmed'),
+        title=_('Email Address Confirmed'),
         widget=deform.widget.RadioChoiceWidget(
             values=(
-                (u'yes', _(u'Yes, confirmed')),
-                (u'no', _(u'No, not confirmed')),)),
+                ('yes', _('Yes, confirmed')),
+                ('no', _('No, not confirmed')),)),
         missing=False,
         oid='email_is_confirmed',
     )
     locale = colander.SchemaNode(
         colander.String(),
-        title=_(u'Preferred Language'),
+        title=_('Preferred Language'),
         widget=deform.widget.SelectWidget(
             values=locale_codes),
-        missing=u'',
+        missing='',
     )
 
 
@@ -232,7 +232,7 @@ class MemberIdIsMemberNode(MemberIdNode):
         super(MemberIdIsMemberNode, self).validate(request, value)
         if not value.is_member():
             message = \
-                u'Member with member ID {} has not been granted membership'
+                'Member with member ID {} has not been granted membership'
             raise colander.Invalid(
                 self,
                 message.format(self.original_value))

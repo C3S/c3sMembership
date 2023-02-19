@@ -117,7 +117,7 @@ def get_dashboard_redirect(request, member_id=''):
         A HTTPFound for redirection to the dashboard.
     """
     kwargs = {}
-    if type(member_id) == str or type(member_id) == unicode:
+    if type(member_id) == str or type(member_id) == str:
         member_id_str = member_id
     else:
         member_id_str = str(member_id)
@@ -156,7 +156,7 @@ def make_payment_reminder_email(member):
                 member.locale),
             shares_value=int(member.num_shares) * 50,
             shares_count=member.num_shares,
-            transfer_purpose=u'C3Shares ' + member.email_confirm_code,
+            transfer_purpose='C3Shares ' + member.email_confirm_code,
             footer=get_email_footer(member.locale)))
 
 
@@ -489,7 +489,7 @@ def delete_afms(request):
         buttons=[deform.Button('delete_them', 'DELETE')]
     )
     if 'first' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = delete_range_form.validate(controls)
             _first = appstruct['first']
@@ -530,28 +530,28 @@ def afms_awaiting_approval(request):
 
     # print("there are {} afms ready for approval".format(len(afms)))
 
-    output_string = u"""\n"""
+    output_string = """\n"""
     # output_string = u"""there are {} afms ready for approval \n""".format(
     #    len(afms))
 
     if len(afms) > 0:
-        output_string += u"""Neue Genossenschaftsmitglieder\n"""
-        output_string += u"""------------------------------\n\n"""
-        output_string += u"""Vorname      | Name       | Anteile | Typ \n"""
-        output_string += u"""-----------  | ---------- | ------- | ----- \n"""
+        output_string += """Neue Genossenschaftsmitglieder\n"""
+        output_string += """------------------------------\n\n"""
+        output_string += """Vorname      | Name       | Anteile | Typ \n"""
+        output_string += """-----------  | ---------- | ------- | ----- \n"""
 
     for afm in afms:
-        output_string += u"""{}      | {}     |   {}    | {} \n""".format(
-            unicode(afm.firstname),
-            unicode(afm.lastname),
+        output_string += """{}      | {}     |   {}    | {} \n""".format(
+            str(afm.firstname),
+            str(afm.lastname),
             afm.num_shares,
             'legal entity/inv.' if afm.is_legalentity else afm.membership_type
         )
 
     # we can not see aufstockers as of now, or?
-    output_string += u"""\nAufstocker\n"""
-    output_string += u"""------------------------------\n\n"""
-    output_string += u"""Vorname      | Name        | Anteile | Typ \n"""
-    output_string += u"""-----------  | ----------  | ------- | ----- \n"""
-    output_string += u"""\n TODO: check! \n"""
+    output_string += """\nAufstocker\n"""
+    output_string += """------------------------------\n\n"""
+    output_string += """Vorname      | Name        | Anteile | Typ \n"""
+    output_string += """-----------  | ----------  | ------- | ----- \n"""
+    output_string += """\n TODO: check! \n"""
     return output_string

@@ -19,13 +19,13 @@ class PaymentListFilterSchema(colander.Schema):
 
     from_date = colander.SchemaNode(
         colander.Date(),
-        title=_(u"From date"),
+        title=_("From date"),
         missing=None,
         oid="from_date",
     )
     to_date = colander.SchemaNode(
         colander.Date(),
-        title=_(u"To date"),
+        title=_("To date"),
         missing=None,
         oid="from_date",
     )
@@ -36,8 +36,8 @@ def create_payment_filter_form():
     filter_form = deform.Form(
         filter_schema,
         buttons=[
-            deform.Button('submit', _(u'Apply')),
-            deform.Button('reset', _(u'Reset')),
+            deform.Button('submit', _('Apply')),
+            deform.Button('reset', _('Reset')),
         ],
         use_ajax=True,
         renderer=ZPT_RENDERER

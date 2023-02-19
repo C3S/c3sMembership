@@ -16,19 +16,19 @@ down_revision = '1638f269c5f5'
 
 def upgrade():
     with op.batch_alter_table(
-            u'GeneralAssemblyInvitation', schema=None) as batch_op:
+            'GeneralAssemblyInvitation', schema=None) as batch_op:
         batch_op.alter_column(
             'sent',
             existing_type=sa.DATETIME(),
             nullable=False)
-    with op.batch_alter_table(u'members', schema=None) as batch_op:
+    with op.batch_alter_table('members', schema=None) as batch_op:
         batch_op.drop_column('email_invite_token_bcgv18_2')
         batch_op.drop_column('email_invite_flag_bcgv18_2')
         batch_op.drop_column('email_invite_date_bcgv18_2')
 
 
 def downgrade():
-    with op.batch_alter_table(u'members', schema=None) as batch_op:
+    with op.batch_alter_table('members', schema=None) as batch_op:
         batch_op.add_column(sa.Column(
             'email_invite_date_bcgv18_2', sa.DATETIME(), nullable=True))
         batch_op.add_column(sa.Column(
@@ -38,7 +38,7 @@ def downgrade():
             sa.VARCHAR(length=255),
             nullable=True))
     with op.batch_alter_table(
-            u'GeneralAssemblyInvitation', schema=None) as batch_op:
+            'GeneralAssemblyInvitation', schema=None) as batch_op:
         batch_op.alter_column(
             'sent',
             existing_type=sa.DATETIME(),

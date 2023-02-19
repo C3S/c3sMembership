@@ -38,15 +38,15 @@ class AwaitingApprovalTests(unittest.TestCase):
 
         with transaction.manager:
             # a group for accountants/staff
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             self.session.add(accountants_group)
             self.session.flush()
 
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             self.session.add(accountants_group)
@@ -66,24 +66,24 @@ class AwaitingApprovalTests(unittest.TestCase):
     def make_member_ready_for_approval(self):
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             member1.signature_received = True
             member1.payment_received = True

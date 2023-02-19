@@ -64,7 +64,7 @@ class TestGeneralAssemblyNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['general_assembly_number'],
-            u'"asdf" is not a number')
+            '"asdf" is not a number')
 
         # 3. Failure, general assembly not found
         request \
@@ -80,7 +80,7 @@ class TestGeneralAssemblyNode(TestCase):
 
         self.assertEqual(
             invalid.exception.asdict()['general_assembly_number'],
-            u'General assembly 987 does not exist.')
+            'General assembly 987 does not exist.')
 
     def test_transform(self):
         """

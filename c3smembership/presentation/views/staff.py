@@ -66,7 +66,7 @@ def staff_view(request):
             _staffer = Staff.get_by_id(int(request.POST['id']))
         except (KeyError, ValueError):
             return HTTPFound(location=request.route_url('staff'))
-        if request.POST['action'] == u'delete':
+        if request.POST['action'] == 'delete':
             Staff.delete_by_id(_staffer.id)
             encrypted = encrypt_with_gnupg('''hi,
 %s was deleted from the backend by %s.
@@ -93,7 +93,7 @@ your membership tool''' % (_staffer.login,
             stafferform.set_appstruct(appstruct)
 
     if 'new_staffer' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = stafferform.validate(controls)
         except ValidationFailure as error:
@@ -102,7 +102,7 @@ your membership tool''' % (_staffer.login,
             }
         existing = Staff.get_by_login(appstruct['login'])
         if existing is not None:
-            if u'_UNCHANGED_' in appstruct['password']:
+            if '_UNCHANGED_' in appstruct['password']:
                 pass
             else:
                 existing.password = appstruct['password']
@@ -126,7 +126,7 @@ your membership tool''' % (existing.login,
             staffer = Staff(
                 login=appstruct['login'],
                 password=appstruct['password'],
-                email=u'',
+                email='',
             )
             staffer.groups = [Group.get_staffers_group()]
             # pylint: disable=no-member

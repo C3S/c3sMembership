@@ -23,7 +23,7 @@ def upgrade():
     session = Session(bind=bind)
     session.execute(
         update(C3sMember).where(
-            C3sMember.membership_type == u'investing').values(
+            C3sMember.membership_type == 'investing').values(
                 dues15_amount=Decimal('NaN'),
                 dues15_invoice_no=None,
                 dues15_token=None,
@@ -37,7 +37,7 @@ def upgrade():
                 dues15_paid_date=None))
     session.execute(
         update(C3sMember).where(
-            C3sMember.membership_type == u'investing').values(
+            C3sMember.membership_type == 'investing').values(
                 dues16_amount=Decimal('NaN'),
                 dues16_invoice_no=None,
                 dues16_token=None,
@@ -51,7 +51,7 @@ def upgrade():
                 dues16_paid_date=None))
     session.execute(
         update(C3sMember).where(
-            C3sMember.membership_type == u'investing').values(
+            C3sMember.membership_type == 'investing').values(
                 dues17_amount=Decimal('NaN'),
                 dues17_invoice_no=None,
                 dues17_token=None,
@@ -65,7 +65,7 @@ def upgrade():
                 dues17_paid_date=None))
     session.execute(
         update(C3sMember).where(
-            C3sMember.membership_type == u'investing').values(
+            C3sMember.membership_type == 'investing').values(
                 dues18_amount=Decimal('NaN'),
                 dues18_invoice_no=None,
                 dues18_token=None,
@@ -79,7 +79,7 @@ def upgrade():
                 dues18_paid_date=None))
     session.execute(
         update(C3sMember).where(
-            C3sMember.membership_type == u'investing').values(
+            C3sMember.membership_type == 'investing').values(
                 dues19_amount=Decimal('NaN'),
                 dues19_invoice_no=None,
                 dues19_token=None,
@@ -93,7 +93,7 @@ def upgrade():
                 dues19_paid_date=None))
     session.execute(
         update(C3sMember).where(
-            C3sMember.membership_type == u'investing').values(
+            C3sMember.membership_type == 'investing').values(
                 dues20_amount=Decimal('NaN'),
                 dues20_invoice_no=None,
                 dues20_token=None,

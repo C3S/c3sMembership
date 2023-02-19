@@ -24,13 +24,13 @@ class TexTools(object):
         '\\': r'\textbackslash{}',
         '<': r'\textless{}',
         '>': r'\textgreater{}',
-        u'℅': r'c/o',
-        u'°': r'\degree{}',
-        u'ß': r'\ss{}',
+        '℅': r'c/o',
+        '°': r'\degree{}',
+        'ß': r'\ss{}',
     }
-    regex = re.compile(u'|'.join(re.escape(unicode(key))
+    regex = re.compile('|'.join(re.escape(str(key))
                        for key in sorted(
-                           conv.keys(),
+                           list(conv.keys()),
                            key=lambda item: -len(item))))
 
     @classmethod

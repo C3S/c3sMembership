@@ -65,142 +65,142 @@ def init_db():
 
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2014,
-            u'1. ordentliche Generalversammlung',
+            '1. ordentliche Generalversammlung',
             date(2014, 8, 23),
-            u'Assembly 2014', u'Hello {salutation}!',
-            u'Versammlung 2014', u'Hallo {salutation}!'))
+            'Assembly 2014', 'Hello {salutation}!',
+            'Versammlung 2014', 'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2015,
-            u'2. ordentliche Generalversammlung',
+            '2. ordentliche Generalversammlung',
             date(2015, 6, 13),
-            u'Assembly 2015', u'Hello {salutation}!',
-            u'Versammlung 2015', u'Hallo {salutation}!'))
+            'Assembly 2015', 'Hello {salutation}!',
+            'Versammlung 2015', 'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2015_2,
-            u'Außerordentliche Generalversammlung',
+            'Außerordentliche Generalversammlung',
             date(2015, 7, 16),
-            u'Assembly 2015-2', u'Hello {salutation}!',
-            u'Versammlung 2015-2', u'Hallo {salutation}!'))
+            'Assembly 2015-2', 'Hello {salutation}!',
+            'Versammlung 2015-2', 'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2016,
-            u'3. ordentliche Generalversammlung',
+            '3. ordentliche Generalversammlung',
             date(2016, 4, 17),
-            u'Assembly 2016', u'Hello {salutation}!',
-            u'Versammlung 2016', u'Hallo {salutation}!'))
+            'Assembly 2016', 'Hello {salutation}!',
+            'Versammlung 2016', 'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2017,
-            u'4. ordentliche Generalversammlung',
+            '4. ordentliche Generalversammlung',
             date(2017, 4, 2),
-            u'Assembly 2017', u'Hello {salutation}!',
-            u'Versammlung 2017', u'Hallo {salutation}!'))
+            'Assembly 2017', 'Hello {salutation}!',
+            'Versammlung 2017', 'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2018,
-            u'5. ordentliche Generalversammlung',
+            '5. ordentliche Generalversammlung',
             date(2018, 6, 3),
-            u'Assembly 2018', u'Hello {salutation}!',
-            u'Versammlung 2018', u'Hallo {salutation}!'))
+            'Assembly 2018', 'Hello {salutation}!',
+            'Versammlung 2018', 'Hallo {salutation}!'))
         DBSession.add(GeneralAssembly(
             GENERAL_ASSEMBLY_NUMBER_2018_2,
-            u'Außerordentliche Generalversammlung',
+            'Außerordentliche Generalversammlung',
             date(2018, 12, 1),
-            u'Assembly 2018-2', u'Hello {salutation}!',
-            u'Versammlung 2018-2', u'Hallo {salutation}!'))
+            'Assembly 2018-2', 'Hello {salutation}!',
+            'Versammlung 2018-2', 'Hallo {salutation}!'))
 
         # German person
         member1 = C3sMember(
-            firstname=u'SomeFirstnäme',
-            lastname=u'SomeLastnäme',
-            email=u'some@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"de",
+            firstname='SomeFirstnäme',
+            lastname='SomeLastnäme',
+            email='some@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG1',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG1',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
-            num_shares=u'23',
+            name_of_colsoc="",
+            num_shares='23',
         )
         # English person
         member2 = C3sMember(
-            firstname=u'AAASomeFirstnäme',
-            lastname=u'XXXSomeLastnäme',
-            email=u'some2@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"en",
+            firstname='AAASomeFirstnäme',
+            lastname='XXXSomeLastnäme',
+            email='some2@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG2',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG2',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
-            num_shares=u'23',
+            name_of_colsoc="",
+            num_shares='23',
         )
         # German legal entity
         member3 = C3sMember(
-            firstname=u'Cooles PlattenLabel',
-            lastname=u'SomeLastnäme',
-            email=u'some@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"de",
+            firstname='Cooles PlattenLabel',
+            lastname='SomeLastnäme',
+            email='some@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG3',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG3',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
-            num_shares=u'42',
+            name_of_colsoc="",
+            num_shares='42',
         )
         # English legal entity
         member4 = C3sMember(
-            firstname=u'Incredible Records',
-            lastname=u'XXXSomeLastnäme',
-            email=u'some2@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"en",
+            firstname='Incredible Records',
+            lastname='XXXSomeLastnäme',
+            email='some2@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFG4',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFG4',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
-            num_shares=u'2',
+            name_of_colsoc="",
+            num_shares='2',
         )
         member1.membership_accepted = True
-        member1.membership_number = u'11'
+        member1.membership_number = '11'
         DBSession.add(member1)
         member2.membership_accepted = True
-        member2.membership_number = u'22'
+        member2.membership_number = '22'
         DBSession.add(member2)
         member3.membership_accepted = True
-        member3.membership_number = u'33'
+        member3.membership_number = '33'
         DBSession.add(member3)
         member4.membership_accepted = True
-        member4.membership_number = u'44'
+        member4.membership_number = '44'
         DBSession.add(member4)
 
         DBSession.flush()
@@ -318,7 +318,7 @@ class TestInvitation(unittest.TestCase):
 
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member1.membership_number, CURRENT_GENERAL_ASSEMBLY)
-        self.assertTrue(u'Versammlung' in mailer.outbox[0].subject)
+        self.assertTrue('Versammlung' in mailer.outbox[0].subject)
         self.assertTrue(member1.firstname
                         in mailer.outbox[0].body)
         # Token not in email template for current general assembly of
@@ -347,7 +347,7 @@ class TestInvitation(unittest.TestCase):
         self.assertEqual(invitation['flag'], True)
         self.assertTrue(invitation['token'] is not None)
         self.assertEqual(len(mailer.outbox), 3)
-        self.assertTrue(u'Assembly' in mailer.outbox[2].subject)
+        self.assertTrue('Assembly' in mailer.outbox[2].subject)
         self.assertTrue(member2.firstname
                         in mailer.outbox[2].body)
         # Token not in email template for current general assembly of

@@ -108,7 +108,7 @@ class TestColanderValidator(TestCase):
         validator = DummyColanderValidator(schema, error_handler)
         result = validator(context, request)
 
-        self.assertEquals(result, 'error handler result')
+        self.assertEqual(result, 'error handler result')
         error_handler.assert_called_with(request, schema, {'node name': 'abc'})
         schema.bind.assert_called_with(request=request)
         schema_bind.deserialize.assert_called_with('get data')
@@ -125,7 +125,7 @@ class TestColanderValidator(TestCase):
         validator = DummyColanderValidator(schema)
         result = validator(context, request)
 
-        self.assertEquals(result, 'error handler result')
+        self.assertEqual(result, 'error handler result')
         error_handler.assert_called_with(request, schema, {'node name': 'abc'})
         schema.bind.assert_called_with(request=request)
         schema_bind.deserialize.assert_called_with('get data')
@@ -144,7 +144,7 @@ class TestColanderValidator(TestCase):
         validator = DummyColanderValidator(schema)
         result = validator(context, request)
 
-        self.assertEquals(result, 'error handler result')
+        self.assertEqual(result, 'error handler result')
         error_handler.assert_called_with(request, schema, {'node name': 'abc'})
         schema.bind.assert_called_with(request=request)
         schema_bind.deserialize.assert_called_with('get data')

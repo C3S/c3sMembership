@@ -55,4 +55,4 @@ class TestMultiPreProcessor(TestCase):
         proc2.side_effect = [None]
         processor = MultiPreProcessor([proc1, proc2])
         result = processor('context', 'request')
-        self.assertEquals(result, 'proc1 result')
+        self.assertEqual(result, 'proc1 result')

@@ -70,7 +70,7 @@ class TestMultiErrorHandler(TestCase):
 
         result = handler('request', 'schema', 'errors')
 
-        self.assertEquals(result, 'error handling result')
+        self.assertEqual(result, 'error handling result')
         error_handler1.assert_called_with('request', 'schema', 'errors')
         error_handler2.assert_called_with('request', 'schema', 'errors')
         error_handler3.assert_not_called()
@@ -127,8 +127,8 @@ class TestFlashErrorHandler(TestCase):
         result = handler(request, None, [])
 
         request.route_url.assert_called_with('error route')
-        self.assertEquals(result.code, 302)
-        self.assertEquals(result.location, 'route url')
+        self.assertEqual(result.code, 302)
+        self.assertEqual(result.location, 'route url')
 
         # 3. Schema error route
         request = mock.Mock()
@@ -140,5 +140,5 @@ class TestFlashErrorHandler(TestCase):
         result = handler(request, schema, [])
 
         request.route_url.assert_called_with('error route')
-        self.assertEquals(result.code, 302)
-        self.assertEquals(result.location, 'route url')
+        self.assertEqual(result.code, 302)
+        self.assertEqual(result.location, 'route url')

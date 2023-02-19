@@ -51,14 +51,14 @@ class EditMemberTests(unittest.TestCase):
 
         with transaction.manager:
             # a group for accountants/staff
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             db_session.add(accountants_group)
             db_session.flush()
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             db_session.add(accountants_group)
@@ -84,24 +84,24 @@ class EditMemberTests(unittest.TestCase):
         member = None
         with transaction.manager:
             member = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'Membership Applicant',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='Membership Applicant',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date(1970, 1, 1),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date(2015, 1, 1),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
         return member
 
@@ -113,24 +113,24 @@ class EditMemberTests(unittest.TestCase):
         member = None
         with transaction.manager:
             member = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'Accepted Full Member',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='Accepted Full Member',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date(1970, 1, 1),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date(2014, 1, 1),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             member.membership_accepted = True
             member.membership_date = date(2015, 1, 1)
@@ -167,19 +167,19 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_successful_edit(
             member.id,
             {
-                'firstname': u'EinVörname',
-                'lastname': u'EinNachname',
-                'email': u'info@example.com',
-                'address1': u'adressteil 1',
-                'address2': u'adressteil 2',
-                'postcode': u'12346',
-                'city': u'die city',
-                'country': u'FI',
-                'membership_type': u'investing',
-                'entity_type': u'legalentity',
-                'other_colsoc': u'no',
-                'name_of_colsoc': u'',
-                'email_is_confirmed': u'yes',
+                'firstname': 'EinVörname',
+                'lastname': 'EinNachname',
+                'email': 'info@example.com',
+                'address1': 'adressteil 1',
+                'address2': 'adressteil 2',
+                'postcode': '12346',
+                'city': 'die city',
+                'country': 'FI',
+                'membership_type': 'investing',
+                'entity_type': 'legalentity',
+                'other_colsoc': 'no',
+                'name_of_colsoc': '',
+                'email_is_confirmed': 'yes',
             },
             {
                 'date_of_birth': '1999-12-30',
@@ -188,15 +188,15 @@ class EditMemberTests(unittest.TestCase):
                 'payment_received_date': '2013-09-24',
             },
             [
-                u'EinNachname',
-                u'info@example.com',
-                u'adressteil 1',
-                u'adressteil 2',
-                u'12346',
-                u'die city',
-                u'FI',
-                u'investing',
-                u'<td>Yes</td>',
+                'EinNachname',
+                'info@example.com',
+                'adressteil 1',
+                'adressteil 2',
+                '12346',
+                'die city',
+                'FI',
+                'investing',
+                '<td>Yes</td>',
             ])
 
         # edit again ... changing membership acceptance status
@@ -256,12 +256,12 @@ class EditMemberTests(unittest.TestCase):
             id_properties: dict. Properties to set by the field's id
         """
         if name_properties:
-            for key, value in name_properties.iteritems():
+            for key, value in name_properties.items():
                 form[key] = value
 
         if id_properties:
             field_id_dict = cls.__get_field_id_dict(form)
-            for key, value in id_properties.iteritems():
+            for key, value in id_properties.items():
                 field_id_dict[key].value = value
 
     @classmethod
@@ -281,7 +281,7 @@ class EditMemberTests(unittest.TestCase):
             dict mapping the id to its field.
         """
         field_id_dict = {}
-        for key in form.fields.keys():
+        for key in list(form.fields.keys()):
             fields = form.fields[key]
             for field in fields:
                 field_id_dict[field.id] = field
@@ -457,12 +457,12 @@ class EditMemberTests(unittest.TestCase):
         self.__validate_abortive_edit(
             member.id,
             {
-                'membership_loss_type': u'resignation',
+                'membership_loss_type': 'resignation',
             },
             {
                 'membership_loss_date': date.today(),
             },
-            [u'Please note: There were errors, please check the form below.'])
+            ['Please note: There were errors, please check the form below.'])
 
         # 2 Editing members
         member = self.__create_accepted_member_full()
@@ -607,7 +607,7 @@ class EditMemberTests(unittest.TestCase):
             {
                 'membership_loss_date': date(2016, 12, 30),
             },
-            [u'Resignations are only allowed to the 31st of December of a '
+            ['Resignations are only allowed to the 31st of December of a '
              'year.'])
 
         # 2.4.4 Set loss type to resignation and loss date to 31st of
@@ -634,8 +634,8 @@ class EditMemberTests(unittest.TestCase):
             {
                 'membership_loss_date': date(2016, 3, 25),
             },
-            [u'The membership loss type \'death\' is only allowed for natural '
-             u'person members and not for legal entity members.'])
+            ['The membership loss type \'death\' is only allowed for natural '
+             'person members and not for legal entity members.'])
 
         # 2.5.2 Set loss type to death and entity type to natural person ->
         #       success
@@ -662,8 +662,8 @@ class EditMemberTests(unittest.TestCase):
             {
                 'membership_loss_date': date(2016, 3, 25),
             },
-            [u'The membership loss type \'winding-up\' is only allowed for '
-             u'legal entity members and not for natural person members.'])
+            ['The membership loss type \'winding-up\' is only allowed for '
+             'legal entity members and not for natural person members.'])
 
         # 2.6.2 Set loss type to winding-up and entity type to legal entity
         #       -> success

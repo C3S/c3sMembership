@@ -55,126 +55,126 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         with transaction.manager:
             DBSession.add(
                 GeneralAssembly(GENERAL_ASSEMBLY_NUMBER_2014,
-                                u'1. ordentliche Generalversammlung',
-                                date(2014, 8, 23), u'Assembly 2014',
-                                u'Hello {salutation}!', u'Versammlung 2014',
-                                u'Hallo {salutation}!'))
+                                '1. ordentliche Generalversammlung',
+                                date(2014, 8, 23), 'Assembly 2014',
+                                'Hello {salutation}!', 'Versammlung 2014',
+                                'Hallo {salutation}!'))
             DBSession.add(
                 GeneralAssembly(GENERAL_ASSEMBLY_NUMBER_2015,
-                                u'2. ordentliche Generalversammlung',
-                                date(2015, 6, 13), u'Assembly 2015',
-                                u'Hello {salutation}!', u'Versammlung 2015',
-                                u'Hallo {salutation}!'))
+                                '2. ordentliche Generalversammlung',
+                                date(2015, 6, 13), 'Assembly 2015',
+                                'Hello {salutation}!', 'Versammlung 2015',
+                                'Hallo {salutation}!'))
             DBSession.add(
                 GeneralAssembly(GENERAL_ASSEMBLY_NUMBER_2015_2,
-                                u'Außerordentliche Generalversammlung',
-                                date(2015, 7, 16), u'Assembly 2015-2',
-                                u'Hello {salutation}!', u'Versammlung 2015-2',
-                                u'Hallo {salutation}!'))
+                                'Außerordentliche Generalversammlung',
+                                date(2015, 7, 16), 'Assembly 2015-2',
+                                'Hello {salutation}!', 'Versammlung 2015-2',
+                                'Hallo {salutation}!'))
             DBSession.add(
                 GeneralAssembly(GENERAL_ASSEMBLY_NUMBER_2016,
-                                u'3. ordentliche Generalversammlung',
-                                date(2016, 4, 17), u'Assembly 2016',
-                                u'Hello {salutation}!', u'Versammlung 2016',
-                                u'Hallo {salutation}!'))
+                                '3. ordentliche Generalversammlung',
+                                date(2016, 4, 17), 'Assembly 2016',
+                                'Hello {salutation}!', 'Versammlung 2016',
+                                'Hallo {salutation}!'))
             DBSession.add(
                 GeneralAssembly(GENERAL_ASSEMBLY_NUMBER_2017,
-                                u'4. ordentliche Generalversammlung',
-                                date(2017, 4, 2), u'Assembly 2017',
-                                u'Hello {salutation}!', u'Versammlung 2017',
-                                u'Hallo {salutation}!'))
+                                '4. ordentliche Generalversammlung',
+                                date(2017, 4, 2), 'Assembly 2017',
+                                'Hello {salutation}!', 'Versammlung 2017',
+                                'Hallo {salutation}!'))
             DBSession.add(
                 GeneralAssembly(GENERAL_ASSEMBLY_NUMBER_2018,
-                                u'5. ordentliche Generalversammlung',
-                                date(2018, 6, 3), u'Assembly 2018',
-                                u'Hello {salutation}!', u'Versammlung 2018',
-                                u'Hallo {salutation}!'))
+                                '5. ordentliche Generalversammlung',
+                                date(2018, 6, 3), 'Assembly 2018',
+                                'Hello {salutation}!', 'Versammlung 2018',
+                                'Hallo {salutation}!'))
             DBSession.add(
                 GeneralAssembly(GENERAL_ASSEMBLY_NUMBER_2018_2,
-                                u'Außerordentliche Generalversammlung',
-                                date(2018, 12, 1), u'Assembly 2018-2',
-                                u'Hello {salutation}!', u'Versammlung 2018-2',
-                                u'Hallo {salutation}!'))
+                                'Außerordentliche Generalversammlung',
+                                date(2018, 12, 1), 'Assembly 2018-2',
+                                'Hello {salutation}!', 'Versammlung 2018-2',
+                                'Hallo {salutation}!'))
 
             member1 = C3sMember(
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'member1@example.com',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='member1@example.com',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=35,
             )
             member2 = C3sMember(
-                firstname=u'AAASomeFirstnäme',
-                lastname=u'XXXSomeLastnäme',
-                email=u'member2@example.com',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='AAASomeFirstnäme',
+                lastname='XXXSomeLastnäme',
+                email='member2@example.com',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAR',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAR',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=45,
             )
             member3 = C3sMember(
-                firstname=u'Not invited',
-                lastname=u'at all',
-                email=u'member3@example.com',
-                address1=u'Some',
-                address2=u'Address',
-                postcode=u'45678',
-                city=u'Hamburg',
-                country=u'Germany',
-                locale=u'DE',
+                firstname='Not invited',
+                lastname='at all',
+                email='member3@example.com',
+                address1='Some',
+                address2='Address',
+                postcode='45678',
+                city='Hamburg',
+                country='Germany',
+                locale='DE',
                 date_of_birth=date(1980, 1, 2),
                 email_is_confirmed=False,
-                email_confirm_code=u'member3',
-                password=u'arandompassword',
+                email_confirm_code='member3',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=45,
             )
-            member1.membership_number = u'member_1'
+            member1.membership_number = 'member_1'
             member1.membership_date = date(2018, 1, 1)
             member1.membership_accepted = True
             DBSession.add(member1)
 
             datetime_mock.now.side_effect = [datetime(2018, 9, 1, 23, 5, 15)]
             GeneralAssemblyRepository.invite_member(
-                'member_1', GENERAL_ASSEMBLY_NUMBER_2018_2, u'test_token_1')
+                'member_1', GENERAL_ASSEMBLY_NUMBER_2018_2, 'test_token_1')
 
-            member2.membership_number = u'member_2'
+            member2.membership_number = 'member_2'
             member2.membership_date = date(2017, 1, 1)
             member2.membership_accepted = True
             DBSession.add(member2)
 
             datetime_mock.now.side_effect = [datetime(2018, 9, 2, 22, 3, 10)]
             GeneralAssemblyRepository.invite_member(
-                'member_2', GENERAL_ASSEMBLY_NUMBER_2018_2, u'test_token_2')
+                'member_2', GENERAL_ASSEMBLY_NUMBER_2018_2, 'test_token_2')
 
-            member3.membership_number = u'member_3'
+            member3.membership_number = 'member_3'
             member3.membership_date = date(2016, 1, 1)
             member3.membership_accepted = True
             DBSession.add(member3)
@@ -208,11 +208,11 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         """
         Test the get_member_by_token method
         """
-        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_1')
-        self.assertEqual(member.membership_number, u'member_1')
+        member = GeneralAssemblyRepository.get_member_by_token('test_token_1')
+        self.assertEqual(member.membership_number, 'member_1')
 
-        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_2')
-        self.assertEqual(member.membership_number, u'member_2')
+        member = GeneralAssemblyRepository.get_member_by_token('test_token_2')
+        self.assertEqual(member.membership_number, 'member_2')
 
     def test_get_member_invitations(self):
         """
@@ -223,9 +223,9 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         3. Test membership loss
         """
         # 1. Test invited
-        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_1')
+        member = GeneralAssemblyRepository.get_member_by_token('test_token_1')
         invitations = GeneralAssemblyRepository \
-            .get_member_invitations(u'member_1', member.membership_date)
+            .get_member_invitations('member_1', member.membership_date)
         self.assertEqual(len(invitations), 2)
         self.assertEqual(invitations[0]['number'],
                          GENERAL_ASSEMBLY_NUMBER_2018)
@@ -238,19 +238,19 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
                          datetime(2018, 9, 1, 23, 5, 15))
 
         # 2. Test not invited
-        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_2')
+        member = GeneralAssemblyRepository.get_member_by_token('test_token_2')
         invitations = GeneralAssemblyRepository \
-            .get_member_invitations(u'member_2', member.membership_date)
+            .get_member_invitations('member_2', member.membership_date)
         self.assertEqual(len(invitations), 3)
         self.assertEqual(invitations[0]['number'],
                          GENERAL_ASSEMBLY_NUMBER_2017)
         self.assertEqual(invitations[0]['flag'], False)
 
         # 3. Test membership loss
-        member = GeneralAssemblyRepository.get_member_by_token(u'test_token_2')
+        member = GeneralAssemblyRepository.get_member_by_token('test_token_2')
         invitations = GeneralAssemblyRepository \
             .get_member_invitations(
-                u'member_2',
+                'member_2',
                 member.membership_date,
                 date(2017, 12, 31))
         self.assertEqual(len(invitations), 1)
@@ -314,11 +314,11 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         ]
         GeneralAssemblyRepository.invite_member('member_3',
                                                 GENERAL_ASSEMBLY_NUMBER_2015,
-                                                u'token15')
+                                                'token15')
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member.membership_number, GENERAL_ASSEMBLY_NUMBER_2015)
         self.assertEqual(invitation['flag'], True)
-        self.assertEqual(invitation['token'], u'token15')
+        self.assertEqual(invitation['token'], 'token15')
         self.assertEqual(invitation['sent'], datetime(2018, 11, 17, 13, 31))
 
         # 3. Invitation for 2016
@@ -333,11 +333,11 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         ]
         GeneralAssemblyRepository.invite_member('member_3',
                                                 GENERAL_ASSEMBLY_NUMBER_2016,
-                                                u'token16')
+                                                'token16')
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member.membership_number, GENERAL_ASSEMBLY_NUMBER_2016)
         self.assertEqual(invitation['flag'], True)
-        self.assertEqual(invitation['token'], u'token16')
+        self.assertEqual(invitation['token'], 'token16')
         self.assertEqual(invitation['sent'], datetime(2018, 11, 17, 13, 32))
 
         # 4. Invitation for 2017
@@ -352,11 +352,11 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         ]
         GeneralAssemblyRepository.invite_member('member_3',
                                                 GENERAL_ASSEMBLY_NUMBER_2017,
-                                                u'token17')
+                                                'token17')
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member.membership_number, GENERAL_ASSEMBLY_NUMBER_2017)
         self.assertEqual(invitation['flag'], True)
-        self.assertEqual(invitation['token'], u'token17')
+        self.assertEqual(invitation['token'], 'token17')
         self.assertEqual(invitation['sent'], datetime(2018, 11, 17, 13, 33))
 
         # 5. Invitation for 2018
@@ -371,11 +371,11 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         ]
         GeneralAssemblyRepository.invite_member('member_3',
                                                 GENERAL_ASSEMBLY_NUMBER_2018,
-                                                u'token18')
+                                                'token18')
         invitation = GeneralAssemblyRepository.get_member_invitation(
             member.membership_number, GENERAL_ASSEMBLY_NUMBER_2018)
         self.assertEqual(invitation['flag'], True)
-        self.assertEqual(invitation['token'], u'token18')
+        self.assertEqual(invitation['token'], 'token18')
         self.assertEqual(invitation['sent'], datetime(2018, 11, 17, 13, 34))
 
     def test_get_general_assemblies(self):
@@ -394,16 +394,16 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         # 2. Test properties
         self.assertEqual(general_assembly.number, GENERAL_ASSEMBLY_NUMBER_2018)
         self.assertEqual(general_assembly.name,
-                         u'5. ordentliche Generalversammlung')
+                         '5. ordentliche Generalversammlung')
         self.assertEqual(general_assembly.date, date(2018, 6, 3))
         self.assertEqual(general_assembly.invitation_subject_en,
-                         u'Assembly 2018')
+                         'Assembly 2018')
         self.assertEqual(general_assembly.invitation_text_en,
-                         u'Hello {salutation}!')
+                         'Hello {salutation}!')
         self.assertEqual(general_assembly.invitation_subject_de,
-                         u'Versammlung 2018')
+                         'Versammlung 2018')
         self.assertEqual(general_assembly.invitation_text_de,
-                         u'Hallo {salutation}!')
+                         'Hallo {salutation}!')
 
     def test_get_general_assembly(self):
         """
@@ -430,16 +430,16 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
             GENERAL_ASSEMBLY_NUMBER_2018)
         self.assertEqual(general_assembly.number, GENERAL_ASSEMBLY_NUMBER_2018)
         self.assertEqual(general_assembly.name,
-                         u'5. ordentliche Generalversammlung')
+                         '5. ordentliche Generalversammlung')
         self.assertEqual(general_assembly.date, date(2018, 6, 3))
         self.assertEqual(general_assembly.invitation_subject_en,
-                         u'Assembly 2018')
+                         'Assembly 2018')
         self.assertEqual(general_assembly.invitation_text_en,
-                         u'Hello {salutation}!')
+                         'Hello {salutation}!')
         self.assertEqual(general_assembly.invitation_subject_de,
-                         u'Versammlung 2018')
+                         'Versammlung 2018')
         self.assertEqual(general_assembly.invitation_text_de,
-                         u'Hallo {salutation}!')
+                         'Hallo {salutation}!')
 
         # 3. Test non-existing general assembly
         general_assembly = GeneralAssemblyRepository.get_general_assembly(0)
@@ -459,18 +459,18 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         assembly = GeneralAssemblyRepository.get_general_assembly(100)
         self.assertTrue(assembly is None)
         GeneralAssemblyRepository.add_general_assembly(
-            GeneralAssemblyBusiness(100, u'New general assembly',
-                                    date(2018, 11, 18), u'Assembly',
-                                    u'Hello {salutation}!', u'Versammlung',
-                                    u'Hallo {salutation}!'))
+            GeneralAssemblyBusiness(100, 'New general assembly',
+                                    date(2018, 11, 18), 'Assembly',
+                                    'Hello {salutation}!', 'Versammlung',
+                                    'Hallo {salutation}!'))
         assembly = GeneralAssemblyRepository.get_general_assembly(100)
         self.assertEqual(assembly.number, 100)
-        self.assertEqual(assembly.name, u'New general assembly')
+        self.assertEqual(assembly.name, 'New general assembly')
         self.assertEqual(assembly.date, date(2018, 11, 18))
-        self.assertEqual(assembly.invitation_subject_en, u'Assembly')
-        self.assertEqual(assembly.invitation_text_en, u'Hello {salutation}!')
-        self.assertEqual(assembly.invitation_subject_de, u'Versammlung')
-        self.assertEqual(assembly.invitation_text_de, u'Hallo {salutation}!')
+        self.assertEqual(assembly.invitation_subject_en, 'Assembly')
+        self.assertEqual(assembly.invitation_text_en, 'Hello {salutation}!')
+        self.assertEqual(assembly.invitation_subject_de, 'Versammlung')
+        self.assertEqual(assembly.invitation_text_de, 'Hallo {salutation}!')
 
     def test_update_general_assembly(self):
         """
@@ -485,29 +485,29 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         self.assertTrue(assembly is not None)
         GeneralAssemblyRepository.update_general_assembly(
             GeneralAssemblyBusiness(GENERAL_ASSEMBLY_NUMBER_2018_2,
-                                    u'New general assembly name',
-                                    date(2019, 1, 21), u'Assembly',
-                                    u'Hello {salutation}!', u'Versammlung',
-                                    u'Hallo {salutation}!'))
+                                    'New general assembly name',
+                                    date(2019, 1, 21), 'Assembly',
+                                    'Hello {salutation}!', 'Versammlung',
+                                    'Hallo {salutation}!'))
 
         assembly = GeneralAssemblyRepository.get_general_assembly(
             GENERAL_ASSEMBLY_NUMBER_2018_2)
         self.assertEqual(assembly.number, GENERAL_ASSEMBLY_NUMBER_2018_2)
-        self.assertEqual(assembly.name, u'New general assembly name')
+        self.assertEqual(assembly.name, 'New general assembly name')
         self.assertEqual(assembly.date, date(2019, 1, 21))
-        self.assertEqual(assembly.invitation_subject_en, u'Assembly')
-        self.assertEqual(assembly.invitation_text_en, u'Hello {salutation}!')
-        self.assertEqual(assembly.invitation_subject_de, u'Versammlung')
-        self.assertEqual(assembly.invitation_text_de, u'Hallo {salutation}!')
+        self.assertEqual(assembly.invitation_subject_en, 'Assembly')
+        self.assertEqual(assembly.invitation_text_en, 'Hello {salutation}!')
+        self.assertEqual(assembly.invitation_subject_de, 'Versammlung')
+        self.assertEqual(assembly.invitation_text_de, 'Hallo {salutation}!')
 
         # 2. Try updating a non-existing general assembly
         with self.assertRaises(ValueError) as raise_context:
             GeneralAssemblyRepository.update_general_assembly(
                 GeneralAssemblyBusiness(123456789,
-                                        u'New general assembly name',
-                                        date(2019, 1, 21), u'Assembly',
-                                        u'Hello {salutation}', u'Versammlung',
-                                        u'Hallo {salutation}'))
+                                        'New general assembly name',
+                                        date(2019, 1, 21), 'Assembly',
+                                        'Hello {salutation}', 'Versammlung',
+                                        'Hallo {salutation}'))
         self.assertEqual(
             str(raise_context.exception),
             'A general assembly with this number does not exist.')
@@ -522,10 +522,10 @@ class TestGeneralAssemblyRepository(unittest.TestCase):
         max_number = GeneralAssemblyRepository.general_assembly_max_number()
         self.assertEqual(max_number, 7)
         GeneralAssemblyRepository.add_general_assembly(
-            GeneralAssemblyBusiness(100, u'New general assembly',
-                                    date(2018, 11, 18), u'Assembly',
-                                    u'Hello {salutation}', u'Versammlung',
-                                    u'Hallo {salutation}'))
+            GeneralAssemblyBusiness(100, 'New general assembly',
+                                    date(2018, 11, 18), 'Assembly',
+                                    'Hello {salutation}', 'Versammlung',
+                                    'Hallo {salutation}'))
         max_number = GeneralAssemblyRepository.general_assembly_max_number()
         self.assertEqual(max_number, 100)
 

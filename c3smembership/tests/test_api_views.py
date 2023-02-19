@@ -35,7 +35,7 @@ class TestApiViews(unittest.TestCase):
     def setUp(self):
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
-            'api_auth_token': u"SECRETAUTHTOKEN",
+            'api_auth_token': "SECRETAUTHTOKEN",
         }
         self.config = testing.setUp()
         app = main({}, **my_settings)
@@ -45,30 +45,30 @@ class TestApiViews(unittest.TestCase):
         Base.metadata.create_all(engine)
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"de",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="de",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
         member1.membership_number = 'M1'
         # pylint: disable=no-member
         DBSession.add(member1)
         GeneralAssemblyRepository.invite_member(
-            member1.membership_number, GENERAL_ASSEMBLY, u'MEMBERS_TOKEN')
+            member1.membership_number, GENERAL_ASSEMBLY, 'MEMBERS_TOKEN')
         # pylint: disable=no-member
         DBSession.flush()
 

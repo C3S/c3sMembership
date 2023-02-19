@@ -50,8 +50,8 @@ def downgrade():
     op.create_table('membership_shares',
     sa.Column('membership_id', sa.INTEGER(), nullable=False),
     sa.Column('shares_id', sa.INTEGER(), nullable=False),
-    sa.ForeignKeyConstraint(['membership_id'], [u'memberships.id'], ),
-    sa.ForeignKeyConstraint(['shares_id'], [u'shares.id'], ),
+    sa.ForeignKeyConstraint(['membership_id'], ['memberships.id'], ),
+    sa.ForeignKeyConstraint(['shares_id'], ['shares.id'], ),
     sa.PrimaryKeyConstraint('membership_id', 'shares_id')
     )
     ### end Alembic commands ###

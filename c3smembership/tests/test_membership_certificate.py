@@ -49,66 +49,66 @@ def init_db():
     with transaction.manager:
         # German
         member1 = C3sMember(
-            firstname=u'SomeFirstnäme',
-            lastname=u'SomeLastnäme',
-            email=u'some@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"de",
+            firstname='SomeFirstnäme',
+            lastname='SomeLastnäme',
+            email='some@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFGFOO',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFGFOO',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
-            num_shares=u'23',
+            name_of_colsoc="GEMA",
+            num_shares='23',
         )
         # English
         member2 = C3sMember(
-            firstname=u'AAASomeFirstnäme',
-            lastname=u'XXXSomeLastnäme',
-            email=u'some2@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"en",
+            firstname='AAASomeFirstnäme',
+            lastname='XXXSomeLastnäme',
+            email='some2@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFGBAR',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFGBAR',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
-            num_shares=u'2',
+            name_of_colsoc="GEMA",
+            num_shares='2',
         )
         # English
         founding_member3 = C3sMember(
-            firstname=u'BBBSomeFirstnäme',
-            lastname=u'YYYSomeLastnäme',
-            email=u'some3@shri.de',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"en",
+            firstname='BBBSomeFirstnäme',
+            lastname='YYYSomeLastnäme',
+            email='some3@shri.de',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCBARdungHH_',
-            password=u'anotherrandompassword',
+            email_confirm_code='ABCBARdungHH_',
+            password='anotherrandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
-            num_shares=u'2',
+            name_of_colsoc="GEMA",
+            num_shares='2',
         )
         db_session.add(member1)
         db_session.add(member2)
@@ -265,12 +265,12 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.assertEqual(len(mailer.outbox), 1)
         self.assertEqual(
             mailer.outbox[0].subject,
-            u"C3S-Mitgliedsbescheinigung"
+            "C3S-Mitgliedsbescheinigung"
         )
         self.assertTrue(
-            u"Hallo SomeFirstnäme SomeLastnäme," in mailer.outbox[0].body)
+            "Hallo SomeFirstnäme SomeLastnäme," in mailer.outbox[0].body)
         self.assertTrue(
-            u"Deine persönliche Mitgliederbescheinig" in mailer.outbox[0].body)
+            "Deine persönliche Mitgliederbescheinig" in mailer.outbox[0].body)
 
         member1.membership_accepted = True
         member1.membership_loss_date = date.today() + timedelta(days=1)
@@ -307,13 +307,13 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.assertEqual(len(mailer.outbox), 2)
         self.assertEqual(
             mailer.outbox[1].subject,
-            u"C3S membership certificate"
+            "C3S membership certificate"
         )
         self.assertTrue(
-            u"Hello AAASomeFirstnäme XXXSomeLastnäme,"
+            "Hello AAASomeFirstnäme XXXSomeLastnäme,"
             in mailer.outbox[1].body)
         self.assertTrue(
-            u"your personal membership certificate" in mailer.outbox[1].body)
+            "your personal membership certificate" in mailer.outbox[1].body)
 
     def test_generate_certificate_en(self):
         """
@@ -339,7 +339,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
             'member': member2,
             'token': 'hotzenplotz123',
         }
-        member2.certificate_token = u'hotzenplotz123'
+        member2.certificate_token = 'hotzenplotz123'
         member2.certificate_email_date = datetime.now() - timedelta(weeks=1)
         member2.membership_accepted = True
         member2.membership_loss_date = date.today() + timedelta(days=1)
@@ -378,7 +378,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
             'token': 'hotzenplotz123',
         }
         member = C3sMember.get_by_id(1)
-        member.certificate_token = u'hotzenplotz123'
+        member.certificate_token = 'hotzenplotz123'
         member.membership_accepted = True
 
         result = generate_certificate(request)
@@ -400,7 +400,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
-        member.certificate_token = u'hotzenplotz123'
+        member.certificate_token = 'hotzenplotz123'
         member.num_shares = 1
 
         result = generate_certificate(request)
@@ -408,7 +408,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
-        member.certificate_token = u'hotzenplotz123'
+        member.certificate_token = 'hotzenplotz123'
         member.is_legalentity = True
 
         result = generate_certificate(request)
@@ -430,7 +430,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
             'member': member,
             'token': 'hotzenplotz123',
         }
-        member.certificate_token = u'hotzenplotz123'
+        member.certificate_token = 'hotzenplotz123'
         member.membership_accepted = True
 
         # need to get the date right!
@@ -442,7 +442,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
-        member.certificate_token = u'hotzenplotz123'
+        member.certificate_token = 'hotzenplotz123'
         member.num_shares = 1
 
         result = generate_certificate(request)
@@ -450,11 +450,11 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
-        member.certificate_token = u'hotzenplotz123'
+        member.certificate_token = 'hotzenplotz123'
         member.is_legalentity = True
 
         result = generate_certificate(request)
-        member.locale = u'de'
+        member.locale = 'de'
         result = generate_certificate(request)
 
         self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
@@ -485,9 +485,9 @@ class TestMembershipCertificateViews(unittest.TestCase):
             'token': 'hotzenplotz123',
         }
         member = C3sMember.get_by_id(1)
-        member.firstname = u"Foobar Corp & Co."
-        member.lastname = u"Your Number #1"
-        member.certificate_token = u'hotzenplotz123'
+        member.firstname = "Foobar Corp & Co."
+        member.lastname = "Your Number #1"
+        member.certificate_token = 'hotzenplotz123'
         member.membership_accepted = True
 
         # # need to get the date right!

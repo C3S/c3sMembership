@@ -54,17 +54,17 @@ class QuarterlyDuesCalculatorTest(TestCase):
 
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('50.0'))
-        self.assertEqual(dues_calculation.code, u'q1_2016')
+        self.assertEqual(dues_calculation.code, 'q1_2016')
 
         member.membership_date = date(2016, 1, 1)
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('50.0'))
-        self.assertEqual(dues_calculation.code, u'q1_2016')
+        self.assertEqual(dues_calculation.code, 'q1_2016')
 
         member.membership_date = date(2016, 3, 31)
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('50.0'))
-        self.assertEqual(dues_calculation.code, u'q1_2016')
+        self.assertEqual(dues_calculation.code, 'q1_2016')
 
         # 2. Test quarter 2
         member = mock.Mock()
@@ -74,12 +74,12 @@ class QuarterlyDuesCalculatorTest(TestCase):
 
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('37.5'))
-        self.assertEqual(dues_calculation.code, u'q2_2016')
+        self.assertEqual(dues_calculation.code, 'q2_2016')
 
         member.membership_date = date(2016, 6, 30)
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('37.5'))
-        self.assertEqual(dues_calculation.code, u'q2_2016')
+        self.assertEqual(dues_calculation.code, 'q2_2016')
 
         # 3. Test quarter 3
         member = mock.Mock()
@@ -89,12 +89,12 @@ class QuarterlyDuesCalculatorTest(TestCase):
 
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('25.0'))
-        self.assertEqual(dues_calculation.code, u'q3_2016')
+        self.assertEqual(dues_calculation.code, 'q3_2016')
 
         member.membership_date = date(2016, 9, 30)
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('25.0'))
-        self.assertEqual(dues_calculation.code, u'q3_2016')
+        self.assertEqual(dues_calculation.code, 'q3_2016')
 
         # 4. Test quarter 4
         member = mock.Mock()
@@ -104,12 +104,12 @@ class QuarterlyDuesCalculatorTest(TestCase):
 
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('12.5'))
-        self.assertEqual(dues_calculation.code, u'q4_2016')
+        self.assertEqual(dues_calculation.code, 'q4_2016')
 
         member.membership_date = date(2016, 12, 31)
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('12.5'))
-        self.assertEqual(dues_calculation.code, u'q4_2016')
+        self.assertEqual(dues_calculation.code, 'q4_2016')
 
     def test_calculate_after_the_year(self):
         """
@@ -148,7 +148,7 @@ class QuarterlyDuesCalculatorTest(TestCase):
 
         dues_calculation = calculator.calculate(member)
         self.assertEqual(dues_calculation.amount, Decimal('50.0'))
-        self.assertEqual(dues_calculation.code, u'q1_2016')
+        self.assertEqual(dues_calculation.code, 'q1_2016')
 
     def test_get_description(self):
         """
@@ -157,31 +157,31 @@ class QuarterlyDuesCalculatorTest(TestCase):
         calculator = QuarterlyDuesCalculator(Decimal('50.0'), 2016)
 
         # Test English local
-        description = calculator.get_description(u'q1', 'en')
-        self.assertEqual(description, u'whole year 2016')
-        description = calculator.get_description(u'q2', 'en')
-        self.assertEqual(description, u'from second quarter 2016')
-        description = calculator.get_description(u'q3', 'en')
-        self.assertEqual(description, u'from third quarter 2016')
-        description = calculator.get_description(u'q4', 'en')
-        self.assertEqual(description, u'from fourth quarter 2016')
+        description = calculator.get_description('q1', 'en')
+        self.assertEqual(description, 'whole year 2016')
+        description = calculator.get_description('q2', 'en')
+        self.assertEqual(description, 'from second quarter 2016')
+        description = calculator.get_description('q3', 'en')
+        self.assertEqual(description, 'from third quarter 2016')
+        description = calculator.get_description('q4', 'en')
+        self.assertEqual(description, 'from fourth quarter 2016')
 
         # Test German local
-        description = calculator.get_description(u'q1', 'de')
-        self.assertEqual(description, u'für das ganze Jahr 2016')
-        description = calculator.get_description(u'q2', 'de')
-        self.assertEqual(description, u'ab zweitem Quartal 2016')
-        description = calculator.get_description(u'q3', 'de')
-        self.assertEqual(description, u'ab drittem Quartal 2016')
-        description = calculator.get_description(u'q4', 'de')
-        self.assertEqual(description, u'ab viertem Quartal 2016')
+        description = calculator.get_description('q1', 'de')
+        self.assertEqual(description, 'für das ganze Jahr 2016')
+        description = calculator.get_description('q2', 'de')
+        self.assertEqual(description, 'ab zweitem Quartal 2016')
+        description = calculator.get_description('q3', 'de')
+        self.assertEqual(description, 'ab drittem Quartal 2016')
+        description = calculator.get_description('q4', 'de')
+        self.assertEqual(description, 'ab viertem Quartal 2016')
 
         # Test default locale
-        description = calculator.get_description(u'q1', 'xy')
-        self.assertEqual(description, u'whole year 2016')
-        description = calculator.get_description(u'q2', 'xy')
-        self.assertEqual(description, u'from second quarter 2016')
-        description = calculator.get_description(u'q3', 'xy')
-        self.assertEqual(description, u'from third quarter 2016')
-        description = calculator.get_description(u'q4', 'xy')
-        self.assertEqual(description, u'from fourth quarter 2016')
+        description = calculator.get_description('q1', 'xy')
+        self.assertEqual(description, 'whole year 2016')
+        description = calculator.get_description('q2', 'xy')
+        self.assertEqual(description, 'from second quarter 2016')
+        description = calculator.get_description('q3', 'xy')
+        self.assertEqual(description, 'from third quarter 2016')
+        description = calculator.get_description('q4', 'xy')
+        self.assertEqual(description, 'from fourth quarter 2016')

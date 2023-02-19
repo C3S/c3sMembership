@@ -49,129 +49,129 @@ def _initTestingDB():
     Base.metadata.create_all(engine)
     with transaction.manager:
         normal_de = C3sMember(  # german normal
-            firstname=u'Ada Musiziert',
-            lastname=u'Traumhaft ÄÖÜ',
-            email=u'devNull@example.com',
-            address1=u"ada addr one",
-            address2=u"ada addr two",
-            postcode=u"12345",
-            city=u"Foostadt Ada",
-            country=u"Foocountry",
-            locale=u"de",
+            firstname='Ada Musiziert',
+            lastname='Traumhaft ÄÖÜ',
+            email='devNull@example.com',
+            address1="ada addr one",
+            address2="ada addr two",
+            postcode="12345",
+            city="Foostadt Ada",
+            country="Foocountry",
+            locale="de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'NORMAL_DE1',
-            password=u'adasrandompassword',
+            email_confirm_code='NORMAL_DE1',
+            password='adasrandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
-            num_shares=u'23',
+            name_of_colsoc="GEMA",
+            num_shares='23',
         )
         normal_de.membership_number = 11
         normal_en = C3sMember(  # english normal
-            firstname=u'James',
-            lastname=u'Musician',
-            email=u'dummy@example.com',
-            address1=u"james addr 1",
-            address2=u"james appartment 2",
-            postcode=u"12345",
-            city=u"Jamestown",
-            country=u"Jamescountry",
-            locale=u"en",
+            firstname='James',
+            lastname='Musician',
+            email='dummy@example.com',
+            address1="james addr 1",
+            address2="james appartment 2",
+            postcode="12345",
+            city="Jamestown",
+            country="Jamescountry",
+            locale="en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'NORMAL_DE',
-            password=u'jamesrandompassword',
+            email_confirm_code='NORMAL_DE',
+            password='jamesrandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"",
-            num_shares=u'2',
+            name_of_colsoc="",
+            num_shares='2',
         )
         normal_en.membership_number = 12
         investing_de = C3sMember(  # german investing
-            firstname=u'Herman',
-            lastname=u'Investorius',
-            email=u'dummy@example.com',
-            address1=u"addr one4",
-            address2=u"addr two4",
-            postcode=u"12344",
-            city=u"Footown M44",
-            country=u"Foocountr4",
-            locale=u"de",
+            firstname='Herman',
+            lastname='Investorius',
+            email='dummy@example.com',
+            address1="addr one4",
+            address2="addr two4",
+            postcode="12344",
+            city="Footown M44",
+            country="Foocountr4",
+            locale="de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'INVESTING_DE',
-            password=u'arandompasswor4',
+            email_confirm_code='INVESTING_DE',
+            password='arandompasswor4',
             date_of_submission=date.today(),
-            membership_type=u'investing',
+            membership_type='investing',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
-            num_shares=u'60',
+            name_of_colsoc="GEMA",
+            num_shares='60',
         )
         investing_de.membership_number = 13
         investing_en = C3sMember(  # english investing
-            firstname=u'Britany',
-            lastname=u'Investing',
-            email=u'dummy@example.com',
-            address1=u"aone5",
-            address2=u"atwo5",
-            postcode=u"12355",
-            city=u"Footown M45",
-            country=u"Foocountr5",
-            locale=u"en",
+            firstname='Britany',
+            lastname='Investing',
+            email='dummy@example.com',
+            address1="aone5",
+            address2="atwo5",
+            postcode="12355",
+            city="Footown M45",
+            country="Foocountr5",
+            locale="en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'INVESTING_EN',
-            password=u'arandompasswor5',
+            email_confirm_code='INVESTING_EN',
+            password='arandompasswor5',
             date_of_submission=date.today(),
-            membership_type=u'investing',
+            membership_type='investing',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
-            num_shares=u'60',
+            name_of_colsoc="GEMA",
+            num_shares='60',
         )
         investing_en.membership_number = 14
         legal_entity_de = C3sMember(  # german investing legal entity
-            firstname=u'Deutscher',
-            lastname=u'Musikverlag',
-            email=u'verlag@compa.ny',
-            address1=u"foo bulevard",
-            address2=u"123-345",
-            postcode=u"98765",
-            city=u"Foo",
-            country=u"Bar",
-            locale=u"de",
+            firstname='Deutscher',
+            lastname='Musikverlag',
+            email='verlag@compa.ny',
+            address1="foo bulevard",
+            address2="123-345",
+            postcode="98765",
+            city="Foo",
+            country="Bar",
+            locale="de",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'VERLAG_DE',
-            password=u'arandompasswor6',
+            email_confirm_code='VERLAG_DE',
+            password='arandompasswor6',
             date_of_submission=date.today(),
-            membership_type=u'investing',
+            membership_type='investing',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
-            num_shares=u'60',
+            name_of_colsoc="",
+            num_shares='60',
         )
         legal_entity_de.membership_number = 15
         legal_entity_en = C3sMember(  # english investing legal entity
-            firstname=u'Francoise',
-            lastname=u'Company',
-            email=u'foo@compa.ny',
-            address1=u"foo bulevard",
-            address2=u"123-345",
-            postcode=u"98765",
-            city=u"Foo",
-            country=u"Bar",
-            locale=u"en",
+            firstname='Francoise',
+            lastname='Company',
+            email='foo@compa.ny',
+            address1="foo bulevard",
+            address2="123-345",
+            postcode="98765",
+            city="Foo",
+            country="Bar",
+            locale="en",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'COMPANY_EN',
-            password=u'arandompasswor6',
+            email_confirm_code='COMPANY_EN',
+            password='arandompasswor6',
             date_of_submission=date.today(),
-            membership_type=u'investing',
+            membership_type='investing',
             member_of_colsoc=False,
-            name_of_colsoc=u"",
-            num_shares=u'60',
+            name_of_colsoc="",
+            num_shares='60',
         )
         legal_entity_en.membership_number = 16
         DBSession.add(normal_de)
@@ -298,10 +298,10 @@ class TestDues19Views(unittest.TestCase):
         """
         self.assertEqual(len(mailer.outbox), 2)
         self.assertTrue(
-            (u'50 Euro. Er ist niedriger, falls du später als im 1. Quartal')
+            ('50 Euro. Er ist niedriger, falls du später als im 1. Quartal')
             in mailer.outbox[0].body)
         self.assertTrue(
-            (u'50 Euro. Er ist niedriger, falls du später als im 1. Quartal')
+            ('50 Euro. Er ist niedriger, falls du später als im 1. Quartal')
             in mailer.outbox[1].body)
 
         """
@@ -322,7 +322,7 @@ class TestDues19Views(unittest.TestCase):
         self.assertTrue(res_en_normal.status_code == 302)
         self.assertEqual(len(mailer.outbox), 3)
         self.assertTrue(
-            (u'Please transfer 50 Euro')
+            ('Please transfer 50 Euro')
             in mailer.outbox[2].body)
 
         # german investing ###################################################
@@ -337,7 +337,7 @@ class TestDues19Views(unittest.TestCase):
         self.assertTrue(res_de_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 4)
         self.assertTrue(
-            (u'Da Du investierendes Mitglied bist')
+            ('Da Du investierendes Mitglied bist')
             in mailer.outbox[3].body)
 
         # english investing ##################################################
@@ -352,7 +352,7 @@ class TestDues19Views(unittest.TestCase):
         self.assertTrue(res_en_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 5)
         self.assertTrue(
-            (u'Since you are an investing member')
+            ('Since you are an investing member')
             in mailer.outbox[4].body)
 
         # german legal entity ################################################
@@ -367,7 +367,7 @@ class TestDues19Views(unittest.TestCase):
         self.assertTrue(res_de_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 6)
         self.assertTrue(
-            (u'')
+            ('')
             in mailer.outbox[5].body)
 
         # english legal entity ###############################################
@@ -382,10 +382,10 @@ class TestDues19Views(unittest.TestCase):
         self.assertTrue(res_en_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 7)
         self.assertTrue(
-            (u'Da Musikverlag investierendes Mitglied ist')
+            ('Da Musikverlag investierendes Mitglied ist')
             in mailer.outbox[6].body)
         self.assertTrue(
-            (u'Für juristische Personen wird empfohlen')
+            ('Für juristische Personen wird empfohlen')
             in mailer.outbox[6].body)
 
     def test_send_dues19_invoice_email_via_BATCH(self):
@@ -449,8 +449,8 @@ class TestDues19Views(unittest.TestCase):
         # this will respond with a redirect and tell
         # that there are no invitees left
         res2 = send_dues19_invoice_batch(req)
-        self.assertEquals(res2.status, '302 Found')
-        self.assertEquals(res2.status_code, 302)
+        self.assertEqual(res2.status, '302 Found')
+        self.assertEqual(res2.status_code, 302)
         assert(
             'no invoicees left. all done!' in
             req.session.pop_flash('success'))
@@ -467,7 +467,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token + 'false!!!',  # must fail
-            'i': u'0001',
+            'i': '0001',
         }
 
         res = make_dues19_invoice_no_pdf(req2)
@@ -479,7 +479,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token,
-            'i': u'1234',  # must fail
+            'i': '1234',  # must fail
         }
         res = make_dues19_invoice_no_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -487,11 +487,11 @@ class TestDues19Views(unittest.TestCase):
 
         # wrong invoice token: must fail!
         i2 = DuesInvoiceRepository.get_by_number(2, 2019)
-        i2.token = u'not_matching'
+        i2.token = 'not_matching'
         req2.matchdict = {
             'email': m2.email,
             'code': m2.dues19_token,
-            'i': u'3',  # must fail
+            'i': '3',  # must fail
         }
         res = make_dues19_invoice_no_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -503,11 +503,11 @@ class TestDues19Views(unittest.TestCase):
         # first, set inv_code to something wrong:
         i1 = DuesInvoiceRepository.get_by_number(1, 2019)
         _old_i1_token = i1.token
-        i1.token = u'not_right'
+        i1.token = 'not_right'
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token,
-            'i': u'0001',
+            'i': '0001',
         }
         res = make_dues19_invoice_no_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -524,7 +524,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token,
-            'i': u'0001',
+            'i': '0001',
         }
         res = make_dues19_invoice_no_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -537,7 +537,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token,
-            'i': u'0001',
+            'i': '0001',
         }
         res = make_dues19_invoice_no_pdf(req2)
         # m1.
@@ -738,7 +738,7 @@ class TestDues19Views(unittest.TestCase):
         )
         req_reduce.matchdict['member_id'] = 1
         res_reduce = dues19_reduction(req_reduce)
-        m1.locale = u'en'
+        m1.locale = 'en'
         req_reduce = testing.DummyRequest(
             post={
                 'confirmed': 'yes',
@@ -763,7 +763,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token + 'false!!!',  # must fail
-            'no': u'0006',
+            'no': '0006',
         }
         res = make_dues19_reversal_invoice_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -773,7 +773,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token,
-            'no': u'1234',  # must fail
+            'no': '1234',  # must fail
         }
         res = make_dues19_reversal_invoice_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -781,11 +781,11 @@ class TestDues19Views(unittest.TestCase):
 
         # wrong invoice token: must fail!
         i2 = DuesInvoiceRepository.get_by_number(2, 2019)
-        i2.token = u'not_matching'
+        i2.token = 'not_matching'
         req2.matchdict = {
             'email': m2.email,
             'code': m2.dues19_token,
-            'no': u'2',  # must fail
+            'no': '2',  # must fail
         }
         res = make_dues19_reversal_invoice_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -798,7 +798,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m2.email,
             'code': m2.dues19_token,
-            'no': u'0002',
+            'no': '0002',
         }
         res = make_dues19_reversal_invoice_pdf(req2)
         assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
@@ -809,7 +809,7 @@ class TestDues19Views(unittest.TestCase):
         req2.matchdict = {
             'email': m1.email,
             'code': m1.dues19_token,
-            'no': u'0003',
+            'no': '0003',
         }
         res = make_dues19_reversal_invoice_pdf(req2)
         assert(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)

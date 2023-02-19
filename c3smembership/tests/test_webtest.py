@@ -53,7 +53,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
 
         with transaction.manager:
             # a group for accountants/staff
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             try:
                 DBSession.add(accountants_group)
                 DBSession.flush()
@@ -61,9 +61,9 @@ class AccountantsFunctionalTests(unittest.TestCase):
                 print("could not add group staff.")
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             try:
@@ -84,64 +84,64 @@ class AccountantsFunctionalTests(unittest.TestCase):
     def _insert_members(self):
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             member2 = C3sMember(  # german
-                firstname=u'AAASomeFirstnäme',
-                lastname=u'XXXSomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='AAASomeFirstnäme',
+                lastname='XXXSomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAR',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAR',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             member3 = C3sMember(  # german
-                firstname=u'BBBSomeFirstnäme',
-                lastname=u'AAASomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='BBBSomeFirstnäme',
+                lastname='AAASomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAZ',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAZ',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             DBSession.add(member1)
             DBSession.add(member2)
@@ -263,7 +263,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
         first_name = first_member_row('td:nth-child(2)')
-        self.assertEqual(u'AAASomeFirstnäme', first_name.text())
+        self.assertEqual('AAASomeFirstnäme', first_name.text())
 
     def test_dashboard_orderByFirstnameDesc_dashboardOrdered(self):
         res2 = self._login()
@@ -271,7 +271,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
         first_name = first_member_row('td:nth-child(2)')
-        self.assertEqual(u'SomeFirstnäme', first_name.text())
+        self.assertEqual('SomeFirstnäme', first_name.text())
 
     def test_dashboard_orderByLastnameAsc_dashboardOrdered(self):
         res2 = self._login()
@@ -279,7 +279,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
         last_name = first_member_row('td:nth-child(1)')
-        self.assertEqual(u'AAASomeLastnäme', last_name.text())
+        self.assertEqual('AAASomeLastnäme', last_name.text())
 
     def test_dashboard_orderByLastnameDesc_dashboardOrdered(self):
         self._login()
@@ -287,7 +287,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         pq = self._get_pyquery(res2.body)
         first_member_row = pq('tr:nth-child(2)')
         last_name = first_member_row('td:nth-child(1)')
-        self.assertEqual(u'XXXSomeLastnäme', last_name.text())
+        self.assertEqual('XXXSomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_sameOrderAsBefore(self):
         self._login()
@@ -299,7 +299,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         pq = self._get_pyquery(resdel.body)
         first_member_row = pq('tr:nth-child(2)')
         last_name = first_member_row('td:nth-child(1)')
-        self.assertEqual(u'SomeLastnäme', last_name.text())
+        self.assertEqual('SomeLastnäme', last_name.text())
 
     def test_dashboard_afterDelete_messageShown(self):
         self._login()
@@ -422,7 +422,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         self.assertTrue('Personen finden' in res.body)
         # now use existing code
         form = res.forms[0]
-        form['code_to_show'] = u'XXXSomeLastnäme'
+        form['code_to_show'] = 'XXXSomeLastnäme'
         res = form.submit()
 
 
@@ -448,24 +448,24 @@ class FunctionalTests(unittest.TestCase):
         # dummy database entries for testing
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             DBSession.add(member1)
             DBSession.flush()

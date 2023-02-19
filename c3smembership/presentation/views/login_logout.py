@@ -47,19 +47,19 @@ def login(request):
     form = deform.Form(
         AccountantLogin(),
         buttons=[
-            deform.Button('submit', _(u'Submit')),
-            deform.Button('reset', _(u'Reset'))
+            deform.Button('submit', _('Submit')),
+            deform.Button('reset', _('Reset'))
         ],
     )
 
     # if the form has been used and SUBMITTED, check contents
     if 'submit' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = form.validate(controls)
         except ValidationFailure as e_validation_failure:
             request.session.flash(
-                _(u"Please note: There were errors, "
+                _("Please note: There were errors, "
                   "please check the form below."),
                 'message_above_form',
                 allow_duplicate=False)
@@ -97,7 +97,7 @@ def logout(request):
     Is used to log a user/staffer off. "forget"
     """
     request.session.invalidate()
-    request.session.flash(u'Logged out successfully.')
+    request.session.flash('Logged out successfully.')
     headers = forget(request)
     return HTTPFound(
         location=route_url('login', request),

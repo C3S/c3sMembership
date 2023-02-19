@@ -10,7 +10,7 @@ from datetime import (
     timedelta,
 )
 
-from integration_test_base import IntegrationTestCaseBase
+from .integration_test_base import IntegrationTestCaseBase
 
 from c3smembership.data.model.base.c3smember import C3sMember
 
@@ -28,23 +28,23 @@ class MembershipCertificateInt(IntegrationTestCaseBase):
         super(MembershipCertificateInt, cls).setUpClass()
         db_session = cls.get_db_session()
         cls.member = C3sMember(
-            firstname=u'SomeFirstnäme',
-            lastname=u'SomeLastnäme',
-            email=u'member@example.com',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"DE",
+            firstname='SomeFirstnäme',
+            lastname='SomeLastnäme',
+            email='member@example.com',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="DE",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFGFOO',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFGFOO',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
+            name_of_colsoc="GEMA",
             num_shares=23,
         )
         db_session.add(cls.member)
@@ -91,7 +91,7 @@ class MembershipCertificateInt(IntegrationTestCaseBase):
             days=15)
         return self
 
-    def set_certificate_token(self, token=u'cert-token-abc-zyx'):
+    def set_certificate_token(self, token='cert-token-abc-zyx'):
         """
         Set the member's certificate token
         """

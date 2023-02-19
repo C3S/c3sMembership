@@ -40,10 +40,10 @@ def upgrade():
     sa.ForeignKeyConstraint(['shares_id'], ['shares.id'], ),
     sa.PrimaryKeyConstraint('members_id', 'shares_id')
     )
-    op.add_column(u'members', sa.Column('court_of_law', sa.Unicode(length=255), nullable=True))
-    op.add_column(u'members', sa.Column('is_duplicate', sa.Boolean(), nullable=True))
-    op.add_column(u'members', sa.Column('is_duplicate_of', sa.Integer(), nullable=True))
-    op.add_column(u'members', sa.Column('registration_number', sa.Unicode(length=255), nullable=True))
+    op.add_column('members', sa.Column('court_of_law', sa.Unicode(length=255), nullable=True))
+    op.add_column('members', sa.Column('is_duplicate', sa.Boolean(), nullable=True))
+    op.add_column('members', sa.Column('is_duplicate_of', sa.Integer(), nullable=True))
+    op.add_column('members', sa.Column('registration_number', sa.Unicode(length=255), nullable=True))
     ### end Alembic commands ###
 
 

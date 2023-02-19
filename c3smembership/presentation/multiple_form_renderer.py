@@ -112,7 +112,7 @@ class MultipleFormRenderer(object):
                 form = self.__forms[post_formid]
                 try:
                     # validate the form
-                    appstruct = form.validate(request.POST.items())
+                    appstruct = form.validate(list(request.POST.items()))
                     # perform callback if available and return result
                     if post_formid in self.__validation_success:
                         callback = self.__validation_success[post_formid]

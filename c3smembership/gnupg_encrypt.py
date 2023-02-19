@@ -46,7 +46,7 @@ def encrypt_with_gnupg(data):
     # check if we have the membership key
     list_of_keys = gpg.list_keys()
     if DEBUG:  # pragma: no cover
-        print("=== the list of keys: " + repr(list_of_keys))
+        print(("=== the list of keys: " + repr(list_of_keys)))
 
     if 'C3S-Yes!' not in str(list_of_keys):
         # open and read key file
@@ -90,19 +90,19 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
         pass
 
     if DEBUG:  # pragma: no cover
-        print("list_keys(): " + str(gpg.list_keys()))
+        print(("list_keys(): " + str(gpg.list_keys())))
 
     # prepare
     to_encode = data
 
-    if isinstance(to_encode, unicode):
+    if isinstance(to_encode, str):
         to_encrypt = to_encode.encode(gpg.encoding)
     else:
         to_encrypt = to_encode
 
     if DEBUG:  # pragma: no cover
-        print("len(to_encrypt): " + str(len(str(to_encrypt))))
-        print("encrypt_with_gnupg: type(to_encrypt): %s") % type(to_encrypt)
+        print(("len(to_encrypt): " + str(len(str(to_encrypt)))))
+        print(("encrypt_with_gnupg: type(to_encrypt): %s") % type(to_encrypt))
 
     # encrypt
     encrypted = gpg.encrypt(
@@ -112,11 +112,11 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
         always_trust=True)
 
     if DEBUG:  # pragma: no cover
-        print("encrypt_with_gnupg: type(encrypted): %s") % type(encrypted)
-        print(
+        print(("encrypt_with_gnupg: type(encrypted): %s") % type(encrypted))
+        print((
             "encrypt_with_gnupg: type(encrypted.data): %s"
         ) % type(
-            encrypted.data)
+            encrypted.data))
         print("========================================== GNUPG END")
     shutil.rmtree(keyfolder)
 
@@ -125,7 +125,7 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
 
 if __name__ == '__main__':  # pragma: no coverage
 
-    my_unicode_text = u"""
+    my_unicode_text = """
     --                                      --
     --  So here is some sample text.        --
     --  With umlauts: öäß        --

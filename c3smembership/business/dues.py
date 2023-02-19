@@ -116,7 +116,7 @@ def is_dues_applicable(year, member):
             'Member {0} was not a member in {1}. Therefore, the member is not '
             'applicable for dues in {1}.'.format(member.id, year))
 
-    return True, u''
+    return True, ''
 
 
 def create_dues_invoice(year, member, dues_amount):
@@ -144,7 +144,7 @@ def create_dues_invoice(year, member, dues_amount):
         year,
         member,
         invoice_number=new_invoice_no,
-        invoice_number_string=(u'C3S-dues{0}-{1}'.format(
+        invoice_number_string=('C3S-dues{0}-{1}'.format(
             year,
             str(new_invoice_no).zfill(4))),
         invoice_amount=dues_amount,
@@ -193,7 +193,7 @@ def _make_random_string():
     """
     Generate a random string used as a dues token
     """
-    return u''.join(random.choice(string.ascii_uppercase) for x in range(10))
+    return ''.join(random.choice(string.ascii_uppercase) for x in range(10))
 
 
 def _get_dues_calculator(year):

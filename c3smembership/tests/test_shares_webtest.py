@@ -47,14 +47,14 @@ class SharesTests(unittest.TestCase):
 
         with transaction.manager:
             # a group for accountants/staff
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             db_session.add(accountants_group)
             db_session.flush()
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             db_session.add(accountants_group)
@@ -79,29 +79,29 @@ class SharesTests(unittest.TestCase):
         """
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             shares1 = Shares(
                 number=2,
                 date_of_acquisition=date.today(),
-                reference_code=u'ABCDEFGH',
+                reference_code='ABCDEFGH',
                 signature_received=True,
                 signature_received_date=date(2014, 6, 7),
                 payment_received=True,
@@ -110,13 +110,13 @@ class SharesTests(unittest.TestCase):
                 signature_confirmed_date=date(2014, 6, 8),
                 payment_confirmed=True,
                 payment_confirmed_date=date(2014, 6, 9),
-                accountant_comment=u'no comment',
+                accountant_comment='no comment',
             )
             member1.shares = [shares1]
             shares2 = Shares(
                 number=23,
                 date_of_acquisition=date.today(),
-                reference_code=u'IJKLMNO',
+                reference_code='IJKLMNO',
                 signature_received=True,
                 signature_received_date=date(2014, 1, 7),
                 payment_received=True,
@@ -125,7 +125,7 @@ class SharesTests(unittest.TestCase):
                 signature_confirmed_date=date(2014, 1, 8),
                 payment_confirmed=True,
                 payment_confirmed_date=date(2014, 1, 9),
-                accountant_comment=u'not connected',
+                accountant_comment='not connected',
             )
         db_session = DBSession()
         db_session.add(member1)
@@ -139,29 +139,29 @@ class SharesTests(unittest.TestCase):
         """
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             shares1 = Shares(
                 number=2,
                 date_of_acquisition=date.today(),
-                reference_code=u'ABCDEFGH',
+                reference_code='ABCDEFGH',
                 signature_received=True,
                 signature_received_date=date(2014, 6, 7),
                 payment_received=True,
@@ -170,7 +170,7 @@ class SharesTests(unittest.TestCase):
                 signature_confirmed_date=date(2014, 6, 8),
                 payment_confirmed=True,
                 payment_confirmed_date=date(2014, 6, 9),
-                accountant_comment=u'no comment',
+                accountant_comment='no comment',
             )
             member1.shares = [shares1]
         db_session = DBSession()
@@ -186,7 +186,7 @@ class SharesTests(unittest.TestCase):
             shares2 = Shares(
                 number=23,
                 date_of_acquisition=date.today(),
-                reference_code=u'IJKLMNO',
+                reference_code='IJKLMNO',
                 signature_received=True,
                 signature_received_date=date(2014, 1, 7),
                 payment_received=True,
@@ -195,7 +195,7 @@ class SharesTests(unittest.TestCase):
                 signature_confirmed_date=date(2014, 1, 8),
                 payment_confirmed=True,
                 payment_confirmed_date=date(2014, 1, 9),
-                accountant_comment=u'not connected',
+                accountant_comment='not connected',
             )
         DBSession().add(shares2)
 
@@ -245,8 +245,8 @@ class SharesTests(unittest.TestCase):
         self.assertTrue('login' in res.body)
         # try valid user
         form = res.form
-        form['login'] = u'rut'
-        form['password'] = u'berries'
+        form['login'] = 'rut'
+        form['password'] = 'berries'
         res2 = form.submit('submit', status=302)
         # # being logged in ...
         res3 = res2.follow()  # being redirected to dashboard with parameters
@@ -276,8 +276,8 @@ class SharesTests(unittest.TestCase):
         field_id_dict = self.__get_field_id_dict(form)
         self.assertTrue(datetime.today().strftime(
             '%Y-%m-%d') in field_id_dict['date_of_acquisition'].value)
-        form['number'] = u'3'
-        field_id_dict['date_of_acquisition'].value = u'2015-01-02'
+        form['number'] = '3'
+        field_id_dict['date_of_acquisition'].value = '2015-01-02'
 
         # try to submit now. this must fail,
         # because the date of birth is wrong
@@ -352,7 +352,7 @@ class SharesTests(unittest.TestCase):
             dict mapping the id to its field.
         """
         field_id_dict = {}
-        for key in form.fields.keys():
+        for key in list(form.fields.keys()):
             fields = form.fields[key]
             for field in fields:
                 field_id_dict[field.id] = field

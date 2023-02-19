@@ -34,12 +34,12 @@ def build_form_renderer():
     # build forms
     membership_listing_date_pdf_form = deform.Form(
         MembershipListingDate().bind(),
-        buttons=[deform.Button('submit', _(u'Generate PDF'))],
+        buttons=[deform.Button('submit', _('Generate PDF'))],
         formid='membership_listing_date_pdf')
 
     membership_listing_year_end_pdf_form = deform.Form(
         MembershipListingYearEnd().bind(),
-        buttons=[deform.Button('submit', _(u'Generate PDF'))],
+        buttons=[deform.Button('submit', _('Generate PDF'))],
         formid='membership_listing_year_end_pdf'
     )
 

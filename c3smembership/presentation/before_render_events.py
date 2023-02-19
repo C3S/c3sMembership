@@ -40,12 +40,12 @@ def get_version_information():
     tag = GitTools.get_tag()
     branch = GitTools.get_branch()
 
-    version_metadata = [u'Version {0}'.format(version_number)]
+    version_metadata = ['Version {0}'.format(version_number)]
     if tag is not None:
-        version_metadata.append(u'Tag {0}'.format(tag))
+        version_metadata.append('Tag {0}'.format(tag))
     if branch is not None:
-        version_metadata.append(u'Branch {0}'.format(branch))
-    version_information = u', '.join(version_metadata)
+        version_metadata.append('Branch {0}'.format(branch))
+    version_information = ', '.join(version_metadata)
     return version_information
 
 

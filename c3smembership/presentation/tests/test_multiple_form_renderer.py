@@ -311,7 +311,7 @@ class TestMultipleFormRenderer(unittest.TestCase):
         form1.render.assert_has_calls([mock.call()])
         form2.render.assert_has_calls([mock.call()])
         # validation called with POST items
-        form1.validate.assert_has_calls([mock.call(request.POST.items())])
+        form1.validate.assert_has_calls([mock.call(list(request.POST.items()))])
 
     def test_render_post_valid_exc(self):
         """

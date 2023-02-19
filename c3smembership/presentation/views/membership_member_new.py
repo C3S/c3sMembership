@@ -49,40 +49,40 @@ def new_member(request):
         Schema for membership specific information
         """
 
-        yes_no = ((u'yes', _(u'Yes')),
-                  (u'no', _(u'No')),
-                  (u'dontknow', _(u'Unknown')),)
+        yes_no = (('yes', _('Yes')),
+                  ('no', _('No')),
+                  ('dontknow', _('Unknown')),)
 
         entity_type = colander.SchemaNode(
             colander.String(),
-            title=(u'Person oder Körperschaft?'),
-            description=u'Bitte die Kategorie des Mitglied auswählen.',
+            title=('Person oder Körperschaft?'),
+            description='Bitte die Kategorie des Mitglied auswählen.',
             widget=deform.widget.RadioChoiceWidget(
                 values=(
-                    (u'person',
-                     (u'Person')),
-                    (u'legalentity',
-                     u'Körperschaft'),
+                    ('person',
+                     ('Person')),
+                    ('legalentity',
+                     'Körperschaft'),
                 ),
             ),
-            missing=unicode(''),
+            missing=str(''),
             oid='entity_type',
         )
         membership_type = colander.SchemaNode(
             colander.String(),
-            title=(u'Art der Mitgliedschaft'),
-            description=u'Bitte die Art der Mitgliedschaft auswählen.',
+            title=('Art der Mitgliedschaft'),
+            description='Bitte die Art der Mitgliedschaft auswählen.',
             widget=deform.widget.RadioChoiceWidget(
                 values=(
-                    (u'normal',
-                     (u'Normales Mitglied')),
-                    (u'investing',
-                     u'Investierendes Mitglied'),
-                    (u'unknown',
-                     u'Unbekannt.'),
+                    ('normal',
+                     ('Normales Mitglied')),
+                    ('investing',
+                     'Investierendes Mitglied'),
+                    ('unknown',
+                     'Unbekannt.'),
                 ),
             ),
-            missing=unicode(''),
+            missing=str(''),
             oid='membership_type',
         )
         member_of_colsoc = colander.SchemaNode(
@@ -90,13 +90,13 @@ def new_member(request):
             title='Mitglied einer Verwertungsgesellschaft?',
             validator=colander.OneOf([x[0] for x in yes_no]),
             widget=deform.widget.RadioChoiceWidget(values=yes_no),
-            missing=unicode(''),
+            missing=str(''),
             oid="other_colsoc",
         )
         name_of_colsoc = colander.SchemaNode(
             colander.String(),
-            title=(u'Falls ja, welche? (Kommasepariert)'),
-            missing=unicode(''),
+            title=('Falls ja, welche? (Kommasepariert)'),
+            missing=str(''),
             oid="colsoc_name",
         )
 
@@ -111,8 +111,8 @@ def new_member(request):
             validator=colander.Range(
                 min=1,
                 max=60,
-                min_err=u'mindestens 1',
-                max_err=u'höchstens 60',
+                min_err='mindestens 1',
+                max_err='höchstens 60',
             ),
             oid="num_shares")
 
@@ -124,13 +124,13 @@ def new_member(request):
         - Shares
         """
         person = PersonalDataCreateEdit(
-            title=_(u"Personal Data"),
+            title=_("Personal Data"),
         )
         membership_info = MembershipInfo(
-            title=_(u"Membership Requirements")
+            title=_("Membership Requirements")
         )
         shares = Shares(
-            title=_(u"Shares")
+            title=_("Shares")
         )
 
     schema = MembershipForm()
@@ -138,8 +138,8 @@ def new_member(request):
     form = deform.Form(
         schema.bind(date=date),
         buttons=[
-            deform.Button('submit', _(u'Submit')),
-            deform.Button('reset', _(u'Reset'))
+            deform.Button('submit', _('Submit')),
+            deform.Button('reset', _('Reset'))
         ],
         use_ajax=True,
         renderer=ZPT_RENDERER,
@@ -151,13 +151,13 @@ def new_member(request):
 
     # if the form has been used and SUBMITTED, check contents
     if 'submit' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = form.validate(controls)
 
         except ValidationFailure as exception:
             request.session.flash(
-                _(u"Please note: There were errors, "
+                _("Please note: There were errors, "
                   "please check the form below."),
                 'danger',
                 allow_duplicate=False)
@@ -167,7 +167,7 @@ def new_member(request):
             """
             used as email confirmation code
             """
-            return u''.join(
+            return ''.join(
                 random.choice(
                     string.ascii_uppercase + string.digits
                 ) for x in range(10))
@@ -196,12 +196,12 @@ def new_member(request):
             date_of_submission=datetime.now(),
             membership_type=appstruct['membership_info']['membership_type'],
             member_of_colsoc=(
-                appstruct['membership_info']['member_of_colsoc'] == u'yes'),
+                appstruct['membership_info']['member_of_colsoc'] == 'yes'),
             name_of_colsoc=appstruct['membership_info']['name_of_colsoc'],
             num_shares=appstruct['shares']['num_shares'],
         )
         if 'legalentity' in appstruct['membership_info']['entity_type']:
-            member.membership_type = u'investing'
+            member.membership_type = 'investing'
             member.is_legalentity = True
 
         dbsession = DBSession()
@@ -225,9 +225,9 @@ def new_member(request):
             dbsession.flush()
             the_new_id = member.id
         except InvalidRequestError as exception:
-            print("InvalidRequestError! %s") % exception
+            print(("InvalidRequestError! %s") % exception)
         except IntegrityError as exception:
-            print("IntegrityError! %s") % exception
+            print(("IntegrityError! %s") % exception)
 
         # redirect to success page, then return the PDF
         # first, store appstruct in session

@@ -35,7 +35,7 @@ class TestGnuPG(unittest.TestCase):
         test if unicode input is acceptable and digested
         """
         from c3smembership.gnupg_encrypt import encrypt_with_gnupg
-        result = encrypt_with_gnupg(u'fuck the umläuts')
+        result = encrypt_with_gnupg('fuck the umläuts')
         self.assertTrue('-----BEGIN PGP MESSAGE-----' in str(result))
         self.assertTrue('-----END PGP MESSAGE-----' in str(result))
 

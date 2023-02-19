@@ -64,7 +64,7 @@ def add_locale_to_cookie(event):
             event.request.response.set_cookie('_LOCALE_', value=lang)
 
             if DEBUG:  # pragma: no cover
-                print("switching language to " + lang)
+                print(("switching language to " + lang))
             # from pyramid.httpexceptions import HTTPFound
             # print("XXXXXXXXXXXXXXX ==> REDIRECTING in subscriber")
             # return HTTPFound(location=event.request.route_url('intent'),
@@ -79,7 +79,7 @@ def add_locale_to_cookie(event):
     locale = default_locale_negotiator(event.request)
 
     if DEBUG:  # pragma: no cover
-        print("locale (from default_locale_negotiator): " + str(locale))
+        print(("locale (from default_locale_negotiator): " + str(locale)))
 
     # if locale is not already set, look at browser information
     browser_info = str(event.request.accept_language).replace('-', '_')

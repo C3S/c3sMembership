@@ -46,7 +46,7 @@ def auth_header_does_match(request):
     '''
     _auth_token = request.headers['X-messaging-token']
     if DEBUG:  # pragma: no cover
-        print("the api received this: {}".format(_auth_token))
+        print(("the api received this: {}".format(_auth_token)))
     if ((_auth_token in request.registry.settings['api_auth_token']) and
             (request.registry.settings['api_auth_token'] in _auth_token)):
         pass
@@ -64,8 +64,8 @@ def token_does_exist(request):
     req = json.loads(request.body)
     _token = req['token']
     if DEBUG:  # pragma: no cover
-        print("the request: {}".format(req))
-        print("the token: {}".format(_token))
+        print(("the request: {}".format(req)))
+        print(("the token: {}".format(_token)))
     request.validated['refcode'] = _token
 
 
@@ -75,7 +75,7 @@ def api_userinfo(request):
     Allow api access to load user info (for ticketing)
     '''
     if DEBUG:  # pragma: no cover
-        print(u"the refcode received: {}".format(request.validated['refcode']))
+        print(("the refcode received: {}".format(request.validated['refcode'])))
 
     _m = GeneralAssemblyRepository.get_member_by_token(
         request.validated['refcode'])

@@ -46,21 +46,21 @@ class TestPaymentRepository(unittest.TestCase):
         member = C3sMember(
             firstname=firstname,
             lastname=lastname,
-            email=u'',
-            address1=u'',
-            address2=u'',
-            postcode=u'',
-            city=u'',
-            country=u'',
-            locale=u'',
+            email='',
+            address1='',
+            address2='',
+            postcode='',
+            city='',
+            country='',
+            locale='',
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=unicode(membership_number),
-            password=u'',
+            email_confirm_code=str(membership_number),
+            password='',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=False,
-            name_of_colsoc=u'',
+            name_of_colsoc='',
             num_shares=1,
         )
         member.membership_number = membership_number
@@ -139,69 +139,69 @@ class TestPaymentRepository(unittest.TestCase):
             # pylint: disable=no-member
             DBSession.add(self._create_member(
                 membership_number=1,
-                firstname=u'Jane',
-                lastname=u'Smith',
+                firstname='Jane',
+                lastname='Smith',
                 dues15_paid=True,
                 dues15_payment_date=date(2015, 1, 1),
-                dues15_payment_token=u'JANE',
+                dues15_payment_token='JANE',
                 dues15_payment_amount=Decimal('15.11'),
                 dues16_paid=True,
                 dues16_payment_date=date(2016, 2, 1),
-                dues16_payment_token=u'SMI',
+                dues16_payment_token='SMI',
                 dues16_payment_amount=Decimal('16.21'),
                 dues17_paid=True,
                 dues17_payment_date=date(2017, 3, 1),
-                dues17_payment_token=u'TH',
+                dues17_payment_token='TH',
                 dues17_payment_amount=Decimal('17.31'),
                 dues19_paid=True,
                 dues19_payment_date=date(2019, 4, 5),
-                dues19_payment_token=u'JS19',
+                dues19_payment_token='JS19',
                 dues19_payment_amount=Decimal('19.19'),
                 dues20_paid=True,
                 dues20_payment_date=date(2020, 4, 5),
-                dues20_payment_token=u'JS20',
+                dues20_payment_token='JS20',
                 dues20_payment_amount=Decimal('20.20'),
                 dues21_paid=True,
                 dues21_payment_date=date(2021, 4, 5),
-                dues21_payment_token=u'JS21',
+                dues21_payment_token='JS21',
                 dues21_payment_amount=Decimal('21.21'),
                 dues22_paid=True,
                 dues22_payment_date=date(2022, 4, 5),
-                dues22_payment_token=u'JS22',
+                dues22_payment_token='JS22',
                 dues22_payment_amount=Decimal('22.22'),
                 dues23_paid=True,
                 dues23_payment_date=date(2023, 4, 5),
-                dues23_payment_token=u'JS23',
+                dues23_payment_token='JS23',
                 dues23_payment_amount=Decimal('23.23'),
             ))
             DBSession.add(self._create_member(
                 membership_number=2,
-                firstname=u'John',
-                lastname=u'Smith',
+                firstname='John',
+                lastname='Smith',
                 dues15_paid=False,
                 dues15_payment_date=None,
                 dues15_payment_token=None,
                 dues15_payment_amount=None,
                 dues16_paid=True,
                 dues16_payment_date=date(2016, 2, 2),
-                dues16_payment_token=u'JOHN',
+                dues16_payment_token='JOHN',
                 dues16_payment_amount=Decimal('16.22'),
                 dues17_paid=True,
                 dues17_payment_date=date(2017, 3, 2),
-                dues17_payment_token=u'SMITH',
+                dues17_payment_token='SMITH',
                 dues17_payment_amount=Decimal('17.32'),
             ))
             DBSession.add(self._create_member(
                 membership_number=3,
-                firstname=u'Cassandra',
-                lastname=u'Jones',
+                firstname='Cassandra',
+                lastname='Jones',
                 dues15_paid=True,
                 dues15_payment_date=date(2015, 1, 3),
-                dues15_payment_token=u'CASSANDRA',
+                dues15_payment_token='CASSANDRA',
                 dues15_payment_amount=Decimal('15.13'),
                 dues16_paid=True,
                 dues16_payment_date=date(2016, 2, 3),
-                dues16_payment_token=u'JONES',
+                dues16_payment_token='JONES',
                 dues16_payment_amount=Decimal('16.23'),
                 dues17_paid=False,
                 dues17_payment_date=None,
@@ -209,7 +209,7 @@ class TestPaymentRepository(unittest.TestCase):
                 dues17_payment_amount=None,
                 dues18_paid=True,
                 dues18_payment_date=date(2018, 10, 12),
-                dues18_payment_token=u'CJ18',
+                dues18_payment_token='CJ18',
                 dues18_payment_amount=Decimal('12.12'),
             ))
 
@@ -241,66 +241,66 @@ class TestPaymentRepository(unittest.TestCase):
         # 2. Test first payment for default sorting
         payments = PaymentRepository.get_payments(1, 1)
         self.assertEqual(payments[0]['date'], date(2015, 1, 1))
-        self.assertEqual(payments[0]['account'], u'Membership dues 2015')
-        self.assertEqual(payments[0]['reference'], u'JANE')
+        self.assertEqual(payments[0]['account'], 'Membership dues 2015')
+        self.assertEqual(payments[0]['reference'], 'JANE')
         self.assertEqual(payments[0]['membership_number'], 1)
-        self.assertEqual(payments[0]['firstname'], u'Jane')
-        self.assertEqual(payments[0]['lastname'], u'Smith')
+        self.assertEqual(payments[0]['firstname'], 'Jane')
+        self.assertEqual(payments[0]['lastname'], 'Smith')
         self.assertEqual(payments[0]['amount'], Decimal('15.11'))
 
         # 3. Test paging and 4th payment for default sorting
         payments = PaymentRepository.get_payments(2, 3)
         self.assertEqual(len(payments), 3)
         self.assertEqual(payments[0]['date'], date(2016, 2, 2))
-        self.assertEqual(payments[0]['account'], u'Membership dues 2016')
-        self.assertEqual(payments[0]['reference'], u'JOHN')
+        self.assertEqual(payments[0]['account'], 'Membership dues 2016')
+        self.assertEqual(payments[0]['reference'], 'JOHN')
         self.assertEqual(payments[0]['membership_number'], 2)
-        self.assertEqual(payments[0]['firstname'], u'John')
-        self.assertEqual(payments[0]['lastname'], u'Smith')
+        self.assertEqual(payments[0]['firstname'], 'John')
+        self.assertEqual(payments[0]['lastname'], 'Smith')
         self.assertEqual(payments[0]['amount'], Decimal('16.22'))
 
         # 4. Test 2nd records for default sorting
         payments = PaymentRepository.get_payments(2, 1)
         self.assertEqual(len(payments), 1)
         self.assertEqual(payments[0]['date'], date(2015, 1, 3))
-        self.assertEqual(payments[0]['account'], u'Membership dues 2015')
-        self.assertEqual(payments[0]['reference'], u'CASSANDRA')
+        self.assertEqual(payments[0]['account'], 'Membership dues 2015')
+        self.assertEqual(payments[0]['reference'], 'CASSANDRA')
         self.assertEqual(payments[0]['membership_number'], 3)
-        self.assertEqual(payments[0]['firstname'], u'Cassandra')
-        self.assertEqual(payments[0]['lastname'], u'Jones')
+        self.assertEqual(payments[0]['firstname'], 'Cassandra')
+        self.assertEqual(payments[0]['lastname'], 'Jones')
         self.assertEqual(payments[0]['amount'], Decimal('15.13'))
 
         # 5. Test 7th record for default sorting
         payments = PaymentRepository.get_payments(7, 1)
         self.assertEqual(len(payments), 1)
         self.assertEqual(payments[0]['date'], date(2017, 3, 2))
-        self.assertEqual(payments[0]['account'], u'Membership dues 2017')
-        self.assertEqual(payments[0]['reference'], u'SMITH')
+        self.assertEqual(payments[0]['account'], 'Membership dues 2017')
+        self.assertEqual(payments[0]['reference'], 'SMITH')
         self.assertEqual(payments[0]['membership_number'], 2)
-        self.assertEqual(payments[0]['firstname'], u'John')
-        self.assertEqual(payments[0]['lastname'], u'Smith')
+        self.assertEqual(payments[0]['firstname'], 'John')
+        self.assertEqual(payments[0]['lastname'], 'Smith')
         self.assertEqual(payments[0]['amount'], Decimal('17.32'))
 
         # 6. Test 8th record for default sorting
         payments = PaymentRepository.get_payments(8, 1)
         self.assertEqual(len(payments), 1)
         self.assertEqual(payments[0]['date'], date(2018, 10, 12))
-        self.assertEqual(payments[0]['account'], u'Membership dues 2018')
-        self.assertEqual(payments[0]['reference'], u'CJ18')
+        self.assertEqual(payments[0]['account'], 'Membership dues 2018')
+        self.assertEqual(payments[0]['reference'], 'CJ18')
         self.assertEqual(payments[0]['membership_number'], 3)
-        self.assertEqual(payments[0]['firstname'], u'Cassandra')
-        self.assertEqual(payments[0]['lastname'], u'Jones')
+        self.assertEqual(payments[0]['firstname'], 'Cassandra')
+        self.assertEqual(payments[0]['lastname'], 'Jones')
         self.assertEqual(payments[0]['amount'], Decimal('12.12'))
 
         # 7. Test 9th record for default sorting
         payments = PaymentRepository.get_payments(9, 1)
         self.assertEqual(len(payments), 1)
         self.assertEqual(payments[0]['date'], date(2019, 4, 5))
-        self.assertEqual(payments[0]['account'], u'Membership dues 2019')
-        self.assertEqual(payments[0]['reference'], u'JS19')
+        self.assertEqual(payments[0]['account'], 'Membership dues 2019')
+        self.assertEqual(payments[0]['reference'], 'JS19')
         self.assertEqual(payments[0]['membership_number'], 1)
-        self.assertEqual(payments[0]['firstname'], u'Jane')
-        self.assertEqual(payments[0]['lastname'], u'Smith')
+        self.assertEqual(payments[0]['firstname'], 'Jane')
+        self.assertEqual(payments[0]['lastname'], 'Smith')
         self.assertEqual(payments[0]['amount'], Decimal('19.19'))
 
     def test_get_payments_filtering(self):

@@ -290,7 +290,7 @@ class PagingIterator(Paging):
         """
         return self
 
-    def next(self):
+    def __next__(self):
         """
         Returns the next object in iteration.
         """

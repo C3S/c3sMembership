@@ -556,7 +556,7 @@ class C3sMember(Base):
         if self.member_of_colsoc is True:
             self.name_of_colsoc = name_of_colsoc
         else:
-            self.name_of_colsoc = u''
+            self.name_of_colsoc = ''
 
     def _get_password(self):
         return self._password
@@ -1024,7 +1024,7 @@ class C3sMember(Base):
                 cls.membership_accepted == 1,
                 cls.dues16_invoice == 0,
                 cls.membership_date < date(2017, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing'])
+                cls.membership_type.in_(['normal', 'investing'])
             )).slice(0, num).all()
 
     @classmethod
@@ -1052,7 +1052,7 @@ class C3sMember(Base):
                 cls.membership_accepted == True,
                 cls.dues17_invoice == False,
                 cls.membership_date < date(2018, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing']),
+                cls.membership_type.in_(['normal', 'investing']),
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(2017, 1, 1),
@@ -1084,7 +1084,7 @@ class C3sMember(Base):
                 cls.membership_accepted == True,
                 cls.dues18_invoice == False,
                 cls.membership_date < date(2019, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing']),
+                cls.membership_type.in_(['normal', 'investing']),
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(2018, 1, 1),
@@ -1117,7 +1117,7 @@ class C3sMember(Base):
                 cls.membership_accepted == True,
                 cls.dues19_invoice == False,
                 cls.membership_date < date(invoice_year+1, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing']),
+                cls.membership_type.in_(['normal', 'investing']),
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(invoice_year, 1, 1),
@@ -1150,7 +1150,7 @@ class C3sMember(Base):
                 cls.membership_accepted == True,
                 cls.dues20_invoice == False,
                 cls.membership_date < date(invoice_year+1, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing']),
+                cls.membership_type.in_(['normal', 'investing']),
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(invoice_year, 1, 1),
@@ -1183,7 +1183,7 @@ class C3sMember(Base):
                 cls.membership_accepted == True,
                 cls.dues21_invoice == False,
                 cls.membership_date < date(invoice_year+1, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing']),
+                cls.membership_type.in_(['normal', 'investing']),
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(invoice_year, 1, 1),
@@ -1216,7 +1216,7 @@ class C3sMember(Base):
                 cls.membership_accepted == True,
                 cls.dues22_invoice == False,
                 cls.membership_date < date(invoice_year+1, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing']),
+                cls.membership_type.in_(['normal', 'investing']),
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(invoice_year, 1, 1),
@@ -1249,7 +1249,7 @@ class C3sMember(Base):
                 cls.membership_accepted == True,
                 cls.dues23_invoice == False,
                 cls.membership_date < date(invoice_year+1, 1, 1),
-                cls.membership_type.in_([u'normal', u'investing']),
+                cls.membership_type.in_(['normal', 'investing']),
                 or_(
                     cls.membership_loss_date == None,
                     cls.membership_loss_date >= date(invoice_year, 1, 1),
@@ -1423,7 +1423,7 @@ class C3sMember(Base):
         """
         return DBSession.query(cls).filter(
             cls.is_member_filter(),
-            cls.membership_type == u'normal'
+            cls.membership_type == 'normal'
         ).count()
 
     @classmethod
@@ -1439,7 +1439,7 @@ class C3sMember(Base):
         """
         return DBSession.query(cls).filter(
             cls.is_member_filter(),
-            cls.membership_type == u'investing'
+            cls.membership_type == 'investing'
         ).count()
 
     @classmethod
@@ -1455,8 +1455,8 @@ class C3sMember(Base):
         """
         return DBSession.query(cls).filter(
             cls.is_member_filter(),
-            cls.membership_type != u'normal',
-            cls.membership_type != u'investing'
+            cls.membership_type != 'normal',
+            cls.membership_type != 'investing'
         ).count()
 
     @classmethod
@@ -1786,7 +1786,7 @@ class C3sMember(Base):
         countries = {}
         rows = DBSession.query(cls)
         for row in rows:
-            if row.country not in countries.keys():
+            if row.country not in list(countries.keys()):
                 countries[row.country] = 1
             else:
                 countries[row.country] += 1

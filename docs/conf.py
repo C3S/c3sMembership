@@ -77,8 +77,8 @@ numfig_secnum_depth = 1
 master_doc = 'index'
 
 # General information about the project.
-project = u'c3sMembership'
-copyright = u'Cultural Commons Collecting Society SCE mbH and contributers'
+project = 'c3sMembership'
+copyright = 'Cultural Commons Collecting Society SCE mbH and contributers'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -264,7 +264,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'c3sMembership.tex', u'c3sMembership Documentation',
+  ('index', 'c3sMembership.tex', 'c3sMembership Documentation',
    copyright, 'manual'),
 ]
 
@@ -294,7 +294,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'c3smembership', u'c3sMembership Documentation',
+    ('index', 'c3smembership', 'c3sMembership Documentation',
      [copyright], 1)
 ]
 
@@ -308,7 +308,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'c3sMembership', u'c3sMembership Documentation',
+  ('index', 'c3sMembership', 'c3sMembership Documentation',
    copyright, 'c3sMembership', 'One line description of project.',
    'Miscellaneous'),
 ]
@@ -329,9 +329,9 @@ texinfo_documents = [
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'c3sMembership'
+epub_title = 'c3sMembership'
 epub_author = copyright
-epub_publisher = u'Cultural Commons Collecting Society SCE mbH'
+epub_publisher = 'Cultural Commons Collecting Society SCE mbH'
 epub_copyright = copyright
 
 # The basename for the epub file. It defaults to the project name.

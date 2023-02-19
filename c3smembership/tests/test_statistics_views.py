@@ -22,75 +22,75 @@ class TestViews(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.config.include('pyramid_mailer.testing')
-        engine = create_engine(u'sqlite://')
+        engine = create_engine('sqlite://')
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
         with transaction.manager:
             member1 = C3sMember(
-                firstname=u'firsie',
-                lastname=u'lastie',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"de",
+                firstname='firsie',
+                lastname='lastie',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="de",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             member2 = C3sMember(  # german
-                firstname=u'AAASomeFirstnäme',
-                lastname=u'XXXSomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"de",
+                firstname='AAASomeFirstnäme',
+                lastname='XXXSomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="de",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAR',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAR',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             member3 = C3sMember(  # german
-                firstname=u'BBBSomeFirstnäme',
-                lastname=u'AAASomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"de",
+                firstname='BBBSomeFirstnäme',
+                lastname='AAASomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="de",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAZ',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAZ',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'investing',
+                membership_type='investing',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=23,
             )
             DBSession.add(member1)
             DBSession.add(member2)
             DBSession.add(member3)
 
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             try:
                 DBSession.add(accountants_group)
                 DBSession.flush()
@@ -100,9 +100,9 @@ class TestViews(unittest.TestCase):
                 # pass
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             try:

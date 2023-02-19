@@ -60,6 +60,6 @@ def create_archiving_form(request):
 
     return deform.Form(
         InvoiceArchivingSchemaGroup(),
-        buttons=[deform.Button('submit', _(u'Archive invoices'))],
+        buttons=[deform.Button('submit', _('Archive invoices'))],
         renderer=ZPT_RENDERER
     )

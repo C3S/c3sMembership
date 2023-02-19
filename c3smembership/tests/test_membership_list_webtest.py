@@ -51,14 +51,14 @@ class MemberTestsBase(unittest.TestCase):
 
         with transaction.manager:
             # a group for accountants/staff
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             DBSession.add(accountants_group)
             DBSession.flush()
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             DBSession.add(accountants_group)
@@ -68,29 +68,29 @@ class MemberTestsBase(unittest.TestCase):
         with transaction.manager:
             # German
             member1 = C3sMember(
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"de",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="de",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'23',
+                name_of_colsoc="GEMA",
+                num_shares='23',
             )
             shares1_member1 = Shares(
                 number=2,
                 date_of_acquisition=date.today(),
-                reference_code=u'ABCDEFGH',
+                reference_code='ABCDEFGH',
                 signature_received=True,
                 signature_received_date=date(2014, 6, 7),
                 payment_received=True,
@@ -99,13 +99,13 @@ class MemberTestsBase(unittest.TestCase):
                 signature_confirmed_date=date(2014, 6, 8),
                 payment_confirmed=True,
                 payment_confirmed_date=date(2014, 6, 9),
-                accountant_comment=u'no comment',
+                accountant_comment='no comment',
             )
             member1.shares = [shares1_member1]
             shares2_member1 = Shares(
                 number=23,
                 date_of_acquisition=date.today(),
-                reference_code=u'IJKLMNO',
+                reference_code='IJKLMNO',
                 signature_received=True,
                 signature_received_date=date(2014, 1, 7),
                 payment_received=True,
@@ -114,72 +114,72 @@ class MemberTestsBase(unittest.TestCase):
                 signature_confirmed_date=date(2014, 1, 8),
                 payment_confirmed=True,
                 payment_confirmed_date=date(2014, 1, 9),
-                accountant_comment=u'not connected',
+                accountant_comment='not connected',
             )
             member1.shares.append(shares2_member1)
             member1.membership_accepted = True
 
             # English
             member2 = C3sMember(
-                firstname=u'AAASomeFirstnäme',
-                lastname=u'XXXSomeLastnäme',
-                email=u'some2@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"en",
+                firstname='AAASomeFirstnäme',
+                lastname='XXXSomeLastnäme',
+                email='some2@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="en",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAR',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAR',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'2',
+                name_of_colsoc="GEMA",
+                num_shares='2',
             )
             # English
             founding_member3 = C3sMember(
-                firstname=u'BBBSomeFirstnäme',
-                lastname=u'YYYSomeLastnäme',
-                email=u'some3@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"en",
+                firstname='BBBSomeFirstnäme',
+                lastname='YYYSomeLastnäme',
+                email='some3@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="en",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCBARdungHH_',
-                password=u'anotherrandompassword',
+                email_confirm_code='ABCBARdungHH_',
+                password='anotherrandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'2',
+                name_of_colsoc="GEMA",
+                num_shares='2',
             )
             member4_lost = C3sMember(
-                firstname=u'Resigned',
-                lastname=u'Smith',
-                email=u'resigned.smith@example.com',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"en",
+                firstname='Resigned',
+                lastname='Smith',
+                email='resigned.smith@example.com',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="en",
                 date_of_birth=date(1980, 1, 2),
                 email_is_confirmed=False,
-                email_confirm_code=u'RESIGNEDSMITH',
-                password=u'arandompassword',
+                email_confirm_code='RESIGNEDSMITH',
+                password='arandompassword',
                 date_of_submission=date.today() - timedelta(days=370),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
-                num_shares=u'2',
+                name_of_colsoc="GEMA",
+                num_shares='2',
             )
 
             DBSession.add(shares1_member1)
@@ -307,7 +307,7 @@ class MakeMergeMemberTests(MemberTestsBase):
         self.assertTrue(
             'form action="http://localhost/make_member/1' in res.body)
         self.assertTrue(
-            u'SomeFirstnäme SomeLastnäme' in res.body.decode('utf-8'))
+            'SomeFirstnäme SomeLastnäme' in res.body.decode('utf-8'))
 
         # this member must not be accepted yet
         self.assertTrue(member1.membership_accepted is False)
@@ -485,4 +485,4 @@ class MembershipListTests(MemberTestsBase):
         res = self.testapp.get('/memberships', status=200)
 
         self.assertTrue('Page 1 of 1' in res.body)
-        self.assertTrue(u'SomeFirstnäme' in res.body.decode('utf-8'))
+        self.assertTrue('SomeFirstnäme' in res.body.decode('utf-8'))

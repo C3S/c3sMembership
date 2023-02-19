@@ -37,7 +37,7 @@ class Group(Base):
         self.name = name
 
     @classmethod
-    def get_staffers_group(cls, groupname=u'staff'):
+    def get_staffers_group(cls, groupname='staff'):
         """
         Get the "staff" group.
 

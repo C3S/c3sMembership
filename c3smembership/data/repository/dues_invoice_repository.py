@@ -264,7 +264,7 @@ class DuesInvoiceRepository(object):
             invoice_no=invoice_number,
             invoice_no_string=invoice_number_string,
             invoice_date=datetime.now(),
-            invoice_amount=u'' + str(invoice_amount),
+            invoice_amount='' + str(invoice_amount),
             member_id=member.id,
             membership_no=member.membership_number,
             email=member.email,

@@ -92,7 +92,7 @@ def get_euro_string(euro_amount):
     euro_string = babel.numbers.format_currency(euro_amount,
                                                 'EUR',
                                                 locale='de_DE')
-    return euro_string.replace(u'\u20ac', '').replace(u'\xa0', '')
+    return euro_string.replace('\u20ac', '').replace('\xa0', '')
 
 
 class PyramidInvoiceUrlCreator(InvoiceUrlCreator):
@@ -190,7 +190,7 @@ class PyramidDuesEmailSender(DuesEmailSender):
         if 'true' in self._request.registry.settings[
                 'testing.mail_to_console']:
             # pylint: disable=superfluous-parens
-            print(message.body.encode('utf-8'))
+            print((message.body.encode('utf-8')))
         else:
             send_message(self._request, message)
 
@@ -299,7 +299,7 @@ def get_dues20_invoice(invoice, request):
     """
     if invoice is None:
         request.session.flash(
-            u'No invoice found!',
+            'No invoice found!',
             'danger'  # message queue for user
         )
         return HTTPFound(request.route_url('error'))
@@ -356,13 +356,13 @@ def make_dues20_invoice_no_pdf(request):
                              timedelta(days=365))
 
     if invoice is None or token_is_invalid or invoice.is_reversal:
-        request.session.flash(u"No invoice found!", 'warning')
+        request.session.flash("No invoice found!", 'warning')
         return HTTPFound(request.route_url('error'))
 
     if older_than_a_year or member.dues20_paid:
         request.session.flash(
-            u'This invoice cannot be downloaded anymore. '
-            u'Please contact office@c3s.cc for further information.',
+            'This invoice cannot be downloaded anymore. '
+            'Please contact office@c3s.cc for further information.',
             'warning')
         return HTTPFound(request.route_url('error'))
 
@@ -419,15 +419,15 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     filename = os.path.splitext(filename)[0]
 
     # generate tex command for pdflatex
-    tex_cmd = u''
-    for key, val in tex_vars.iteritems():
+    tex_cmd = ''
+    for key, val in tex_vars.items():
         tex_cmd += '\\newcommand{\\%s}{%s}' % (key, TexTools.escape(val))
     tex_cmd += '\\input{%s}' % tpl_tex
-    tex_cmd = u'"' + tex_cmd + '"'
+    tex_cmd = '"' + tex_cmd + '"'
 
     # make latex show ß correctly in pdf:
     # not necessary since latex version 2018-04
-    tex_cmd = tex_cmd.replace(u'ß', u'\\ss{}')
+    tex_cmd = tex_cmd.replace('ß', '\\ss{}')
 
     cmd = [
         'pdflatex', '-jobname', filename, '-output-directory', path,
@@ -474,8 +474,8 @@ def make_invoice_pdf_pdflatex(invoice):
     # on invoice, print start quarter or "reduced". prepare string:
     if (not invoice.is_reversal and invoice.is_altered
             and invoice.preceding_invoice_no is not None):
-        is_altered_str = u'angepasst' if (
-            'de' in member.locale) else u'altered'
+        is_altered_str = 'angepasst' if (
+            'de' in member.locale) else 'altered'
 
     invoice_no = str(invoice.invoice_no).zfill(4)
     invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
@@ -491,7 +491,7 @@ def make_invoice_pdf_pdflatex(invoice):
         'personalAddressTwo': member.address2,
         'personalPostCode': member.postcode,
         'personalCity': member.city,
-        'personalMShipNo': unicode(member.membership_number),
+        'personalMShipNo': str(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
         'account':
@@ -544,7 +544,7 @@ def dues20_reduction(request):
     if (member is None or not member.membership_accepted
             or not member.dues20_invoice):
         request.session.flash(
-            u"Member not found or not a member or no invoice to reduce",
+            "Member not found or not a member or no invoice to reduce",
             'dues20notice_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -556,8 +556,8 @@ def dues20_reduction(request):
         assert not reduced_amount.is_signed()
     except (KeyError, AssertionError):  # pragma: no cover
         request.session.flash(
-            (u"Invalid amount to reduce to: '{}' "
-             u"Use the dot ('.') as decimal mark, e.g. '23.42'".format(
+            ("Invalid amount to reduce to: '{}' "
+             "Use the dot ('.') as decimal mark, e.g. '23.42'".format(
                  request.POST['amount'])),
             'dues20_message_to_staff'  # message queue for user
         )
@@ -569,7 +569,7 @@ def dues20_reduction(request):
     reduction_confirmed = request.POST['confirmed']
     if reduction_confirmed != 'yes':
         request.session.flash(
-            u'Die Reduktion wurde nicht bestätigt.',
+            'Die Reduktion wurde nicht bestätigt.',
             'dues20_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -578,7 +578,7 @@ def dues20_reduction(request):
     # check the reduction amount: same as default calculated amount?
     if (not member.dues20_reduced and member.dues20_amount == reduced_amount):
         request.session.flash(
-            u"Dieser Beitrag ist der default-Beitrag!",
+            "Dieser Beitrag ist der default-Beitrag!",
             'dues20_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -587,7 +587,7 @@ def dues20_reduction(request):
     if (member.dues20_reduced
             and reduced_amount == member.dues20_amount_reduced):
         request.session.flash(
-            u"Auf diesen Beitrag wurde schon reduziert!",
+            "Auf diesen Beitrag wurde schon reduziert!",
             'dues20_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -596,8 +596,8 @@ def dues20_reduction(request):
     if (member.dues20_reduced and reduced_amount > member.dues20_amount_reduced
             or reduced_amount > member.dues20_amount):
         request.session.flash(
-            u'Beitrag darf nicht über den berechneten oder bereits'
-            u'reduzierten Wert gesetzt werden.',
+            'Beitrag darf nicht über den berechneten oder bereits'
+            'reduzierten Wert gesetzt werden.',
             'dues20_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -626,7 +626,7 @@ def dues20_reduction(request):
     # create reversal invoice
     reversal_invoice = Dues20Invoice(
         invoice_no=new_invoice_no,
-        invoice_no_string=(u'C3S-dues{0}-{1}-S'.format(
+        invoice_no_string=('C3S-dues{0}-{1}-S'.format(
             YEAR,
             str(new_invoice_no).zfill(4))),
         invoice_date=datetime.today(),
@@ -652,11 +652,11 @@ def dues20_reduction(request):
         # create new invoice
         new_invoice = Dues20Invoice(
             invoice_no=new_invoice_no + 1,
-            invoice_no_string=(u'C3S-dues{0}-{1}'.format(
+            invoice_no_string=('C3S-dues{0}-{1}'.format(
                 YEAR,
                 str(new_invoice_no + 1).zfill(4))),
             invoice_date=datetime.today(),
-            invoice_amount=u'' + str(reduced_amount),
+            invoice_amount='' + str(reduced_amount),
             member_id=member.id,
             membership_no=member.membership_number,
             email=member.email,
@@ -729,13 +729,13 @@ def make_dues20_reversal_invoice_pdf(request):
                              timedelta(days=365))
 
     if invoice is None or token_is_invalid or not invoice.is_reversal:
-        request.session.flash(u"No invoice found!", 'warning')
+        request.session.flash("No invoice found!", 'warning')
         return HTTPFound(request.route_url('error'))
 
     if older_than_a_year or member.dues20_paid:
         request.session.flash(
-            u'This invoice cannot be downloaded anymore. '
-            u'Please contact office@c3s.cc for further information.',
+            'This invoice cannot be downloaded anymore. '
+            'Please contact office@c3s.cc for further information.',
             'warning')
         return HTTPFound(request.route_url('error'))
 
@@ -771,7 +771,7 @@ def make_reversal_pdf_pdflatex(invoice):
         'personalAddressTwo': member.address2,
         'personalPostCode': member.postcode,
         'personalCity': member.city,
-        'personalMShipNo': unicode(member.membership_number),
+        'personalMShipNo': str(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
         'duesAmount': get_euro_string(invoice.invoice_amount),
@@ -795,7 +795,7 @@ def dues20_notice(request):
     if (member is None or not member.membership_accepted
             or not member.dues20_invoice):
         request.session.flash(
-            u"Member not found or not a member or no invoice to pay for",
+            "Member not found or not a member or no invoice to pay for",
             'dues20notice_message_to_staff'  # message queue for staff
         )
         return HTTPFound(
@@ -807,8 +807,8 @@ def dues20_notice(request):
         assert not paid_amount.is_signed()
     except (KeyError, AssertionError, InvalidOperation):  # pragma: no cover
         request.session.flash(
-            (u"Invalid amount to pay: '{}' "
-             u"Use the dot ('.') as decimal mark, e.g. '23.42'".format(
+            ("Invalid amount to pay: '{}' "
+             "Use the dot ('.') as decimal mark, e.g. '23.42'".format(
                  request.POST['amount'])),
             'dues20notice_message_to_staff'  # message queue for user
         )
@@ -820,8 +820,8 @@ def dues20_notice(request):
         paid_date = datetime.strptime(request.POST['payment_date'], '%Y-%m-%d')
     except (KeyError, ValueError):  # pragma: no cover
         request.session.flash(
-            (u"Invalid date for payment: '{}' "
-             u"Use YYYY-MM-DD, e.g. '1999-09-11'".format(
+            ("Invalid date for payment: '{}' "
+             "Use YYYY-MM-DD, e.g. '1999-09-11'".format(
                  request.POST['payment_date'])),
             'dues20notice_message_to_staff'  # message queue for user
         )

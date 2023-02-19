@@ -49,7 +49,7 @@ def make_random_token():
     """
     import random
     import string
-    return u''.join(
+    return ''.join(
         random.choice(
             string.ascii_lowercase + string.digits
         ) for x in range(15))
@@ -214,47 +214,47 @@ def gen_cert(member):
     is_founder = True if 'dungHH_' in member.email_confirm_code else False
     # prepare the certificate text
     if member.locale == 'de':  # german
-        hereby_confirmed = u'Hiermit wird bestätigt, dass'
-        is_member = u'Mitglied der Cultural Commons Collecting Society SCE ' \
-                    u'mit beschränkter Haftung (C3S SCE) ist'
-        one_more_share = u' und einen weiteren Geschäftsanteil übernommen hat'
-        several_shares = u' weitere Geschäftsanteile übernommen hat'
-        and_block = u' und '
+        hereby_confirmed = 'Hiermit wird bestätigt, dass'
+        is_member = 'Mitglied der Cultural Commons Collecting Society SCE ' \
+                    'mit beschränkter Haftung (C3S SCE) ist'
+        one_more_share = ' und einen weiteren Geschäftsanteil übernommen hat'
+        several_shares = ' weitere Geschäftsanteile übernommen hat'
+        and_block = ' und '
         if is_founder:
             confirm_date = (
-                u'Der Beitritt erfolgte im Rahmen der Gründung am 25.09.2013')
+                'Der Beitritt erfolgte im Rahmen der Gründung am 25.09.2013')
         else:
-            confirm_date = u'Der Beitritt wurde am {} zugelassen'.format(
+            confirm_date = 'Der Beitritt wurde am {} zugelassen'.format(
                 datetime.strftime(member.membership_date, '%d.%m.%Y'))
-        mship_num = u'Die Mitgliedsnummer lautet {}.'.format(
+        mship_num = 'Die Mitgliedsnummer lautet {}.'.format(
             member.membership_number
         )
-        mship_num_text = u'Mitgliedsnummer {}'.format(
+        mship_num_text = 'Mitgliedsnummer {}'.format(
             member.membership_number
         )
-        exec_dir = u'Geschäftsführender Direktor'
+        exec_dir = 'Geschäftsführender Direktor'
 
     else:  # default fallback is english
-        hereby_confirmed = u'This is to certify that'
-        is_member = u'is a member of the >>Cultural Commons Collecting ' \
-                    u'Society SCE mit beschränkter Haftung (C3S SCE)<<'
-        one_more_share = u' and has subscribed to one additional share'
-        several_shares = u'additional shares'
-        and_block = u' and has subscribed to'
+        hereby_confirmed = 'This is to certify that'
+        is_member = 'is a member of the >>Cultural Commons Collecting ' \
+                    'Society SCE mit beschränkter Haftung (C3S SCE)<<'
+        one_more_share = ' and has subscribed to one additional share'
+        several_shares = 'additional shares'
+        and_block = ' and has subscribed to'
         if is_founder:
             confirm_date = (
-                u'Membership was acquired as a founding member '
+                'Membership was acquired as a founding member '
                 'on the 25th of September 2013')
         else:
-            confirm_date = u'Registered on the {}'.format(
+            confirm_date = 'Registered on the {}'.format(
                 datetime.strftime(member.membership_date, '%Y-%m-%d'))
-        mship_num = u'The membership number is {}.'.format(
+        mship_num = 'The membership number is {}.'.format(
             member.membership_number
         )
-        mship_num_text = u'membership number {}'.format(
+        mship_num_text = 'membership number {}'.format(
             member.membership_number
         )
-        exec_dir = u'Executive Director'
+        exec_dir = 'Executive Director'
 
     # construct latex_file
     latex_data = '''
@@ -301,7 +301,7 @@ def gen_cert(member):
     )
     if member.is_legalentity:
         latex_data += '\n\\def\\company{%s}' % TexTools.escape(member.lastname)
-    if member.address2 is not u'':  # add address part 2 iff exists
+    if member.address2 is not '':  # add address part 2 iff exists
         latex_data += '\n\\def\\addressTwo{%s}' % TexTools.escape(
             member.address2)
     if member.num_shares > 1:  # how many shares?

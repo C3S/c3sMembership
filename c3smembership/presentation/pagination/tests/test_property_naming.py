@@ -83,41 +83,41 @@ class TestPropertyNaming(TestCase):
             'prefix.{property_name}')
 
     def test_page_number_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._default_format_property_naming.page_number_name,
             'page_number'
         )
-        self.assertEquals(
+        self.assertEqual(
             self._prefix_property_naming.page_number_name,
             'prefix.page_number'
         )
 
     def test_page_size_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._default_format_property_naming.page_size_name,
             'page_size'
         )
-        self.assertEquals(
+        self.assertEqual(
             self._prefix_property_naming.page_size_name,
             'prefix.page_size'
         )
 
     def test_sort_property_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._default_format_property_naming.sort_property_name,
             'sort_property'
         )
-        self.assertEquals(
+        self.assertEqual(
             self._prefix_property_naming.sort_property_name,
             'prefix.sort_property'
         )
 
     def test_sort_direction_name(self):
-        self.assertEquals(
+        self.assertEqual(
             self._default_format_property_naming.sort_direction_name,
             'sort_direction'
         )
-        self.assertEquals(
+        self.assertEqual(
             self._prefix_property_naming.sort_direction_name,
             'prefix.sort_direction'
         )

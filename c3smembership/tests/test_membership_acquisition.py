@@ -13,7 +13,7 @@ from datetime import (
 from mock import Mock
 import pyramid_mailer
 
-from integration_test_base import IntegrationTestCaseBase
+from .integration_test_base import IntegrationTestCaseBase
 
 from c3smembership.data.model.base.c3smember import C3sMember
 
@@ -28,23 +28,23 @@ class MembershipAcqIntegration(IntegrationTestCaseBase):
         super(MembershipAcqIntegration, cls).setUpClass()
         db_session = cls.get_db_session()
         cls.member = C3sMember(  # german
-            firstname=u'SomeFirstnäme',
-            lastname=u'SomeLastnäme',
-            email=u'member@example.com',
-            address1=u"addr one",
-            address2=u"addr two",
-            postcode=u"12345",
-            city=u"Footown Mäh",
-            country=u"Foocountry",
-            locale=u"DE",
+            firstname='SomeFirstnäme',
+            lastname='SomeLastnäme',
+            email='member@example.com',
+            address1="addr one",
+            address2="addr two",
+            postcode="12345",
+            city="Footown Mäh",
+            country="Foocountry",
+            locale="DE",
             date_of_birth=date.today(),
             email_is_confirmed=False,
-            email_confirm_code=u'ABCDEFGFOO',
-            password=u'arandompassword',
+            email_confirm_code='ABCDEFGFOO',
+            password='arandompassword',
             date_of_submission=date.today(),
-            membership_type=u'normal',
+            membership_type='normal',
             member_of_colsoc=True,
-            name_of_colsoc=u"GEMA",
+            name_of_colsoc="GEMA",
             num_shares=23,
         )
         db_session.add(cls.member)
@@ -245,21 +245,21 @@ class MembershipAcqIntegration(IntegrationTestCaseBase):
         # 1.5. The email contains a salutation with the member's first and last
         # name
         self.assertTrue(
-            u'{firstname} {lastname}'.format(
+            '{firstname} {lastname}'.format(
                 firstname=self.member.firstname,
                 lastname=self.member.lastname
             ) in message.body)
-        self.assertTrue(u'SomeFirstnäme SomeLastnäme' in message.body)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in message.body)
 
         # 1.6. The email contains the number of shares
         self.assertTrue(
-            u'{} share(s)'.format(self.member.num_shares) in message.body)
-        self.assertTrue(u'23 share(s)' in message.body)
+            '{} share(s)'.format(self.member.num_shares) in message.body)
+        self.assertTrue('23 share(s)' in message.body)
 
         # 1.7. The email contains the value amount of the shares
         self.assertTrue(
-            u'{} Euro'.format(self.member.num_shares * 50) in message.body)
-        self.assertTrue(u'1150 Euro' in message.body)
+            '{} Euro'.format(self.member.num_shares * 50) in message.body)
+        self.assertTrue('1150 Euro' in message.body)
 
         # 1.8. Sending the email is recorded with flag and timestamp
         self.assertTrue(self.member.signature_confirmed)
@@ -357,21 +357,21 @@ class MembershipAcqIntegration(IntegrationTestCaseBase):
         # 1.5. The email contains a salutation with the member's first and last
         # name
         self.assertTrue(
-            u'{firstname} {lastname}'.format(
+            '{firstname} {lastname}'.format(
                 firstname=self.member.firstname,
                 lastname=self.member.lastname
             ) in message.body)
-        self.assertTrue(u'SomeFirstnäme SomeLastnäme' in message.body)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in message.body)
 
         # 1.6. The email contains the number of shares
         self.assertTrue(
-            u'{} share(s)'.format(self.member.num_shares) in message.body)
-        self.assertTrue(u'23 share(s)' in message.body)
+            '{} share(s)'.format(self.member.num_shares) in message.body)
+        self.assertTrue('23 share(s)' in message.body)
 
         # 1.7. The email contains the value amount of the shares
         self.assertTrue(
-            u'{} Euro'.format(self.member.num_shares * 50) in message.body)
-        self.assertTrue(u'1150 Euro' in message.body)
+            '{} Euro'.format(self.member.num_shares * 50) in message.body)
+        self.assertTrue('1150 Euro' in message.body)
 
         # 1.8. Sending the email is recorded with flag and timestamp
         self.assertTrue(self.member.payment_confirmed)
@@ -473,11 +473,11 @@ class MembershipAcqIntegration(IntegrationTestCaseBase):
         # 1.5. The email contains a salutation with the member's first and last
         # name
         self.assertTrue(
-            u'{firstname} {lastname}'.format(
+            '{firstname} {lastname}'.format(
                 firstname=self.member.firstname,
                 lastname=self.member.lastname
             ) in message.body)
-        self.assertTrue(u'SomeFirstnäme SomeLastnäme' in message.body)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in message.body)
 
         # 1.6. Sending the email is recorded with flag and timestamp
         self.assertEqual(self.member.sent_signature_reminder, 1)
@@ -590,11 +590,11 @@ class MembershipAcqIntegration(IntegrationTestCaseBase):
         # 1.5. The email contains a salutation with the member's first and last
         # name
         self.assertTrue(
-            u'{firstname} {lastname}'.format(
+            '{firstname} {lastname}'.format(
                 firstname=self.member.firstname,
                 lastname=self.member.lastname
             ) in message.body)
-        self.assertTrue(u'SomeFirstnäme SomeLastnäme' in message.body)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in message.body)
 
         # 1.6. Sending the email is recorded with flag and timestamp
         self.assertEqual(self.member.sent_payment_reminder, 1)
@@ -697,21 +697,21 @@ class MembershipAcqIntegration(IntegrationTestCaseBase):
         # 1.5. The email contains a salutation with the member's first and last
         # name
         self.assertTrue(
-            u'{firstname} {lastname}'.format(
+            '{firstname} {lastname}'.format(
                 firstname=self.member.firstname,
                 lastname=self.member.lastname
             ) in message.body)
-        self.assertTrue(u'SomeFirstnäme SomeLastnäme' in message.body)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in message.body)
 
         # 1.6. The email contains a verification link with the email confirm
         #      code
         self.assertTrue(self.member.email_confirm_code in message.body)
-        self.assertTrue(u'ABCDEFGFOO' in message.body)
+        self.assertTrue('ABCDEFGFOO' in message.body)
         self.assertTrue(
-            u'{}/verify/'.format(self.SETTINGS['c3smembership.url'])
+            '{}/verify/'.format(self.SETTINGS['c3smembership.url'])
             in message.body)
         self.assertTrue(
-            u'http://membership.example.com/verify/' in message.body)
+            'http://membership.example.com/verify/' in message.body)
 
         # 3. Validation fails if the member does not have membership
         self.assert_get_redirect_flash(

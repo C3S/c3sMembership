@@ -24,8 +24,8 @@ from c3smembership.presentation.i18n import (
 from c3smembership.presentation.schemas.member import PersonalDataCreateEdit
 
 
-COUNTRY_DEFAULT = u'DE'
-LOCALE_DEFAULT = u'de'
+COUNTRY_DEFAULT = 'DE'
+LOCALE_DEFAULT = 'de'
 
 LOG = logging.getLogger(__name__)
 
@@ -82,16 +82,16 @@ def edit_member(request):
         'membership_date': (
             # this is necessary because membership_date's default is
             # 1970-01-01 which should be changed to None in the future
-            u''
+            ''
             if member.membership_date == date(1970, 1, 1)
             else member.membership_date),
         'is_duplicate': member.is_duplicate,
         'is_duplicate_of': (
-            u''
+            ''
             if member.is_duplicate_of is None
             else member.is_duplicate_of),
         'accountant_comment': (
-            u''
+            ''
             if member.accountant_comment is None
             else member.accountant_comment),
         'signature_received': member.signature_received,
@@ -100,24 +100,24 @@ def edit_member(request):
         'payment_received_date': member.payment_received_date,
         'membership_loss_date': member.membership_loss_date,
         'membership_loss_type': (
-            u''
+            ''
             if member.membership_loss_type is None
             else member.membership_loss_type),
     }
     appstruct['membership_info'] = {
         'membership_type': member.membership_type,
-        'entity_type': u'legalentity' if member.is_legalentity else 'person',
+        'entity_type': 'legalentity' if member.is_legalentity else 'person',
         'member_of_colsoc': 'yes' if member.member_of_colsoc else 'no',
         'name_of_colsoc': member.name_of_colsoc,
     }
     membership_loss_types = (
-        ('', _(u'(Select)')),
-        ('resignation', _(u'Resignation')),
-        ('expulsion', _(u'Expulsion')),
-        ('death', _(u'Death')),
-        ('bankruptcy', _(u'Bankruptcy')),
-        ('winding-up', _(u'Winding-up')),
-        ('shares_transfer', _(u'Transfer of remaining shares'))
+        ('', _('(Select)')),
+        ('resignation', _('Resignation')),
+        ('expulsion', _('Expulsion')),
+        ('death', _('Death')),
+        ('bankruptcy', _('Bankruptcy')),
+        ('winding-up', _('Winding-up')),
+        ('shares_transfer', _('Transfer of remaining shares'))
     )
 
     @colander.deferred
@@ -148,35 +148,35 @@ def edit_member(request):
         """
         membership_accepted = colander.SchemaNode(
             colander.Boolean(),
-            title=_(u'Membership Accepted'),
+            title=_('Membership Accepted'),
             oid='membership_accepted',
         )
         membership_date = colander.SchemaNode(
             colander.Date(),
-            title=_(u'Membership Acceptance Date'),
+            title=_('Membership Acceptance Date'),
             validator=Range(
                 min=date(2013, 9, 24),
                 max=date.today(),
-                min_err=_(u'${val} is earlier than earliest date ${min}.'),
-                max_err=_(u'${val} is later than latest date ${max}.')
+                min_err=_('${val} is earlier than earliest date ${min}.'),
+                max_err=_('${val} is later than latest date ${max}.')
             ),
             missing=date(1970, 1, 1),
             oid='membership_date',
         )
         is_duplicate = colander.SchemaNode(
             colander.Boolean(),
-            title=_(u'Is Duplicate'),
+            title=_('Is Duplicate'),
             oid='is_duplicate',
         )
         is_duplicate_of = colander.SchemaNode(
             colander.String(),
-            title=_(u'Duplicate Id'),
-            missing=u'',
+            title=_('Duplicate Id'),
+            missing='',
             oid='id_duplicate_of',
         )
         signature_received = colander.SchemaNode(
             colander.Boolean(),
-            title=_(u'Signature Received'),
+            title=_('Signature Received'),
             oid='signature_received',
         )
         signature_received_date = colander.SchemaNode(
@@ -185,25 +185,25 @@ def edit_member(request):
             validator=Range(
                 min=date(1070, 1, 1),
                 max=date.today(),
-                min_err=_(u'${val} is earlier than earliest date ${min}.'),
-                max_err=_(u'${val} is later than latest date ${max}.')
+                min_err=_('${val} is earlier than earliest date ${min}.'),
+                max_err=_('${val} is later than latest date ${max}.')
             ),
             missing=date(1970, 1, 1),
             oid='signature_received_date',
         )
         payment_received = colander.SchemaNode(
             colander.Boolean(),
-            title=_(u'Payment Received'),
+            title=_('Payment Received'),
             oid='payment_received',
         )
         payment_received_date = colander.SchemaNode(
             colander.Date(),
-            title=_(u'Payment reception date'),
+            title=_('Payment reception date'),
             validator=Range(
                 min=date(1970, 1, 1),
                 max=date.today(),
-                min_err=_(u'${val} is earlier than earliest date ${min}.'),
-                max_err=_(u'${val} is later than latest date ${max}.')
+                min_err=_('${val} is earlier than earliest date ${min}.'),
+                max_err=_('${val} is later than latest date ${max}.')
             ),
             missing=date(1970, 1, 1),
             oid='payment_received_date',
@@ -211,7 +211,7 @@ def edit_member(request):
         membership_loss_date = colander.SchemaNode(
             colander.Date(),
             widget=membership_loss_date_widget,
-            title=_(u'Date of the loss of membership'),
+            title=_('Date of the loss of membership'),
             default=None,
             missing=None,
             oid='membership_loss_date',
@@ -219,15 +219,15 @@ def edit_member(request):
         membership_loss_type = colander.SchemaNode(
             colander.String(),
             widget=membership_loss_type_widget,
-            title=_(u'Type of membership loss'),
+            title=_('Type of membership loss'),
             default=None,
             missing=None,
             oid='membership_loss_type',
         )
         accountant_comment = colander.SchemaNode(
             colander.String(),
-            title=_(u'Staff Comment: (255 letters)'),
-            missing=u'',
+            title=_('Staff Comment: (255 letters)'),
+            missing='',
             oid='accountant_comment',
         )
 
@@ -236,36 +236,36 @@ def edit_member(request):
         Colander schema of the additional data for editing member data.
         """
         yes_no = (
-            (u'yes', _(u'Yes')),
-            (u'no', _(u'No')),
-            (u'dontknow', _(u'Unknwon')),
+            ('yes', _('Yes')),
+            ('no', _('No')),
+            ('dontknow', _('Unknwon')),
         )
 
         entity_type = colander.SchemaNode(
             colander.String(),
-            title=_(u'Member Category'),
-            description=_(u'Please choose the member category.'),
+            title=_('Member Category'),
+            description=_('Please choose the member category.'),
             widget=deform.widget.RadioChoiceWidget(
                 values=(
-                    (u'person', _(u'Person')),
-                    (u'legalentity', _(u'Legal Entity')),
+                    ('person', _('Person')),
+                    ('legalentity', _('Legal Entity')),
                 ),
             ),
-            missing=u'',
+            missing='',
             oid='entity_type',
         )
         membership_type = colander.SchemaNode(
             colander.String(),
-            title=_(u'Type of Membership'),
-            description=_(u'Please choose the type of membership.'),
+            title=_('Type of Membership'),
+            description=_('Please choose the type of membership.'),
             widget=deform.widget.RadioChoiceWidget(
                 values=(
-                    (u'normal', _(u'Member')),
-                    (u'investing', _(u'Investing (non-user) member')),
-                    (u'unknown', _(u'Unknown')),
+                    ('normal', _('Member')),
+                    ('investing', _('Investing (non-user) member')),
+                    ('unknown', _('Unknown')),
                 ),
             ),
-            missing=u'',
+            missing='',
             oid='membership_type',
         )
         member_of_colsoc = colander.SchemaNode(
@@ -273,15 +273,15 @@ def edit_member(request):
             title=_('Member of a Collecting Society'),
             widget=deform.widget.RadioChoiceWidget(values=yes_no),
             oid='other_colsoc',
-            default=u'',
-            missing=u'',
+            default='',
+            missing='',
         )
         name_of_colsoc = colander.SchemaNode(
             colander.String(),
-            title=_(u'Names of Collecting Societies'),
-            description=_(u'Please separate multiple collecting societies by '
-                          u'comma.'),
-            missing=u'',
+            title=_('Names of Collecting Societies'),
+            description=_('Please separate multiple collecting societies by '
+                          'comma.'),
+            missing='',
             oid='colsoc_name',
         )
 
@@ -295,11 +295,11 @@ def edit_member(request):
                 (value['membership_loss_type'] is None):
             exc = colander.Invalid(form)
             exc['membership_loss_type'] = \
-                _(u'Date and type of membership loss must be set both or '
-                  u'none.')
+                _('Date and type of membership loss must be set both or '
+                  'none.')
             exc['membership_loss_date'] = \
-                _(u'Date and type of membership loss must be set both or '
-                  u'none.')
+                _('Date and type of membership loss must be set both or '
+                  'none.')
             raise exc
 
     def loss_date_larger_acceptance_validator(form, value):
@@ -315,8 +315,8 @@ def edit_member(request):
                  not value['membership_accepted'])):
             exc = colander.Invalid(form)
             exc['membership_loss_date'] = \
-                _(u'Date membership loss must be larger than membership '
-                  u'acceptance date.')
+                _('Date membership loss must be larger than membership '
+                  'acceptance date.')
             raise exc
 
     def loss_date_resignation_validator(form, value):
@@ -333,8 +333,8 @@ def edit_member(request):
                     value['membership_loss_date'].month == 12)):
             exc = colander.Invalid(form)
             exc['membership_loss_date'] = \
-                _(u'Resignations are only allowed to the 31st of December '
-                  u'of a year.')
+                _('Resignations are only allowed to the 31st of December '
+                  'of a year.')
             raise exc
 
     class MembershipForm(colander.Schema):
@@ -343,10 +343,10 @@ def edit_member(request):
         the subject areas.
         """
         person = PersonalDataCreateEdit(
-            title=_(u'Personal Data'),
+            title=_('Personal Data'),
         )
         membership_meta = MembershipMeta(
-            title=_(u'Membership Bureaucracy'),
+            title=_('Membership Bureaucracy'),
             validator=colander.All(
                 loss_type_and_date_set_validator,
                 loss_date_larger_acceptance_validator,
@@ -355,7 +355,7 @@ def edit_member(request):
             membership_accepted=member.membership_accepted,
         )
         membership_info = MembershipInfo(
-            title=_(u'Membership Requirements')
+            title=_('Membership Requirements')
         )
 
     def membership_loss_type_entity_type_validator(form, value):
@@ -368,8 +368,8 @@ def edit_member(request):
                 value['membership_info']['entity_type'] != 'person'):
             exc_type = colander.Invalid(
                 form['membership_meta']['membership_loss_type'],
-                _(u'The membership loss type \'death\' is only allowed for '
-                  u'natural person members and not for legal entity members.'))
+                _('The membership loss type \'death\' is only allowed for '
+                  'natural person members and not for legal entity members.'))
             exc_meta = colander.Invalid(form['membership_meta'])
             exc_meta.add(
                 exc_type,
@@ -389,9 +389,9 @@ def edit_member(request):
                 value['membership_info']['entity_type'] != 'legalentity'):
             exc_type = colander.Invalid(
                 form['membership_meta']['membership_loss_type'],
-                _(u'The membership loss type \'winding-up\' is only allowed '
-                  u'for legal entity members and not for natural person '
-                  u'members.'))
+                _('The membership loss type \'winding-up\' is only allowed '
+                  'for legal entity members and not for natural person '
+                  'members.'))
             exc_meta = colander.Invalid(form['membership_meta'])
             exc_meta.add(
                 exc_type,
@@ -413,8 +413,8 @@ def edit_member(request):
     form = deform.Form(
         schema.bind(date=date),
         buttons=[
-            deform.Button('submit', _(u'Submit')),
-            deform.Button('reset', _(u'Reset')),
+            deform.Button('submit', _('Submit')),
+            deform.Button('reset', _('Reset')),
         ],
         renderer=ZPT_RENDERER,
         use_ajax=True,
@@ -441,14 +441,14 @@ def edit_member(request):
 
     # if the form has been used and SUBMITTED, check contents
     if 'submit' in request.POST:
-        controls = request.POST.items()
+        controls = list(request.POST.items())
         try:
             appstruct = form.validate(controls)
         except ValidationFailure as validationfailure:
             # clean_error_messages(validationfailure.error)
             request.session.flash(
-                _(u'Please note: There were errors, '
-                  u'please check the form below.'),
+                _('Please note: There were errors, '
+                  'please check the form below.'),
                 'warning',
                 allow_duplicate=False)
             return{'form': validationfailure.render()}
@@ -531,7 +531,7 @@ def edit_member(request):
                 pass
             else:
                 LOG.info(
-                    u'%s changes %s of id %s to %s',
+                    '%s changes %s of id %s to %s',
                     request.authenticated_userid,
                     attribute_name,
                     member.id,

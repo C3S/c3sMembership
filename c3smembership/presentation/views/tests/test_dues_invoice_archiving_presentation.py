@@ -72,7 +72,7 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
         self._validate_result(result, ['invoice1', 'invoice2'])
         self._validate_flash_message(
             'success',
-            [u'Success', u'2 invoices', u'no more'])
+            ['Success', '2 invoices', 'no more'])
 
     def test_post_some_invoices(self):
         """
@@ -86,7 +86,7 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
         self._validate_result(result, ['invoice1'])
         self._validate_flash_message(
             'success',
-            [u'Success', u'1 invoices', u'might be more'])
+            ['Success', '1 invoices', 'might be more'])
 
     def test_post_nothing_left(self):
         """
@@ -98,7 +98,7 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
         result = batch_archive_pdf_invoices(self.request)
 
         self._validate_result(result, [])
-        self._validate_flash_message('success', [u'were no invoices'])
+        self._validate_flash_message('success', ['were no invoices'])
 
     def test_post_error(self):
         """
@@ -111,7 +111,7 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
         result = batch_archive_pdf_invoices(self.request)
 
         self._validate_result(result, None)
-        self._validate_flash_message('danger', [u'error'])
+        self._validate_flash_message('danger', ['error'])
 
     def test_post_count_zero(self):
         """
@@ -124,7 +124,7 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
 
         self._validate_result(result, [])
         self.assertTrue(
-            u'There was a problem with your submission' in result['form'])
+            'There was a problem with your submission' in result['form'])
 
     def test_post_count_negative(self):
         """
@@ -137,7 +137,7 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
 
         self._validate_result(result, [])
         self.assertTrue(
-            u'There was a problem with your submission' in result['form'])
+            'There was a problem with your submission' in result['form'])
 
     def _configure_missing_invoices_generated(self, invoices=None):
         """
@@ -160,11 +160,11 @@ class TestDuesInvoiceArchiving(unittest.TestCase):
         """
         self.request.method = 'POST'
         self.request.POST = MultiDict()
-        self.request.POST.add('__formid__', u'form')
-        self.request.POST.add('__start__', u'archive_invoices:mapping')
-        self.request.POST.add('year', unicode(year))
-        self.request.POST.add('count', unicode(count))
-        self.request.POST.add('__end__', u'archive_invoices:mapping')
+        self.request.POST.add('__formid__', 'form')
+        self.request.POST.add('__start__', 'archive_invoices:mapping')
+        self.request.POST.add('year', str(year))
+        self.request.POST.add('count', str(count))
+        self.request.POST.add('__end__', 'archive_invoices:mapping')
 
     def _validate_flash_message(self, queue, message_parts):
         """

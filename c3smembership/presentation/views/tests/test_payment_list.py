@@ -127,7 +127,7 @@ class TestPaymentList(unittest.TestCase):
             """
             Dummy type parser.
             """
-            return u'dummy parser result'
+            return 'dummy parser result'
 
         filter_settings = {
             'from_date': {
@@ -141,7 +141,7 @@ class TestPaymentList(unittest.TestCase):
 
         filtering = {'preset': 'filter'}
         request_dummy = testing.DummyRequest(
-            cookies = {u'payment_list.from_date': u'from_date value'})
+            cookies = {'payment_list.from_date': 'from_date value'})
         filtering = get_filter_from_cookies(
             request_dummy, filtering, filter_settings, cookie_parsers)
         self.assertEqual(
@@ -161,7 +161,7 @@ class TestPaymentList(unittest.TestCase):
             """
             Dummy cookie parser.
             """
-            return u'parsing result'
+            return 'parsing result'
 
         def dummy_cookie_formatter(filter_value, filter_setting):
             # pylint: disable=unused-argument
@@ -185,7 +185,7 @@ class TestPaymentList(unittest.TestCase):
 
         # Test no form action
         request_dummy = testing.DummyRequest(
-            cookies={u'payment_list.from_date': u'from date value'})
+            cookies={'payment_list.from_date': 'from date value'})
         request_dummy.POST = {}
         filter_form = Mock()
         filter_form.render.side_effect = ['filter form render result']
@@ -202,7 +202,7 @@ class TestPaymentList(unittest.TestCase):
 
         # Test reset
         request_dummy = testing.DummyRequest(
-            cookies={u'payment_list.from_date': u'from date value'},
+            cookies={'payment_list.from_date': 'from date value'},
             post={'reset': 'reset'})
         filter_form = Mock()
         filter_form.render.side_effect = ['filter form render result']
@@ -220,7 +220,7 @@ class TestPaymentList(unittest.TestCase):
         # Test submit with successful validation
         request_dummy = testing.DummyRequest(
             post={'submit': 'submit'},
-            cookies={u'payment_list.from_date': u'from date value'})
+            cookies={'payment_list.from_date': 'from date value'})
         filter_form = Mock()
         filter_form.render.side_effect = ['filter form render result']
         filter_form.validate.side_effect = [filtering]
@@ -238,7 +238,7 @@ class TestPaymentList(unittest.TestCase):
         # Test submit with validation failure
         request_dummy = testing.DummyRequest(
             post={'submit': 'submit'},
-            cookies={u'payment_list.from_date': u'from date value'})
+            cookies={'payment_list.from_date': 'from date value'})
         filter_form = Mock()
         mock_field = Mock()
         filter_form.render.side_effect = [deform.ValidationFailure(

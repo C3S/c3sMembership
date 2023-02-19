@@ -39,7 +39,7 @@ def get_salutation(member):
         # contains the legal entity's name
         return member.firstname
     else:
-        return u'{first_name} {last_name}'.format(
+        return '{first_name} {last_name}'.format(
             first_name=member.firstname,
             last_name=member.lastname)
 
@@ -122,10 +122,10 @@ def send_message(request, message):
     In debugging mode the message will be written to the console.
     """
     if 'true' in request.registry.settings['testing.mail_to_console']:
-        print(u'Sender: ' + unicode(message.sender))
-        print(u'Receipients: ' + unicode(message.recipients))
-        print(u'Subject: ' + unicode(message.subject))
-        print(message.body.encode('utf-8'))
+        print(('Sender: ' + str(message.sender)))
+        print(('Receipients: ' + str(message.recipients)))
+        print(('Subject: ' + str(message.subject)))
+        print((message.body.encode('utf-8')))
     else:
         mailer = None
         if hasattr(request.registry, 'get_mailer'):

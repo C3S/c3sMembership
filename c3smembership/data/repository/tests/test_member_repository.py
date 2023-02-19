@@ -29,83 +29,83 @@ class TestMemberRepository(unittest.TestCase):
         Base.metadata.create_all(engine)
         with transaction.manager:
             member1 = C3sMember(  # german
-                firstname=u'SomeFirstnäme',
-                lastname=u'SomeLastnäme',
-                email=u'some@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGFOO',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=35,
             )
             member2 = C3sMember(  # german
-                firstname=u'AAASomeFirstnäme',
-                lastname=u'XXXSomeLastnäme',
-                email=u'some2@shri.de',
-                address1=u"addr one",
-                address2=u"addr two",
-                postcode=u"12345",
-                city=u"Footown Mäh",
-                country=u"Foocountry",
-                locale=u"DE",
+                firstname='AAASomeFirstnäme',
+                lastname='XXXSomeLastnäme',
+                email='some2@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
                 date_of_birth=date.today(),
                 email_is_confirmed=False,
-                email_confirm_code=u'ABCDEFGBAR',
-                password=u'arandompassword',
+                email_confirm_code='ABCDEFGBAR',
+                password='arandompassword',
                 date_of_submission=date.today(),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u"GEMA",
+                name_of_colsoc="GEMA",
                 num_shares=45,
             )
             member3 = C3sMember(
-                firstname=u'Not Approved',
-                lastname=u'Member',
-                email=u'not.approved@example.com',
-                address1=u'Some Street 123',
-                address2=u'',
-                postcode=u"12345",
-                city=u"Some City",
-                country=u"Some Country",
-                locale=u"DE",
+                firstname='Not Approved',
+                lastname='Member',
+                email='not.approved@example.com',
+                address1='Some Street 123',
+                address2='',
+                postcode="12345",
+                city="Some City",
+                country="Some Country",
+                locale="DE",
                 date_of_birth=date(1980, 1, 2),
                 email_is_confirmed=False,
-                email_confirm_code=u'NOT_APPROVED_MEMBER',
-                password=u'not_approved_member',
+                email_confirm_code='NOT_APPROVED_MEMBER',
+                password='not_approved_member',
                 date_of_submission=date(1970, 1, 1),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u'',
+                name_of_colsoc='',
                 num_shares=7,
             )
             member4 = C3sMember(
-                firstname=u'Membership',
-                lastname=u'Lost',
-                email=u'membership.lost@example.com',
-                address1=u'Some Street 123',
-                address2=u'',
-                postcode=u"12345",
-                city=u"Some City",
-                country=u"Some Country",
-                locale=u"DE",
+                firstname='Membership',
+                lastname='Lost',
+                email='membership.lost@example.com',
+                address1='Some Street 123',
+                address2='',
+                postcode="12345",
+                city="Some City",
+                country="Some Country",
+                locale="DE",
                 date_of_birth=date(1980, 1, 2),
                 email_is_confirmed=False,
-                email_confirm_code=u'MEMBERSHIP_LOST',
-                password=u'not_approved_member',
+                email_confirm_code='MEMBERSHIP_LOST',
+                password='not_approved_member',
                 date_of_submission=date(1970, 1, 1),
-                membership_type=u'normal',
+                membership_type='normal',
                 member_of_colsoc=True,
-                name_of_colsoc=u'',
+                name_of_colsoc='',
                 num_shares=7,
             )
             # pylint: disable=no-member
@@ -117,14 +117,14 @@ class TestMemberRepository(unittest.TestCase):
             # pylint: disable=no-member
             DBSession.add(member4)
 
-            member1.membership_number = u'member1'
+            member1.membership_number = 'member1'
             member1.membership_date = date(2013, 1, 1)
             member1.membership_accepted = True
-            member2.membership_number = u'member2'
+            member2.membership_number = 'member2'
             member2.membership_date = date(2013, 1, 5)
             member2.membership_accepted = True
             member3.payment_received_date = date(2016, 10, 11)
-            member4.membership_number = u'member3'
+            member4.membership_number = 'member3'
             member4.membership_date = date(2014, 1, 5)
             member4.membership_accepted = True
             member4.membership_loss_date = date(2015, 12, 31)
@@ -199,37 +199,37 @@ class TestMemberRepository(unittest.TestCase):
         """
         members = MemberRepository.get_accepted_members_sorted()
         self.assertEqual(len(members), 2)
-        self.assertEqual(members[0].lastname, u'SomeLastnäme')
-        self.assertEqual(members[1].lastname, u'XXXSomeLastnäme')
+        self.assertEqual(members[0].lastname, 'SomeLastnäme')
+        self.assertEqual(members[1].lastname, 'XXXSomeLastnäme')
 
-        members[0].lastname = u'Smith'
-        members[1].lastname = u'Jones'
+        members[0].lastname = 'Smith'
+        members[1].lastname = 'Jones'
         members = MemberRepository.get_accepted_members_sorted()
         self.assertEqual(len(members), 2)
-        self.assertEqual(members[0].lastname, u'Jones')
-        self.assertEqual(members[1].lastname, u'Smith')
+        self.assertEqual(members[0].lastname, 'Jones')
+        self.assertEqual(members[1].lastname, 'Smith')
 
-        members[0].lastname = u'Smith'
-        members[0].firstname = u'Jane'
-        members[1].lastname = u'Smith'
-        members[1].firstname = u'Caroline'
+        members[0].lastname = 'Smith'
+        members[0].firstname = 'Jane'
+        members[1].lastname = 'Smith'
+        members[1].firstname = 'Caroline'
         members = MemberRepository.get_accepted_members_sorted()
         self.assertEqual(len(members), 2)
-        self.assertEqual(members[0].lastname, u'Smith')
-        self.assertEqual(members[0].firstname, u'Caroline')
-        self.assertEqual(members[1].lastname, u'Smith')
-        self.assertEqual(members[1].firstname, u'Jane')
+        self.assertEqual(members[0].lastname, 'Smith')
+        self.assertEqual(members[0].firstname, 'Caroline')
+        self.assertEqual(members[1].lastname, 'Smith')
+        self.assertEqual(members[1].firstname, 'Jane')
 
-        members[0].lastname = u'Smith'
-        members[0].firstname = u'Beatrice'
-        members[1].lastname = u'Smith'
-        members[1].firstname = u'Caroline'
+        members[0].lastname = 'Smith'
+        members[0].firstname = 'Beatrice'
+        members[1].lastname = 'Smith'
+        members[1].firstname = 'Caroline'
         members = MemberRepository.get_accepted_members_sorted()
         self.assertEqual(len(members), 2)
-        self.assertEqual(members[0].lastname, u'Smith')
-        self.assertEqual(members[0].firstname, u'Beatrice')
-        self.assertEqual(members[1].lastname, u'Smith')
-        self.assertEqual(members[1].firstname, u'Caroline')
+        self.assertEqual(members[0].lastname, 'Smith')
+        self.assertEqual(members[0].firstname, 'Beatrice')
+        self.assertEqual(members[1].lastname, 'Smith')
+        self.assertEqual(members[1].firstname, 'Caroline')
 
     def test_get_accepted_members_count(self):
         """

@@ -22,7 +22,7 @@ def stats_view(request):
     """
     # countries_dict = C3sMember.get_countries_list()
     _cl = C3sMember.get_countries_list()
-    _cl_sorted = _cl.items()
+    _cl_sorted = list(_cl.items())
     import operator
     _cl_sorted.sort(key=operator.itemgetter(1), reverse=True)
     share_information = request.registry.share_information

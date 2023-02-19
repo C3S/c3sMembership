@@ -16,8 +16,8 @@ class TestTexTools(unittest.TestCase):
         """
         Test method TexTools.escape
         """
-        unescaped = u'&%$#_{}~^\\<>℅°ß'
+        unescaped = '&%$#_{}~^\\<>℅°ß'
         escaped = TexTools.escape(unescaped)
-        expected = u'\\&\\%\\$\\#\\_\\{\}\\textasciitilde{}\\^{}' + \
-                   u'\\textbackslash{}\\textless{}\\textgreater{}c/o\\degree{}\\ss{}'
+        expected = '\\&\\%\\$\\#\\_\\{\}\\textasciitilde{}\\^{}' + \
+                   '\\textbackslash{}\\textless{}\\textgreater{}c/o\\degree{}\\ss{}'
         self.assertEqual(escaped, expected)

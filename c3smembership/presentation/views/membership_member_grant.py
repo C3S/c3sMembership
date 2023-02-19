@@ -75,14 +75,14 @@ def make_member_view(request):
         try:
             member.membership_date = datetime.strptime(
                 request.POST['membership_date'], '%Y-%m-%d').date()
-        except ValueError, value_error:
+        except ValueError as value_error:
             request.session.flash(value_error.message, 'danger')
             return HTTPFound(
                 request.route_url('make_member', afm_id=member.id))
 
         member.membership_accepted = True
         if member.is_legalentity:
-            member.membership_type = u'investing'
+            member.membership_type = 'investing'
         else:
             member.is_legalentity = False
         member.membership_number = C3sMember.get_next_free_membership_number()

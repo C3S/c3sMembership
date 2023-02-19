@@ -1,6 +1,6 @@
-import StringIO
+import io
 import csv
-from gnupg_encrypt import encrypt_with_gnupg
+from .gnupg_encrypt import encrypt_with_gnupg
 
 
 class CSVRenderer(object):
@@ -8,7 +8,7 @@ class CSVRenderer(object):
         pass
 
     def __call__(self, value, system):
-        fout = StringIO.StringIO()
+        fout = io.StringIO()
         writer = csv.writer(
             fout, delimiter=';', quoting=csv.QUOTE_ALL)
 

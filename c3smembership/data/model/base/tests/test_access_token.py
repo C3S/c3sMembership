@@ -25,7 +25,7 @@ class AccessTokenTest(TestCase):
         datetime_mock = DateTimeMock(datetime.datetime(2000, 1, 1, 0, 0, 0))
         AccessToken.datetime = datetime_mock
         token = AccessToken()
-        self.assertEquals(len(token.token), AccessToken.LENGTH)
+        self.assertEqual(len(token.token), AccessToken.LENGTH)
         self.assertEqual(
             token.creation, datetime.datetime(2000, 1, 1, 0, 0, 0))
         self.assertEqual(token.expiration,
@@ -42,10 +42,10 @@ class AccessTokenTest(TestCase):
         datetime_mock = DateTimeMock(datetime.datetime(2000, 1, 1, 0, 0, 0))
         AccessToken.datetime = datetime_mock
         token = AccessToken(
-            available_characters=u'a',
+            available_characters='a',
             length=10,
             expiration_timespan=datetime.timedelta(days=1))
-        self.assertEquals(token.token, u'aaaaaaaaaa')
+        self.assertEqual(token.token, 'aaaaaaaaaa')
         self.assertEqual(
             token.creation, datetime.datetime(2000, 1, 1, 0, 0, 0))
         self.assertEqual(token.expiration,
@@ -55,7 +55,7 @@ class AccessTokenTest(TestCase):
         with self.assertRaises(TypeError):
             AccessToken(available_characters=3)
         with self.assertRaises(TypeError):
-            AccessToken(available_characters=u'')
+            AccessToken(available_characters='')
         with self.assertRaises(TypeError):
             AccessToken(length='')
         with self.assertRaises(TypeError):

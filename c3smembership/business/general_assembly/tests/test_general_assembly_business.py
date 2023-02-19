@@ -149,10 +149,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         general_assembly = mock.Mock()
         general_assembly.date = date(2018, 9, 15)
         general_assembly.number = 'GA1'
-        general_assembly.invitation_subject_en = u'Assembly'
-        general_assembly.invitation_text_en = u'Hello {salutation}!'
-        general_assembly.invitation_subject_de = u'Versammlung'
-        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+        general_assembly.invitation_subject_en = 'Assembly'
+        general_assembly.invitation_text_en = 'Hello {salutation}!'
+        general_assembly.invitation_subject_de = 'Versammlung'
+        general_assembly.invitation_text_de = 'Hallo {salutation}!'
         date_dummy = mock.Mock()
         member = mock.Mock()
         member.membership_number = 'M1'
@@ -202,10 +202,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         general_assembly_repository.get_member_invitation.side_effect = [None]
         general_assembly.date = date(2020, 6, 24)
 
-        general_assembly.invitation_subject_en = u''
-        general_assembly.invitation_text_en = u''
-        general_assembly.invitation_subject_de = u''
-        general_assembly.invitation_text_de = u''
+        general_assembly.invitation_subject_en = ''
+        general_assembly.invitation_text_en = ''
+        general_assembly.invitation_subject_de = ''
+        general_assembly.invitation_text_de = ''
 
         with self.assertRaises(ValueError) as raise_context:
             gai.invite_member(member, general_assembly, token)
@@ -217,10 +217,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         date_dummy.today.side_effect = [date(2020, 5, 1)]
         general_assembly_repository.get_member_invitation.side_effect = [None]
         general_assembly.date = date(2020, 6, 24)
-        general_assembly.invitation_subject_en = u''
-        general_assembly.invitation_text_en = u'Hello {salutation}!'
-        general_assembly.invitation_subject_de = u'Versammlung'
-        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+        general_assembly.invitation_subject_en = ''
+        general_assembly.invitation_text_en = 'Hello {salutation}!'
+        general_assembly.invitation_subject_de = 'Versammlung'
+        general_assembly.invitation_text_de = 'Hallo {salutation}!'
 
         with self.assertRaises(ValueError) as raise_context:
             gai.invite_member(member, general_assembly, token)
@@ -232,10 +232,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         date_dummy.today.side_effect = [date(2020, 5, 1)]
         general_assembly_repository.get_member_invitation.side_effect = [None]
         general_assembly.date = date(2020, 6, 24)
-        general_assembly.invitation_subject_en = u'Assembly'
-        general_assembly.invitation_text_en = u''
-        general_assembly.invitation_subject_de = u'Versammlung'
-        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+        general_assembly.invitation_subject_en = 'Assembly'
+        general_assembly.invitation_text_en = ''
+        general_assembly.invitation_subject_de = 'Versammlung'
+        general_assembly.invitation_text_de = 'Hallo {salutation}!'
 
         with self.assertRaises(ValueError) as raise_context:
             gai.invite_member(member, general_assembly, token)
@@ -247,10 +247,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         date_dummy.today.side_effect = [date(2020, 5, 1)]
         general_assembly_repository.get_member_invitation.side_effect = [None]
         general_assembly.date = date(2020, 6, 24)
-        general_assembly.invitation_subject_en = u'Assembly'
-        general_assembly.invitation_text_en = u'Hello {salutation}!'
-        general_assembly.invitation_subject_de = u''
-        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+        general_assembly.invitation_subject_en = 'Assembly'
+        general_assembly.invitation_text_en = 'Hello {salutation}!'
+        general_assembly.invitation_subject_de = ''
+        general_assembly.invitation_text_de = 'Hallo {salutation}!'
 
         with self.assertRaises(ValueError) as raise_context:
             gai.invite_member(member, general_assembly, token)
@@ -262,10 +262,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         date_dummy.today.side_effect = [date(2020, 5, 1)]
         general_assembly_repository.get_member_invitation.side_effect = [None]
         general_assembly.date = date(2020, 6, 24)
-        general_assembly.invitation_subject_en = u'Assembly'
-        general_assembly.invitation_text_en = u'Hello {salutation}!'
-        general_assembly.invitation_subject_de = u'Versammlung'
-        general_assembly.invitation_text_de = u''
+        general_assembly.invitation_subject_en = 'Assembly'
+        general_assembly.invitation_text_en = 'Hello {salutation}!'
+        general_assembly.invitation_subject_de = 'Versammlung'
+        general_assembly.invitation_text_de = ''
 
         with self.assertRaises(ValueError) as raise_context:
             gai.invite_member(member, general_assembly, token)
@@ -278,10 +278,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         member.is_member.side_effect = [True]
         general_assembly_repository.get_member_invitation.side_effect = [None]
         general_assembly.date = date(2018, 9, 15)
-        general_assembly.invitation_subject_en = u'Assembly'
-        general_assembly.invitation_text_en = u'Hello {salutation}!'
-        general_assembly.invitation_subject_de = u'Versammlung'
-        general_assembly.invitation_text_de = u'Hallo {salutation}!'
+        general_assembly.invitation_subject_en = 'Assembly'
+        general_assembly.invitation_text_en = 'Hello {salutation}!'
+        general_assembly.invitation_subject_de = 'Versammlung'
+        general_assembly.invitation_text_de = 'Hallo {salutation}!'
 
         gai.invite_member(member, general_assembly, token)
         member.is_member.assert_called_with(date(2018, 9, 15))
@@ -336,10 +336,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         ]
         gai.date.today.side_effect = [date(2018, 11, 17)]
 
-        gai.create_general_assembly(u'New general assembly',
-                                    date(2018, 11, 18), u'Assembly',
-                                    u'Hello {salutation}!', u'Versammlung',
-                                    u'Hallo {salutation}!')
+        gai.create_general_assembly('New general assembly',
+                                    date(2018, 11, 18), 'Assembly',
+                                    'Hello {salutation}!', 'Versammlung',
+                                    'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         general_assembly_repository.general_assembly_max_number \
@@ -349,15 +349,15 @@ class GeneralAssemblyInvitationTest(TestCase):
         call_tuple = call[0]
         general_assembly = call_tuple[0]
         self.assertEqual(general_assembly.number, 11)
-        self.assertEqual(general_assembly.name, u'New general assembly')
+        self.assertEqual(general_assembly.name, 'New general assembly')
         self.assertEqual(general_assembly.date, date(2018, 11, 18))
-        self.assertEqual(general_assembly.invitation_subject_en, u'Assembly')
+        self.assertEqual(general_assembly.invitation_subject_en, 'Assembly')
         self.assertEqual(general_assembly.invitation_text_en,
-                         u'Hello {salutation}!')
+                         'Hello {salutation}!')
         self.assertEqual(general_assembly.invitation_subject_de,
-                         u'Versammlung')
+                         'Versammlung')
         self.assertEqual(general_assembly.invitation_text_de,
-                         u'Hallo {salutation}!')
+                         'Hallo {salutation}!')
 
         # 2. Create a general assembly for today
         general_assembly_repository.general_assembly_max_number.side_effect = [
@@ -365,10 +365,10 @@ class GeneralAssemblyInvitationTest(TestCase):
         ]
         gai.date.today.side_effect = [date(2018, 11, 20)]
 
-        gai.create_general_assembly(u'Another general assembly',
-                                    date(2018, 11, 20), u'Assembly',
-                                    u'Hello {salutation}!', u'Versammlung',
-                                    u'Hallo {salutation}!')
+        gai.create_general_assembly('Another general assembly',
+                                    date(2018, 11, 20), 'Assembly',
+                                    'Hello {salutation}!', 'Versammlung',
+                                    'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         general_assembly_repository.general_assembly_max_number \
@@ -378,15 +378,15 @@ class GeneralAssemblyInvitationTest(TestCase):
         call_tuple = call[0]
         general_assembly = call_tuple[0]
         self.assertEqual(general_assembly.number, 22)
-        self.assertEqual(general_assembly.name, u'Another general assembly')
+        self.assertEqual(general_assembly.name, 'Another general assembly')
         self.assertEqual(general_assembly.date, date(2018, 11, 20))
-        self.assertEqual(general_assembly.invitation_subject_en, u'Assembly')
+        self.assertEqual(general_assembly.invitation_subject_en, 'Assembly')
         self.assertEqual(general_assembly.invitation_text_en,
-                         u'Hello {salutation}!')
+                         'Hello {salutation}!')
         self.assertEqual(general_assembly.invitation_subject_de,
-                         u'Versammlung')
+                         'Versammlung')
         self.assertEqual(general_assembly.invitation_text_de,
-                         u'Hallo {salutation}!')
+                         'Hallo {salutation}!')
 
         # 3. Create a general assembly without invitation subjects and texts
         general_assembly_repository.general_assembly_max_number.side_effect = [
@@ -394,8 +394,8 @@ class GeneralAssemblyInvitationTest(TestCase):
         ]
         gai.date.today.side_effect = [date(2018, 11, 20)]
 
-        gai.create_general_assembly(u'Yet another general assembly',
-                                    date(2020, 5, 1), u'', u'', u'', u'')
+        gai.create_general_assembly('Yet another general assembly',
+                                    date(2020, 5, 1), '', '', '', '')
 
         gai.date.today.assert_called_with()
         general_assembly_repository.general_assembly_max_number \
@@ -406,29 +406,29 @@ class GeneralAssemblyInvitationTest(TestCase):
         general_assembly = call_tuple[0]
         self.assertEqual(general_assembly.number, 23)
         self.assertEqual(general_assembly.name,
-                         u'Yet another general assembly')
+                         'Yet another general assembly')
         self.assertEqual(general_assembly.date, date(2020, 5, 1))
-        self.assertEqual(general_assembly.invitation_subject_en, u'')
-        self.assertEqual(general_assembly.invitation_text_en, u'')
-        self.assertEqual(general_assembly.invitation_subject_de, u'')
-        self.assertEqual(general_assembly.invitation_text_de, u'')
+        self.assertEqual(general_assembly.invitation_subject_en, '')
+        self.assertEqual(general_assembly.invitation_text_en, '')
+        self.assertEqual(general_assembly.invitation_subject_de, '')
+        self.assertEqual(general_assembly.invitation_text_de, '')
 
         # 4. Try creating a general assembly in the past
         gai.date.today.side_effect = [date(2018, 11, 19)]
         with self.assertRaises(ValueError) as raise_context:
-            gai.create_general_assembly(u'New general assembly',
-                                        date(2018, 11, 18), u'Assembly',
-                                        u'Hello {salutation}!', u'Versammlung',
-                                        u'Hallo {salutation}!')
+            gai.create_general_assembly('New general assembly',
+                                        date(2018, 11, 18), 'Assembly',
+                                        'Hello {salutation}!', 'Versammlung',
+                                        'Hallo {salutation}!')
         self.assertEqual(
             str(raise_context.exception),
             'The general assembly must take place in the future.')
 
         # 5. Try creating a general assembly without a name
         with self.assertRaises(ValueError) as raise_context:
-            gai.create_general_assembly(u'', date(2018, 11, 18), u'Assembly',
-                                        u'Hello {salutation}!', u'Versammlung',
-                                        u'Hallo {salutation}!')
+            gai.create_general_assembly('', date(2018, 11, 18), 'Assembly',
+                                        'Hello {salutation}!', 'Versammlung',
+                                        'Hallo {salutation}!')
         self.assertEqual(str(raise_context.exception),
                          'The general assembly must be given a name.')
 
@@ -450,14 +450,14 @@ class GeneralAssemblyInvitationTest(TestCase):
         # 1. Edit a general assembly in the future and verify the calls
         general_assembly_repository.get_general_assembly.side_effect = [
             GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22),
-                            u'Assembly', u'Hello {salutation}!',
-                            u'Versammlung', u'Hallo {salutation}!')
+                            'Assembly', 'Hello {salutation}!',
+                            'Versammlung', 'Hallo {salutation}!')
         ]
         gai.date.today.side_effect = [date(2019, 1, 21)]
-        gai.edit_general_assembly(1, u'New general assembly name',
-                                  date(2019, 1, 23), u'Assembly',
-                                  u'Hello {salutation}!', u'Versammlung',
-                                  u'Hallo {salutation}!')
+        gai.edit_general_assembly(1, 'New general assembly name',
+                                  date(2019, 1, 23), 'Assembly',
+                                  'Hello {salutation}!', 'Versammlung',
+                                  'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         call = general_assembly_repository.update_general_assembly \
@@ -465,27 +465,27 @@ class GeneralAssemblyInvitationTest(TestCase):
         call_tuple = call[0]
         general_assembly = call_tuple[0]
         self.assertEqual(general_assembly.number, 1)
-        self.assertEqual(general_assembly.name, u'New general assembly name')
+        self.assertEqual(general_assembly.name, 'New general assembly name')
         self.assertEqual(general_assembly.date, date(2019, 1, 23))
-        self.assertEqual(general_assembly.invitation_subject_en, u'Assembly')
+        self.assertEqual(general_assembly.invitation_subject_en, 'Assembly')
         self.assertEqual(general_assembly.invitation_text_en,
-                         u'Hello {salutation}!')
+                         'Hello {salutation}!')
         self.assertEqual(general_assembly.invitation_subject_de,
-                         u'Versammlung')
+                         'Versammlung')
         self.assertEqual(general_assembly.invitation_text_de,
-                         u'Hallo {salutation}!')
+                         'Hallo {salutation}!')
 
         # 2. Edit a general assembly for today
         general_assembly_repository.get_general_assembly.side_effect = [
             GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22),
-                            u'Assembly', u'Hello {salutation}!',
-                            u'Versammlung', u'Hallo {salutation}!')
+                            'Assembly', 'Hello {salutation}!',
+                            'Versammlung', 'Hallo {salutation}!')
         ]
         gai.date.today.side_effect = [date(2019, 1, 21)]
-        gai.edit_general_assembly(1, u'New general assembly name',
-                                  date(2019, 1, 21), u'Assembly',
-                                  u'Hello {salutation}!', u'Versammlung',
-                                  u'Hallo {salutation}!')
+        gai.edit_general_assembly(1, 'New general assembly name',
+                                  date(2019, 1, 21), 'Assembly',
+                                  'Hello {salutation}!', 'Versammlung',
+                                  'Hallo {salutation}!')
 
         gai.date.today.assert_called_with()
         call = general_assembly_repository.update_general_assembly \
@@ -493,27 +493,27 @@ class GeneralAssemblyInvitationTest(TestCase):
         call_tuple = call[0]
         general_assembly = call_tuple[0]
         self.assertEqual(general_assembly.number, 1)
-        self.assertEqual(general_assembly.name, u'New general assembly name')
+        self.assertEqual(general_assembly.name, 'New general assembly name')
         self.assertEqual(general_assembly.date, date(2019, 1, 21))
-        self.assertEqual(general_assembly.invitation_subject_en, u'Assembly')
+        self.assertEqual(general_assembly.invitation_subject_en, 'Assembly')
         self.assertEqual(general_assembly.invitation_text_en,
-                         u'Hello {salutation}!')
+                         'Hello {salutation}!')
         self.assertEqual(general_assembly.invitation_subject_de,
-                         u'Versammlung')
+                         'Versammlung')
         self.assertEqual(general_assembly.invitation_text_de,
-                         u'Hallo {salutation}!')
+                         'Hallo {salutation}!')
 
         #3. Edit a general assembly, set invitation subjects and texts empty
         general_assembly_repository.get_general_assembly.side_effect = [
             GeneralAssembly(1, 'Old general assembly name', date(2019, 1, 22),
-                            u'Assembly', u'Hello {salutation}!',
-                            u'Versammlung', u'Hallo {salutation}!')
+                            'Assembly', 'Hello {salutation}!',
+                            'Versammlung', 'Hallo {salutation}!')
         ]
         gai.date.today.side_effect = [date(2019, 1, 21)]
-        gai.edit_general_assembly(1, u'New general assembly name',
-                                  date(2020, 5, 1), u'',
-                                  u'', u'',
-                                  u'')
+        gai.edit_general_assembly(1, 'New general assembly name',
+                                  date(2020, 5, 1), '',
+                                  '', '',
+                                  '')
 
         gai.date.today.assert_called_with()
         call = general_assembly_repository.update_general_assembly \
@@ -521,23 +521,23 @@ class GeneralAssemblyInvitationTest(TestCase):
         call_tuple = call[0]
         general_assembly = call_tuple[0]
         self.assertEqual(general_assembly.number, 1)
-        self.assertEqual(general_assembly.name, u'New general assembly name')
+        self.assertEqual(general_assembly.name, 'New general assembly name')
         self.assertEqual(general_assembly.date, date(2020, 5, 1))
-        self.assertEqual(general_assembly.invitation_subject_en, u'')
+        self.assertEqual(general_assembly.invitation_subject_en, '')
         self.assertEqual(general_assembly.invitation_text_en,
-                         u'')
+                         '')
         self.assertEqual(general_assembly.invitation_subject_de,
-                         u'')
+                         '')
         self.assertEqual(general_assembly.invitation_text_de,
-                         u'')
+                         '')
 
         # 4. Try editing a general assembly in the past
         gai.date.today.side_effect = [date(2019, 1, 21)]
         with self.assertRaises(ValueError) as raise_context:
-            gai.edit_general_assembly(1, u'New general assembly name',
-                                      date(2019, 1, 20), u'Assembly',
-                                      u'Hello {salutation}!', u'Versammlung',
-                                      u'Hallo {salutation}!')
+            gai.edit_general_assembly(1, 'New general assembly name',
+                                      date(2019, 1, 20), 'Assembly',
+                                      'Hello {salutation}!', 'Versammlung',
+                                      'Hallo {salutation}!')
         self.assertEqual(
             str(raise_context.exception),
             'The general assembly must take place in the future.')
@@ -547,19 +547,19 @@ class GeneralAssemblyInvitationTest(TestCase):
         gai.date.today.side_effect = [date(2019, 1, 21)]
 
         with self.assertRaises(ValueError) as raise_context:
-            gai.edit_general_assembly(1, u'New general assembly name',
-                                      date(2019, 1, 22), u'Assembly',
-                                      u'Hello {salutation}!', u'Versammlung',
-                                      u'Hallo {salutation}!')
+            gai.edit_general_assembly(1, 'New general assembly name',
+                                      date(2019, 1, 22), 'Assembly',
+                                      'Hello {salutation}!', 'Versammlung',
+                                      'Hallo {salutation}!')
         self.assertEqual(str(raise_context.exception),
                          'The general assembly does not exist.')
 
         # 6. Try editing a general assembly in the past
         gai.date.today.side_effect = [date(2019, 1, 21)]
         with self.assertRaises(ValueError) as raise_context:
-            gai.edit_general_assembly(1, u'', date(2019, 1, 20), u'Assembly',
-                                      u'Hello {salutation}!', u'Versammlung',
-                                      u'Hallo {salutation}!')
+            gai.edit_general_assembly(1, '', date(2019, 1, 20), 'Assembly',
+                                      'Hello {salutation}!', 'Versammlung',
+                                      'Hallo {salutation}!')
         self.assertEqual(str(raise_context.exception),
                          'The general assembly must be given a name.')
 

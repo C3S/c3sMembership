@@ -278,7 +278,7 @@ def downgrade():
     afterwards.
     """
     # pylint: disable=no-member
-    with op.batch_alter_table(u'members', schema=None) as batch_op:
+    with op.batch_alter_table('members', schema=None) as batch_op:
         batch_op.add_column(sa.Column(
             'email_invite_flag_bcgv14',
             sa.Boolean(),

@@ -44,7 +44,7 @@ class PaymentRepository(object):
             if member.dues15_paid:
                 payments.append(cls._create_payment(
                     date=member.dues15_paid_date.date(),
-                    account=u'Membership dues 2015',
+                    account='Membership dues 2015',
                     reference=member.dues15_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -62,7 +62,7 @@ class PaymentRepository(object):
             if member.dues16_paid:
                 payments.append(cls._create_payment(
                     date=member.dues16_paid_date.date(),
-                    account=u'Membership dues 2016',
+                    account='Membership dues 2016',
                     reference=member.dues16_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -80,7 +80,7 @@ class PaymentRepository(object):
             if member.dues17_paid:
                 payments.append(cls._create_payment(
                     date=member.dues17_paid_date.date(),
-                    account=u'Membership dues 2017',
+                    account='Membership dues 2017',
                     reference=member.dues17_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -98,7 +98,7 @@ class PaymentRepository(object):
             if member.dues18_paid:
                 payments.append(cls._create_payment(
                     date=member.dues18_paid_date.date(),
-                    account=u'Membership dues 2018',
+                    account='Membership dues 2018',
                     reference=member.dues18_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -116,7 +116,7 @@ class PaymentRepository(object):
             if member.dues19_paid:
                 payments.append(cls._create_payment(
                     date=member.dues19_paid_date.date(),
-                    account=u'Membership dues 2019',
+                    account='Membership dues 2019',
                     reference=member.dues19_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -134,7 +134,7 @@ class PaymentRepository(object):
             if member.dues20_paid:
                 payments.append(cls._create_payment(
                     date=member.dues20_paid_date.date(),
-                    account=u'Membership dues 2020',
+                    account='Membership dues 2020',
                     reference=member.dues20_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -152,7 +152,7 @@ class PaymentRepository(object):
             if member.dues21_paid:
                 payments.append(cls._create_payment(
                     date=member.dues21_paid_date.date(),
-                    account=u'Membership dues 2021',
+                    account='Membership dues 2021',
                     reference=member.dues21_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -170,7 +170,7 @@ class PaymentRepository(object):
             if member.dues22_paid:
                 payments.append(cls._create_payment(
                     date=member.dues22_paid_date.date(),
-                    account=u'Membership dues 2022',
+                    account='Membership dues 2022',
                     reference=member.dues22_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -188,7 +188,7 @@ class PaymentRepository(object):
             if member.dues23_paid:
                 payments.append(cls._create_payment(
                     date=member.dues23_paid_date.date(),
-                    account=u'Membership dues 2023',
+                    account='Membership dues 2023',
                     reference=member.dues23_token,
                     membership_number=member.membership_number,
                     firstname=member.firstname,
@@ -224,9 +224,7 @@ class PaymentRepository(object):
             if to_date is None:
                 to_date = datetime.date(9999, 1, 1)
             # pylint: disable=bad-builtin,deprecated-lambda
-            payments = filter(
-                lambda k: k['date'] >= from_date and k['date'] <= to_date,
-                payments)
+            payments = [k for k in payments if k['date'] >= from_date and k['date'] <= to_date]
         return payments
 
     @classmethod
@@ -323,8 +321,8 @@ class PaymentRepository(object):
         """
         if not cls._is_valid_sort_property(sort_property):
             raise ValueError(
-                u'"{}"" is an invalid sort property.'.format(
-                    unicode(sort_property)))
+                '"{}"" is an invalid sort property.'.format(
+                    str(sort_property)))
 
         payments = []
         members = DBSession().query(C3sMember).all()

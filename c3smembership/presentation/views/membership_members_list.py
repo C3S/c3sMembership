@@ -80,23 +80,23 @@ def latex_address(address1, address2, postal_code, city, country_code):
     address2_latex = ''
     if len(address2) > 0:
         address2_latex = '\\linebreak '
-        address2_latex += unicode(TexTools.escape(address2)).encode('utf-8')
+        address2_latex += str(TexTools.escape(address2)).encode('utf-8')
     return LATEX_ADDRESS.format(
-        address1_latex=unicode(TexTools.escape(address1)).encode('utf-8'),
+        address1_latex=str(TexTools.escape(address1)).encode('utf-8'),
         address2_latex=address2_latex,
-        postal_code_latex=unicode(
+        postal_code_latex=str(
             TexTools.escape(postal_code)).encode('utf-8'),
-        city=unicode(TexTools.escape(city)).encode('utf-8'),
-        country_code=unicode(TexTools.escape(country_code)).encode('utf-8'))
+        city=str(TexTools.escape(city)).encode('utf-8'),
+        country_code=str(TexTools.escape(country_code)).encode('utf-8'))
 
 
 def latex_membership_loss(membership_loss_date, membership_loss_type):
-    membership_loss = u''
+    membership_loss = ''
     if membership_loss_date is not None:
         membership_loss += membership_loss_date.strftime('%d.%m.%Y')
     if membership_loss_type is not None:
         membership_loss += '\\linebreak '
-        membership_loss += unicode(TexTools.escape(
+        membership_loss += str(TexTools.escape(
             membership_loss_type)).encode('utf-8')
     return membership_loss
 
@@ -244,7 +244,7 @@ def member_list_print_view(request):
     It was used before the PDF-generating view above existed
     """
     all_members = C3sMember.member_listing(
-        'lastname', how_many=C3sMember.get_number(), offset=0, order=u'asc')
+        'lastname', how_many=C3sMember.get_number(), offset=0, order='asc')
     member_list = []
     count = 0
     for member in all_members:
@@ -254,8 +254,8 @@ def member_list_print_view(request):
                 assert(member.membership_number is not None)
             except AssertionError:
                 if DEBUG:  # pragma: no cover
-                    print(u"failed at id {} lastname {}".format(
-                        member.id, member.lastname))
+                    print(("failed at id {} lastname {}".format(
+                        member.id, member.lastname)))
             member_list.append(member)
             count += 1
     # sort members alphabetically

@@ -32,8 +32,8 @@ class TestDeferredMethods(TestCase):
         result = preparer('some value')
 
         node.transform.assert_called_with('some request', 'some value')
-        self.assertEquals(result, 'transform result')
-        self.assertEquals(node.original_value, 'some value')
+        self.assertEqual(result, 'transform result')
+        self.assertEqual(node.original_value, 'some value')
 
     def test_deferred_validator(self):
         """
@@ -75,7 +75,7 @@ class TestValidationNode(TestCase):
         """
         node = ValidationNode(colander.Int)
         result = node.transform(None, 'some value')
-        self.assertEquals(result, 'some value')
+        self.assertEqual(result, 'some value')
 
     def test_validate(self):
         """

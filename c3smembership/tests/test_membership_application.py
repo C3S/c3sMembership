@@ -58,11 +58,11 @@ class MembershipApplicationTest(unittest.TestCase):
     def setUp(self):
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
-            'api_auth_token': u"SECRETAUTHTOKEN",
-            'c3smembership.url': u'localhost',
-            'c3smembership.notification_sender': u'test@example.com',
-            'c3smembership.status_receiver': u'test@example.com',
-            'testing.mail_to_console': u'false',
+            'api_auth_token': "SECRETAUTHTOKEN",
+            'c3smembership.url': 'localhost',
+            'c3smembership.notification_sender': 'test@example.com',
+            'c3smembership.status_receiver': 'test@example.com',
+            'testing.mail_to_console': 'false',
         }
         self.config = testing.setUp()
         app = main({}, **my_settings)
@@ -77,14 +77,14 @@ class MembershipApplicationTest(unittest.TestCase):
 
         with transaction.manager:
             # a group for accountants/staff
-            accountants_group = Group(name=u"staff")
+            accountants_group = Group(name="staff")
             DBSession.add(accountants_group)
             DBSession.flush()
             # staff personnel
             staffer1 = Staff(
-                login=u"rut",
-                password=u"berries",
-                email=u"noreply@example.com",
+                login="rut",
+                password="berries",
+                email="noreply@example.com",
             )
             staffer1.groups = [accountants_group]
             DBSession.add(accountants_group)
@@ -153,30 +153,30 @@ class MembershipApplicationTest(unittest.TestCase):
         # 1. Enter applicant data to application form
         res = self.testapp.get('/', status=200)
         properties = {
-            'firstname': u'Sönke',
-            'lastname': u'Blømqvist',
-            'email': u'soenke@example.com',
-            'address1': u'℅ Big Boss',
-            'address2': u'Håkanvägen 12',
-            'postcode': u'ABC1234',
-            'city': u'Stockholm',
-            'year': u'1980',
-            'month': u'01',
-            'day': u'02',
-            'name_of_colsoc': u'Svenska Tonsättares Internationella Musikbyrå',
-            'num_shares': u'15',
-            'password': u'worst password ever chosen',
-            'password-confirm': u'worst password ever chosen',
+            'firstname': 'Sönke',
+            'lastname': 'Blømqvist',
+            'email': 'soenke@example.com',
+            'address1': '℅ Big Boss',
+            'address2': 'Håkanvägen 12',
+            'postcode': 'ABC1234',
+            'city': 'Stockholm',
+            'year': '1980',
+            'month': '01',
+            'day': '02',
+            'name_of_colsoc': 'Svenska Tonsättares Internationella Musikbyrå',
+            'num_shares': '15',
+            'password': 'worst password ever chosen',
+            'password-confirm': 'worst password ever chosen',
         }
-        for key, value in properties.iteritems():
+        for key, value in properties.items():
             res.form[key] = value
-        res.form['country'].select(text=u'Sweden')
-        res.form['membership_type'].value__set(u'normal')
-        res.form['other_colsoc'].value__set(u'yes')
+        res.form['country'].select(text='Sweden')
+        res.form['membership_type'].value__set('normal')
+        res.form['other_colsoc'].value__set('yes')
         res.form['got_statute'].checked = True
         res.form['got_dues_regulations'].checked = True
         res.form['privacy_consent'].checked = True
-        res = res.form.submit(u'submit', status=302)
+        res = res.form.submit('submit', status=302)
         res = res.follow()
 
         # 2. Verify entered data and confirm
@@ -213,9 +213,9 @@ class MembershipApplicationTest(unittest.TestCase):
             match.group('url'),
             status=200)
 
-        self.assertTrue(u'password in order to verify your email' in res.body)
+        self.assertTrue('password in order to verify your email' in res.body)
         res.form['password'] = 'worst password ever chosen'
-        res = res.form.submit(u'submit', status=200)
+        res = res.form.submit('submit', status=200)
 
         # 5. Login to backend
         self.testapp.reset()
