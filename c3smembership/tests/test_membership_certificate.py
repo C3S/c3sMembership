@@ -122,6 +122,7 @@ class TestErrorHandler(ErrorHandler):
     Dummy error handler for testing purposes collecting calls
     """
     # pylint: disable=too-few-public-methods
+    __test__ = False
 
     def __init__(self):
         """
@@ -566,7 +567,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         }
 
         # assure files for PDF creation are present
-        self.check_for_pdf_elements()    
+        self.check_for_pdf_elements()
 
         result = generate_certificate_staff(request)
         self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
