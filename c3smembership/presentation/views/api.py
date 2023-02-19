@@ -40,7 +40,7 @@ member = Service(name='member', path='/lm', description="load user info")
 DEBUG = False
 
 
-def auth_header_does_match(request):
+def auth_header_does_match(request, **kwargs):
     '''
     a validator to check the authentication header
     '''
@@ -57,7 +57,7 @@ def auth_header_does_match(request):
         raise HTTPUnauthorized()
 
 
-def token_does_exist(request):
+def token_does_exist(request, **kwargs):
     """
     validator: check existence of token
     """
