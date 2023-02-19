@@ -478,8 +478,8 @@ class DuesInvoiceRepository(object):
             .group_by(payment_date_month)
 
         # union invoice amounts and payments
-        union_all_query = expression.union_all(member_payments_query,
-                                               invoice_amounts_query)
+        union_all_query = expression.union_all(
+            member_payments_query, invoice_amounts_query).subquery()
 
         # aggregate invoice amounts and payments by month
         result_query = db_session.query(
