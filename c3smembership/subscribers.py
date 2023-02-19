@@ -29,9 +29,9 @@ BROWSER_LANGUAGES = {  # a dictionary of codes the browsers send
     'de_CH': 'de',
     'de_DE': 'de',
     'en': 'en',
-    'en-CA': 'en',
-    'en-GB': 'en',
-    'en-US': 'en',
+    'en_CA': 'en',
+    'en_GB': 'en',
+    'en_US': 'en',
     'es': 'es',
     'fr': 'fr',
     # ... add new languages here, too!
@@ -82,9 +82,9 @@ def add_locale_to_cookie(event):
         print("locale (from default_locale_negotiator): " + str(locale))
 
     # if locale is not already set, look at browser information
-    if locale is None and event.request.accept_language:
-        locale = event.request.accept_language.best_match(BROWSER_LANGUAGES)
-        locale = BROWSER_LANGUAGES.get(locale)
+    browser_info = str(event.request.accept_language).replace('-', '_')
+    if locale is None and browser_info in BROWSER_LANGUAGES:
+        locale = BROWSER_LANGUAGES.get(browser_info)
 
     # if we have nothing, assume english as fallback
     if locale is None and not event.request.accept_language:
