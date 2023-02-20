@@ -344,7 +344,7 @@ class AccountantsFunctionalTests(unittest.TestCase):
         self.assertEqual(len(pq("#navigate_next")), 0)
 
     def _get_pyquery(self, html):
-        pure_html = ''.join(html.split('\n')[2:])
+        pure_html = ''.join(str(html).split('\n')[2:])
         pure_html = "<html>" + pure_html
         d = pq(pure_html)
         return d
@@ -649,7 +649,7 @@ class FunctionalTests(unittest.TestCase):
             '/C3S_SCE_AFM_SomeFirstn_meSomeLastn_me.pdf',
             status=200
         )
-        self.assertTrue(80000 < len(res3) < 220000)  # check pdf size
+        self.assertTrue(80000 < len(res3.body) < 220000)  # check pdf size
 
     def test_email_confirmation_wrong_mail(self):
         """
