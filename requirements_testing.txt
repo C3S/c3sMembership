@@ -1,7 +1,6 @@
 -r requirements_production.txt
 -r requirements_staging.txt
 coverage
-mock
 pytest
 pylint
 pyquery

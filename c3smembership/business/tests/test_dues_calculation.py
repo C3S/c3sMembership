@@ -5,9 +5,7 @@ Test the c3smembership.business.dues_calculation module
 
 from datetime import date
 from decimal import Decimal
-from unittest import TestCase
-
-import mock
+from unittest import TestCase, mock
 
 from c3smembership.business.dues_calculation import (
     DuesCalculator,

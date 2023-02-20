@@ -7,7 +7,7 @@ Test the general assembly module
 from datetime import date
 import unittest
 
-import mock
+from unittest import mock
 from pyramid import testing
 from pyramid_mailer import get_mailer
 import transaction

@@ -9,7 +9,7 @@ from datetime import (
     datetime,
 )
 
-import mock
+from unittest import mock
 
 from template_test_case import TemplateTestCase
 

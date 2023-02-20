@@ -11,7 +11,7 @@ from datetime import (
 import unittest
 
 import os.path
-from mock import Mock
+from unittest.mock import Mock
 from pyramid import testing
 from pyramid.httpexceptions import HTTPFound
 from pyramid_beaker import session_factory_from_settings

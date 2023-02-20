@@ -9,7 +9,7 @@ from datetime import (
 )
 from unittest import TestCase
 
-from mock import Mock
+from unittest.mock import Mock
 
 from c3smembership.cache import (
     Cache,

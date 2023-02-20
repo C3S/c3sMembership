@@ -5,7 +5,7 @@ Tests the c3smembership.presentation.before_render_events module
 
 import unittest
 
-import mock
+from unittest import mock
 
 from c3smembership.presentation import before_render_events
 from c3smembership.presentation.before_render_events import (

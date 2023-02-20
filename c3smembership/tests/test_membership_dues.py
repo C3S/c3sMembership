@@ -6,7 +6,7 @@ Integration test the membership dues
 from datetime import date
 from decimal import Decimal
 
-from mock import Mock
+from unittest.mock import Mock
 
 from .integration_test_base import IntegrationTestCaseBase
 

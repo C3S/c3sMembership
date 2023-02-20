@@ -4,12 +4,12 @@ Test the c3smembership.presentation.schemas.general_assembly module
 """
 
 from unittest import TestCase
+from unittest.mock import Mock
 
 from colander import (
     Invalid,
     MappingSchema,
 )
-from mock import Mock
 
 from c3smembership.presentation.schemas.general_assembly import (
     GeneralAssemblyFormFactory,

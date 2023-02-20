@@ -6,7 +6,7 @@ package
 
 from datetime import date
 
-from mock import Mock
+from unittest.mock import Mock
 
 from .integration_test_base import IntegrationTestCaseBase
 

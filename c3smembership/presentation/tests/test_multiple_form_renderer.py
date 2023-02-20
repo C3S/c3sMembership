@@ -4,7 +4,7 @@ Tests the c3smembership.presentation.multiple_form_renderer module.
 """
 
 import unittest
-import mock
+from unittest import mock
 
 from deform import ValidationFailure
 

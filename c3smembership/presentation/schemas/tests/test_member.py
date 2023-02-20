@@ -9,7 +9,7 @@ from colander import (
     Invalid,
     MappingSchema,
 )
-from mock import Mock
+from unittest.mock import Mock
 
 from c3smembership.presentation.schemas.member import (
     MemberNode,

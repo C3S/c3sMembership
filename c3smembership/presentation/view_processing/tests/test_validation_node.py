@@ -6,7 +6,7 @@ Test the validation_node module
 from unittest import TestCase
 
 import colander
-from mock import Mock
+from unittest.mock import Mock
 
 from c3smembership.presentation.view_processing.validation_node import (
     deferred_preparer,

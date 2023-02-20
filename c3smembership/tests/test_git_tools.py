@@ -1,10 +1,10 @@
 """Test module for c3smembership.GitTools."""
 
-import mock
 import os
 import re
 import subprocess
 import unittest
+from unittest import mock
 
 from c3smembership.git_tools import GitTools
 

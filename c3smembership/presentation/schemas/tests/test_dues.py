@@ -3,10 +3,9 @@
 Test the c3smembership.presentation.schemas.dues module
 """
 
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import deform
-import mock
 
 from c3smembership.presentation.schemas.dues import (
     invoice_archiving_year_widget,

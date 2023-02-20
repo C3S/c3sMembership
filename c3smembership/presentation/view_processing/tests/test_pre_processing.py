@@ -3,9 +3,7 @@
 Test the pre_processing module
 """
 
-from unittest import TestCase
-
-import mock
+from unittest import TestCase, mock
 
 from c3smembership.presentation.view_processing.pre_processing import (
     PreProcessor,

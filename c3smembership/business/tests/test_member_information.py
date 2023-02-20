@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import mock
 from datetime import date
 
-from unittest import TestCase
+from unittest import TestCase, mock
 
 from c3smembership.business.member_information import (
     MemberInformation,

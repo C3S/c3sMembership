@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import mock
 from datetime import (
     date,
     datetime,
 )
 
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import c3smembership.business.membership_application as \
     membership_application_package

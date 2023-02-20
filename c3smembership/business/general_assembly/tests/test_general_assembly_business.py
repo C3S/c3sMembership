@@ -4,9 +4,7 @@ Test the c3smembership.business.general_assembly module
 """
 
 from datetime import date
-from unittest import TestCase
-
-import mock
+from unittest import TestCase, mock
 
 from c3smembership.data.model.general_assembly import GeneralAssembly
 

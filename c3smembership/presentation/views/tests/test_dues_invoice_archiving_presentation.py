@@ -5,7 +5,7 @@ Test the c3smembership.presentation.views.dues_invoice_archiving package
 
 import unittest
 
-import mock
+from unittest import mock
 from pyramid import testing
 from webob.multidict import MultiDict
 

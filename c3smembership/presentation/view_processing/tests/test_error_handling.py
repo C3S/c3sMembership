@@ -3,9 +3,7 @@
 Test the error_handling module
 """
 
-from unittest import TestCase
-
-import mock
+from unittest import TestCase, mock
 
 from c3smembership.presentation.view_processing.error_handling import (
     ErrorHandler,

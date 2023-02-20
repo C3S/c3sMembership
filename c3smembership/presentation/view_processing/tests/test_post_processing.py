@@ -3,9 +3,7 @@
 Test the post_processing module
 """
 
-from unittest import TestCase
-
-import mock
+from unittest import TestCase, mock
 
 from c3smembership.presentation.view_processing.post_processing import (
     PostProcessor,

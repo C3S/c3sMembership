@@ -3,9 +3,7 @@
 Test the payment information module.
 """
 
-from unittest import TestCase
-
-import mock
+from unittest import TestCase, mock
 
 from c3smembership.business.payment_information import (
     PaymentInformation,

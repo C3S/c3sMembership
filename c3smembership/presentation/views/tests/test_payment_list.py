@@ -7,7 +7,7 @@ import datetime
 import unittest
 
 import deform
-from mock import Mock
+from unittest.mock import Mock
 from pyramid import testing
 
 import c3smembership.presentation.views.payment_list as payment_list_package

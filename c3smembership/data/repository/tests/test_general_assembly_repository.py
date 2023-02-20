@@ -9,8 +9,8 @@ from datetime import (
 )
 import unittest
 
-import mock
 import transaction
+from unittest import mock
 from sqlalchemy import engine_from_config
 
 from c3smembership.data.model.base import (

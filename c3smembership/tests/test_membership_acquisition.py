@@ -10,7 +10,7 @@ from datetime import (
     timedelta,
 )
 
-from mock import Mock
+from unittest.mock import Mock
 import pyramid_mailer
 
 from .integration_test_base import IntegrationTestCaseBase

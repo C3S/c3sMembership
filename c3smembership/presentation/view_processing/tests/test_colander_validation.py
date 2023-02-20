@@ -6,7 +6,7 @@ Test the colander_validation module
 from unittest import TestCase
 
 import colander
-import mock
+from unittest import mock
 
 from c3smembership.presentation.view_processing.colander_validation import (
     ColanderGetValidator,
