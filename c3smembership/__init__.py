@@ -56,10 +56,27 @@ __version__ = open(os.path.join(os.path.abspath(
     os.path.dirname(__file__)), '../VERSION')).read()
 
 
+def debug_warnings():
+    import traceback
+    import warnings
+    import sys
+
+    def warn_with_traceback(msg, cat, filename, lineno, file=None, line=None):
+
+        log = file if hasattr(file, 'write') else sys.stderr
+        traceback.print_stack(file=log)
+        log.write(warnings.formatwarning(msg, cat, filename, lineno, line))
+
+    warnings.showwarning = warn_with_traceback
+
+
 def main(global_config, **settings):
     """
     Create a Pyramid WSGI application
     """
+    # to debug warnings, start pserve with PYTHONWARNINGS=default and uncomment
+    # debug_warnings()
+
     # pylint: disable=unused-argument
     engine = engine_from_config(settings, 'sqlalchemy.')
     Base.metadata.bind = engine
