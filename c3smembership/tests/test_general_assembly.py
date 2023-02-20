@@ -4,7 +4,7 @@
 Test the general assembly module
 """
 
-from datetime import date
+from datetime import date, timedelta
 import unittest
 
 from unittest import mock
@@ -230,6 +230,8 @@ class TestInvitation(unittest.TestCase):
         self.config.registry.general_assembly_invitation = \
             GeneralAssemblyInvitation(GeneralAssemblyRepository())
         self.config.registry.general_assembly_invitation.date = mock.Mock()
+        self.config.registry.general_assembly_invitation.date.today\
+            .return_value = date(2000, 1, 1)
         self.config.registry.member_information = MemberInformation(
             MemberRepository)
         self.session = init_db()
