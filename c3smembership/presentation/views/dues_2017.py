@@ -399,7 +399,7 @@ def make_dues17_invoice_no_pdf(request):
     pdf_file = make_invoice_pdf_pdflatex(invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
-    response.app_iter = open(pdf_file.name, "r")
+    response.app_iter = open(pdf_file.name, "rb")
     return response
 
 
@@ -433,7 +433,7 @@ def get_invoice(invoice_number):
         pdf_file = make_invoice_pdf_pdflatex(invoice)
     pdf_file.seek(0)  # rewind to beginning
     response = Response(content_type='application/pdf')
-    response.app_iter = open(pdf_file.name, "r")
+    response.app_iter = open(pdf_file.name, "rb")
     return response
 
 
@@ -881,7 +881,7 @@ def make_dues17_reversal_invoice_pdf(request):
     pdf_file = make_reversal_pdf_pdflatex(invoice)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
-    response.app_iter = open(pdf_file.name, "r")
+    response.app_iter = open(pdf_file.name, "rb")
     return response
 
 

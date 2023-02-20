@@ -131,7 +131,7 @@ def generate_pdf(request, appstruct):
     from pyramid.response import Response
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
-    response.app_iter = open(pdf_file.name, "r")
+    response.app_iter = open(pdf_file.name, "rb")
 
     return response
 

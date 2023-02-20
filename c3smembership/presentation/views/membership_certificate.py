@@ -336,6 +336,6 @@ def gen_cert(member):
 
     # return a pdf file
     response = Response(content_type='application/pdf')
-    response.app_iter = open(pdf_file.name, "r")
+    response.app_iter = open(pdf_file.name, "rb")
     shutil.rmtree(tempdir, ignore_errors=True)  # delete temporary directory
     return response
