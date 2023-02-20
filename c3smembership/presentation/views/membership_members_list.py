@@ -80,14 +80,14 @@ def latex_address(address1, address2, postal_code, city, country_code):
     address2_latex = ''
     if len(address2) > 0:
         address2_latex = '\\linebreak '
-        address2_latex += str(TexTools.escape(address2)).encode('utf-8')
+        address2_latex += TexTools.escape(address2)
     return LATEX_ADDRESS.format(
-        address1_latex=str(TexTools.escape(address1)).encode('utf-8'),
+        address1_latex=TexTools.escape(address1),
         address2_latex=address2_latex,
-        postal_code_latex=str(
-            TexTools.escape(postal_code)).encode('utf-8'),
-        city=str(TexTools.escape(city)).encode('utf-8'),
-        country_code=str(TexTools.escape(country_code)).encode('utf-8'))
+        postal_code_latex=TexTools.escape(postal_code),
+        city=TexTools.escape(city),
+        country_code=TexTools.escape(country_code)
+    )
 
 
 def latex_membership_loss(membership_loss_date, membership_loss_type):
@@ -96,78 +96,70 @@ def latex_membership_loss(membership_loss_date, membership_loss_type):
         membership_loss += membership_loss_date.strftime('%d.%m.%Y')
     if membership_loss_type is not None:
         membership_loss += '\\linebreak '
-        membership_loss += str(TexTools.escape(
-            membership_loss_type)).encode('utf-8')
+        membership_loss += TexTools.escape(membership_loss_type)
     return membership_loss
 
 
 def generate_membership_list_pdf(effective_date, members):
+    # header
     template_path = os.path.join(
-        os.path.dirname(__file__),
-        '../templates/pdflatex')
-    latex_dir = tempfile.mkdtemp()
-    latex_file = tempfile.NamedTemporaryFile(
-        suffix='.tex',
-        dir=latex_dir,
-        delete=False,
-    )
-
+        os.path.dirname(__file__), '../templates/pdflatex')
     shares_count = sum([member['shares_count'] for member in members])
-
-    latex_file.write(
-        LATEX_HEADER.format(
-            header_file=os.path.abspath(
-                os.path.join(
-                    template_path,
-                    'header')),
-            footer_file=os.path.abspath(
-                os.path.join(
-                    template_path,
-                    'footer')),
-            members_count=len(members),
-            shares_count=shares_count,
-            shares_value=shares_count * 50,
-            effective_date=effective_date.strftime('%d.%m.%Y'),
-        ).encode('utf-8'))
-
+    latex_header = LATEX_HEADER.format(
+        header_file=os.path.abspath(os.path.join(template_path, 'header')),
+        footer_file=os.path.abspath(os.path.join(template_path, 'footer')),
+        members_count=len(members),
+        shares_count=shares_count,
+        shares_value=shares_count * 50,
+        effective_date=effective_date.strftime('%d.%m.%Y'),
+    )
     # make table rows per member
+    latex_member_rows = ""
     for member in members:
-        latex_file.write(
-            LATEX_MEMBER_ROW.format(
-                lastname=TexTools.escape(member['lastname']).encode('utf-8'),
-                firstname=TexTools.escape(member['firstname']).encode('utf-8'),
-                membership_number=TexTools.escape(
-                    str(member['membership_number'])),
-                address=latex_address(
-                    member['address1'],
-                    member['address2'],
-                    member['postcode'],
-                    member['city'],
-                    member['country']),
-                membership_approval=member['membership_date'].strftime(
-                    '%d.%m.%Y'),
-                membership_loss=latex_membership_loss(
-                    member['membership_loss_date'],
-                    member['membership_loss_type']),
-                shares=str(member['shares_count'])))
+        latex_member_rows += LATEX_MEMBER_ROW.format(
+            lastname=TexTools.escape(member['lastname']),
+            firstname=TexTools.escape(member['firstname']),
+            membership_number=TexTools.escape(
+                str(member['membership_number'])),
+            address=latex_address(
+                member['address1'],
+                member['address2'],
+                member['postcode'],
+                member['city'],
+                member['country']),
+            membership_approval=member['membership_date'].strftime('%d.%m.%Y'),
+            membership_loss=latex_membership_loss(
+                member['membership_loss_date'],
+                member['membership_loss_type']),
+            shares=member['shares_count']
+        )
+    # footer
+    latex_footer = LATEX_FOOTER
+    # merged content
+    latex_content = "".join([latex_header, latex_member_rows, latex_footer])
 
-    latex_file.write(LATEX_FOOTER)
-    latex_file.close()
+    # write
+    latex_dir = tempfile.mkdtemp()
+    with tempfile.NamedTemporaryFile(
+            suffix='.tex', dir=latex_dir, delete=False) as latex_file:
+        latex_file.write(latex_content.encode('utf-8'))
 
     # generate file three times in order to make sure all back references like
     # the number of total pages are properly calculated
     for i in range(3):
-        subprocess.call(
+        output = subprocess.run(
             [
                 'pdflatex',
-                '-output-directory={0}'.format(latex_dir),
+                f'-output-directory={latex_dir}',
                 latex_file.name
             ],
-            stdout=open(os.devnull, 'w'),
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
+    if output.returncode or DEBUG:
+        print(output.stdout.decode())
 
-    pdf_file = open(latex_file.name.replace('.tex', '.pdf'), "r")
+    pdf_file = open(latex_file.name.replace('.tex', '.pdf'), "rb")
     shutil.rmtree(latex_dir, ignore_errors=True)
     return pdf_file
 
@@ -209,7 +201,6 @@ def member_list_date_pdf_view(request):
         membership_list_entries.append({
             'lastname': member.lastname,
             'firstname': member.firstname,
-            'membership_number': member.membership_number,
             'address1': member.address1,
             'address2': member.address2,
             'postcode': member.postcode,
@@ -219,10 +210,10 @@ def member_list_date_pdf_view(request):
             'membership_loss_date': member.membership_loss_date,
             'membership_loss_type': member.membership_loss_type,
             'membership_number': member.membership_number,
-            'shares_count': request.registry.share_information \
-                .get_member_share_count(
-                        member.membership_number,
-                        effective_date)
+            'shares_count':
+                request.registry.share_information.get_member_share_count(
+                    member.membership_number,
+                    effective_date)
         })
 
     response = Response(content_type='application/pdf')
@@ -262,8 +253,8 @@ def member_list_print_view(request):
     import locale
     locale.setlocale(locale.LC_ALL, "de_DE.UTF-8")
 
-    member_list.sort(key=lambda x: x.firstname, cmp=locale.strcoll)
-    member_list.sort(key=lambda x: x.lastname, cmp=locale.strcoll)
+    sorted(member_list, key=lambda x: locale.strxfrm(x.firstname))
+    sorted(member_list, key=lambda x: locale.strxfrm(x.lastname))
 
     return {
         'members': member_list,

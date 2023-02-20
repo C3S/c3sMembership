@@ -236,13 +236,15 @@ class MakeMergeMemberTests(MemberTestsBase):
 
     @classmethod
     def _response_to_bare_text(cls, res):
-        html = res.normal_body
+        html = str(res)
         # remove JavaScript
-        html = re.sub(re.compile('<script.*</script>'), '', html)
+        html = re.sub(r'<script.*</script>', '', html)
         # remove all tags
-        html = re.sub(re.compile('<.*?>'), '', html)
+        html = re.sub(r'<.*?>', '', html)
         # remove html characters like &nbsp;
-        html = re.sub(re.compile('&[A-Za-z]+;'), '', html)
+        html = re.sub(r'&[A-Za-z]+;', '', html)
+        # reduce multiple whitespaces
+        html = re.sub(r'\s+', ' ', html)
         return html
 
     def test_make_member_view(self):
@@ -304,10 +306,8 @@ class MakeMergeMemberTests(MemberTestsBase):
         self.assertTrue('You are about to make this person '
                         'a proper member of C3S SCE:' in res)
         self.assertTrue('Membership Number to be given: 1' in res)
-        self.assertTrue(
-            'form action="http://localhost/make_member/1' in res)
-        self.assertTrue(
-            'SomeFirstnäme SomeLastnäme' in res.decode('utf-8'))
+        self.assertTrue('form action="http://localhost/make_member/1' in res)
+        self.assertTrue('SomeFirstnäme SomeLastnäme' in res)
 
         # this member must not be accepted yet
         self.assertTrue(member1.membership_accepted is False)
@@ -356,7 +356,7 @@ class MakeMergeMemberTests(MemberTestsBase):
         # this now is a member!
         self.assertTrue('Member details' in res3)
         self.assertTrue(
-            'Membership accepted  Yes' in self._response_to_bare_text(res3))
+            'Membership accepted Yes' in self._response_to_bare_text(res3))
 
     def test_merge_member_view(self):
         '''
@@ -431,7 +431,7 @@ class MembershipListTests(MemberTestsBase):
 
         # try with valid date in URL
         res = self.testapp.get('/aml-' + _date + '.pdf', status=200)
-        self.assertTrue(20000 < len(res) < 100000)
+        self.assertTrue(20000 < len(res.body) < 100000)
         self.assertEqual(res.content_type, 'application/pdf')
 
         member1 = C3sMember.get_by_id(1)
@@ -442,7 +442,7 @@ class MembershipListTests(MemberTestsBase):
 
         # try with valid date in URL
         res = self.testapp.get('/aml-' + _date + '.pdf', status=200)
-        self.assertTrue(20000 < len(res) < 100000)
+        self.assertTrue(20000 < len(res.body) < 100000)
         self.assertEqual(res.content_type, 'application/pdf')
         # XXX TODO: missing coverage of membership_loss cases...
 
@@ -485,4 +485,4 @@ class MembershipListTests(MemberTestsBase):
         res = self.testapp.get('/memberships', status=200)
 
         self.assertTrue('Page 1 of 1' in res)
-        self.assertTrue('SomeFirstnäme' in res.decode('utf-8'))
+        self.assertTrue('SomeFirstnäme' in res)
