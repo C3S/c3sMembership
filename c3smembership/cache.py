@@ -161,7 +161,8 @@ class Cache(object):
             values.append(kwargs[key])
         result_hash = hashlib.sha1()
         for value in values:
-            result_hash.update(hashlib.sha1(repr(value)).digest())
+            result_hash.update(
+                hashlib.sha1(repr(value).encode('utf-8')).digest())
         return result_hash.digest()
 
 # pylint: disable=invalid-name
