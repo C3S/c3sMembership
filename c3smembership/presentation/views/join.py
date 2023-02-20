@@ -59,17 +59,6 @@ def join_c3s(request):
     """
     This is the main membership application form view: Join C3S as member
     """
-    # if another language was chosen by clicking on a flag
-    # the add_locale_to_cookie subscriber has planted an attr on the request
-    if hasattr(request, '_REDIRECT_'):
-
-        _query = request._REDIRECT_
-        # set language cookie
-        request.response.set_cookie('locale', _query)
-        request.locale = _query
-        return HTTPFound(location=request.route_url('join'),
-                         headers=request.response.headers)
-
     class MembershipInfo(colander.Schema):
         """
         Basic member information.

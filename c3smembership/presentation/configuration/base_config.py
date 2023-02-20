@@ -56,10 +56,6 @@ class BaseConfig(Configuration):
                 'c3smembership.subscribers.add_old_backend_template',
                 'pyramid.events.BeforeRender',
             ),
-            (
-                'c3smembership.subscribers.add_locale_to_cookie',
-                'pyramid.events.NewRequest',
-            ),
         ]
         for subscriber in subscribers:
             self.config.add_subscriber(subscriber[0], subscriber[1])

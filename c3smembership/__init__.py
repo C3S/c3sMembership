@@ -92,6 +92,9 @@ def main(global_config, **settings):
                           authorization_policy=authz_policy,
                           session_factory=session_factory,
                           root_factory=Root)
+    config.add_subscriber(
+        subscriber='.subscribers.add_locale',
+        iface='pyramid.events.NewRequest')
 
     module_configs = [
         BaseConfig,

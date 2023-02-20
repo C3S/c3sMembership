@@ -483,11 +483,12 @@ class FunctionalTests(unittest.TestCase):
         self.assertTrue('Cultural Commons Collecting Society' in res)
         self.assertTrue('Copyright 2014, C3S SCE' in res)
 
-    def test_lang_en_LOCALE(self):
-        """load the front page, forced to english (default pyramid way),
+    def test_lang_language_en(self):
+        """load the front page, forced to english via language param,
         check english string exists"""
         res = self.testapp.reset()  # delete cookie
-        res = self.testapp.get('/?_LOCALE_=en', status=200)
+        res = self.testapp.get('/?language=en', status=302)
+        res = res.follow()
         self.assertTrue('Application for Membership of ' in res)
 
     def test_lang_en(self):
@@ -495,10 +496,8 @@ class FunctionalTests(unittest.TestCase):
         check english string exists"""
         res = self.testapp.reset()  # delete cookie
         res = self.testapp.get('/?en', status=302)
-        self.assertTrue('The resource was found at' in res)
-        # we are being redirected...
-        res1 = res.follow()
-        self.assertTrue('Application for Membership of ' in res1)
+        res = res.follow()
+        self.assertTrue('Application for Membership of ' in res)
 
     def test_accept_language_header_de_DE(self):
         """check the http 'Accept-Language' header obedience: german
@@ -535,7 +534,8 @@ class FunctionalTests(unittest.TestCase):
     def test_form_lang_en_non_validating(self):
         """load the join form, check english string exists"""
         res = self.testapp.reset()
-        res = self.testapp.get('/?_LOCALE_=en', status=200)
+        res = self.testapp.get('/?language=en', status=302)
+        res = res.follow()
         form = res.form
         form['firstname'] = 'John'
         # form['address2'] = 'some address part'
@@ -545,19 +545,17 @@ class FunctionalTests(unittest.TestCase):
     def test_form_lang_de(self):
         """load the join form, check german string exists"""
         res = self.testapp.get('/?de', status=302)
-        self.assertTrue('The resource was found at' in res)
-        # we are being redirected...
-        res2 = res.follow()
+        res = res.follow()
         # test for german translation of template text (lingua_xml)
-        self.assertTrue('Mitgliedschaftsantrag für die' in res2)
+        self.assertTrue('Mitgliedschaftsantrag für die' in res)
         # test for german translation of form field label (lingua_python)
-        self.assertTrue('Vorname' in res2)
+        self.assertTrue('Vorname' in res)
 
-    def test_form_lang_LOCALE_de(self):
+    def test_form_lang_language_de(self):
         """load the join form in german, check german string exists
-        this time forcing german locale the pyramid way
+        this time forcing german locale via language query param
         """
-        res = self.testapp.get('/?de', status=302)
+        res = self.testapp.get('/?language=de', status=302)
         res = res.follow()
         # test for german translation of template text (lingua_xml)
         self.assertTrue('Mitgliedschaftsantrag für die' in res)

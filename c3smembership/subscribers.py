@@ -1,7 +1,5 @@
 from pyramid.renderers import get_renderer
-from pyramid.i18n import (
-    default_locale_negotiator,
-)
+from pyramid.httpexceptions import HTTPFound
 
 
 def add_frontend_template(event):
@@ -22,7 +20,7 @@ def add_old_backend_template(event):
     event.update({'old_backend': old_backend})
 
 
-BROWSER_LANGUAGES = {  # a dictionary of codes the browsers send
+LANGUAGE_MAPPING = {  # a dictionary of codes the browsers send
     'da': 'da',  # # # # and the locales we choose for them
     'de': 'de',  # # # # used in the subscriber below
     'de_AT': 'de',
@@ -38,7 +36,7 @@ BROWSER_LANGUAGES = {  # a dictionary of codes the browsers send
 }
 
 
-def add_locale_to_cookie(event):
+def add_locale(event):
     """
     give user a cookie to determine the language to display.
     if user has chosen another language by clicking a flag,
@@ -46,51 +44,33 @@ def add_locale_to_cookie(event):
     ask users browser for language to display,
     fallback to english if language is not available.
     """
-    DEBUG = False
+    # exclude requests
+    path = event.request.path
+    if path.startswith('/static/') or path.startswith('/_debug_toolbar/'):
+        return
 
-    # if user clicked at particular language flag
-    if event.request.query_string is not '':
-        # the list of available languages is taken from the .ini file:
-        # either development.ini or production.ini
-        languages = event.request.registry.settings[
-            'available_languages'].split()
-        if event.request.query_string in languages:
-            # we want to reload the page in this other language
-            lang = event.request.query_string
+    # default locale
+    current = 'en'
 
-            # so we put it on the request object as locale and redirect info
-            event.request._LOCALE_ = event.request._REDIRECT_ = lang
-            # and we set a cookie
-            event.request.response.set_cookie('_LOCALE_', value=lang)
+    # cookie locale
+    cookie = event.request.cookies.get('_LOCALE_')
+    if cookie:
+        current = LANGUAGE_MAPPING.get(cookie, current)
 
-            if DEBUG:  # pragma: no cover
-                print(("switching language to " + lang))
-            # from pyramid.httpexceptions import HTTPFound
-            # print("XXXXXXXXXXXXXXX ==> REDIRECTING in subscriber")
-            # return HTTPFound(location=event.request.route_url('intent'),
-            #                 headers=event.request.response.headers)
-            #
-            # redirect not working here!
-            # redirects to relevant language,
-            # but does not clean URL from query_string in browser
-            # redirecting in views.py using _REDIRECT_ attribute of the request
+    # check browser for language, if no cookie present
+    if not cookie:
+        current = event.request.accept_language.best_match(LANGUAGE_MAPPING) \
+            or current
 
-    # get locale from request
-    locale = default_locale_negotiator(event.request)
+    # language request
+    request = event.request.params.get('language')  # ?language=<LANG>
+    if not request:                                 # ?<LANG>
+        params = list(event.request.params)
+        if len(params) == 1:
+            request = LANGUAGE_MAPPING.get(params[0], None)
+    if request:
+        current = LANGUAGE_MAPPING.get(request, current)
+        event.request.response = HTTPFound(location=event.request.path_url)
 
-    if DEBUG:  # pragma: no cover
-        print(("locale (from default_locale_negotiator): " + str(locale)))
-
-    # if locale is not already set, look at browser information
-    browser_info = str(event.request.accept_language).replace('-', '_')
-    if locale is None and browser_info in BROWSER_LANGUAGES:
-        locale = BROWSER_LANGUAGES.get(browser_info)
-
-    # if we have nothing, assume english as fallback
-    if locale is None and not event.request.accept_language:
-        locale = 'en'
-
-    # make the request know which language to respond with
-    event.request._LOCALE_ = locale
-    # store language setting in cookie
-    event.request.response.set_cookie('_LOCALE_', value=locale)
+    event.request.locale_name = current
+    event.request.response.set_cookie('_LOCALE_', value=current)
