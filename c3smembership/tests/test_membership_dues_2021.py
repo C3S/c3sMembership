@@ -530,7 +530,7 @@ class TestDues21Views(unittest.TestCase):
             'i': '0001',
         }
         res = make_dues21_invoice_no_pdf(req2)
-        self.assertTrue(PDF_SIZE_MIN < len(res) < PDF_SIZE_MAX)
+        self.assertTrue(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
         self.assertTrue('application/pdf' in res.headers['Content-Type'])
 
         """
@@ -793,7 +793,7 @@ class TestDues21Views(unittest.TestCase):
             'no': '0003',
         }
         res = make_dues21_reversal_invoice_pdf(req2)
-        self.assertTrue(PDF_SIZE_MIN < len(res) < PDF_SIZE_MAX)
+        self.assertTrue(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
         self.assertTrue('application/pdf' in res.headers['Content-Type'])
 
     def test_dues21_notice(self):

@@ -351,7 +351,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         member2.membership_loss_date = None
         result = generate_certificate(request)
 
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
     def test_generate_certificate_de(self):
@@ -396,7 +396,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         result = generate_certificate(request)
 
         self.assertEqual(result.status_code, 200)
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
@@ -404,7 +404,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         member.num_shares = 1
 
         result = generate_certificate(request)
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
@@ -413,7 +413,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
 
         result = generate_certificate(request)
 
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
     def test_generate_cert_founder(self):
@@ -438,7 +438,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         ) - timedelta(weeks=1)
         result = generate_certificate(request)
 
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
@@ -446,7 +446,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         member.num_shares = 1
 
         result = generate_certificate(request)
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
         # edge case: member has one share
@@ -457,7 +457,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         member.locale = 'de'
         result = generate_certificate(request)
 
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
     def test_gen_cert_special_chars(self):
@@ -495,7 +495,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         ) - timedelta(weeks=1)
         result = generate_certificate(request)
         self.assertEqual(result.status_code, 200)
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
 
     def test_gen_cert_staff_int(self):
@@ -555,7 +555,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         result = self.testapp.get('/certificate_pdf_staff/1')
 
         self.assertEqual(result.status_code, 200)
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
 
     def test_generate_certificate_staff(self):
         """
@@ -570,5 +570,5 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.check_for_pdf_elements()
 
         result = generate_certificate_staff(request)
-        self.assertTrue(MIN_PDF_SIZE < len(result) < MAX_PDF_SIZE)
+        self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)
         self.assertEqual(result.content_type, 'application/pdf')
