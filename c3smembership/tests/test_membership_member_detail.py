@@ -71,19 +71,18 @@ class MemberDetailIntegration(IntegrationTestCaseBase):
         membership_member_detail.LOG = logger
 
         # 1.1. At least contain name and address
-        body = response.decode('utf8')
-        self.assertTrue(self.member.firstname in body)
-        self.assertTrue('SomeFirstnäme' in body)
-        self.assertTrue(self.member.lastname in body)
-        self.assertTrue('SomeLastnäme' in body)
-        self.assertTrue(self.member.address1 in body)
-        self.assertTrue('addr one' in body)
-        self.assertTrue(self.member.address2 in body)
-        self.assertTrue('addr two' in body)
-        self.assertTrue(self.member.postcode in body)
-        self.assertTrue('12345' in body)
-        self.assertTrue(self.member.city in body)
-        self.assertTrue('Footown Mäh' in body)
+        self.assertTrue(self.member.firstname in response)
+        self.assertTrue('SomeFirstnäme' in response)
+        self.assertTrue(self.member.lastname in response)
+        self.assertTrue('SomeLastnäme' in response)
+        self.assertTrue(self.member.address1 in response)
+        self.assertTrue('addr one' in response)
+        self.assertTrue(self.member.address2 in response)
+        self.assertTrue('addr two' in response)
+        self.assertTrue(self.member.postcode in response)
+        self.assertTrue('12345' in response)
+        self.assertTrue(self.member.city in response)
+        self.assertTrue('Footown Mäh' in response)
 
         # 1.2. Access is logged
         logger_mock.info.assert_called_with(
@@ -132,19 +131,18 @@ class MemberDetailIntegration(IntegrationTestCaseBase):
         membership_member_detail.LOG = logger
 
         # 1.1. At least contain name and address
-        body = response.decode('utf8')
-        self.assertTrue(self.member.firstname in body)
-        self.assertTrue('SomeFirstnäme' in body)
-        self.assertTrue(self.member.lastname in body)
-        self.assertTrue('SomeLastnäme' in body)
-        self.assertTrue(self.member.address1 in body)
-        self.assertTrue('addr one' in body)
-        self.assertTrue(self.member.address2 in body)
-        self.assertTrue('addr two' in body)
-        self.assertTrue(self.member.postcode in body)
-        self.assertTrue('12345' in body)
-        self.assertTrue(self.member.city in body)
-        self.assertTrue('Footown Mäh' in body)
+        self.assertTrue(self.member.firstname in response)
+        self.assertTrue('SomeFirstnäme' in response)
+        self.assertTrue(self.member.lastname in response)
+        self.assertTrue('SomeLastnäme' in response)
+        self.assertTrue(self.member.address1 in response)
+        self.assertTrue('addr one' in response)
+        self.assertTrue(self.member.address2 in response)
+        self.assertTrue('addr two' in response)
+        self.assertTrue(self.member.postcode in response)
+        self.assertTrue('12345' in response)
+        self.assertTrue(self.member.city in response)
+        self.assertTrue('Footown Mäh' in response)
 
         # 1.2. Access is logged
         logger_mock.info.assert_called_with(
