@@ -31,5 +31,11 @@ class PaymentInformationTest(TestCase):
             'page_number', 'page_size', 'from_date', 'to_date')
 
         self.assertEqual(payments, 'get_payments result')
-        self.assertTrue(payment_repository_mock.get_payments.called_with((
-            'page_number', 'page_size', 'from_date', 'to_date')))
+        payment_repository_mock.get_payments.assert_called_with(
+            'page_number',
+            'page_size',
+            'from_date',
+            'to_date',
+            None,
+            None
+        )
