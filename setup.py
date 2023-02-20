@@ -30,7 +30,7 @@ REQUIRES = [
     # Pyramid transaction management, used for development
     'pyramid_tm>=2.2.1',
     'python-gnupg>=0.4.4',  # GPG encryption
-    'SQLAlchemy>=1.3.0',  # Object-relational mapper
+    'SQLAlchemy<2.0',  # Object-relational mapper, 2.0 needs adjustments
     # Transaction management, e.g. for database transactions
     'transaction>=2.4.0',
     'zope.sqlalchemy>=1.2',  # TODO: Can it be replaced by SQLAlchemy?
