@@ -1138,17 +1138,17 @@ class TestMemberListing(C3sMembershipModelTestBase):
         self.assertEqual("ABC", result[-1].lastname)
 
     def test_order_invalid(self):
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='unknown', order="desc")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by=None, order="desc")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by="", order="desc")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='lastname', order="unknown")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='lastname', order="")
-        self.assertRaises(self.class_under_test.member_listing,
+        self.assertRaises(Exception, self.class_under_test.member_listing,
                           order_by='lastname', order=None)
 
 
