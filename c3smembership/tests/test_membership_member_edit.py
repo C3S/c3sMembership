@@ -230,8 +230,7 @@ class EditMemberTests(unittest.TestCase):
         """
         if body_content_parts is not None:
             for body_content_part in body_content_parts:
-                self.assertTrue(body_content_part.decode(
-                    'utf-8') in res.decode('utf-8'))
+                self.assertTrue(body_content_part in res)
 
     @classmethod
     def __validate_submit_error(cls, res):
