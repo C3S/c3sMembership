@@ -110,7 +110,7 @@ class TestUtilities(unittest.TestCase):
                 self.assertEqual(result.content_type,
                                   'application/pdf')
                 # check pdf size
-                self.assertTrue(210000 > len(result) > 50000)
+                self.assertTrue(210000 > len(result.body) > 50000)
         except subprocess.CalledProcessError:
             pass
 
@@ -146,7 +146,7 @@ class TestUtilities(unittest.TestCase):
                 result = generate_pdf(request, appstruct)
                 self.assertEqual(result.content_type,
                                   'application/pdf')
-                self.assertTrue(210000 > len(result) > 50000)
+                self.assertTrue(210000 > len(result.body) > 50000)
         except subprocess.CalledProcessError:
             pass
 
@@ -219,9 +219,9 @@ class TestUtilities(unittest.TestCase):
 
         self.assertTrue(isinstance(result, Message))
         self.assertTrue('yes@example.com' in result.recipients)
-        self.assertTrue('-BEGIN PGP MESSAGE-' in result.body,
+        self.assertTrue('-BEGIN PGP MESSAGE-' in str(result.body),
                         'something missing in the mail body!')
-        self.assertTrue('-END PGP MESSAGE-' in result.body,
+        self.assertTrue('-END PGP MESSAGE-' in str(result.body),
                         'something missing in the mail body!')
         self.assertTrue(
             '[C3S] Yes! a new member' in result.subject,
