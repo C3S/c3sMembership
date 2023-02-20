@@ -237,6 +237,8 @@ class MakeMergeMemberTests(MemberTestsBase):
     @classmethod
     def _response_to_bare_text(cls, res):
         html = str(res)
+        # remove newlines
+        html = re.sub(r'\n', '', html)
         # remove JavaScript
         html = re.sub(r'<script.*</script>', '', html)
         # remove all tags

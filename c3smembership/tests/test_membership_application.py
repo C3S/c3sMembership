@@ -124,13 +124,17 @@ class MembershipApplicationTest(unittest.TestCase):
 
     @classmethod
     def _response_to_bare_text(cls, res):
-        html = res.normal_body
+        html = str(res)
+        # remove newlines
+        html = re.sub(r'\n', '', html)
         # remove JavaScript
-        html = re.sub(re.compile('<script.*</script>'), '', html)
+        html = re.sub(r'<script.*</script>', '', html)
         # remove all tags
-        html = re.sub(re.compile('<.*?>'), '', html)
+        html = re.sub(r'<.*?>', '', html)
         # remove html characters like &nbsp;
-        html = re.sub(re.compile('&[A-Za-z]+;'), '', html)
+        html = re.sub(r'&[A-Za-z]+;', '', html)
+        # reduce multiple whitespaces
+        html = re.sub(r'\s+', ' ', html)
         return html
 
     def test_membership_application(self):
@@ -236,16 +240,16 @@ class MembershipApplicationTest(unittest.TestCase):
         self.assertTrue('City Stockholm' in body)
         self.assertTrue('Country SE' in body)
         self.assertTrue('Date of birth 1980-01-02' in body)
-        self.assertTrue('Membership accepted  No' in body)
+        self.assertTrue('Membership accepted No' in body)
         self.assertTrue('Entity type Natural person' in body)
         self.assertTrue('Membership type normal' in body)
         self.assertTrue('Member of collecting societies Yes Svenska Tonsättares Internationella Musikbyrå' in body)
         self.assertTrue('Date of submission' in body)
-        self.assertTrue('Signature received    No' in body)
+        self.assertTrue('Signature received No' in body)
         self.assertTrue('Signature confirmed No' in body)
-        self.assertTrue('Payment received   No' in body)
+        self.assertTrue('Payment received No' in body)
         self.assertTrue('Payment confirmed No' in body)
-        self.assertTrue('Shares  Total: 15' in body)
+        self.assertTrue('Shares Total: 15' in body)
         # TODO:
         # - code
         # - locale, set explicitly and test both German and English
@@ -258,7 +262,7 @@ class MembershipApplicationTest(unittest.TestCase):
             status=302)
         res = res.follow()
         body = self._response_to_bare_text(res)
-        self.assertTrue('Payment received    Yes' in body)
+        self.assertTrue('Payment received Yes' in body)
         self.assertTrue('Payment reception date 2018-04-26 12:23:34' in body)
 
         # 8. Set signature received
@@ -268,7 +272,7 @@ class MembershipApplicationTest(unittest.TestCase):
             status=302)
         res = res.follow()
         body = self._response_to_bare_text(res)
-        self.assertTrue('Signature received    Yes' in body)
+        self.assertTrue('Signature received Yes' in body)
         self.assertTrue('Signature reception date 2018-04-26 12:23:34' in body)
 
         # 9. Make member
@@ -283,10 +287,10 @@ class MembershipApplicationTest(unittest.TestCase):
         # 10. Verify member details
         membership_number = C3sMember.get_next_free_membership_number() - 1
         body = self._response_to_bare_text(res)
-        self.assertTrue('Membership accepted  Yes' in body)
+        self.assertTrue('Membership accepted Yes' in body)
         self.assertTrue(
-            'Membership number  {0}'.format(membership_number) in body)
+            'Membership number {0}'.format(membership_number) in body)
         self.assertTrue('Membership date 2018-04-27' in body)
-        self.assertTrue('Shares  Total: 15' in body)
+        self.assertTrue('Shares Total: 15' in body)
         self.assertTrue('1 package(s)' in body)
-        self.assertTrue('15 shares   (2018-04-27)' in body)
+        self.assertTrue('15 shares (2018-04-27)' in body)
