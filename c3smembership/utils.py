@@ -145,7 +145,7 @@ def generate_csv(member):
     import csv
 
     csvf = tempfile.TemporaryFile()
-    csvw = csv.writer(csvf, encoding='utf-8')
+    csvw = csv.writer(csvf)
     fields = (
         date.today().strftime("%Y-%m-%d"),
         'pending...',
