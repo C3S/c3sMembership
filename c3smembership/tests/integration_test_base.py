@@ -143,7 +143,7 @@ class IntegrationTestCaseBase(TestCase):
         """
         with self.assertRaises(AppError) as raise_context:
             self.testapp.get(*args, **kwargs)
-        self.assertTrue('403 Forbidden' in raise_context.exception.message)
+        self.assertTrue('403 Forbidden' in str(raise_context.exception))
 
     @classmethod
     def get_db_session(cls):
@@ -167,7 +167,7 @@ class IntegrationTestCaseBase(TestCase):
                 message must be exactly equal, if False message must be a part
                 of the flash message.
         """
-        matches = re.findall(self.FLASH_REGEX, response)
+        matches = re.findall(self.FLASH_REGEX, str(response))
         for match in matches:
             match_queue = match[0]
             match_message = match[1]
