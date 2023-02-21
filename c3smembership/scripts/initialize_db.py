@@ -69,6 +69,8 @@ def main(argv=sys.argv):
     setup_logging(config_uri)
     settings = get_appsettings(config_uri)
     engine = engine_from_config(settings, 'sqlalchemy.')
+    if os.path.isfile(engine.url.database):
+        exit("database already exists")
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     # Setup alembic database migration information.
