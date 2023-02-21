@@ -15,6 +15,7 @@ build/
 cover/
 dist/
 docs/_build/
+docs/design/
 env/
 invoices/
 utils/
