@@ -74,7 +74,8 @@ def main(global_config, **settings):
     """
     Create a Pyramid WSGI application
     """
-    # to debug warnings, start pserve with PYTHONWARNINGS=default and uncomment
+    # to debug warnings, start pserve with PYTHONWARNINGS=default,
+    # check filterwarnings in pylint.ini and uncomment the following line
     # debug_warnings()
 
     # pylint: disable=unused-argument
