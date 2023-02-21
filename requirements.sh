@@ -39,7 +39,7 @@ TESTING=(
     coverage
     docutils
     mock
-    nose
+    pytest
     pylint
     pyquery
     selenium
