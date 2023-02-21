@@ -3,3 +3,5 @@
 -r requirements_testing.txt
 pdbpp
 pyramid-debugtoolbar
+sphinx
+docutils
