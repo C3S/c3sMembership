@@ -4,6 +4,6 @@ coverage
 pytest
 pylint
 pyquery
-selenium
+selenium==4.8.0
 sphinxcontrib-plantuml
 WebTest

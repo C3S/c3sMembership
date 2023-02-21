@@ -43,7 +43,7 @@ TEST_REQUIREMENTS = [
     'pytest',  # Execute unit testing
     'pylint',  # Code linting
     'pyquery',  # HTML element querying
-    'selenium==3.14.1',  # 4.0.0a1 causes issues by not finding elements
+    'selenium',  # 4.0.0a1 causes issues by not finding elements
     'webtest',  # Run web applications for unit testing
 
     # Dependency compatibility
