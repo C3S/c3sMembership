@@ -12,7 +12,6 @@
 .tmp
 .coverage
 build/
-cover/
 dist/
 docs/_build/
 docs/design/
@@ -27,7 +26,12 @@ static_docs/
 .env
 screenshots/
 
+cov.html/
+cov.xml
+junit.xml
+
 # ignore local test settings
 nosetests.xml
+results.xml
 
 .coveragerc

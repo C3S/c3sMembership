@@ -40,7 +40,9 @@ TESTING=(
     docutils
     mock
     pytest
+    pytest-cov
     pylint
+    flake8
     pyquery
     selenium
     sphinx

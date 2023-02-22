@@ -51,7 +51,7 @@ services:
       args: *buildargs
     user: ${UID}:${GID}
     entrypoint: docker-entrypoint.sh
-    command: pytest -x -v
+    command: ./test.sh
     profiles:
       - testing
     depends_on:
