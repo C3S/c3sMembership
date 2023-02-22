@@ -74,7 +74,7 @@ Copy and configure `.env` example file:
 
 Build docker images:
 
-    COMPOSE_PROFILES=development,testing,documentation docker compose build
+    COMPOSE_PROFILES=development,testing,documentation docker compose build --pull
 
 Initialize database:
 
@@ -125,14 +125,16 @@ Run tests:
 Run tests multiple times from within the container:
 
     docker compose run --rm tests bash
+    > ./test.sh
+    > pytest
     > pytest -v -x
 
 Run specific tests verbose, cancel on first error:
 
-    docker compose run --rm tests \
-        pytest -v -x c3smembership/tests/test_initialization.py -k test_main_correct
+    > pytest -v -x c3smembership/tests/test_initialization.py -k test_main_correct
 
-    docker compose run --rm tests bash
+Run specific tests verbose, jump into pdb on first error, cancel afterwards:
+
     > pytests -v -x c3smembership/tests/test_initialization.py -k test_main_correct --pdb
 
 Inspect screenshots of selenium tests:
