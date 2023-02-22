@@ -1,4 +1,0 @@
-[flake8]
-per-file-ignores =
-    georga/migrations/*.py: E501
-max-line-length = 129
