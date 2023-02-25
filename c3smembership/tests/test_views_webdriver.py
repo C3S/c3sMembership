@@ -76,10 +76,7 @@ def server(copy_db_template):
         port=CONFIG['port'],
         clear_untrusted_proxy_headers=True
     )
-    tries = 10
-    while tries and not server.wait():
-        time.sleep(0.5)
-    if not tries:
+    if not server.wait():
         raise Exception('Server could not be fired up. Exiting ...')
     # provide server
     try:
