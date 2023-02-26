@@ -75,7 +75,7 @@ Install LaTeX pdf compilation dependencies::
 
 Setup the virtual environment::
 
-   $ virtualenv -p python2 env
+   $ python -m venv env
 
 Activate the virtual environment and update pip and setuptools::
 
