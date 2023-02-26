@@ -166,6 +166,7 @@
                     <th>
                         <?python
                             from decimal import Decimal
+                            from functools import reduce
                             amount_sum = reduce(lambda a, b: a + b['amount'], payments, Decimal('0.0'))
                         ?>
                         ${format_currency(amount_sum, 'EUR')}
