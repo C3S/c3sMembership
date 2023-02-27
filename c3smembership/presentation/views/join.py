@@ -17,6 +17,7 @@ Tests for these functions can be found in
 
 """
 
+import os
 from datetime import (
     date,
     datetime,
@@ -220,6 +221,32 @@ def join_c3s(request):
         )
 
     schema = MembershipForm()
+    appstruct = {}
+    if os.environ.get('ENVIRONMENT') == 'development':
+        appstruct = {
+            'person': {
+                'firstname': 'SomeFirstname',
+                'lastname': 'SomeLastname',
+                'email': 'joined@yes.test',
+                'address1': 'SomeStreet',
+                'postcode': '12345',
+                'city': 'SomeCity',
+                'date_of_birth': date(1970, 1, 1),
+                'password': 'asdqwe123',
+            },
+            'membership_info': {
+                'membership_type': 'normal',
+                'member_of_colsoc': 'no',
+            },
+            'shares': {
+                'num_shares': 5,
+            },
+            'acknowledge_terms': {
+                'got_statute': True,
+                'got_dues_regulations': True,
+                'privacy_consent': True
+            }
+        }
 
     form = deform.Form(
         schema.bind(date=date),
@@ -228,7 +255,8 @@ def join_c3s(request):
             deform.Button('submit', _('Next'))
         ],
         use_ajax=True,
-        renderer=ZPT_RENDERER
+        renderer=ZPT_RENDERER,
+        appstruct=appstruct,
     )
 
     # if the form has NOT been used and submitted, remove error messages if any
@@ -273,8 +301,7 @@ def join_c3s(request):
         appstruct['membership_info']['privacy_consent'] = datetime.now()
         request.session['appstruct'] = appstruct
         # empty the messages queue (as validation worked anyways)
-        deleted_msg = request.session.pop_flash()
-        del deleted_msg
+        request.session.pop_flash()
         return HTTPFound(
             location=request.route_url('success'),
         )
@@ -283,8 +310,7 @@ def join_c3s(request):
     # BUT the user wants to correct their information:
     else:
         # remove annoying message from other session
-        deleted_msg = request.session.pop_flash()
-        del deleted_msg
+        request.session.pop_flash()
         if 'appstruct' in request.session:
             appstruct = request.session['appstruct']
             # pre-fill the form with the values from last time
