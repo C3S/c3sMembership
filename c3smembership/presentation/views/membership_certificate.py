@@ -129,7 +129,8 @@ def generate_certificate(request):
             status='404 Not Found',
         )
 
-    return gen_cert(member)
+    template = request.registry.settings['c3smembership.certificate_template']
+    return gen_cert(member, template)
 
 
 @view_config(
@@ -144,16 +145,17 @@ def generate_certificate_staff(request):
     Generate the membership_certificate of any member for staffers.
     '''
     member = request.validated_matchdict['member']
-    return gen_cert(member)
+    template = request.registry.settings['c3smembership.certificate_template']
+    return gen_cert(member, template)
 
 
-def gen_cert(member):
+def gen_cert(member, template):
     '''
     Utility function: create a membership certificate PDF file using pdflatex
     '''
     certificate_path = os.path.join(
         os.path.dirname(__file__),
-        '../../../certificate')
+        '..', '..', '..', 'certificate', template)
 
     if 'de' in member.locale:
         latex_background_image = os.path.abspath(

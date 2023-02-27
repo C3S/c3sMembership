@@ -152,7 +152,7 @@ def send_dues16_invoice_email(request, m_id=None):
 
     try:  # get member from DB
         member = C3sMember.get_by_id(member_id)
-        assert(member is not None)
+        assert member is not None
     except AssertionError:
         if not batch:
             request.session.flash(
@@ -162,7 +162,7 @@ def send_dues16_invoice_email(request, m_id=None):
 
     # sanity check:is this a member?
     try:
-        assert(member.membership_accepted)  # must be accepted member!
+        assert member.membership_accepted  # must be accepted member!
     except AssertionError:
         request.session.flash(
             "member {} not accepted by the board!".format(member_id),
@@ -392,7 +392,8 @@ def make_dues16_invoice_no_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-    pdf_file = make_invoice_pdf_pdflatex(invoice)
+    template = request.registry.settings['c3smembership.certificate_template']
+    pdf_file = make_invoice_pdf_pdflatex(invoice, template)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "rb")
@@ -406,7 +407,9 @@ def make_dues16_invoice_pdf_backend(request):
     """
     Show the invoice to a backend user
     """
-    return get_invoice(request.matchdict['invoice_number'].lstrip('0'))
+    template = request.registry.settings['c3smembership.certificate_template']
+    return get_invoice(
+        request.matchdict['invoice_number'].lstrip('0'), template)
 
 
 @view_config(
@@ -416,17 +419,19 @@ def make_dues16_reversal_pdf_backend(request):
     """
     Show the invoice to a backend user
     """
-    return get_invoice(request.matchdict['invoice_number'].lstrip('0'))
+    template = request.registry.settings['c3smembership.certificate_template']
+    return get_invoice(
+        request.matchdict['invoice_number'].lstrip('0'), template)
 
 
-def get_invoice(invoice_number):
+def get_invoice(invoice_number, template):
     invoice = DuesInvoiceRepository.get_by_number(
         invoice_number, 2016)
     pdf_file = None
     if invoice.is_reversal:
-        pdf_file = make_reversal_pdf_pdflatex(invoice)
+        pdf_file = make_reversal_pdf_pdflatex(invoice, template)
     else:
-        pdf_file = make_invoice_pdf_pdflatex(invoice)
+        pdf_file = make_invoice_pdf_pdflatex(invoice, template)
     pdf_file.seek(0)  # rewind to beginning
     response = Response(content_type='application/pdf')
     response.app_iter = open(pdf_file.name, "rb")
@@ -468,7 +473,7 @@ def get_dues16_archive_invoice(invoice):
         return None
 
 
-def make_invoice_pdf_pdflatex(invoice):
+def make_invoice_pdf_pdflatex(invoice, template):
     """
     This function uses pdflatex to create a PDF
     as receipt for the members membership dues.
@@ -486,7 +491,7 @@ def make_invoice_pdf_pdflatex(invoice):
     pdflatex_dir = os.path.abspath(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            '../../../certificate/'
+            '..', '..', '..', 'certificate', template
         ))
 
     # pdf backgrounds
@@ -871,14 +876,15 @@ def make_dues16_reversal_invoice_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-    pdf_file = make_reversal_pdf_pdflatex(invoice)
+    template = request.registry.settings['c3smembership.certificate_template']
+    pdf_file = make_reversal_pdf_pdflatex(invoice, template)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "rb")
     return response
 
 
-def make_reversal_pdf_pdflatex(invoice):
+def make_reversal_pdf_pdflatex(invoice, template):
     """
     This function uses pdflatex to create a PDF
     as reversal invoice: cancel and balance out a former invoice.
@@ -892,7 +898,7 @@ def make_reversal_pdf_pdflatex(invoice):
     pdflatex_dir = os.path.abspath(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            '../../../certificate/'
+            '..', '..', '..', 'certificate', template
         ))
     # pdf backgrounds
     pdf_backgrounds = {

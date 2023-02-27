@@ -195,6 +195,8 @@ class TestDues23Views(unittest.TestCase):
         self.config.include('pyramid_mailer.testing')
         self.config.registry.settings[
             'c3smembership.url'] = 'https://yes.c3s.cc'
+        self.config.registry.settings[
+            'c3smembership.certificate_template'] = 'test'
         self.config.registry.settings['c3smembership.notification_sender'] = \
             'c@example.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
@@ -247,7 +249,7 @@ class TestDues23Views(unittest.TestCase):
         # member 1 not accepted by the board. problem!
 
         _number_of_invoices_2 = len(DuesInvoiceRepository.get_all([2023]))
-        assert(_number_of_invoices == _number_of_invoices_2 == 0)
+        assert _number_of_invoices == _number_of_invoices_2 == 0
 
         m1 = C3sMember.get_by_id(1)
         m1.membership_accepted = True
@@ -255,7 +257,7 @@ class TestDues23Views(unittest.TestCase):
         res = send_dues23_invoice_email(req)
 
         _number_of_invoices_3 = len(DuesInvoiceRepository.get_all([2023]))
-        assert(_number_of_invoices_3 == 1)
+        assert _number_of_invoices_3 == 1
 
         # check for outgoing email
         mailer = get_mailer(req)
@@ -415,7 +417,7 @@ class TestDues23Views(unittest.TestCase):
         # check number of invoices: should be 0
         _number_of_invoices_before_batch = len(
             DuesInvoiceRepository.get_all([2023]))
-        assert(_number_of_invoices_before_batch == 0)
+        assert _number_of_invoices_before_batch == 0
 
         req = testing.DummyRequest()
         req.referer = 'toolbox'
@@ -423,7 +425,7 @@ class TestDues23Views(unittest.TestCase):
 
         # check number of invoices: should be 2
         _number_of_invoices_batch = len(DuesInvoiceRepository.get_all([2023]))
-        assert(_number_of_invoices_batch == 2)
+        assert _number_of_invoices_batch == 2
 
         # try to post a number for batch processing
         req_post = testing.DummyRequest(
@@ -447,9 +449,8 @@ class TestDues23Views(unittest.TestCase):
         res2 = send_dues23_invoice_batch(req)
         self.assertEqual(res2.status, '302 Found')
         self.assertEqual(res2.status_code, 302)
-        assert(
-            'no invoicees left. all done!' in
-            req.session.pop_flash('success'))
+        assert 'no invoicees left. all done!' \
+               in req.session.pop_flash('success')
 
         """
         and now some tests for make_dues23_invoice_no_pdf
@@ -468,8 +469,8 @@ class TestDues23Views(unittest.TestCase):
 
         res = make_dues23_invoice_no_pdf(req2)
 
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice number: must fail!
         req2.matchdict = {
@@ -478,8 +479,8 @@ class TestDues23Views(unittest.TestCase):
             'i': '1234',  # must fail
         }
         res = make_dues23_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice token: must fail!
         i2 = DuesInvoiceRepository.get_by_number(2, 2023)
@@ -490,8 +491,8 @@ class TestDues23Views(unittest.TestCase):
             'i': '3',  # must fail
         }
         res = make_dues23_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         #######################################################################
         # one more edge case:
@@ -506,8 +507,8 @@ class TestDues23Views(unittest.TestCase):
             'i': '0001',
         }
         res = make_dues23_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
         # reset it to what was there before
         i1.token = _old_i1_token
         #######################################################################
@@ -523,8 +524,8 @@ class TestDues23Views(unittest.TestCase):
             'i': '0001',
         }
         res = make_dues23_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
         # reset it to what was there before
         i1.is_reversal = _old_i1_reversal_status
         #######################################################################
@@ -545,7 +546,7 @@ class TestDues23Views(unittest.TestCase):
         from c3smembership.presentation.views.dues_2023 import dues23_listing
         req_list = testing.DummyRequest()
         resp_list = dues23_listing(req_list)
-        assert(resp_list['count'] == 2)
+        assert resp_list['count'] == 2
 
     def test_dues23_reduction(self):
         """
@@ -646,21 +647,21 @@ class TestDues23Views(unittest.TestCase):
         _number_of_invoices_after_reduction = len(
             DuesInvoiceRepository.get_all([2023]))
 
-        assert(  # two new invoices must have been issued
-            (_number_of_invoices_before_reduction + 2) ==
-            _number_of_invoices_after_reduction)
-        assert(_number_of_invoices_after_reduction == 4)
-        assert('detail' in res_reduce.headers['Location'])  # 302 to detail p.
-        assert(_m1_amount_reduced != m1.dues23_amount_reduced)  # changed!
-        assert(m1.dues23_amount_reduced == 42)  # changed to 42!
+        # two new invoices must have been issued
+        assert (_number_of_invoices_before_reduction + 2) \
+               == _number_of_invoices_after_reduction
+        assert _number_of_invoices_after_reduction == 4
+        assert 'detail' in res_reduce.headers['Location']  # 302 to detail p.
+        assert _m1_amount_reduced != m1.dues23_amount_reduced  # changed!
+        assert m1.dues23_amount_reduced == 42  # changed to 42!
 
         # check the invoice created
         _rev_inv = DuesInvoiceRepository.get_by_number(
             _number_of_invoices_before_reduction + 1, 2023)
         _new_inv = DuesInvoiceRepository.get_by_number(
             _number_of_invoices_before_reduction + 2, 2023)
-        assert(_rev_inv.invoice_amount == D('-50'))
-        assert(_new_inv.invoice_amount == D('42'))
+        assert _rev_inv.invoice_amount == D('-50')
+        assert _new_inv.invoice_amount == D('42')
 
         # we have 4 invoices as of now
         self.assertEqual(len(DuesInvoiceRepository.get_all([2023])), 4)
@@ -759,8 +760,8 @@ class TestDues23Views(unittest.TestCase):
             'no': '0006',
         }
         res = make_dues23_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice number: must fail!
         req2.matchdict = {
@@ -769,8 +770,8 @@ class TestDues23Views(unittest.TestCase):
             'no': '1234',  # must fail
         }
         res = make_dues23_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice token: must fail!
         i2 = DuesInvoiceRepository.get_by_number(2, 2023)
@@ -781,12 +782,12 @@ class TestDues23Views(unittest.TestCase):
             'no': '2',  # must fail
         }
         res = make_dues23_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         ######################################################################
         # wrong invoice type (not a reversal): must fail! (edge case coverage)
-        assert(not i2.is_reversal)  # i2 is not a reversal
+        assert not i2.is_reversal  # i2 is not a reversal
         i2.token = m2.dues23_token  # we give it a valid token
         req2.matchdict = {
             'email': m2.email,
@@ -794,8 +795,8 @@ class TestDues23Views(unittest.TestCase):
             'no': '0002',
         }
         res = make_dues23_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
         ######################################################################
 
         # retry with valid token:
@@ -900,5 +901,6 @@ class TestDues23Views(unittest.TestCase):
         response = dues23_notice(request)
         self.assertTrue('detail' in response.location)
         self.assertTrue('#dues23' in response.location)
-        self.assertTrue('Invalid date for payment' in request.session.pop_flash(
-            'dues23notice_message_to_staff')[0])
+        self.assertTrue(
+            'Invalid date for payment' in request.session.pop_flash(
+                'dues23notice_message_to_staff')[0])

@@ -147,23 +147,24 @@ class TestMembershipCertificateViews(unittest.TestCase):
     tests for the membership certificate views
     """
 
-    def check_for_pdf_elements(self):
-        """
-        helper for making sure that necessary files for pdf creation are there
-        """
-        for filen in [
-                'Urkunde_Hintergrund_blank.pdf',
-                'sign_meik.png',
-                'sign_sarah.png',
-                'urkunde_footer_de.tex',
-                'urkunde_footer_en.tex',
-                'urkunde_header_de.tex',
-                'urkunde_header_en.tex'
-            ]:
-            self.assertTrue(os.path.isfile(os.path.join('certificate', filen)),
-                'missing file(s) in certificates folder; please create your '
-                'own corporate design and change gen_cert() in '
-                'membership_vertificate.py so proper PDFs can be generated')
+    # def check_for_pdf_elements(self):
+    #     """
+    #     helper for making sure that necessary files for pdf creation are there
+    #     """
+    #     for filen in [
+    #         'Urkunde_Hintergrund_blank.pdf',
+    #         'sign_meik.png',
+    #         'sign_sarah.png',
+    #         'urkunde_footer_de.tex',
+    #         'urkunde_footer_en.tex',
+    #         'urkunde_header_de.tex',
+    #         'urkunde_header_en.tex'
+    #     ]:
+    #         self.assertTrue(
+    #             os.path.isfile(os.path.join('certificate', filen)),
+    #             'missing file(s) in certificates folder; please create your '
+    #             'own corporate design and change gen_cert() in '
+    #             'membership_vertificate.py so proper PDFs can be generated')
 
     def setUp(self):
         self.config = testing.setUp()
@@ -177,6 +178,8 @@ class TestMembershipCertificateViews(unittest.TestCase):
         self.config.registry.settings['testing.mail_to_console'] = 'no'
         self.config.registry.settings['c3smembership.notification_sender'] = \
             'test@example.com'
+        self.config.registry.settings['c3smembership.certificate_template'] = \
+            'test'
         self.config.add_route('join', '/')
         self.config.add_route('detail', '/detail')
         self.config.add_route('dashboard', '/')
@@ -321,7 +324,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
 
         # assure files for PDF creation are present
-        self.check_for_pdf_elements()
+        # self.check_for_pdf_elements()
 
         member2 = C3sMember.get_by_id(2)
         request = testing.DummyRequest()
@@ -360,7 +363,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
 
         # assure files for PDF creation are present
-        self.check_for_pdf_elements()
+        # self.check_for_pdf_elements()
 
         member1 = C3sMember.get_by_id(1)
         request = testing.DummyRequest()
@@ -422,7 +425,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
 
         # assure files for PDF creation are present
-        self.check_for_pdf_elements()
+        # self.check_for_pdf_elements()
 
         request = testing.DummyRequest()
         member = C3sMember.get_by_id(3)
@@ -467,7 +470,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
 
         # assure files for PDF creation are present
-        self.check_for_pdf_elements()
+        # self.check_for_pdf_elements()
 
         member1 = C3sMember.get_by_id(1)
         request = testing.DummyRequest()
@@ -509,7 +512,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         """
 
         # 0. assure files for PDF creation are present
-        self.check_for_pdf_elements()
+        # self.check_for_pdf_elements()
 
         member = Mock()
         member_information = Mock()
@@ -567,7 +570,7 @@ class TestMembershipCertificateViews(unittest.TestCase):
         }
 
         # assure files for PDF creation are present
-        self.check_for_pdf_elements()
+        # self.check_for_pdf_elements()
 
         result = generate_certificate_staff(request)
         self.assertTrue(MIN_PDF_SIZE < len(result.body) < MAX_PDF_SIZE)

@@ -42,8 +42,6 @@ from c3smembership.presentation.views.dues_2015 import (
     make_dues15_reversal_invoice_pdf,
     make_random_string,
     send_dues15_invoice_batch,
-    send_dues15_invoice_batch,
-    send_dues15_invoice_email,
     send_dues15_invoice_email,
     string_start_quarter,
 )
@@ -203,6 +201,8 @@ class TestDues15Views(unittest.TestCase):
         self.config.include('pyramid_mailer.testing')
         self.config.registry.settings[
             'c3smembership.url'] = 'https://yes.c3s.cc'
+        self.config.registry.settings[
+            'c3smembership.certificate_template'] = 'test'
         self.config.registry.settings['c3smembership.notification_sender'] = \
             'c@example.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'

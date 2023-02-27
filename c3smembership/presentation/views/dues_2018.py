@@ -64,15 +64,15 @@ PDFLATEX_DIR = os.path.abspath(
     ))
 
 PDF_BACKGROUNDS = {
-    'blank': PDFLATEX_DIR + '/' + 'Urkunde_Hintergrund_blank.pdf',
+    'blank': PDFLATEX_DIR + '/{}/' + 'Urkunde_Hintergrund_blank.pdf',
 }
 
 LATEX_TEMPLATES = {
     # 'generic': PDFLATEX_DIR + '/' + 'membership_dues_receipt.tex',
-    'invoice_de': PDFLATEX_DIR + '/' + 'dues18_invoice_de.tex',
-    'invoice_en': PDFLATEX_DIR + '/' + 'dues18_invoice_en.tex',
-    'storno_de': PDFLATEX_DIR + '/' + 'dues18_storno_de.tex',
-    'storno_en': PDFLATEX_DIR + '/' + 'dues18_storno_en.tex',
+    'invoice_de': PDFLATEX_DIR + '/{}/' + 'dues18_invoice_de.tex',
+    'invoice_en': PDFLATEX_DIR + '/{}/' + 'dues18_invoice_en.tex',
+    'storno_de': PDFLATEX_DIR + '/{}/' + 'dues18_storno_de.tex',
+    'storno_en': PDFLATEX_DIR + '/{}/' + 'dues18_storno_en.tex',
 }
 
 
@@ -171,7 +171,7 @@ def send_dues18_invoice_email(request, m_id=None):
 
     try:  # get member from DB
         member = C3sMember.get_by_id(member_id)
-        assert(member is not None)
+        assert member is not None
     except AssertionError:
         if not batch:
             request.session.flash(
@@ -181,7 +181,7 @@ def send_dues18_invoice_email(request, m_id=None):
 
     # sanity check:is this a member?
     try:
-        assert(member.membership_accepted)  # must be accepted member!
+        assert member.membership_accepted  # must be accepted member!
     except AssertionError:
         request.session.flash(
             "member {} not accepted by the board!".format(member_id),
@@ -388,10 +388,11 @@ def get_dues18_invoice(invoice, request):
         )
         return HTTPFound(request.route_url('error'))
 
+    template = request.registry.settings['c3smembership.certificate_template']
     if invoice.is_reversal:
-        pdf_file = make_reversal_pdf_pdflatex(invoice)
+        pdf_file = make_reversal_pdf_pdflatex(invoice, template)
     else:
-        pdf_file = make_invoice_pdf_pdflatex(invoice)
+        pdf_file = make_invoice_pdf_pdflatex(invoice, template)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)
     response.app_iter = open(pdf_file.name, "rb")
@@ -496,7 +497,7 @@ def get_dues18_archive_invoice(invoice):
         return None
 
 
-def create_pdf(tex_vars, tpl_tex, invoice):
+def create_pdf(tex_vars, tpl_tex, invoice, template):
     receipt_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
 
     (path, filename) = os.path.split(receipt_pdf.name)
@@ -525,7 +526,7 @@ def create_pdf(tex_vars, tpl_tex, invoice):
         ],
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
-        cwd=PDFLATEX_DIR
+        cwd=os.path.join(PDFLATEX_DIR, template)
     )
 
     # cleanup
@@ -540,7 +541,7 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     return receipt_pdf
 
 
-def make_invoice_pdf_pdflatex(invoice):
+def make_invoice_pdf_pdflatex(invoice, template):
     """
     This function uses pdflatex to create a PDF
     as receipt for the members membership dues.
@@ -556,8 +557,8 @@ def make_invoice_pdf_pdflatex(invoice):
     member = C3sMember.get_by_id(invoice.member_id)
 
     template_name = 'invoice_de' if 'de' in member.locale else 'invoice_en'
-    bg_pdf = PDF_BACKGROUNDS['blank']
-    tpl_tex = LATEX_TEMPLATES[template_name]
+    bg_pdf = PDF_BACKGROUNDS['blank'].format(template)
+    tpl_tex = LATEX_TEMPLATES[template_name].format(template)
 
     # on invoice, print start quarter or "reduced". prepare string:
     if (
@@ -582,7 +583,7 @@ def make_invoice_pdf_pdflatex(invoice):
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
         'account': str(-member.dues15_balance - member.dues16_balance
-            - member.dues17_balance - member.dues18_balance),
+                       - member.dues17_balance - member.dues18_balance),
         'duesStart':  is_altered_str if (
             invoice.is_altered) else string_start_quarter_dues18(member),
         'duesAmount': str(invoice.invoice_amount),
@@ -590,7 +591,7 @@ def make_invoice_pdf_pdflatex(invoice):
         'pdfBackground': bg_pdf,
     }
 
-    return create_pdf(tex_vars, tpl_tex, invoice)
+    return create_pdf(tex_vars, tpl_tex, invoice, template)
 
 
 @view_config(
@@ -676,7 +677,7 @@ def dues18_reduction(request):
             request.route_url('detail', member_id=member.id) + '#dues18')
 
     # check the reduction amount: same as default calculated amount?
-    if (not member.dues18_reduced  and
+    if (not member.dues18_reduced and
             member.dues18_amount == reduced_amount):
         request.session.flash(
             "Dieser Beitrag ist der default-Beitrag!",
@@ -863,14 +864,15 @@ def make_dues18_reversal_invoice_pdf(request):
         )
         return HTTPFound(request.route_url('error'))
 
-    pdf_file = make_reversal_pdf_pdflatex(invoice)
+    template = request.registry.settings['c3smembership.certificate_template']
+    pdf_file = make_reversal_pdf_pdflatex(invoice, template)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "rb")
     return response
 
 
-def make_reversal_pdf_pdflatex(invoice):
+def make_reversal_pdf_pdflatex(invoice, template):
     """
     This function uses pdflatex to create a PDF
     as reversal invoice: cancel and balance out a former invoice.
@@ -882,8 +884,8 @@ def make_reversal_pdf_pdflatex(invoice):
 
     member = C3sMember.get_by_id(invoice.member_id)
     template_name = 'storno_de' if 'de' in member.locale else 'storno_en'
-    bg_pdf = PDF_BACKGROUNDS['blank']
-    tpl_tex = LATEX_TEMPLATES[template_name]
+    bg_pdf = PDF_BACKGROUNDS['blank'].format(template)
+    tpl_tex = LATEX_TEMPLATES[template_name].format(template)
     invoice_no = str(invoice.invoice_no).zfill(4) + '-S'
     invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
 
@@ -905,7 +907,7 @@ def make_reversal_pdf_pdflatex(invoice):
         'pdfBackground': bg_pdf,
     }
 
-    return create_pdf(tex_vars, tpl_tex, invoice)
+    return create_pdf(tex_vars, tpl_tex, invoice, template)
 
 
 @view_config(

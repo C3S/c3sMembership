@@ -67,14 +67,14 @@ PDFLATEX_DIR = os.path.abspath(
                  '../../../certificate/'))
 
 PDF_BACKGROUNDS = {
-    'blank': PDFLATEX_DIR + '/' + 'Urkunde_Hintergrund_blank.pdf',
+    'blank': PDFLATEX_DIR + '/{}/' + 'Urkunde_Hintergrund_blank.pdf',
 }
 
 LATEX_TEMPLATES = {
-    'invoice_de': PDFLATEX_DIR + '/' + 'dues23_invoice_de.tex',
-    'invoice_en': PDFLATEX_DIR + '/' + 'dues23_invoice_en.tex',
-    'storno_de': PDFLATEX_DIR + '/' + 'dues23_storno_de.tex',
-    'storno_en': PDFLATEX_DIR + '/' + 'dues23_storno_en.tex',
+    'invoice_de': PDFLATEX_DIR + '/{}/' + 'dues23_invoice_de.tex',
+    'invoice_en': PDFLATEX_DIR + '/{}/' + 'dues23_invoice_en.tex',
+    'storno_de': PDFLATEX_DIR + '/{}/' + 'dues23_storno_de.tex',
+    'storno_en': PDFLATEX_DIR + '/{}/' + 'dues23_storno_en.tex',
 }
 
 YEAR = 2023
@@ -316,10 +316,11 @@ def get_dues23_invoice(invoice, request):
         )
         return HTTPFound(request.route_url('error'))
 
+    template = request.registry.settings['c3smembership.certificate_template']
     if invoice.is_reversal:
-        pdf_file = make_reversal_pdf_pdflatex(invoice)
+        pdf_file = make_reversal_pdf_pdflatex(invoice, template)
     else:
-        pdf_file = make_invoice_pdf_pdflatex(invoice)
+        pdf_file = make_invoice_pdf_pdflatex(invoice, template)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)
     response.app_iter = open(pdf_file.name, "rb")
@@ -421,7 +422,7 @@ def get_dues23_archive_invoice(invoice):
     return None
 
 
-def create_pdf(tex_vars, tpl_tex, invoice):
+def create_pdf(tex_vars, tpl_tex, invoice, template):
     """
     Create the invoice PDF
     """
@@ -450,7 +451,8 @@ def create_pdf(tex_vars, tpl_tex, invoice):
         cmd,
         stdout=open(os.devnull, 'w'),  # hide output
         stderr=subprocess.STDOUT,
-        cwd=PDFLATEX_DIR)
+        cwd=os.path.join(PDFLATEX_DIR, template)
+    )
 
     # cleanup
     aux = os.path.join(path, filename + '.aux')
@@ -464,7 +466,7 @@ def create_pdf(tex_vars, tpl_tex, invoice):
     return receipt_pdf
 
 
-def make_invoice_pdf_pdflatex(invoice):
+def make_invoice_pdf_pdflatex(invoice, template):
     """
     This function uses pdflatex to create a PDF
     as receipt for the members membership dues.
@@ -480,8 +482,8 @@ def make_invoice_pdf_pdflatex(invoice):
     member = C3sMember.get_by_id(invoice.member_id)
 
     template_name = 'invoice_de' if 'de' in member.locale else 'invoice_en'
-    bg_pdf = PDF_BACKGROUNDS['blank']
-    tpl_tex = LATEX_TEMPLATES[template_name]
+    bg_pdf = PDF_BACKGROUNDS['blank'].format(template)
+    tpl_tex = LATEX_TEMPLATES[template_name].format(template)
 
     # on invoice, print start quarter or "reduced". prepare string:
     if (not invoice.is_reversal and invoice.is_altered
@@ -518,7 +520,7 @@ def make_invoice_pdf_pdflatex(invoice):
         'pdfBackground': bg_pdf,
     }
 
-    return create_pdf(tex_vars, tpl_tex, invoice)
+    return create_pdf(tex_vars, tpl_tex, invoice, template)
 
 
 @view_config(
@@ -753,14 +755,15 @@ def make_dues23_reversal_invoice_pdf(request):
             'warning')
         return HTTPFound(request.route_url('error'))
 
-    pdf_file = make_reversal_pdf_pdflatex(invoice)
+    template = request.registry.settings['c3smembership.certificate_template']
+    pdf_file = make_reversal_pdf_pdflatex(invoice, template)
     response = Response(content_type='application/pdf')
     pdf_file.seek(0)  # rewind to beginning
     response.app_iter = open(pdf_file.name, "rb")
     return response
 
 
-def make_reversal_pdf_pdflatex(invoice):
+def make_reversal_pdf_pdflatex(invoice, template):
     """
     This function uses pdflatex to create a PDF
     as reversal invoice: cancel and balance out a former invoice.
@@ -772,8 +775,8 @@ def make_reversal_pdf_pdflatex(invoice):
 
     member = C3sMember.get_by_id(invoice.member_id)
     template_name = 'storno_de' if 'de' in member.locale else 'storno_en'
-    bg_pdf = PDF_BACKGROUNDS['blank']
-    tpl_tex = LATEX_TEMPLATES[template_name]
+    bg_pdf = PDF_BACKGROUNDS['blank'].format(template)
+    tpl_tex = LATEX_TEMPLATES[template_name].format(template)
     invoice_no = str(invoice.invoice_no).zfill(4) + '-S'
     invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
 
@@ -796,7 +799,7 @@ def make_reversal_pdf_pdflatex(invoice):
         'pdfBackground': bg_pdf,
     }
 
-    return create_pdf(tex_vars, tpl_tex, invoice)
+    return create_pdf(tex_vars, tpl_tex, invoice, template)
 
 
 @view_config(route_name='dues23_notice', permission='manage')

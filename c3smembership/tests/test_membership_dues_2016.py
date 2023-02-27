@@ -30,7 +30,6 @@ from c3smembership.data.model.base import (
     Base,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues16invoice import Dues16Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
@@ -189,6 +188,8 @@ class TestDues16Views(unittest.TestCase):
         self.config.include('pyramid_mailer.testing')
         self.config.registry.settings[
             'c3smembership.url'] = 'https://yes.c3s.cc'
+        self.config.registry.settings[
+            'c3smembership.certificate_template'] = 'test'
         self.config.registry.settings['c3smembership.notification_sender'] = \
             'c@example.com'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
@@ -244,30 +245,30 @@ class TestDues16Views(unittest.TestCase):
 
         member.dues16_start = 'q1_2016'
         res = string_start_quarter_dues16(member)
-        assert('Quartal 1' in res)
+        assert 'Quartal 1' in res
         member.dues16_start = 'q2_2016'
         res = string_start_quarter_dues16(member)
-        assert('Quartal 2' in res)
+        assert 'Quartal 2' in res
         member.dues16_start = 'q3_2016'
         res = string_start_quarter_dues16(member)
-        assert('Quartal 3' in res)
+        assert 'Quartal 3' in res
         member.dues16_start = 'q4_2016'
         res = string_start_quarter_dues16(member)
-        assert('Quartal 4' in res)
+        assert 'Quartal 4' in res
 
         member.locale = 'en'
         member.dues16_start = 'q1_2016'
         res = string_start_quarter_dues16(member)
-        assert('1st quarter' in res)
+        assert '1st quarter' in res
         member.dues16_start = 'q2_2016'
         res = string_start_quarter_dues16(member)
-        assert('2nd quarter' in res)
+        assert '2nd quarter' in res
         member.dues16_start = 'q3_2016'
         res = string_start_quarter_dues16(member)
-        assert('3rd quarter' in res)
+        assert '3rd quarter' in res
         member.dues16_start = 'q4_2016'
         res = string_start_quarter_dues16(member)
-        assert('4th quarter' in res)
+        assert '4th quarter' in res
 
     def test_send_dues16_invoice_email_single(self):
         """
@@ -310,7 +311,7 @@ class TestDues16Views(unittest.TestCase):
         # member 1 not accepted by the board. problem!
 
         _number_of_invoices_2 = len(DuesInvoiceRepository.get_all([2016]))
-        assert(_number_of_invoices == _number_of_invoices_2 == 0)
+        assert _number_of_invoices == _number_of_invoices_2 == 0
 
         m1 = C3sMember.get_by_id(1)
         m1.membership_accepted = True
@@ -318,7 +319,7 @@ class TestDues16Views(unittest.TestCase):
         res = send_dues16_invoice_email(req)
 
         _number_of_invoices_3 = len(DuesInvoiceRepository.get_all([2016]))
-        assert(_number_of_invoices_3 == 1)
+        assert _number_of_invoices_3 == 1
 
         # check for outgoing email
         mailer = get_mailer(req)
@@ -480,7 +481,7 @@ class TestDues16Views(unittest.TestCase):
         _number_of_invoices_before_batch = len(
             DuesInvoiceRepository.get_all([2016]))
         #    _number_of_invoices_before_batch))
-        assert(_number_of_invoices_before_batch == 0)
+        assert _number_of_invoices_before_batch == 0
 
         req = testing.DummyRequest()
         req.referrer = 'toolbox'
@@ -489,7 +490,7 @@ class TestDues16Views(unittest.TestCase):
         # check number of invoices: should be 2
         _number_of_invoices_batch = len(DuesInvoiceRepository.get_all([2016]))
         #    _number_of_invoices_batch))
-        assert(_number_of_invoices_batch == 2)
+        assert _number_of_invoices_batch == 2
 
         # try to post a number for batch processing
         req_post = testing.DummyRequest(
@@ -502,9 +503,8 @@ class TestDues16Views(unittest.TestCase):
         req.referrer = 'toolbox'
         res = send_dues16_invoice_batch(req_post)
 
-        assert(
-            'sent out 5 mails (to members with ids [1, 2, 3, 4, 5])' in
-            req.session.pop_flash('success'))
+        assert 'sent out 5 mails (to members with ids [1, 2, 3, 4, 5])' \
+               in req.session.pop_flash('success')
 
         # try to batch-send once more:
         # this will respond with a redirect and tell
@@ -512,9 +512,8 @@ class TestDues16Views(unittest.TestCase):
         res2 = send_dues16_invoice_batch(req)
         self.assertEqual(res2.status, '302 Found')
         self.assertEqual(res2.status_code, 302)
-        assert(
-            'no invoicees left. all done!' in
-            req.session.pop_flash('success'))
+        assert 'no invoicees left. all done!' \
+               in req.session.pop_flash('success')
 
         """
         and now some tests for make_dues16_invoice_no_pdf
@@ -533,8 +532,8 @@ class TestDues16Views(unittest.TestCase):
 
         res = make_dues16_invoice_no_pdf(req2)
 
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice number: must fail!
         req2.matchdict = {
@@ -543,8 +542,8 @@ class TestDues16Views(unittest.TestCase):
             'i': '1234',  # must fail
         }
         res = make_dues16_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice token: must fail!
         i2 = DuesInvoiceRepository.get_by_number(2, 2016)
@@ -555,8 +554,8 @@ class TestDues16Views(unittest.TestCase):
             'i': '3',  # must fail
         }
         res = make_dues16_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         #######################################################################
         # one more edge case:
@@ -571,8 +570,8 @@ class TestDues16Views(unittest.TestCase):
             'i': '0001',
         }
         res = make_dues16_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
         # reset it to what was there before
         i1.token = _old_i1_token
         #######################################################################
@@ -588,8 +587,8 @@ class TestDues16Views(unittest.TestCase):
             'i': '0001',
         }
         res = make_dues16_invoice_no_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
         # reset it to what was there before
         i1.is_reversal = _old_i1_reversal_status
         #######################################################################
@@ -602,8 +601,8 @@ class TestDues16Views(unittest.TestCase):
         }
         res = make_dues16_invoice_no_pdf(req2)
         # m1.
-        assert(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
-        assert('application/pdf' in res.headers['Content-Type'])
+        assert PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX
+        assert 'application/pdf' in res.headers['Content-Type']
 
         """
         test dues listing
@@ -619,7 +618,7 @@ class TestDues16Views(unittest.TestCase):
         #       <c3smembership.models.Dues16Invoice object at 0x7f95df761c90>,
         #       <c3smembership.models.Dues16Invoice object at 0x7f95df761c10>],
         #   '_today': datetime.date(2016, 9, 1)}
-        assert(resp_list['count'] == 2)
+        assert resp_list['count'] == 2
 
     def test_dues16_reduction(self):
         """
@@ -721,21 +720,21 @@ class TestDues16Views(unittest.TestCase):
         _number_of_invoices_after_reduction = len(
             DuesInvoiceRepository.get_all([2016]))
 
-        assert(  # two new invoices must have been issued
-            (_number_of_invoices_before_reduction + 2) ==
-            _number_of_invoices_after_reduction)
-        assert(_number_of_invoices_after_reduction == 4)
-        assert('detail' in res_reduce.headers['Location'])  # 302 to detail p.
-        assert(_m1_amount_reduced != m1.dues16_amount_reduced)  # changed!
-        assert(m1.dues16_amount_reduced == 42)  # changed to 42!
+        # two new invoices must have been issued
+        assert (_number_of_invoices_before_reduction + 2) \
+               == _number_of_invoices_after_reduction
+        assert _number_of_invoices_after_reduction == 4
+        assert 'detail' in res_reduce.headers['Location']  # 302 to detail p.
+        assert _m1_amount_reduced != m1.dues16_amount_reduced  # changed!
+        assert m1.dues16_amount_reduced == 42  # changed to 42!
 
         # check the invoice created
         _rev_inv = DuesInvoiceRepository.get_by_number(
             _number_of_invoices_before_reduction + 1, 2016)
         _new_inv = DuesInvoiceRepository.get_by_number(
             _number_of_invoices_before_reduction + 2, 2016)
-        assert(_rev_inv.invoice_amount == D('-50'))
-        assert(_new_inv.invoice_amount == D('42'))
+        assert _rev_inv.invoice_amount == D('-50')
+        assert _new_inv.invoice_amount == D('42')
 
         # we have 4 invoices as of now
         self.assertEqual(len(DuesInvoiceRepository.get_all([2016])), 4)
@@ -833,8 +832,8 @@ class TestDues16Views(unittest.TestCase):
             'no': '0006',
         }
         res = make_dues16_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice number: must fail!
         req2.matchdict = {
@@ -843,8 +842,8 @@ class TestDues16Views(unittest.TestCase):
             'no': '1234',  # must fail
         }
         res = make_dues16_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice token: must fail!
         i2 = DuesInvoiceRepository.get_by_number(2, 2016)
@@ -855,12 +854,12 @@ class TestDues16Views(unittest.TestCase):
             'no': '2',  # must fail
         }
         res = make_dues16_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
 
         ######################################################################
         # wrong invoice type (not a reversal): must fail! (edge case coverage)
-        assert(not i2.is_reversal)  # i2 is not a reversal
+        assert not i2.is_reversal  # i2 is not a reversal
         i2.token = m2.dues16_token  # we give it a valid token
         req2.matchdict = {
             'email': m2.email,
@@ -868,8 +867,8 @@ class TestDues16Views(unittest.TestCase):
             'no': '0002',
         }
         res = make_dues16_reversal_invoice_pdf(req2)
-        assert('application/pdf' not in res.headers['Content-Type'])  # no PDF
-        assert('error' in res.headers['Location'])  # but error
+        assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
+        assert 'error' in res.headers['Location']  # but error
         ######################################################################
 
         # retry with valid token:
@@ -879,8 +878,8 @@ class TestDues16Views(unittest.TestCase):
             'no': '0003',
         }
         res = make_dues16_reversal_invoice_pdf(req2)
-        assert(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
-        assert('application/pdf' in res.headers['Content-Type'])
+        assert PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX
+        assert 'application/pdf' in res.headers['Content-Type']
 
     def test_dues16_notice(self):
         """

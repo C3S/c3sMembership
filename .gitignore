@@ -17,6 +17,8 @@ docs/_build/
 docs/design/
 env/
 invoices/
+certificates/*
+!certificates/test
 utils/
 off/
 pyramid.pid

@@ -40,6 +40,7 @@ class IntegrationTestCaseBase(TestCase):
         'api_auth_token': "SECRETAUTHTOKEN",
         'c3smembership.notification_sender': 'membership@example.com',
         'c3smembership.url': 'http://membership.example.com',
+        'c3smembership.certificate_template': 'test',
         'testing.mail_to_console': 'false',
         'available_languages': 'en de',
     }
