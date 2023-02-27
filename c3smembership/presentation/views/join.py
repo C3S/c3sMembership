@@ -221,8 +221,10 @@ def join_c3s(request):
         )
 
     schema = MembershipForm()
-    appstruct = {}
-    if os.environ.get('ENVIRONMENT') == 'development':
+
+    appstruct = colander.null
+    if os.environ.get('ENVIRONMENT') == 'development' \
+            and not os.environ.get('TESTING'):
         appstruct = {
             'person': {
                 'firstname': 'SomeFirstname',
