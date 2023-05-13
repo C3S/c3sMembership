@@ -16,6 +16,7 @@ dist/
 docs/_build/
 docs/design/
 env/
+venv/
 invoices/
 certificate/*
 !certificate/test
@@ -37,3 +38,5 @@ nosetests.xml
 results.xml
 
 .coveragerc
+
+.htpasswd
