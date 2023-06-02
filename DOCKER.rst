@@ -69,8 +69,14 @@ Copy and configure `.env` example file:
     cp .env.example .env
     xdg-open .env
 
+    # uid/gid of your host user (to map the user/group of the files in the container)
     UID=<UID_OF_YOUR_USER>
     GID=<GID_OF_YOUR_USER>
+
+    # use the mailhog test mail server
+    MEMBERSHIP_MAIL_HOST=mail
+    MEMBERSHIP_MAIL_PORT=1025
+    MEMBERSHIP_MAIL_TO_CONSOLE=false
 
 Build docker images:
 

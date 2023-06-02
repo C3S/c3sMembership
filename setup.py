@@ -15,7 +15,7 @@ VERSION = open(os.path.join(HERE, 'VERSION')).read()
 REQUIRES = [
     'alembic',  # database schema migration
     'Babel',  # Internationalization for XML page templates and Python files
-    'bcrypt',  # Password hashing. TODO: Use bcrypt instead?
+    'bcrypt',  # Password hashing.
     'colander>=1.7.0',  # Schema validation
     'cornice',  # API tools
     'deform>=2.0.7',  # HTML forms from colander schemas

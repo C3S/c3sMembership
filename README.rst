@@ -98,6 +98,19 @@ Install documentation compilation dependencies::
       -O utils/plantuml.jar
    $ pip install sphinx sphinxcontrib-plantuml
 
+Copy ``.env.example`` to ``.env`` and adjust the ``MEMBERSHIP_*`` values as needed
+(default ones are examples or for local development) ::
+
+   $ cp .env.example .env
+
+.. note::
+   The variables in ``.env`` can also be set via envvars.
+   Envvars have precedence over ``.env``.
+
+.. note::
+   If you change the ``MEMBERSHIP_NOTIFICATION_SENDER_GPGID``, the public gpg key has
+   to be available in ``./keys/*GPGID.asc``.
+
 Create an initial database::
 
    $ initialize_c3sMembership_db development.ini

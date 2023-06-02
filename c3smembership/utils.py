@@ -3,9 +3,13 @@
 Utilities for generating PDF and CSV files as well as sending emails.
 """
 
+import os
+import shutil
+import re
 import subprocess
 import tempfile
 import time
+from collections.abc import Mapping
 
 from fdfgen import forge_fdf
 from pyramid_mailer.message import (
@@ -59,6 +63,60 @@ locale_codes = [
     ('en', _('Englisch')),
     ('fr', _('Français')),
 ]
+
+env_re = re.compile(r'''^([^\s=]+)=(?:[\s"']*)(.+?)(?:[\s"']*)$''')
+envsub_re = re.compile(r'\$\{([A-Z-_]*)\}')
+
+
+def get_dot_env(path="."):
+    """Reads the shared environment file and parses it into a dictionary."""
+    path = os.path.join(path, ".env")
+    if not os.path.isfile(path):
+        shutil.copyfile('.env.example', '.env')
+    assert os.path.isfile(path)
+    env = {}
+    with open(path) as _file:
+        for line in _file:
+            match = env_re.match(line)
+            if match is not None:
+                env[match.group(1)] = match.group(2)
+    return replace_env_vars(env, env)
+
+
+def replace_env_vars(dictionary, env):
+    """
+    Substitues ${key} placeholders in dictionary with values in env dict.
+
+    If a matching envvar exists, the placeholder is replaced with that envvar
+    instead.
+    """
+    for key, val in dictionary.items():
+        if isinstance(val, Mapping):
+            replace_env_vars(val, env)
+        elif isinstance(val, list):
+            for i, item in enumerate(val):
+                if isinstance(item, str):
+                    for (match) in envsub_re.findall(item):
+                        dictionary[key][i] = os.path.expandvars(
+                            dictionary[key][i])
+                        dictionary[key][i] = dictionary[key][i].replace(
+                            '${%s}' % match, env[match])
+                        assert not (
+                            dictionary[key][i].startswith('${')
+                            and dictionary[key][i].endswith('}')
+                        ), f"envvar not found: {{ '{dictionary[key][i]}' }}"
+                    continue
+                replace_env_vars(item, env)
+        elif isinstance(val, str):
+            for (match) in envsub_re.findall(val):
+                dictionary[key] = os.path.expandvars(dictionary[key])
+                dictionary[key] = dictionary[key].replace(
+                    '${%s}' % match, env[match])
+                assert not (
+                    dictionary[key].startswith('${')
+                    and dictionary[key].endswith('}')
+                ), f"envvar not found: {{ '{key}': '{dictionary[key]}' }}"
+    return dictionary
 
 
 def generate_pdf(request, appstruct):

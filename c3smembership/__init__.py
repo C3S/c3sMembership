@@ -34,6 +34,8 @@ from c3smembership.presentation.configuration.staff_config import StaffConfig
 from c3smembership.presentation.configuration.statistics_config import \
     StatisticsConfig
 
+from c3smembership.utils import get_dot_env, replace_env_vars
+
 # Import for SqlAlchemy metadata detection. Currently, the metadata detection
 # only covers some of the tables probably because they are imported here.
 # Others are not covered maybe because they are not directly imported but only
@@ -78,6 +80,10 @@ def main(global_config, **settings):
     # check filterwarnings in pylint.ini and uncomment the following line
     # debug_warnings()
 
+    # replace ${} placeholders in settings with .env/envvar values
+    env = get_dot_env()
+    settings = replace_env_vars(settings, env)
+
     # pylint: disable=unused-argument
     engine = engine_from_config(settings, 'sqlalchemy.')
     Base.metadata.bind = engine
@@ -112,4 +118,5 @@ def main(global_config, **settings):
         module_config(config).configure()
 
     config.scan()
+    config.commit()
     return config.make_wsgi_app()
