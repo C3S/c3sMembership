@@ -72,14 +72,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pip  \
         python-is-python3 \
     && rm -rf /var/lib/apt/lists/*
-# upgrade pip
-RUN python -m pip install --upgrade pip
 # create virtual environment
-RUN python -m venv /opt/venv
+RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 ENV VIRTUAL_ENV=/opt/venv
-# install wheel
-RUN pip install wheel
+# upgrade essential pip packages
+RUN python3 -m pip install --upgrade pip wheel
 
 ### staging
 FROM python_production AS python_staging
