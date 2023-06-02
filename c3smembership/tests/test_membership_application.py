@@ -62,6 +62,8 @@ class MembershipApplicationTest(unittest.TestCase):
             'c3smembership.url': 'localhost',
             'c3smembership.notification_sender': 'test@example.com',
             'c3smembership.status_receiver': 'test@example.com',
+            'c3smembership.status_receiver_gpgid':
+                'A938D04BB2D9AAE1C1CCCA136B12C53270C76DD5',
             'testing.mail_to_console': 'false',
         }
         self.config = testing.setUp()

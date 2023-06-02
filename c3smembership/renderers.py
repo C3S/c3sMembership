@@ -23,4 +23,6 @@ class CSVRenderer(object):
             return fout.getvalue()
         if system['request'].registry.settings[
                 'c3smembership.runmode'] == 'prod':
-            return encrypt_with_gnupg(fout.getvalue())
+            gpgid = system['request'].registry.settings[
+                'c3smembership.status_receiver_gpgid']
+            return encrypt_with_gnupg(fout.getvalue(), gpgid)

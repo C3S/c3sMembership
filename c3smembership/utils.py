@@ -253,8 +253,7 @@ number of shares                {}
 member of coll. soc.:           {}
   name of coll. soc.:           {}
 
-that's it.. bye!""". \
-    format(
+that's it.. bye!""".format(
         member.date_of_submission,
         member.firstname,
         member.lastname,
@@ -274,13 +273,13 @@ that's it.. bye!""". \
     return unencrypted
 
 
-def create_accountant_mail(member, sender, recipients):
+def create_accountant_mail(member, sender, recipients, gpgid):
     """
     Create an email message information the accountant about the new
     membership application.
     """
     unencrypted = make_mail_body(member)
-    encrypted = encrypt_with_gnupg(unencrypted)
+    encrypted = encrypt_with_gnupg(unencrypted, gpgid)
 
     message = Message(
         subject="[C3S] Yes! a new member",
@@ -288,7 +287,7 @@ def create_accountant_mail(member, sender, recipients):
         recipients=recipients,
         body=encrypted
     )
-    csv_payload_encd = encrypt_with_gnupg(generate_csv(member))
+    csv_payload_encd = encrypt_with_gnupg(generate_csv(member), gpgid)
 
     attachment = Attachment(
         "C3S-SCE-AFM.csv.gpg",
@@ -308,13 +307,14 @@ def send_accountant_mail(request, member):
         the_mail = create_accountant_mail(
             member,
             request.registry.settings['c3smembership.notification_sender'],
-            [request.registry.settings['c3smembership.status_receiver']])
+            [request.registry.settings['c3smembership.status_receiver']],
+            request.registry.settings['c3smembership.status_receiver_gpgid'])
         if 'true' in request.registry.settings['testing.mail_to_console']:
             # pylint: disable=superfluous-parens
             print((the_mail.body))
         else:
             mailer.send(the_mail)
-    except:
+    except Exception:
         mail = Message(
             subject=_("[yes][ALERT] check the logs!"),
             sender=request.registry.settings[

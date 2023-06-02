@@ -215,7 +215,8 @@ class TestUtilities(unittest.TestCase):
             privacy_consent=datetime.datetime.now(),
         )
         result = create_accountant_mail(
-            member, 'yes@example.com', ['yes@example.com'])
+            member, 'yes@example.com', ['yes@example.com'],
+            'A938D04BB2D9AAE1C1CCCA136B12C53270C76DD5')
 
         self.assertTrue(isinstance(result, Message))
         self.assertTrue('yes@example.com' in result.recipients)

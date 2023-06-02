@@ -12,6 +12,7 @@ GnuPG is used to encrypt email to staff
 # you need python-gnupg, so
 # bin/pip install python-gnupg
 
+import os
 import gnupg
 import tempfile
 import shutil
@@ -20,7 +21,7 @@ DEBUG = False
 # DEBUG = True
 
 
-def encrypt_with_gnupg(data):
+def encrypt_with_gnupg(data, keyid=""):
     """
     this function encrypts "data" with gnupg.
 
@@ -31,6 +32,8 @@ def encrypt_with_gnupg(data):
     -----END PGP MESSAGE-----\n
     """
     keyfolder = tempfile.mkdtemp()
+
+    assert keyid
 
     # TODO: check for a better way to do this:
     # do we really need to create a new tempdir for every run? no!
@@ -48,40 +51,18 @@ def encrypt_with_gnupg(data):
     if DEBUG:  # pragma: no cover
         print(("=== the list of keys: " + repr(list_of_keys)))
 
-    if 'C3S-Yes!' not in str(list_of_keys):
+    if keyid not in str(list_of_keys):
         # open and read key file
         # reading public key
-        pubkey_content = """
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-mQENBFBIqlMBCADR7hxvDnwJkLgXU3Xol71eRkdNCAdIDnXQq/+Bmn5rxcJcXzNK
-DyibSGbVVpwMMOIiVuKxM66QdlvBm+2/QUdD/kdcMTwRBFqP40N9T+vaIVDpit4r
-6ZH1w8QD6EJTL0wbtmIkdAYMhYd0k4wDJ+xOcfx/VINiwhS5/DT38jimqmkaOEzs
-DqzbBBogdZ+Tw+leC+D9JkSzGRjwO+UzUxjw4kdib9KbSppTbjv7HdL+Pn1y0ACd
-2ELZjTumqQzQi19WFENNhMaRHlUU5iGp9sLbKUN0GtgxGYIs85QNXH/5/0Qr2ZjH
-2/yZCyyWzZR0efut6WthcxFNb4OMDs056v5LABEBAAG0KUMzUyBZZXMhIChodHRw
-Oi8vd3d3LmMzcy5jYykgPHllc0BjM3MuY2M+iQE4BBMBAgAiAhsDBgsJCAcDAgYV
-CAIJCgsEFgIDAQIeAQIXgAUCW5epxAAKCRBx9rqRzdKBEDw/CAC5w8qR+EWfjtmo
-fPwZYa3NPyMkI7rVfxmJwxGxj8lOjp0rQz99vXFvBkJf+Th287v+UnNERYCD5FkJ
-GIM4qiFVz4wa3h/TzW1+C+tSUbBBOR573CbYFU65ybi5cU798EPepD7uePRQJBmf
-RNFf0uwYa522YzL8TGFn4GILFGsulY/HhAvBQv3vIDlwgeAboAPiAsAoGTUKrcdb
-12kqsvf6R3TCOxAjriE4Ue2Ls001o2pHYIG6rcp2fU79RFlzASEx+T3IU1hbR8Y8
-VuosDRcKSfQYAb7JP+cXdQpym6nL5zeiG+NonLFGBPceVvJ1C4zttzNssf93yVsy
-K8j8WggCuQENBFBIqlMBCACoys54nxs3nrRcUkwFG0lp3L8N0udCzckIiVgU/1Sd
-gbfAD9rnRdKv4UE/uvn7MkfyO8V2V2OZANu8ZL+dtjmi6DWS2iTEXOl6Mn6j0Fyv
-ZNDe6scvahPDjWYnrjOwrNy6FC5Y4eAyHTprABioZgfwNkonK5Oh0pXLRkr5z00l
-HjnkxYwyoFoMa3T7j7sxS0t3bkYZxETMCd+5YqDyt7fPEZ2sPugi1oqVU/ytADNg
-EpjkzUhl4iWYYkk8RlQ8MFWVWEJd34HO6iOT+Pz6A9anuRbEqYCWYlHxM3wBc2Kl
-v/heN0yz5ldZVx1ug0/eLwexNecJOTpy2eQYjVLP/BwTABEBAAGJAR8EGAECAAkC
-GwwFAluXqpkACgkQcfa6kc3SgRCl/wf9EPAvwXm8eabKeohq3Ml4JKeodA64LKAC
-5xpcRGHpdYyduj4FMN+/cI5zBXRDWBKnspEX17nQ/boldXzQkWp/R64uyiD/cNu1
-ynkmNIGFyNlEd5xNk5DUoEwjM8zmVF+bPSpGBy9Q/s6v8gsIT4TZ12SpxPbSCgIT
-nZafeM6jnC2zs0duXsA9dSYV5jTQfeSYNbQEd7C4Mrl3Ix6mzCU5zQjS+3opUfbl
-puHkdLPxW5Lv3YKaSTQZGMlIjwv1lK87+GYGWu3qU6ORn605xZizzDc1boKmGeGw
-rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
-=hLA3
------END PGP PUBLIC KEY BLOCK-----"""
+        pubkey_content = None
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        keys_dir = os.path.join(script_dir, "..", "keys")
+        for filename in os.listdir(keys_dir):
+            if not filename.endswith(f"{keyid}.asc"):
+                continue
+            with open(os.path.join(keys_dir, filename)) as f:
+                pubkey_content = "\n".join(f.readlines())
+        assert pubkey_content
         # import public key
         gpg.import_keys(pubkey_content)
     else:
@@ -105,11 +86,7 @@ rzAF6HkMRirQuUkswGmDf46h5ecU+brT4BU8/JDVsiqX8mb94friQw==
         print(("encrypt_with_gnupg: type(to_encrypt): %s") % type(to_encrypt))
 
     # encrypt
-    encrypted = gpg.encrypt(
-        to_encrypt,
-        '89FC70ECCAD4487972D8924D71F6BA91CDD28110',  # key fingerprint
-        # 'ED6CAAC657A45BCF55EAE6EFE83C7CFC7CB6F90F',  # key fingerprint
-        always_trust=True)
+    encrypted = gpg.encrypt(to_encrypt, keyid, always_trust=True)
 
     if DEBUG:  # pragma: no cover
         print(("encrypt_with_gnupg: type(encrypted): %s") % type(encrypted))
@@ -133,7 +110,8 @@ if __name__ == '__main__':  # pragma: no coverage
     --  And then maybe send it via email    --
     --                                      --
     """
-    result = encrypt_with_gnupg(my_unicode_text)
+    result = encrypt_with_gnupg(
+        my_unicode_text, 'A938D04BB2D9AAE1C1CCCA136B12C53270C76DD5')
     print(result)
 
     my_string = """
@@ -144,5 +122,6 @@ if __name__ == '__main__':  # pragma: no coverage
     --  And then maybe send it via email    --
     --                                      --
     """
-    result = encrypt_with_gnupg(my_string)
+    result = encrypt_with_gnupg(
+        my_string, 'A938D04BB2D9AAE1C1CCCA136B12C53270C76DD5')
     print(result)

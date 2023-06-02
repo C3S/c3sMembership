@@ -28,6 +28,8 @@ pytz-2014.9-py2.7.egg
 static_docs/
 .env
 screenshots/
+keys/*.asc
+!keys/test_*.asc
 
 cov.html/
 cov.xml

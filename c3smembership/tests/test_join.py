@@ -31,7 +31,7 @@ from c3smembership.presentation.views.join import (
 )
 
 
-def encrypt_with_gnupg_dummy(data):
+def encrypt_with_gnupg_dummy(data, keyid):
     """
     Dummy for GnuPG encryption
     """
@@ -119,6 +119,8 @@ class TestViews(unittest.TestCase):
             'test@example.com'
         self.config.registry.settings['c3smembership.status_receiver'] = \
             'test@example.com'
+        self.config.registry.settings['c3smembership.status_receiver_gpgid'] =\
+            'A938D04BB2D9AAE1C1CCCA136B12C53270C76DD5'
         self.config.registry.settings['testing.mail_to_console'] = 'false'
         self.config.registry.get_mailer = get_mailer
 
