@@ -68,14 +68,17 @@ env_re = re.compile(r'''^([^\s=]+)=(?:[\s"']*)(.+?)(?:[\s"']*)$''')
 envsub_re = re.compile(r'\$\{([A-Z-_]*)\}')
 
 
-def get_dot_env(path="."):
+def get_dot_env(path=""):
     """Reads the shared environment file and parses it into a dictionary."""
-    path = os.path.join(path, ".env")
-    if not os.path.isfile(path):
-        shutil.copyfile('.env.example', '.env')
-    assert os.path.isfile(path)
+    if not path:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+    source = os.path.join(path, ".env.example")
+    target = os.path.join(path, ".env")
+    if not os.path.isfile(target):
+        shutil.copyfile(source, target)
+    assert os.path.isfile(target)
     env = {}
-    with open(path) as _file:
+    with open(target) as _file:
         for line in _file:
             match = env_re.match(line)
             if match is not None:
