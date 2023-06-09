@@ -33,7 +33,7 @@ def encrypt_with_gnupg(data, keyid=""):
     """
     keyfolder = tempfile.mkdtemp()
 
-    assert keyid
+    assert keyid, "no gpg keyid specified"
 
     # TODO: check for a better way to do this:
     # do we really need to create a new tempdir for every run? no!
@@ -62,7 +62,7 @@ def encrypt_with_gnupg(data, keyid=""):
                 continue
             with open(os.path.join(keys_dir, filename)) as f:
                 pubkey_content = "\n".join(f.readlines())
-        assert pubkey_content
+        assert pubkey_content, "no gpg key content found"
         # import public key
         gpg.import_keys(pubkey_content)
     else:
