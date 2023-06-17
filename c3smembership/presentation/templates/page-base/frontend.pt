@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div>
-                &copy; Copyright 2014, C3S SCE.
+                &copy; Copyright 2014-2023, C3S SCE.
                 <a href="https://www.c3s.cc/en/contact-us/"
                         i18n:attributes="href footer-contact-href"
                         i18n:translate="footer-contact">
