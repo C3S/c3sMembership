@@ -80,7 +80,9 @@ class DuesConfig(Configuration):
                 '../../../invoices/'))
         self.config.registry.dues_invoice_archiving = DuesInvoiceArchiving(
             DuesInvoiceRepository,
-            invoices_archive_path)
+            invoices_archive_path,
+            self.config.registry.settings['c3smembership.certificate_template']
+        )
         self.config.registry.dues_invoice_archiving.configure_year(
             2015,
             make_invoice_2015,

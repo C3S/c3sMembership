@@ -12,7 +12,8 @@ class DuesInvoiceArchiving(object):
     Offers functionality to archive invoices.
     """
 
-    def __init__(self, dues_invoice_repository, invoices_archive_path):
+    def __init__(self, dues_invoice_repository, invoices_archive_path,
+                 certificate_template):
         """
         Initialises the MembershipApplication object.
 
@@ -22,9 +23,11 @@ class DuesInvoiceArchiving(object):
                 returning invoice instances.
             invoices_archive_path: The absolute path in which the archived
                 invoices are stored.
+            certificate_template: Name of the certificate template to use.
         """
         self._dues_invoice_repository = dues_invoice_repository
         self._invoices_archive_path = invoices_archive_path
+        self._certificate_template = certificate_template
         self._generate_pdf = {}
         if not os.path.isdir(self._invoices_archive_path):
             os.makedirs(self._invoices_archive_path)
@@ -80,9 +83,11 @@ class DuesInvoiceArchiving(object):
         """
         pdf_file = None
         if invoice.is_reversal:
-            pdf_file = self._generate_pdf[year]['reversal'](invoice)
+            pdf_file = self._generate_pdf[year]['reversal'](
+                invoice, self._certificate_template)
         else:
-            pdf_file = self._generate_pdf[year]['invoice'](invoice)
+            pdf_file = self._generate_pdf[year]['invoice'](
+                invoice, self._certificate_template)
         return pdf_file
 
     def get_missing_invoices(self, year):
