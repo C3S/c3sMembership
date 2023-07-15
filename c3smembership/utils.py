@@ -205,7 +205,7 @@ def generate_csv(member):
     from datetime import date
     import csv
 
-    csvf = tempfile.TemporaryFile('r+')
+    csvf = tempfile.TemporaryFile('r+', encoding='utf-8')
     csvw = csv.writer(csvf)
     fields = (
         date.today().strftime("%Y-%m-%d"),
