@@ -14,6 +14,9 @@ from c3smembership.presentation.schemas.membership_listing import (
     MembershipListingDate,
     MembershipListingYearEnd,
 )
+from c3smembership.presentation.schemas.mass_payment_confirmation import (
+    MassPaymentConfirmation
+)
 
 
 def membership_listing_date_pdf_callback(request, result, appstruct):
@@ -24,6 +27,16 @@ def membership_listing_date_pdf_callback(request, result, appstruct):
         location=request.route_url(
             'membership_listing_date_pdf',
             date=appstruct['date']))
+
+
+def mass_payment_confirmation_callback(request, result, appstruct):
+    """
+    Forwards to the mass payment confirmation route for the given codes.
+    """
+    return HTTPFound(
+        location=request.route_url(
+            'mass_payment_confirmation_callback',
+            text=appstruct['date']))
 
 
 def build_form_renderer():
@@ -43,6 +56,12 @@ def build_form_renderer():
         formid='membership_listing_year_end_pdf'
     )
 
+    mass_payment_confirmation_form = deform.Form(
+        MassPaymentConfirmation().bind(),
+        buttons=[deform.Button('submit', _('Confirm Payments'))],
+        formid='mass_payment_confirmation_form'
+    )
+
     # create form handler
     form_renderer = MultipleFormRenderer()
 
@@ -53,6 +72,9 @@ def build_form_renderer():
     form_renderer.add_form(
         membership_listing_year_end_pdf_form,
         membership_listing_date_pdf_callback)
+    form_renderer.add_form(
+        mass_payment_confirmation_form,
+        mass_payment_confirmation_callback)
     return form_renderer
 
 

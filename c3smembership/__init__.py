@@ -33,6 +33,8 @@ from c3smembership.presentation.configuration.share_config \
 from c3smembership.presentation.configuration.staff_config import StaffConfig
 from c3smembership.presentation.configuration.statistics_config import \
     StatisticsConfig
+from c3smembership.presentation.configuration.mass_payment_confirmation_config\
+    import MassPaymentCofirmationConfig
 
 from c3smembership.utils import get_dot_env, replace_env_vars
 
@@ -113,6 +115,7 @@ def main(global_config, **settings):
         GeneralAssemblyConfig,
         StatisticsConfig,
         StaffConfig,
+        MassPaymentCofirmationConfig,
     ]
     for module_config in module_configs:
         module_config(config).configure()

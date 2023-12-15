@@ -62,6 +62,30 @@
             </div>
         </p>
 
+
+
+
+
+        <h3>Mass Payment Confirmation</h3>
+        <p>
+            <a href="${request.route_url('mass_payment_confirmation')}"
+                    title="Note: change date in URL as appropriate! Default is today."
+                    class="btn btn-primary">
+                Mass Payment Confirmation
+            </a>
+        </p>
+        <h4>For all codes</h4>
+        <p>
+            <div tal:content="structure mass_payment_confirmation">
+            </div>
+        </p>
+
+
+
+
+
+
+
         <h3>Applications for Membership</h3>
         <p>
             <a href="${request.route_url('delete_afms')}"
