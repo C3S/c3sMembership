@@ -34,6 +34,7 @@ class MassPaymentCofirmationConfig(Configuration):
         Configure the mass payment confirmation routes.
         """
         routes = [
-            ('mass_payment_confirmation', '/mass_payment_confirmation'),
+            ('mass_payment_confirmation',
+             '/mass_payment_confirmation/{text}'),
         ]
         self._add_routes(routes)

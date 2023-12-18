@@ -35,8 +35,8 @@ def mass_payment_confirmation_callback(request, result, appstruct):
     """
     return HTTPFound(
         location=request.route_url(
-            'mass_payment_confirmation_callback',
-            text=appstruct['date']))
+            'mass_payment_confirmation',
+            text=appstruct['text']))
 
 
 def build_form_renderer():

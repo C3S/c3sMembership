@@ -6,7 +6,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "c3sMembership pserve",
+            "name": "Docker Attach",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5253
+            },
+            "pathMappings": [
+                {
+                  "localRoot": "${workspaceFolder}",
+                  "remoteRoot": "/code"
+                }            
+        },
+        {
+            "name": "pserve",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/env/bin/pserve",

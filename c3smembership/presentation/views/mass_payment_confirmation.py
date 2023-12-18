@@ -41,6 +41,14 @@ def mass_payment_confirmation(request):
     """
     Process payments and show results.
     """
+
+    import debugpy
+    debugpy.listen(("0.0.0.0", 5253))
+    print("Waiting for debugger attach")
+    debugpy.wait_for_client()
+    debugpy.breakpoint()
+    print('break on this line')
+
     effective_date_string = ''
     try:
         text_string = request.matchdict['text']

@@ -11,7 +11,7 @@ services:
       args: &buildargs
         ENVIRONMENT: ${ENVIRONMENT}
         WORKDIR: ${WORKDIR}
-        DEBUGGER_PTVSD: ${DEBUGGER_PTVSD}
+        DEBUGGER_DEBUGPY: ${DEBUGGER_DEBUGPY}
         UID: ${UID}
         GID: ${GID}
     user: ${UID}:${GID}
@@ -25,6 +25,7 @@ services:
       - frontend
     ports:
       - "${DOCKER_PORTMAP_IP}:${DOCKER_PORTMAP_PORT_SERVER}:6543"
+      - "${DOCKER_PORTMAP_IP}:5253:5253"  # for debugging
     volumes:
       - .:/code
     environment:
