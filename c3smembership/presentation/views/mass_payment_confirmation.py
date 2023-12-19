@@ -47,7 +47,6 @@ def mass_payment_confirmation(request):
     print("Waiting for debugger attach")
     debugpy.wait_for_client()
     debugpy.breakpoint()
-    print('break on this line')
 
     effective_date_string = ''
     try:
@@ -59,5 +58,5 @@ def mass_payment_confirmation(request):
         )
         return HTTPFound(request.route_url('error'))
 
-    response = Response(content_type='text/plain ')
+    response = Response(content_type='text/plain')
     return response
