@@ -103,6 +103,7 @@ def toolbox(request):
        - without links -- useful for printout
        - Alphabetical Aufstockers List
     - Members List (PDF)
+    - Mass Payment Confirmation (processes CSV input from Hibiscus banking)
     - Import & Export
     - ...
     """

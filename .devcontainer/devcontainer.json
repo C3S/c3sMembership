@@ -4,6 +4,7 @@
 	"service": "server",
 	"workspaceFolder": "/code",
 	"remoteUser": "root",
+	"containerUser": "root",
 	"shutdownAction": "none",
 	"customizations": {
 		"extensions": [
