@@ -326,7 +326,7 @@ def get_member_details(request, member):
         })
 
     return {
-        'dues': dues,
+        'dues': dues.reverse(),
         'date': date,
         'D': Decimal,
         'member': member,
