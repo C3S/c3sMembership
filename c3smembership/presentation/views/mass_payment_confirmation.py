@@ -103,12 +103,6 @@ def mass_payment_confirmation(request):
                 )
                 continue
             member = members.one()
-
-            # import debugpy
-            # debugpy.listen(("0.0.0.0", 5253))
-            # print("Waiting for debugger attach")
-            # debugpy.wait_for_client()
-            # debugpy.breakpoint()
             
             date = datetime.datetime.strptime(csv_date, "%d.%m.%Y")
             amount =  Decimal(csv_amount.replace(",", "."))
