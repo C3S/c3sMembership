@@ -49,7 +49,6 @@ class MembershipConfig(Configuration):
         routes = [
             ('toolbox', '/membership-tools'),
             ('detail', '/detail/{member_id}'),
-            ('detail_dues', '/detail/{member_id}#dues'),
             ('edit', '/edit/{_id}'),
             ('member_details', '/members/{membership_number}'),
             ('get_member', '/members/{member_id}'),
