@@ -139,11 +139,6 @@ def mass_payment_confirmation(request):
                 )
                 continue
             if db_dues_balance != Decimal(50) or amount != Decimal(50):
-                # import debugpy
-                # debugpy.listen(("0.0.0.0", 5253))
-                # print("Waiting for debugger attach")
-                # debugpy.wait_for_client()
-                # debugpy.breakpoint()
                 outcome[-1]['message'] = (
                     f"Row number {row_number}: "
                     f"Invoice number {csv_invoice_no} mass confirmation "
