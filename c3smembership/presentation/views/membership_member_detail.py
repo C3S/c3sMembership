@@ -52,12 +52,6 @@ def get_member_details(request, member):
         key=lambda ga: ga['date'],
         reverse=True)
 
-    # import debugpy
-    # debugpy.listen(("0.0.0.0", 5253))
-    # print("Waiting for debugger attach")
-    # debugpy.wait_for_client()
-    # debugpy.breakpoint()
-
     dues = []
 
     if (member.membership_date < date(2023, 12, 31) and
