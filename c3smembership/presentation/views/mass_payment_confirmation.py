@@ -134,8 +134,7 @@ def mass_payment_confirmation(request):
                     f"Name similarity '{member.firstname} {member.lastname}' "
                     f"is only {r_percent}% and thus lower than the necessary "
                     f"similarity of {necessary_name_simularity}%. You need to "
-                    f'<a href="detail/{member.id}#dues" target="_blank">'
-                    'confirm the payment manually</a>.'
+                    'confirm the payment manually.'
                 )
                 continue
                         
@@ -149,8 +148,7 @@ def mass_payment_confirmation(request):
                 outcome[-1]['message'] = (
                     f"Row number {row_number}: "
                     f"Invoice number {csv_invoice_no} was already paid. "
-                    '<a href="detail/{member.id}#dues" target="_blank">'
-                    "Manual investigation</a> necessary."
+                    "Manual investigation necessary."
                 )
                 continue
             if db_dues_balance != Decimal(50) or amount != Decimal(50):
@@ -158,8 +156,7 @@ def mass_payment_confirmation(request):
                     f"Row number {row_number}: "
                     f"Invoice number {csv_invoice_no} mass confirmation "
                     "currently can only handle amounts and balances of 50 €. "
-                    '<a href="detail/{member.id}#dues" target="_blank">'
-                    "Manual confirmation</a> necessary. (Dues in db is set to "
+                    "Manual confirmation necessary. (Dues in db is set to "
                     f"{db_dues_balance}.)"
                 )
                 continue
