@@ -89,6 +89,7 @@ def mass_payment_confirmation(request):
                 'db_dues_balance': Decimal(0),
                 'db_dues_paid': None,
                 'message' : "",
+                'member_id': -1
             })
             pattern = '^[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]$'
             if re.match(pattern, csv_invoice_no) is None:
@@ -120,11 +121,24 @@ def mass_payment_confirmation(request):
             outcome[-1]['db_name'] = f'{member.firstname} {member.lastname}' 
             r = SequenceMatcher(None, outcome[-1]['db_name'], csv_name).ratio()
             outcome[-1]['db_name_color'] = ('#%02X%02X%02X' 
-                % (256 - int(r*255), int(r*255), 0))
-                       
+                % (256 - int(r*255), int(r*255), 0))                       
             date = datetime.datetime.strptime(csv_date, "%d.%m.%Y")
             amount =  Decimal(csv_amount.replace(",", "."))
+            outcome[-1]['member_id'] = member.id
             
+            necessary_name_simularity = 90  # in %
+            r_percent = int(r * 100)
+            if r_percent < necessary_name_simularity:  # obscure case
+                outcome[-1]['message'] = (
+                    f"Row number {row_number}: "
+                    f"Name similarity '{member.firstname} {member.lastname}' "
+                    f"is only {r_percent}% and thus lower than the necessary "
+                    f"similarity of {necessary_name_simularity}%. You need to "
+                    f'<a href="detail/{member.id}#dues" target="_blank">'
+                    'confirm the payment manually</a>.'
+                )
+                continue
+                        
             # confirm payment
             db_dues_paid = getattr(member, f"dues{yy}_paid")
             outcome[-1]['db_dues_paid'] = db_dues_paid
@@ -135,7 +149,8 @@ def mass_payment_confirmation(request):
                 outcome[-1]['message'] = (
                     f"Row number {row_number}: "
                     f"Invoice number {csv_invoice_no} was already paid. "
-                    "Manual investigation necessary."
+                    '<a href="detail/{member.id}#dues" target="_blank">'
+                    "Manual investigation</a> necessary."
                 )
                 continue
             if db_dues_balance != Decimal(50) or amount != Decimal(50):
@@ -143,23 +158,25 @@ def mass_payment_confirmation(request):
                     f"Row number {row_number}: "
                     f"Invoice number {csv_invoice_no} mass confirmation "
                     "currently can only handle amounts and balances of 50 €. "
-                    "Manual confirmation necessary. (Dues in db is set to "
+                    '<a href="detail/{member.id}#dues" target="_blank">'
+                    "Manual confirmation</a> necessary. (Dues in db is set to "
                     f"{db_dues_balance}.)"
                 )
                 continue
                 
             set_dues_payment(amount, date)   
             outcome[-1]['message'] = (
-                f"Row number {row_number}: "
+                f"<font color='#40ff40'> Row number {row_number}: "
                 f"Invoice number {csv_invoice_no} confirmed. "
                 f"'{csv_name}' --> '{member.firstname} {member.lastname}'"
+                "</font>"
             )         
     
     DBSession().flush()
     
     return {
         'outcome': outcome,
-        'row_count': row_number,
+        'row_count': row_number
     }
     # response = Response(content_type='text/plain')
     # return response

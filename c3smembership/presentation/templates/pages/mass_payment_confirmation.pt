@@ -17,9 +17,10 @@
                 <th>csv reference</th>
                 <th>csv invoice no</th>
                 <th>csv amount</th>
-                <th>db dues balance</th>
-                <th>db dues paid</th>
+                <th>db balance</th>
+                <th>db paid</th>
                 <th>outcome</th>
+                <th>option</th>
             </tr>
             <!--! loop over the import outcome list -->
             <tr tal:repeat="o outcome">
@@ -32,6 +33,9 @@
                 <td>${o.db_dues_balance}</td>
                 <td>${o.db_dues_paid}</td>
                 <td>${o.message}</td>
+                <td tal:condition="o.member_id > -1">
+                    <a href="../detail/${o.member_id}#dues" target="_blank">Confirm manually</a>
+                </td>
             </tr>
         </table>
     </tal:block>
