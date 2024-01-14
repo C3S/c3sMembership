@@ -89,7 +89,8 @@ def mass_payment_confirmation(request):
                 'db_dues_balance': Decimal(0),
                 'db_dues_paid': None,
                 'message' : "",
-                'member_id': -1
+                'member_id': -1,
+                'success': False
             })
             pattern = '^[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]$'
             if re.match(pattern, csv_invoice_no) is None:
@@ -125,18 +126,6 @@ def mass_payment_confirmation(request):
             date = datetime.datetime.strptime(csv_date, "%d.%m.%Y")
             amount =  Decimal(csv_amount.replace(",", "."))
             outcome[-1]['member_id'] = member.id
-            
-            necessary_name_simularity = 90  # in %
-            r_percent = int(r * 100)
-            if r_percent < necessary_name_simularity:  # obscure case
-                outcome[-1]['message'] = (
-                    f"Row number {row_number}: "
-                    f"Name similarity '{member.firstname} {member.lastname}' "
-                    f"is only {r_percent}% and thus lower than the necessary "
-                    f"similarity of {necessary_name_simularity}%. You need to "
-                    'confirm the payment manually.'
-                )
-                continue
                         
             # confirm payment
             db_dues_paid = getattr(member, f"dues{yy}_paid")
@@ -160,14 +149,26 @@ def mass_payment_confirmation(request):
                     f"{db_dues_balance}.)"
                 )
                 continue
+            
+            necessary_name_simularity = 80  # in %
+            r_percent = int(r * 100)
+            if r_percent < necessary_name_simularity:  # obscure case
+                outcome[-1]['message'] = (
+                    f"Row number {row_number}: "
+                    f"Name similarity '{member.firstname} {member.lastname}' "
+                    f"is only {r_percent}% and thus lower than the necessary "
+                    f"similarity of {necessary_name_simularity}%. You need to "
+                    'confirm the payment manually.'
+                )
+                continue
                 
-            set_dues_payment(amount, date)   
+            outcome[-1]['success'] = True
+            set_dues_payment(amount, date)
             outcome[-1]['message'] = (
-                f"<font color='#40ff40'> Row number {row_number}: "
+                f"Row number {row_number}: "
                 f"Invoice number {csv_invoice_no} confirmed. "
                 f"'{csv_name}' --> '{member.firstname} {member.lastname}'"
-                "</font>"
-            )         
+            )
     
     DBSession().flush()
     

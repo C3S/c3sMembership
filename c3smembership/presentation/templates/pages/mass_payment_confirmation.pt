@@ -33,7 +33,7 @@
                 <td>${o.db_dues_balance}</td>
                 <td>${o.db_dues_paid}</td>
                 <td>${o.message}</td>
-                <td tal:condition="o.member_id > -1">
+                <td tal:condition="o.member_id > -1 and not o.success">
                     <a href="../detail/${o.member_id}#dues" target="_blank">Confirm manually</a>
                 </td>
             </tr>
