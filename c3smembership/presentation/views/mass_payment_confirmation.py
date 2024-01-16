@@ -23,6 +23,17 @@ from c3smembership.data.model.base.c3smember import C3sMember
 
 DEBUG = False
 
+def check_for_comma(name):
+    """
+    'lastname, firstname' -> 'firstname lastname'
+    """
+    if (name.find(',') == -1):
+        return name
+    else:
+        name_splitted = name.split(',')
+        name_reversed = name_splitted[::-1]
+        name_joined = ' '.join(name_reversed)
+        return name_joined.replace('  ', ' ')
 
 @view_config(
     renderer='c3smembership.presentation:templates/pages/'
@@ -73,7 +84,7 @@ def mass_payment_confirmation(request):
         else:  # process actual values
             # CSV fields
             csv_date = row[0]
-            csv_name = row[1]
+            csv_name = check_for_comma(row[1])
             csv_reference = row[2]
             csv_amount = row[3]
             csv_invoice_no = row[4]
