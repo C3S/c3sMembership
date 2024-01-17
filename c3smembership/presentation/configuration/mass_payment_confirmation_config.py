@@ -16,15 +16,6 @@ class MassPaymentCofirmationConfig(Configuration):
         Add the configuration of the module to the Pyramid configuration.
         """
         self.configure_routes()
-        # TODOmpc self.configure_registry()
-
-    def configure_registry(self):
-        """
-        Configure the registry to contain the mass payment confirmation 
-        business layer.
-        """
-        # self.config.registry.share_information = ShareInformation(
-        # TODOmpc    ShareRepository)
 
     def configure_routes(self):
         """

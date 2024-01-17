@@ -49,11 +49,6 @@ def invoice_search_callback(request, result, appstruct):
     """
     Forwards to the dues tab of a member, containing this invoice.
     """
-    # import debugpy
-    # debugpy.listen(("0.0.0.0", 5253))
-    # print("Waiting for debugger attach")
-    # debugpy.wait_for_client()
-    # debugpy.breakpoint()
 
     invoicecode=appstruct['invoicecode']
     if len(invoicecode) == 17:
