@@ -13,13 +13,13 @@ import re
 from difflib import SequenceMatcher
 
 from pyramid.httpexceptions import HTTPFound
-from pyramid.response import Response
 from pyramid.view import view_config
 
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 
 DEBUG = False
+
 
 def check_for_comma(name):
     """
@@ -32,6 +32,7 @@ def check_for_comma(name):
         name_reversed = name_splitted[::-1]
         name_joined = ' '.join(name_reversed)
         return name_joined.replace('  ', ' ')
+
 
 @view_config(
     renderer='c3smembership.presentation:templates/pages/'
@@ -67,16 +68,17 @@ def mass_payment_confirmation(request):
             break
         if row_number == 1:
             # Ensure this looks like a valid reduced Hibiscus csv.
-            if (row[0] != "Datum" or
-                row[1] != "Gegenkonto Inhaber" or
-                row[2] != "Verwendungszwecke" or
-                row[3] != "Betrag" or
-                row[4] != "Rechnungscode"):
+            if (
+                    row[0] != "Datum" or
+                    row[1] != "Gegenkonto Inhaber" or
+                    row[2] != "Verwendungszwecke" or
+                    row[3] != "Betrag" or
+                    row[4] != "Rechnungscode"):
                 request.session.flash(
                     "Expected CSV header line: \"Datum\";"
                     "\"Gegenkonto Inhaber\";\"Verwendungszwecke\";"
                     "\"Betrag\";\"Rechnungscode\""
-                    "Giving up.",                        
+                    "Giving up.",
                     'danger'
                 )
         else:  # process actual values
@@ -93,11 +95,11 @@ def mass_payment_confirmation(request):
                 'db_name': "",
                 'db_name_color': "",
                 'csv_reference': csv_reference,
-                'csv_invoice_no':csv_invoice_no,
+                'csv_invoice_no': csv_invoice_no,
                 'csv_amount': csv_amount,
                 'db_dues_balance': Decimal(0),
                 'db_dues_paid': None,
-                'message' : "",
+                'message': "",
                 'member_id': -1,
                 'success': False
             })
@@ -110,8 +112,8 @@ def mass_payment_confirmation(request):
                 continue
             yy = csv_invoice_no[2:4]
             db_dues_invoice_no = getattr(C3sMember, f"dues{yy}_invoice_no")
-            members = DBSession().query(C3sMember).where(db_dues_invoice_no
-                == int(csv_invoice_no[5:]))
+            members = DBSession().query(C3sMember).where(
+                db_dues_invoice_no == int(csv_invoice_no[5:]))
             if members.count() == 0:   # invoice code not found
                 outcome[-1]['message'] = (
                     f"Row number {row_number}: "
@@ -130,10 +132,10 @@ def mass_payment_confirmation(request):
 
             outcome[-1]['db_name'] = f'{member.firstname} {member.lastname}'
             r = SequenceMatcher(None, outcome[-1]['db_name'], csv_name).ratio()
-            outcome[-1]['db_name_color'] = ('#%02X%02X%02X' 
-                % (256 - int(r*255), int(r*255), 0))                       
+            outcome[-1]['db_name_color'] = (
+                '#%02X%02X%02X' % (256 - int(r*255), int(r*255), 0))
             date = datetime.datetime.strptime(csv_date, "%d.%m.%Y")
-            amount =  Decimal(csv_amount.replace(",", "."))
+            amount = Decimal(csv_amount.replace(",", "."))
             outcome[-1]['member_id'] = member.id
 
             # confirm payment
