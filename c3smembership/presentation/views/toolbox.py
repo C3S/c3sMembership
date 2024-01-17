@@ -54,19 +54,19 @@ def invoice_search_callback(request, result, appstruct):
     # print("Waiting for debugger attach")
     # debugpy.wait_for_client()
     # debugpy.breakpoint()
-    
+
     invoicecode=appstruct['invoicecode']
     if len(invoicecode) == 17:
         invoicecode = invoicecode[8:]
     yy = invoicecode[2:4]
     db_dues_invoice_no = getattr(C3sMember, f"dues{yy}_invoice_no")
-    members = DBSession().query(C3sMember).where(db_dues_invoice_no                 
+    members = DBSession().query(C3sMember).where(db_dues_invoice_no
         == int(invoicecode[5:]))
     if members.count() == 0:   # invoice code not found
         request.session.flash(
             f"Invoice number {invoicecode} not found. ",
             'danger'
-        )        
+        )
         return HTTPFound(request.route_url('error'))
 
     if members.count() > 1:  # obscure case
@@ -74,10 +74,10 @@ def invoice_search_callback(request, result, appstruct):
             f"Invoice number {invoicecode} found for more than one "
             "member. This shouldn't occur. Please check db integrity!",
             'danger'
-        )        
+        )
         return HTTPFound(request.route_url('error'))
     member = members.one()
-    
+
     return HTTPFound(
         location=request.route_url('detail', member_id=member.id) + "#dues")
 

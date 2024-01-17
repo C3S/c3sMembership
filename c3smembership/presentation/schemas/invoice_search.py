@@ -3,8 +3,6 @@
 Form and validation schemas for Mass Payment Confirmation.
 """
 
-import datetime
-
 import colander
 import deform
 

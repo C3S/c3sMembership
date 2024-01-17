@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Pyramid application configuration for annual reporting.
+Pyramid application configuration for mass payment confirmation.
 """
-
-from c3smembership.data.repository.share_repository import ShareRepository
-from c3smembership.business.share_information import ShareInformation
 
 from c3smembership.presentation.configuration import Configuration
 

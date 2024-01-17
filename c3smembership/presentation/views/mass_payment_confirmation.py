@@ -5,8 +5,6 @@ This module holds functionality to handle mass payment confirmations.
 Input is a reduced online banking export CSV.
 """
 
-from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base import DBSession
 from decimal import Decimal
 from io import StringIO
 import datetime
@@ -27,7 +25,7 @@ def check_for_comma(name):
     """
     'lastname, firstname' -> 'firstname lastname'
     """
-    if (name.find(',') == -1):
+    if name.find(',') == -1:
         return name
     else:
         name_splitted = name.split(',')
@@ -66,21 +64,21 @@ def mass_payment_confirmation(request):
                 "Giving up.",
                 'danger'
             )
-            break        
-        elif row_number == 1:
-            """Ensure this looks like a valid reduced Hibiscus csv."""
+            break
+        if row_number == 1:
+            # Ensure this looks like a valid reduced Hibiscus csv.
             if (row[0] != "Datum" or
                 row[1] != "Gegenkonto Inhaber" or
                 row[2] != "Verwendungszwecke" or
                 row[3] != "Betrag" or
                 row[4] != "Rechnungscode"):
-                    request.session.flash(
-                        "Expected CSV header line: \"Datum\";"
-                        "\"Gegenkonto Inhaber\";\"Verwendungszwecke\";"
-                        "\"Betrag\";\"Rechnungscode\""
-                        "Giving up.",                        
-                        'danger'
-                    )   
+                request.session.flash(
+                    "Expected CSV header line: \"Datum\";"
+                    "\"Gegenkonto Inhaber\";\"Verwendungszwecke\";"
+                    "\"Betrag\";\"Rechnungscode\""
+                    "Giving up.",                        
+                    'danger'
+                )
         else:  # process actual values
             # CSV fields
             csv_date = row[0]
@@ -88,7 +86,7 @@ def mass_payment_confirmation(request):
             csv_reference = row[2]
             csv_amount = row[3]
             csv_invoice_no = row[4]
-            
+
             outcome.append({
                 'csv_date': csv_date,
                 'csv_name': csv_name,
@@ -112,7 +110,7 @@ def mass_payment_confirmation(request):
                 continue
             yy = csv_invoice_no[2:4]
             db_dues_invoice_no = getattr(C3sMember, f"dues{yy}_invoice_no")
-            members = DBSession().query(C3sMember).where(db_dues_invoice_no                 
+            members = DBSession().query(C3sMember).where(db_dues_invoice_no
                 == int(csv_invoice_no[5:]))
             if members.count() == 0:   # invoice code not found
                 outcome[-1]['message'] = (
@@ -129,15 +127,15 @@ def mass_payment_confirmation(request):
                 )
                 continue
             member = members.one()
-            
-            outcome[-1]['db_name'] = f'{member.firstname} {member.lastname}' 
+
+            outcome[-1]['db_name'] = f'{member.firstname} {member.lastname}'
             r = SequenceMatcher(None, outcome[-1]['db_name'], csv_name).ratio()
             outcome[-1]['db_name_color'] = ('#%02X%02X%02X' 
                 % (256 - int(r*255), int(r*255), 0))                       
             date = datetime.datetime.strptime(csv_date, "%d.%m.%Y")
             amount =  Decimal(csv_amount.replace(",", "."))
             outcome[-1]['member_id'] = member.id
-                        
+
             # confirm payment
             db_dues_paid = getattr(member, f"dues{yy}_paid")
             outcome[-1]['db_dues_paid'] = db_dues_paid
@@ -160,7 +158,7 @@ def mass_payment_confirmation(request):
                     f"{db_dues_balance}.)"
                 )
                 continue
-            
+
             necessary_name_simularity = 80  # in %
             r_percent = int(r * 100)
             if r_percent < necessary_name_simularity:  # obscure case
@@ -172,7 +170,7 @@ def mass_payment_confirmation(request):
                     'confirm the payment manually.'
                 )
                 continue
-                
+
             outcome[-1]['success'] = True
             set_dues_payment(amount, date)
             outcome[-1]['message'] = (
@@ -180,13 +178,10 @@ def mass_payment_confirmation(request):
                 f"Invoice number {csv_invoice_no} confirmed. "
                 f"'{csv_name}' --> '{member.firstname} {member.lastname}'"
             )
-    
+
     DBSession().flush()
-    
+
     return {
         'outcome': outcome,
         'row_count': row_number
     }
-    # response = Response(content_type='text/plain')
-    # return response
-    return HTTPFound(request.route_url('error'))  
