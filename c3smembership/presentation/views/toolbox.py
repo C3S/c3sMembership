@@ -25,6 +25,7 @@ from c3smembership.presentation.schemas.invoice_search import (
 from c3smembership.data.model.base import DBSession
 from c3smembership.data.model.base.c3smember import C3sMember
 
+
 def membership_listing_date_pdf_callback(request, result, appstruct):
     """
     Forwards to the membership listing pdf route for the given date.
@@ -55,13 +56,13 @@ def invoice_search_callback(request, result, appstruct):
     # debugpy.wait_for_client()
     # debugpy.breakpoint()
 
-    invoicecode=appstruct['invoicecode']
+    invoicecode = appstruct['invoicecode']
     if len(invoicecode) == 17:
         invoicecode = invoicecode[8:]
     yy = invoicecode[2:4]
     db_dues_invoice_no = getattr(C3sMember, f"dues{yy}_invoice_no")
-    members = DBSession().query(C3sMember).where(db_dues_invoice_no
-        == int(invoicecode[5:]))
+    members = DBSession().query(C3sMember).where(
+        db_dues_invoice_no == int(invoicecode[5:]))
     if members.count() == 0:   # invoice code not found
         request.session.flash(
             f"Invoice number {invoicecode} not found. ",
@@ -80,6 +81,7 @@ def invoice_search_callback(request, result, appstruct):
 
     return HTTPFound(
         location=request.route_url('detail', member_id=member.id) + "#dues")
+
 
 def build_form_renderer():
     """

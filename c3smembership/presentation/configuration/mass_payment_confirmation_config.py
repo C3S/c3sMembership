@@ -20,7 +20,7 @@ class MassPaymentCofirmationConfig(Configuration):
 
     def configure_registry(self):
         """
-        Configure the registry to contain the mass payment confirmation 
+        Configure the registry to contain the mass payment confirmation
         business layer.
         """
         # self.config.registry.share_information = ShareInformation(

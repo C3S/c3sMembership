@@ -4,9 +4,9 @@ Form and validation schemas for Mass Payment Confirmation.
 """
 
 import colander
-import deform
 
 from c3smembership.presentation.i18n import _
+
 
 # --- Fields ------------------------------------------------------------------
 
