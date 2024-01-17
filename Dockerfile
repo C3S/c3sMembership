@@ -1,6 +1,6 @@
 ARG ENVIRONMENT
 ARG WORKDIR
-ARG DEBUGGER_PTVSD
+ARG DEBUGGER_DEBUGPY
 
 
 #==============================================================================
@@ -175,9 +175,9 @@ FROM pyramid_testing_compiled AS pyramid_development_compiled
 COPY requirements_development.txt /requirements_development.txt
 RUN pip install -r /requirements_development.txt
 
-ARG DEBUGGER_PTVSD
-RUN if [ ${DEBUGGER_PTVSD} -ne 0 ]; then pip install \
-        ptvsd==4.3.2; \
+ARG DEBUGGER_DEBUGPY
+RUN if [ ${DEBUGGER_DEBUGPY} -ne 0 ]; then pip install \
+        debugpy==1.8.0; \
     fi
 
 ### result

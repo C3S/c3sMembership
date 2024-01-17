@@ -17,6 +17,7 @@ developing the c3sMembership application.
    changes_branches_releases
    alembic
    i18n
+   debugging
 
 
 There is a complete section about tests and testing

@@ -16,6 +16,12 @@
                     class="btn btn-primary">
                 Search for reference codes
             </a>
+
+            <h4>Enter the invoice code below, with or without  the 'C3S-dues' prefix</h4>
+            <p>
+                <div tal:content="structure invoice_search_form">
+                </div>
+            </p>
         </p>
         <h2>Applications</h2>
         <p>
@@ -59,6 +65,13 @@
         <h4>For end of year</h4>
         <p>
             <div tal:content="structure membership_listing_year_end_pdf">
+            </div>
+        </p>
+
+        <h3>Mass Payment Confirmation</h3>
+        <h4>Paste the awk'ed CSV from the online banking software here.</h4>
+        <p>
+            <div tal:content="structure mass_payment_confirmation_form">
             </div>
         </p>
 

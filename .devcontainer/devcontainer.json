@@ -1,0 +1,20 @@
+{
+	"name": "membership server",
+	"dockerComposeFile": [ "../compose.yaml" ],
+	"service": "server",
+	"workspaceFolder": "/code",
+	"remoteUser": "root",
+	"containerUser": "root",
+	"shutdownAction": "none",
+	"customizations": {
+		"extensions": [
+			"ms-python.python",
+			"visualstudioexptteam.vscodeintellicode",
+			"vscode.flake8",
+			"ms-python.vscode-pylance"
+		],
+		"settings": {
+			"editor.rulers": [ 79, 119 ]
+		}
+	}
+}

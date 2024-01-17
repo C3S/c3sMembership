@@ -54,7 +54,7 @@ TESTING=(
 DEVELOPMENT=(
     pdbpp
     pyramid-debugtoolbar
-    ptvsd
+    debugpy
 )
 EXCLUDE=(
     c3smembership

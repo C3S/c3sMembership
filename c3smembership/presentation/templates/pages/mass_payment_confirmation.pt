@@ -1,0 +1,42 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend"
+        i18n:domain="c3smembership">
+    <tal:block metal:fill-slot="content">
+        <h1>Mass Payment Confirmation Results</h1>
+        <p>
+            ${row_count-1} Datens&auml;tze verarbeitet<br />
+        </p>
+        <table class="table table-striped" rules="rows">
+            <tr class="table-striped">
+                <th>csv date</th>
+                <th>csv name</th>
+                <th>db name</th>
+                <th>csv reference</th>
+                <th>csv invoice no</th>
+                <th>csv amount</th>
+                <th>db balance</th>
+                <th>db paid</th>
+                <th>outcome</th>
+                <th>option</th>
+            </tr>
+            <!--! loop over the import outcome list -->
+            <tr tal:repeat="o outcome">
+                <td>${o.csv_date}</td>
+                <td><font color=${o.db_name_color}>${o.csv_name}</font></td>
+                <td>${o.db_name}</td>
+                <td>${o.csv_reference}</td>
+                <td>${o.csv_invoice_no}</td>
+                <td>${o.csv_amount}</td>
+                <td>${o.db_dues_balance}</td>
+                <td>${o.db_dues_paid}</td>
+                <td>${o.message}</td>
+                <td tal:condition="o.member_id > -1 and not o.success">
+                    <a href="../detail/${o.member_id}#dues" target="_blank">Confirm manually</a>
+                </td>
+            </tr>
+        </table>
+    </tal:block>
+</html>
