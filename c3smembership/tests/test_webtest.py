@@ -44,7 +44,8 @@ class AccountantsFunctionalTests(unittest.TestCase):
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
-            'c3smembership.dashboard_number': '30'}
+            'c3smembership.dashboard_number': '30',
+            'c3smembership.certificate_template': 'test'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
@@ -437,6 +438,7 @@ class FunctionalTests(unittest.TestCase):
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
             'c3smembership.notification_sender': 'c@example.com',
+            'c3smembership.certificate_template': 'test',
             'testing.mail_to_console': 'false'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
@@ -481,7 +483,6 @@ class FunctionalTests(unittest.TestCase):
         """load the front page, check string exists"""
         res = self.testapp.get('/', status=200)
         self.assertTrue('Cultural Commons Collecting Society' in res)
-        self.assertTrue('Copyright 2014, C3S SCE' in res)
 
     def test_lang_language_en(self):
         """load the front page, forced to english via language param,

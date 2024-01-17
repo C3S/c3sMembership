@@ -64,6 +64,7 @@ class MembershipApplicationTest(unittest.TestCase):
             'c3smembership.status_receiver': 'test@example.com',
             'c3smembership.status_receiver_gpgid':
                 'A938D04BB2D9AAE1C1CCCA136B12C53270C76DD5',
+            'c3smembership.certificate_template': 'test',
             'testing.mail_to_console': 'false',
         }
         self.config = testing.setUp()

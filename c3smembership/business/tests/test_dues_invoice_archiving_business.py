@@ -117,7 +117,8 @@ class DuesInvoiceArchivingTest(TestCase):
 
         archiving = DuesInvoiceArchiving(
             dues15_invoices_mock,
-            '/tmp/invoices/archive'
+            '/tmp/invoices/archive',
+            'test'
         )
         archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
         generated_files = archiving.generate_missing_invoice_pdfs(2015, 4)
@@ -135,13 +136,13 @@ class DuesInvoiceArchivingTest(TestCase):
             mock.call('tmp4.pdf', '/tmp/invoices/archive/Dues15-0005.pdf'),
         ])
         make_invoice_mock.assert_has_calls([
-            mock.call(self.invoices[0]),
-            mock.call(self.invoices[2]),
-            mock.call(self.invoices[4])
+            mock.call(self.invoices[0], 'test'),
+            mock.call(self.invoices[2], 'test'),
+            mock.call(self.invoices[4], 'test')
         ])
         self.assertEqual(make_invoice_mock.call_count, 3)
         make_reversal_mock.assert_has_calls([
-            mock.call(self.invoices[1]),
+            mock.call(self.invoices[1], 'test'),
         ])
         self.assertEqual(make_reversal_mock.call_count, 1)
 
@@ -156,7 +157,8 @@ class DuesInvoiceArchivingTest(TestCase):
 
         archiving = DuesInvoiceArchiving(
             dues15_invoices_mock,
-            '/tmp/invoices/archive'
+            '/tmp/invoices/archive',
+            'test'
         )
         archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
         generated_files = archiving.generate_missing_invoice_pdfs(2015, 10)
@@ -174,7 +176,8 @@ class DuesInvoiceArchivingTest(TestCase):
         self.isdir_mock.side_effect = [True]
         archiving = DuesInvoiceArchiving(
             dues15_invoices_mock,
-            '/tmp/invoices/archive'
+            '/tmp/invoices/archive',
+            'test'
         )
         archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
         self.makedirs_mock.assert_not_called()
@@ -182,7 +185,8 @@ class DuesInvoiceArchivingTest(TestCase):
         self.isdir_mock.side_effect = [False]
         DuesInvoiceArchiving(
             dues15_invoices_mock,
-            '/tmp/invoices/archive'
+            '/tmp/invoices/archive',
+            'test'
         )
         archiving.configure_year(2015, make_invoice_mock, make_reversal_mock)
         self.makedirs_mock.assert_called_with('/tmp/invoices/archive')
@@ -191,7 +195,7 @@ class DuesInvoiceArchivingTest(TestCase):
         """
         Test the get_configured_years method
         """
-        archiving = DuesInvoiceArchiving(None, None)
+        archiving = DuesInvoiceArchiving(None, None, 'test')
         self.assertEqual(archiving.get_configured_years(), [])
         archiving.configure_year(2015, None, None)
         self.assertEqual(archiving.get_configured_years(), [2015])
@@ -232,7 +236,8 @@ class DuesInvoiceArchivingTest(TestCase):
         ]
         archiving = DuesInvoiceArchiving(
             repository_mock,
-            '/tmp/invoices/archive'
+            '/tmp/invoices/archive',
+            'test'
         )
         archiving.configure_year(2015, None, None)
         archiving.configure_year(2016, None, None)

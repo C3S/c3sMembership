@@ -36,6 +36,7 @@ class TestApiViews(unittest.TestCase):
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'api_auth_token': "SECRETAUTHTOKEN",
+            'c3smembership.certificate_template': 'test',
         }
         self.config = testing.setUp()
         app = main({}, **my_settings)

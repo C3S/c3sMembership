@@ -30,7 +30,8 @@ class AwaitingApprovalTests(unittest.TestCase):
         my_settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
             'available_languages': 'da de en es fr',
-            'c3smembership.dashboard_number': '30'}
+            'c3smembership.dashboard_number': '30',
+            'c3smembership.certificate_template': 'test'}
         engine = engine_from_config(my_settings)
         DBSession.configure(bind=engine)
         self.session = DBSession()
