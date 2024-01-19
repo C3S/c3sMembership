@@ -43,12 +43,7 @@ def mass_payment_confirmation(request):
     """
     Process payments and show results.
     """
-    import debugpy
-    debugpy.listen(("0.0.0.0", 5253))
-    print("Waiting for debugger attach")
-    debugpy.wait_for_client()
-    debugpy.breakpoint()
-    
+
     try:
         text_string = request.matchdict['text']
     except (KeyError, ValueError):
