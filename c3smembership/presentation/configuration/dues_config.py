@@ -365,6 +365,29 @@ class DuesConfig(Configuration):
             ('dues23_notice', '/dues23_notice/{member_id}'),
             ('dues23_listing', '/dues23_listing'),
 
+            # membership dues 2024
+            (
+                'dues24_invoice_pdf_backend',
+                '/dues24_invoice/C3S-dues24-{invoice_number}.pdf'
+            ),
+            (
+                'dues24_reversal_pdf_backend',
+                '/dues24_reversal/C3S-dues24-{invoice_number}-S.pdf'
+            ),
+            ('send_dues24_invoice_email', '/dues24_invoice/{member_id}'),
+            ('send_dues24_invoice_batch', '/dues24_invoice_batch'),
+            (
+                'make_dues24_invoice_no_pdf',
+                '/dues24_invoice_no/{code}/C3S-dues24-{i}.pdf'
+            ),
+            ('dues24_reduction', '/dues24_reduction/{member_id}'),
+            (
+                'make_dues24_reversal_invoice_pdf',
+                '/dues24_reversal/{code}/C3S-dues24-{no}-S.pdf'
+            ),
+            ('dues24_notice', '/dues24_notice/{member_id}'),
+            ('dues24_listing', '/dues24_listing'),
+
             # Archiving
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),
             (

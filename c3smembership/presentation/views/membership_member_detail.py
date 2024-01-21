@@ -46,6 +46,8 @@ def get_member_details(request, member):
         member.membership_number, [2022])
     invoices23 = DuesInvoiceRepository.get_by_membership_number(
         member.membership_number, [2023])
+    invoices24 = DuesInvoiceRepository.get_by_membership_number(
+        member.membership_number, [2024])
     general_assembly_invitations = sorted(
         request.registry.general_assembly_invitation.get_member_invitations(
             member),
@@ -54,6 +56,36 @@ def get_member_details(request, member):
 
     dues = []
 
+    if (member.membership_date < date(2024, 12, 31) and
+            (
+                member.membership_loss_date is None or
+                member.membership_loss_date >= date(2024, 1, 1))):
+        dues.append({
+            'year': '2024',
+            'year_short': '24',
+            'invoices': invoices24,
+            'email_sent': member.dues24_invoice,
+            'email_sent_timestamp': member.dues24_invoice_date,
+            'has_invoice': len(invoices24) > 0,
+            'dues_start': member.dues24_start,
+            'dues_amount': member.dues24_amount,
+            'is_reduced': member.dues24_reduced,
+            'reduced_amount': member.dues24_amount_reduced,
+            'is_balanced': member.dues24_balanced,
+            'amount_paid': member.dues24_amount_paid,
+            'payment_received': member.dues24_paid,
+            'paid_date': member.dues24_paid_date,
+            'send_email_route': request.route_url(
+                'send_dues24_invoice_email', member_id=member.id),
+            'reduction_route': request.route_url(
+                'dues24_reduction', member_id=member.id),
+            'invoice_listing_route': request.route_url('dues24_listing'),
+            'dues_notice_route': request.route_url(
+                'dues24_notice', member_id=member.id),
+            'dues_invoice_pdf_backend': 'dues24_invoice_pdf_backend',
+            'dues_reversal_pdf_backend': 'dues24_reversal_pdf_backend',
+            'dues_notice_message_to_staff': 'dues24notice_message_to_staff',
+        })
     if (member.membership_date < date(2023, 12, 31) and
             (
                 member.membership_loss_date is None or

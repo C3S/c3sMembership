@@ -53,7 +53,7 @@ def _initTestingDB():
             email='devNull@example.com',
             address1="ada addr one",
             address2="ada addr two",
-            postcode="12345",
+            postcode="12445",
             city="Foostadt Ada",
             country="Foocountry",
             locale="de",
@@ -65,7 +65,7 @@ def _initTestingDB():
             membership_type='normal',
             member_of_colsoc=True,
             name_of_colsoc="GEMA",
-            num_shares='23',
+            num_shares='24',
         )
         normal_de.membership_number = 11
         normal_en = C3sMember(  # english normal
@@ -74,7 +74,7 @@ def _initTestingDB():
             email='dummy@example.com',
             address1="james addr 1",
             address2="james appartment 2",
-            postcode="12345",
+            postcode="12445",
             city="Jamestown",
             country="Jamescountry",
             locale="en",
@@ -95,7 +95,7 @@ def _initTestingDB():
             email='dummy@example.com',
             address1="addr one4",
             address2="addr two4",
-            postcode="12344",
+            postcode="12444",
             city="Footown M44",
             country="Foocountr4",
             locale="de",
@@ -116,7 +116,7 @@ def _initTestingDB():
             email='dummy@example.com',
             address1="aone5",
             address2="atwo5",
-            postcode="12355",
+            postcode="12455",
             city="Footown M45",
             country="Foocountr5",
             locale="en",
@@ -136,7 +136,7 @@ def _initTestingDB():
             lastname='Musikverlag',
             email='verlag@compa.ny',
             address1="foo bulevard",
-            address2="123-345",
+            address2="124-345",
             postcode="98765",
             city="Foo",
             country="Bar",
@@ -157,7 +157,7 @@ def _initTestingDB():
             lastname='Company',
             email='foo@compa.ny',
             address1="foo bulevard",
-            address2="123-345",
+            address2="124-345",
             postcode="98765",
             city="Foo",
             country="Bar",
@@ -185,7 +185,7 @@ def _initTestingDB():
     return DBSession
 
 
-class TestDues23Views(unittest.TestCase):
+class TestDues24Views(unittest.TestCase):
     """
     Basic tests for the views concerning membership dues
     """
@@ -206,9 +206,9 @@ class TestDues23Views(unittest.TestCase):
         DBSession.remove()
         testing.tearDown()
 
-    def test_send_dues23_invoice_email_single(self):
+    def test_send_dues24_invoice_email_single(self):
         """
-        test the send_dues23_invoice_email view
+        test the send_dues24_invoice_email view
 
         * calculate invoice amount and send invoice email
         ** to not accepted member
@@ -226,16 +226,16 @@ class TestDues23Views(unittest.TestCase):
 
         """
         from pyramid_mailer import get_mailer
-        from c3smembership.presentation.views.dues_2023 import (
-            send_dues23_invoice_email,
+        from c3smembership.presentation.views.dues_2024 import (
+            send_dues24_invoice_email,
         )
 
-        _number_of_invoices = len(DuesInvoiceRepository.get_all([2023]))
+        _number_of_invoices = len(DuesInvoiceRepository.get_all([2024]))
 
         self.config.add_route('dues', '/')
         self.config.add_route('detail', '/')
         self.config.add_route('membership_listing_backend', '/')
-        self.config.add_route('make_dues23_invoice_no_pdf', '/')
+        self.config.add_route('make_dues24_invoice_no_pdf', '/')
 
         req = testing.DummyRequest()
         req.matchdict = {
@@ -243,27 +243,27 @@ class TestDues23Views(unittest.TestCase):
         }
         req.referer = 'detail'
         req.validated_matchdict = {'member': C3sMember.get_by_id(1)}
-        res = send_dues23_invoice_email(req)
+        res = send_dues24_invoice_email(req)
         self.assertTrue(res.status_code == 302)
         self.assertTrue('http://example.com/' in res.headers['Location'])
         # member 1 not accepted by the board. problem!
 
-        _number_of_invoices_2 = len(DuesInvoiceRepository.get_all([2023]))
+        _number_of_invoices_2 = len(DuesInvoiceRepository.get_all([2024]))
         assert _number_of_invoices == _number_of_invoices_2 == 0
 
         m1 = C3sMember.get_by_id(1)
         m1.membership_accepted = True
 
-        res = send_dues23_invoice_email(req)
+        res = send_dues24_invoice_email(req)
 
-        _number_of_invoices_3 = len(DuesInvoiceRepository.get_all([2023]))
+        _number_of_invoices_3 = len(DuesInvoiceRepository.get_all([2024]))
         assert _number_of_invoices_3 == 1
 
         # check for outgoing email
         mailer = get_mailer(req)
         self.assertEqual(len(mailer.outbox), 1)
         self.assertTrue(
-            'Verwendungszweck: C3S-dues2023-0001' in mailer.outbox[0].body)
+            'Verwendungszweck: C3S-dues2024-0001' in mailer.outbox[0].body)
 
         """
         what if we call that function (and send email) twice?
@@ -275,10 +275,10 @@ class TestDues23Views(unittest.TestCase):
         }
         req3.referer = 'detail'
         req3.validated_matchdict = {'member': C3sMember.get_by_id(1)}
-        res3 = send_dues23_invoice_email(req3)
+        res3 = send_dues24_invoice_email(req3)
         self.assertTrue(res3.status_code == 302)
         self.assertTrue('http://example.com/' in res3.headers['Location'])
-        _number_of_invoices_4 = len(DuesInvoiceRepository.get_all([2023]))
+        _number_of_invoices_4 = len(DuesInvoiceRepository.get_all([2024]))
         self.assertEqual(_number_of_invoices_3, _number_of_invoices_4)
         """
         check for email texts
@@ -306,7 +306,7 @@ class TestDues23Views(unittest.TestCase):
         }
         req_en_normal.referer = 'detail'
         req_en_normal.validated_matchdict = {'member': C3sMember.get_by_id(2)}
-        res_en_normal = send_dues23_invoice_email(req_en_normal)
+        res_en_normal = send_dues24_invoice_email(req_en_normal)
         self.assertTrue(res_en_normal.status_code == 302)
         self.assertEqual(len(mailer.outbox), 3)
         self.assertTrue(
@@ -323,7 +323,7 @@ class TestDues23Views(unittest.TestCase):
         req_de_investing.referer = 'detail'
         req_de_investing.validated_matchdict = {
             'member': C3sMember.get_by_id(3)}
-        res_de_investing = send_dues23_invoice_email(req_de_investing)
+        res_de_investing = send_dues24_invoice_email(req_de_investing)
         self.assertTrue(res_de_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 4)
         self.assertTrue(
@@ -340,7 +340,7 @@ class TestDues23Views(unittest.TestCase):
         req_en_investing.referer = 'detail'
         req_en_investing.validated_matchdict = {
             'member': C3sMember.get_by_id(4)}
-        res_en_investing = send_dues23_invoice_email(req_en_investing)
+        res_en_investing = send_dues24_invoice_email(req_en_investing)
         self.assertTrue(res_en_investing.status_code == 302)
         self.assertEqual(len(mailer.outbox), 5)
         self.assertTrue(
@@ -357,7 +357,7 @@ class TestDues23Views(unittest.TestCase):
         req_de_legalentity.referer = 'detail'
         req_de_legalentity.validated_matchdict = {
             'member': C3sMember.get_by_id(5)}
-        res_de_legalentity = send_dues23_invoice_email(req_de_legalentity)
+        res_de_legalentity = send_dues24_invoice_email(req_de_legalentity)
         self.assertTrue(res_de_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 6)
         self.assertTrue(
@@ -374,7 +374,7 @@ class TestDues23Views(unittest.TestCase):
         req_en_legalentity.referer = 'detail'
         req_en_legalentity.validated_matchdict = {
             'member': C3sMember.get_by_id(6)}
-        res_en_legalentity = send_dues23_invoice_email(req_en_legalentity)
+        res_en_legalentity = send_dues24_invoice_email(req_en_legalentity)
         self.assertTrue(res_en_legalentity.status_code == 302)
         self.assertEqual(len(mailer.outbox), 7)
         self.assertTrue(
@@ -384,17 +384,17 @@ class TestDues23Views(unittest.TestCase):
             ('Für juristische Personen wird empfohlen')
             in mailer.outbox[6].body)
 
-    def test_send_dues23_invoice_email_via_BATCH(self):
+    def test_send_dues24_invoice_email_via_BATCH(self):
         """
-        test the send_dues23_invoice_batch function
+        test the send_dues24_invoice_batch function
         for batch processing
         """
         # from pyramid_mailer import get_mailer
-        from c3smembership.presentation.views.dues_2023 import (
-            send_dues23_invoice_batch,
+        from c3smembership.presentation.views.dues_2024 import (
+            send_dues24_invoice_batch,
         )
-        self.config.add_route('make_dues23_invoice_no_pdf', '/')
-        self.config.add_route('make_dues23_reversal_invoice_pdf', '/')
+        self.config.add_route('make_dues24_invoice_no_pdf', '/')
+        self.config.add_route('make_dues24_reversal_invoice_pdf', '/')
         self.config.add_route('detail', '/detail/')
         self.config.add_route('error', '/error')
         self.config.add_route('dues', '/dues')
@@ -416,15 +416,15 @@ class TestDues23Views(unittest.TestCase):
 
         # check number of invoices: should be 0
         _number_of_invoices_before_batch = len(
-            DuesInvoiceRepository.get_all([2023]))
+            DuesInvoiceRepository.get_all([2024]))
         assert _number_of_invoices_before_batch == 0
 
         req = testing.DummyRequest()
         req.referer = 'toolbox'
-        res = send_dues23_invoice_batch(req)
+        res = send_dues24_invoice_batch(req)
 
         # check number of invoices: should be 2
-        _number_of_invoices_batch = len(DuesInvoiceRepository.get_all([2023]))
+        _number_of_invoices_batch = len(DuesInvoiceRepository.get_all([2024]))
         assert _number_of_invoices_batch == 2
 
         # try to post a number for batch processing
@@ -436,7 +436,7 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_post.referer = 'toolbox'
-        res = send_dues23_invoice_batch(req_post)
+        res = send_dues24_invoice_batch(req_post)
 
         self.assertTrue(
             'sent out 5 mails (to members with membership numbers [11, 12, '
@@ -446,28 +446,28 @@ class TestDues23Views(unittest.TestCase):
         # try to batch-send once more:
         # this will respond with a redirect and tell
         # that there are no invitees left
-        res2 = send_dues23_invoice_batch(req)
+        res2 = send_dues24_invoice_batch(req)
         self.assertEqual(res2.status, '302 Found')
         self.assertEqual(res2.status_code, 302)
         assert 'no invoicees left. all done!' \
                in req.session.pop_flash('success')
 
         """
-        and now some tests for make_dues23_invoice_no_pdf
+        and now some tests for make_dues24_invoice_no_pdf
         """
-        from c3smembership.presentation.views.dues_2023 import (
-            make_dues23_invoice_no_pdf,
+        from c3smembership.presentation.views.dues_2024 import (
+            make_dues24_invoice_no_pdf,
         )
         req2 = testing.DummyRequest()
 
         # wrong token: must fail!
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token + 'false!!!',  # must fail
+            'code': m1.dues24_token + 'false!!!',  # must fail
             'i': '0001',
         }
 
-        res = make_dues23_invoice_no_pdf(req2)
+        res = make_dues24_invoice_no_pdf(req2)
 
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
@@ -475,22 +475,22 @@ class TestDues23Views(unittest.TestCase):
         # wrong invoice number: must fail!
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token,
-            'i': '1234',  # must fail
+            'code': m1.dues24_token,
+            'i': '1244',  # must fail
         }
-        res = make_dues23_invoice_no_pdf(req2)
+        res = make_dues24_invoice_no_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice token: must fail!
-        i2 = DuesInvoiceRepository.get_by_number(2, 2023)
+        i2 = DuesInvoiceRepository.get_by_number(2, 2024)
         i2.token = 'not_matching'
         req2.matchdict = {
             'email': m2.email,
-            'code': m2.dues23_token,
+            'code': m2.dues24_token,
             'i': '3',  # must fail
         }
-        res = make_dues23_invoice_no_pdf(req2)
+        res = make_dues24_invoice_no_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
 
@@ -498,15 +498,15 @@ class TestDues23Views(unittest.TestCase):
         # one more edge case:
         # check _inv.token must match code, or else!!!
         # first, set inv_code to something wrong:
-        i1 = DuesInvoiceRepository.get_by_number(1, 2023)
+        i1 = DuesInvoiceRepository.get_by_number(1, 2024)
         _old_i1_token = i1.token
         i1.token = 'not_right'
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token,
+            'code': m1.dues24_token,
             'i': '0001',
         }
-        res = make_dues23_invoice_no_pdf(req2)
+        res = make_dues24_invoice_no_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
         # reset it to what was there before
@@ -515,15 +515,15 @@ class TestDues23Views(unittest.TestCase):
         # one more edge case:
         # check this invoice is not a reversal, or else no PDF!!!
         # first, set is_reversal to something wrong:
-        i1 = DuesInvoiceRepository.get_by_number(1, 2023)
+        i1 = DuesInvoiceRepository.get_by_number(1, 2024)
         _old_i1_reversal_status = i1.is_reversal  # False
         i1.is_reversal = True
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token,
+            'code': m1.dues24_token,
             'i': '0001',
         }
-        res = make_dues23_invoice_no_pdf(req2)
+        res = make_dues24_invoice_no_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
         # reset it to what was there before
@@ -533,24 +533,24 @@ class TestDues23Views(unittest.TestCase):
         # retry with valid token:
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token,
+            'code': m1.dues24_token,
             'i': '0001',
         }
-        res = make_dues23_invoice_no_pdf(req2)
+        res = make_dues24_invoice_no_pdf(req2)
         self.assertTrue(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
         self.assertTrue('application/pdf' in res.headers['Content-Type'])
 
         """
         test dues listing
         """
-        from c3smembership.presentation.views.dues_2023 import dues23_listing
+        from c3smembership.presentation.views.dues_2024 import dues24_listing
         req_list = testing.DummyRequest()
-        resp_list = dues23_listing(req_list)
+        resp_list = dues24_listing(req_list)
         assert resp_list['count'] == 2
 
-    def test_dues23_reduction(self):
+    def test_dues24_reduction(self):
         """
-        test the dues23_reduction functionality
+        test the dues24_reduction functionality
         """
         # have to accept their membersip first
         m1 = C3sMember.get_by_id(1)  # german normal member
@@ -558,31 +558,31 @@ class TestDues23Views(unittest.TestCase):
         m2 = C3sMember.get_by_id(2)  # english normal member
         m2.membership_accepted = True
 
-        self.config.add_route('make_dues23_invoice_no_pdf', '/')
-        self.config.add_route('make_dues23_reversal_invoice_pdf', '/')
+        self.config.add_route('make_dues24_invoice_no_pdf', '/')
+        self.config.add_route('make_dues24_reversal_invoice_pdf', '/')
         self.config.add_route('detail', '/detail/')
         self.config.add_route('error', '/error')
         self.config.add_route('dues', '/dues')
         req = testing.DummyRequest()
         req.referer = 'dues'
-        from c3smembership.presentation.views.dues_2023 import (
-            send_dues23_invoice_batch,
+        from c3smembership.presentation.views.dues_2024 import (
+            send_dues24_invoice_batch,
         )
         # send out invoices. this is a prerequisite for reductions
-        res = send_dues23_invoice_batch(req)
+        res = send_dues24_invoice_batch(req)
         res
         """
         test reduction of dues
         """
         # pre-check
-        self.assertFalse(m1.dues23_reduced)  # not reduced yet!
-        _m1_amount_reduced = m1.dues23_amount_reduced  # is Decimal('0')
+        self.assertFalse(m1.dues24_reduced)  # not reduced yet!
+        _m1_amount_reduced = m1.dues24_amount_reduced  # is Decimal('0')
         _number_of_invoices_before_reduction = len(
-            DuesInvoiceRepository.get_all([2023]))
+            DuesInvoiceRepository.get_all([2024]))
         # we have 2 invoices as of now
-        self.assertEqual(len(DuesInvoiceRepository.get_all([2023])), 2)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2024])), 2)
         # import the function under test
-        from c3smembership.presentation.views.dues_2023 import dues23_reduction
+        from c3smembership.presentation.views.dues_2024 import dues24_reduction
 
         #############################################################
         # try to reduce to the given calculated amount (edge case coverage)
@@ -596,10 +596,10 @@ class TestDues23Views(unittest.TestCase):
         )
         req_reduce.matchdict['member_id'] = 1  # do it for member with id 1
 
-        res_reduce = dues23_reduction(req_reduce)  # call reduce on her
+        res_reduce = dues24_reduction(req_reduce)  # call reduce on her
 
         # no new invoice
-        self.assertEqual(len(DuesInvoiceRepository.get_all([2023])), 2)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2024])), 2)
 
         #############################################################
         # try to reduce above the given calculated amount
@@ -613,10 +613,10 @@ class TestDues23Views(unittest.TestCase):
         )
         req_reduce.matchdict['member_id'] = 1  # do it for member with id 1
 
-        res_reduce = dues23_reduction(req_reduce)  # call reduce on her
+        res_reduce = dues24_reduction(req_reduce)  # call reduce on her
 
         # no new invoice
-        self.assertEqual(len(DuesInvoiceRepository.get_all([2023])), 2)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2024])), 2)
 
         #############################################################
         # valid reduction but without confirmation
@@ -628,9 +628,9 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 1
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
         # no new invoice
-        self.assertEqual(len(DuesInvoiceRepository.get_all([2023])), 2)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2024])), 2)
 
         #############################################################
         # valid reduction
@@ -642,29 +642,29 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 1
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
 
         _number_of_invoices_after_reduction = len(
-            DuesInvoiceRepository.get_all([2023]))
+            DuesInvoiceRepository.get_all([2024]))
 
         # two new invoices must have been issued
         assert (_number_of_invoices_before_reduction + 2) \
                == _number_of_invoices_after_reduction
         assert _number_of_invoices_after_reduction == 4
         assert 'detail' in res_reduce.headers['Location']  # 302 to detail p.
-        assert _m1_amount_reduced != m1.dues23_amount_reduced  # changed!
-        assert m1.dues23_amount_reduced == 42  # changed to 42!
+        assert _m1_amount_reduced != m1.dues24_amount_reduced  # changed!
+        assert m1.dues24_amount_reduced == 42  # changed to 42!
 
         # check the invoice created
         _rev_inv = DuesInvoiceRepository.get_by_number(
-            _number_of_invoices_before_reduction + 1, 2023)
+            _number_of_invoices_before_reduction + 1, 2024)
         _new_inv = DuesInvoiceRepository.get_by_number(
-            _number_of_invoices_before_reduction + 2, 2023)
+            _number_of_invoices_before_reduction + 2, 2024)
         assert _rev_inv.invoice_amount == D('-50')
         assert _new_inv.invoice_amount == D('42')
 
         # we have 4 invoices as of now
-        self.assertEqual(len(DuesInvoiceRepository.get_all([2023])), 4)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2024])), 4)
 
         #############################################################
         # now try to raise above the previous reduction
@@ -676,13 +676,13 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 1
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
 
         _number_of_invoices_after_reduction = len(
-            DuesInvoiceRepository.get_all([2023]))
+            DuesInvoiceRepository.get_all([2024]))
 
         # no new invoices were created, we still have 4 invoices
-        self.assertEqual(len(DuesInvoiceRepository.get_all([2023])), 4)
+        self.assertEqual(len(DuesInvoiceRepository.get_all([2024])), 4)
 
         #############################################################
         # try to reduce to the same amount again (edge case coverage)
@@ -695,7 +695,7 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 1
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
         #############################################################
         # try to reduce to zero (edge case coverage)
         req_reduce = testing.DummyRequest(
@@ -707,7 +707,7 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 1
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
 
         req_reduce = testing.DummyRequest(
             post={
@@ -718,7 +718,7 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 2
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
         #############################################################
         # try to reduce to zero with english member (edge case coverage)
         # how to do this if you already reduced to zero? reduce to more first!
@@ -731,7 +731,7 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 1
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
         m1.locale = 'en'
         req_reduce = testing.DummyRequest(
             post={
@@ -742,59 +742,59 @@ class TestDues23Views(unittest.TestCase):
             },
         )
         req_reduce.matchdict['member_id'] = 1
-        res_reduce = dues23_reduction(req_reduce)
+        res_reduce = dues24_reduction(req_reduce)
         #############################################################
         """
         test reversal invoice PDF generation
         """
 
-        from c3smembership.presentation.views.dues_2023 import (
-            make_dues23_reversal_invoice_pdf,
+        from c3smembership.presentation.views.dues_2024 import (
+            make_dues24_reversal_invoice_pdf,
         )
         req2 = testing.DummyRequest()
 
         # wrong token: must fail!
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token + 'false!!!',  # must fail
+            'code': m1.dues24_token + 'false!!!',  # must fail
             'no': '0006',
         }
-        res = make_dues23_reversal_invoice_pdf(req2)
+        res = make_dues24_reversal_invoice_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice number: must fail!
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token,
-            'no': '1234',  # must fail
+            'code': m1.dues24_token,
+            'no': '1244',  # must fail
         }
-        res = make_dues23_reversal_invoice_pdf(req2)
+        res = make_dues24_reversal_invoice_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
 
         # wrong invoice token: must fail!
-        i2 = DuesInvoiceRepository.get_by_number(2, 2023)
+        i2 = DuesInvoiceRepository.get_by_number(2, 2024)
         i2.token = 'not_matching'
         req2.matchdict = {
             'email': m2.email,
-            'code': m2.dues23_token,
+            'code': m2.dues24_token,
             'no': '2',  # must fail
         }
-        res = make_dues23_reversal_invoice_pdf(req2)
+        res = make_dues24_reversal_invoice_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
 
         ######################################################################
         # wrong invoice type (not a reversal): must fail! (edge case coverage)
         assert not i2.is_reversal  # i2 is not a reversal
-        i2.token = m2.dues23_token  # we give it a valid token
+        i2.token = m2.dues24_token  # we give it a valid token
         req2.matchdict = {
             'email': m2.email,
-            'code': m2.dues23_token,
+            'code': m2.dues24_token,
             'no': '0002',
         }
-        res = make_dues23_reversal_invoice_pdf(req2)
+        res = make_dues24_reversal_invoice_pdf(req2)
         assert 'application/pdf' not in res.headers['Content-Type']  # no PDF
         assert 'error' in res.headers['Location']  # but error
         ######################################################################
@@ -802,30 +802,30 @@ class TestDues23Views(unittest.TestCase):
         # retry with valid token:
         req2.matchdict = {
             'email': m1.email,
-            'code': m1.dues23_token,
+            'code': m1.dues24_token,
             'no': '0003',
         }
-        res = make_dues23_reversal_invoice_pdf(req2)
+        res = make_dues24_reversal_invoice_pdf(req2)
         self.assertTrue(PDF_SIZE_MIN < len(res.body) < PDF_SIZE_MAX)
         self.assertTrue('application/pdf' in res.headers['Content-Type'])
 
-    def test_dues23_notice(self):
+    def test_dues24_notice(self):
         """
-        test the dues23 notice view -- acknowledge incoming payments
+        test the dues24 notice view -- acknowledge incoming payments
         """
         self.config.add_route('detail', '/detail/')
-        self.config.add_route('make_dues23_invoice_no_pdf', '/')
+        self.config.add_route('make_dues24_invoice_no_pdf', '/')
         # prepare test candidate
         m1 = C3sMember.get_by_id(1)  # german normal member
         m1.membership_accepted = True
-        from c3smembership.presentation.views.dues_2023 import (
-            send_dues23_invoice_email
+        from c3smembership.presentation.views.dues_2024 import (
+            send_dues24_invoice_email
         )
         req0 = testing.DummyRequest(
             matchdict={'member_id': m1.id})
         req0.referer = 'detail'
         req0.validated_matchdict = {'member': m1}
-        send_dues23_invoice_email(req0)
+        send_dues24_invoice_email(req0)
 
         partial_payment_amount = D('10')
 
@@ -834,61 +834,61 @@ class TestDues23Views(unittest.TestCase):
             matchdict={'member_id': 1},
             POST={
                 'amount': partial_payment_amount,
-                'payment_date': '2023-09-11',
+                'payment_date': '2024-09-11',
             }
         )
-        from c3smembership.presentation.views.dues_2023 import dues23_notice
-        res1 = dues23_notice(req1)
+        from c3smembership.presentation.views.dues_2024 import dues24_notice
+        res1 = dues24_notice(req1)
         res1  # tame flymake
 
         # After the partial payment, some amount has been paid
-        self.assertEqual(m1.dues23_paid, True)
+        self.assertEqual(m1.dues24_paid, True)
         # it has been the partial payment amount
-        self.assertEqual(m1.dues23_amount_paid, partial_payment_amount)
-        self.assertEqual(m1.dues23_paid_date,
-                         datetime(2023, 9, 11, 0, 0))
+        self.assertEqual(m1.dues24_amount_paid, partial_payment_amount)
+        self.assertEqual(m1.dues24_paid_date,
+                         datetime(2024, 9, 11, 0, 0))
         # the balance is the original amount subtracted by the partial payment
         self.assertEqual(
-            m1.dues23_balance, D(m1.dues23_amount) - partial_payment_amount)
+            m1.dues24_balance, D(m1.dues24_amount) - partial_payment_amount)
         # and the account is not balanced.
-        self.assertEqual(m1.dues23_balanced, False)
+        self.assertEqual(m1.dues24_balanced, False)
 
         # here comes the request to test
         req2 = testing.DummyRequest(
             matchdict={'member_id': 1},
             POST={
-                'amount': D(m1.dues23_amount) - partial_payment_amount,
-                'payment_date': '2023-09-13',
+                'amount': D(m1.dues24_amount) - partial_payment_amount,
+                'payment_date': '2024-09-13',
             }
         )
-        res2 = dues23_notice(req2)
+        res2 = dues24_notice(req2)
         res2  # tame flymake
 
         # After the final payment, some amount has been paid
-        self.assertEqual(m1.dues23_paid, True)
+        self.assertEqual(m1.dues24_paid, True)
         # it has been the full amount
-        self.assertEqual(m1.dues23_amount_paid, D('50'))
-        self.assertEqual(m1.dues23_paid_date,
-                         datetime(2023, 9, 13, 0, 0))
+        self.assertEqual(m1.dues24_amount_paid, D('50'))
+        self.assertEqual(m1.dues24_paid_date,
+                         datetime(2024, 9, 13, 0, 0))
         # the balance is 0
-        self.assertEqual(m1.dues23_balance, D('0'))
+        self.assertEqual(m1.dues24_balance, D('0'))
         # and the account is balanced.
-        self.assertEqual(m1.dues23_balanced, True)
+        self.assertEqual(m1.dues24_balanced, True)
 
         # Test no payment amount entered
         request = testing.DummyRequest(
             matchdict={'member_id': 1},
             POST={
                 'amount': '',
-                'payment_date': '2023-09-13',
+                'payment_date': '2024-09-13',
             }
         )
-        response = dues23_notice(request)
+        response = dues24_notice(request)
         self.assertEqual(response.status_code, 302)
         self.assertTrue('detail' in response.location)
-        self.assertTrue('#dues23' in response.location)
+        self.assertTrue('#dues24' in response.location)
         self.assertTrue('Invalid amount to pay' in request.session.pop_flash(
-            'dues23notice_message_to_staff')[0])
+            'dues24notice_message_to_staff')[0])
 
         # Test no payment date entered
         request = testing.DummyRequest(
@@ -898,9 +898,9 @@ class TestDues23Views(unittest.TestCase):
                 'payment_date': '',
             }
         )
-        response = dues23_notice(request)
+        response = dues24_notice(request)
         self.assertTrue('detail' in response.location)
-        self.assertTrue('#dues23' in response.location)
+        self.assertTrue('#dues24' in response.location)
         self.assertTrue(
             'Invalid date for payment' in request.session.pop_flash(
-                'dues23notice_message_to_staff')[0])
+                'dues24notice_message_to_staff')[0])
