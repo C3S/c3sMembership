@@ -65,7 +65,7 @@ def mass_payment_confirmation(request):
                 "Giving up.",
                 'danger'
             )
-            break
+            return HTTPFound(request.route_url('error'))
         if row_number == 1:
             # Ensure this looks like a valid reduced Hibiscus csv.
             if (
@@ -81,6 +81,7 @@ def mass_payment_confirmation(request):
                     "Giving up.",
                     'danger'
                 )
+                return HTTPFound(request.route_url('error'))
         else:  # process actual values
             # CSV fields
             csv_date = row[0]
@@ -131,7 +132,9 @@ def mass_payment_confirmation(request):
             member = members.one()
 
             outcome[-1]['db_name'] = f'{member.firstname} {member.lastname}'
-            r = SequenceMatcher(None, outcome[-1]['db_name'], csv_name).ratio()
+            db_name_lower = outcome[-1]['db_name'].lower()
+            csv_name_lower = csv_name.lower()
+            r = SequenceMatcher(None, db_name_lower, csv_name_lower).ratio()
             outcome[-1]['db_name_color'] = (
                 '#%02X%02X%02X' % (256 - int(r*255), int(r*255), 0))
             date = datetime.datetime.strptime(csv_date, "%d.%m.%Y")
