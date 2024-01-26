@@ -92,9 +92,6 @@
                     <abbr title="Barcamp and general assembly invitation for general assembly ${latest_general_assembly.number} &quot;${latest_general_assembly.name}&quot; on ${latest_general_assembly.date}">BC &amp; GA<br />Invitation</abbr>
                 </th>
                 <th>
-                    Dues 2024<br/>Invoice
-                </th>
-                <th>
                     Certificate
                 </th>
                 <th>Edit</th>
@@ -154,18 +151,6 @@
                                     class="fas fa-envelope text-danger"></i>
                         </span>
                     </span>
-                </td>
-                <td class="icons">
-                    <div tal:omit-tag="" tal:condition="not member.membership_date > date(2024, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(2022, 12, 31))">
-                        <a tal:condition="member.dues24_invoice is False"
-                                href="${request.route_url('send_dues24_invoice_email', member_id=member.id)}"
-                                title="Dues invoice not sent yet. Click to send!"
-                                class="fas fa-envelope text-danger"></a>
-                        <a tal:condition="member.dues24_invoice is True"
-                                href="${request.route_url('send_dues24_invoice_email', member_id=member.id)}"
-                                title="Invoice sent at ${member.dues24_invoice_date.strftime('%d.%m.%Y %H:%M')}"
-                                class="fas fa-envelope text-success"></a>
-                    </div>
                 </td>
                 <td class="icons">
                     <a tal:condition="not member.certificate_email"
