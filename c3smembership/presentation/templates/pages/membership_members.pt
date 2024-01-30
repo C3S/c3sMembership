@@ -129,7 +129,7 @@
                             class="fas fa-at"></a>
                 </td>
                 <td class="icons">
-                    <div tal:omit-tag="" tal:condition="not member.membership_date > date(2024, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(2022, 12, 31))">
+                    <div tal:omit-tag="" tal:condition="not member.membership_date > date(2024, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(2023, 12, 31))">
                         <a tal:condition="member.dues24_invoice is False"
                                 href="${request.route_url('send_dues24_invoice_email', member_id=member.id)}"
                                 title="Dues invoice not sent yet. Click to send!"

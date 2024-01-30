@@ -56,6 +56,7 @@ def get_member_details(request, member):
 
     dues = []
 
+    latest_dues_year = '2024'
     if (member.membership_date < date(2024, 12, 31) and
             (
                 member.membership_loss_date is None or
@@ -364,7 +365,7 @@ def get_member_details(request, member):
         'member': member,
         'shares': shares,
         'general_assembly_invitations': general_assembly_invitations,
-        'latest_dues_year': '2023',
+        'latest_dues_year': latest_dues_year,
     }
 
 
