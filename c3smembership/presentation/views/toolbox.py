@@ -98,7 +98,8 @@ def build_form_renderer():
     mass_payment_confirmation_form = deform.Form(
         MassPaymentConfirmation().bind(),
         buttons=[deform.Button('submit', _('Confirm Payments'))],
-        formid='mass_payment_confirmation_form'
+        formid='mass_payment_confirmation_form',
+        action='/mass_payment_confirmation'
     )
 
     invoice_search_form = deform.Form(
