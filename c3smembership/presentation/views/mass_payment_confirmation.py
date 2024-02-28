@@ -43,9 +43,9 @@ def mass_payment_confirmation(request):
     """
     Process payments and show results.
     """
-
+        
     try:
-        text_string = request.matchdict['text']
+        text_string = request.POST['text']
     except (KeyError, ValueError):
         request.session.flash(
             "Invalid CSV input.",
