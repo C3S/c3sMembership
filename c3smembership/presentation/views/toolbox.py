@@ -36,16 +36,6 @@ def membership_listing_date_pdf_callback(request, result, appstruct):
             date=appstruct['date']))
 
 
-def mass_payment_confirmation_callback(request, result, appstruct):
-    """
-    Forwards to the mass payment confirmation route for the given codes.
-    """
-    return HTTPFound(
-        location=request.route_url(
-            'mass_payment_confirmation',
-            text=appstruct['text']))
-
-
 def invoice_search_callback(request, result, appstruct):
     """
     Forwards to the dues tab of a member, containing this invoice.
@@ -98,7 +88,8 @@ def build_form_renderer():
     mass_payment_confirmation_form = deform.Form(
         MassPaymentConfirmation().bind(),
         buttons=[deform.Button('submit', _('Confirm Payments'))],
-        formid='mass_payment_confirmation_form'
+        formid='mass_payment_confirmation_form',
+        action='/mass_payment_confirmation'
     )
 
     invoice_search_form = deform.Form(
@@ -118,8 +109,7 @@ def build_form_renderer():
         membership_listing_year_end_pdf_form,
         membership_listing_date_pdf_callback)
     form_renderer.add_form(
-        mass_payment_confirmation_form,
-        mass_payment_confirmation_callback)
+        mass_payment_confirmation_form)
     form_renderer.add_form(
         invoice_search_form,
         invoice_search_callback)
