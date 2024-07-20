@@ -147,25 +147,6 @@ class TestMembershipCertificateViews(unittest.TestCase):
     tests for the membership certificate views
     """
 
-    # def check_for_pdf_elements(self):
-    #     """
-    #     helper for making sure that necessary files for pdf creation are there
-    #     """
-    #     for filen in [
-    #         'Urkunde_Hintergrund_blank.pdf',
-    #         'sign_meik.png',
-    #         'sign_sarah.png',
-    #         'urkunde_footer_de.tex',
-    #         'urkunde_footer_en.tex',
-    #         'urkunde_header_de.tex',
-    #         'urkunde_header_en.tex'
-    #     ]:
-    #         self.assertTrue(
-    #             os.path.isfile(os.path.join('certificate', filen)),
-    #             'missing file(s) in certificates folder; please create your '
-    #             'own corporate design and change gen_cert() in '
-    #             'membership_vertificate.py so proper PDFs can be generated')
-
     def setUp(self):
         self.config = testing.setUp()
         self.config.set_session_factory(session_factory_from_settings({}))

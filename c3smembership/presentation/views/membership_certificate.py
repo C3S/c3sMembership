@@ -176,14 +176,14 @@ def gen_cert(member, template):
 
     sign_meik = os.path.abspath(
         os.path.join(certificate_path, 'sign_meik.png'))
-    sign_sarah = os.path.abspath(
-        os.path.join(certificate_path, 'sign_sarah.png'))
+    sign_hartmut = os.path.abspath(
+        os.path.join(certificate_path, 'sign_hartmut.png'))
 
     # check if all needed files are there
     for file_needed in [
             'Urkunde_Hintergrund_blank.pdf',
             'sign_meik.png',
-            'sign_sarah.png',
+            'sign_hartmut.png',
             'urkunde_footer_de.tex',
             'urkunde_header_de.tex',
             'urkunde_footer_en.tex',
@@ -275,7 +275,7 @@ def gen_cert(member, template):
 \\def\\txtBlkConfirmDate{%s}
 \\def\\signDate{%s}
 \\def\\signMeik{%s}
-\\def\\signSarah{%s}
+\\def\\signHartmut{%s}
 \\def\\txtBlkCEO{%s}
 \\def\\txtBlkMembershipNum{%s}
     ''' % (
@@ -297,7 +297,7 @@ def gen_cert(member, template):
             if member.locale == 'de'
             else date.today()),
         sign_meik,
-        sign_sarah,
+        sign_hartmut,
         exec_dir,
         mship_num_text
     )
