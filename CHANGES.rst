@@ -1,3 +1,19 @@
+1.34
+====
+
+
+- Add membership dues 2025.
+
+- Add membership dues 2024.
+
+- Add membership dues 2023.
+
+- Add Docker development.
+
+- Migrate to Python 3.
+
+
+
 1.33
 ====
 
