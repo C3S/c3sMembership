@@ -11,9 +11,9 @@ from unittest.mock import Mock
 from .integration_test_base import IntegrationTestCaseBase
 
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues24invoice import Dues24Invoice
+from c3smembership.data.model.base.dues25invoice import Dues25Invoice
 
-YEAR = 2024
+YEAR = 2025
 
 
 class MembershipDuesIntegration(IntegrationTestCaseBase):
@@ -244,12 +244,12 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         db_session = self.get_db_session()
 
         # 1 Input validation: error in case member does not exist
-        self.normal_de.dues24_invoice = False
+        self.normal_de.dues25_invoice = False
         db_session.flush()
 
         response = self._send_invoice(1234)
 
-        self.assertFalse(self.normal_de.dues24_invoice)
+        self.assertFalse(self.normal_de.dues25_invoice)
         self.assert_flash(response, 'danger', 'Member ID 1234 does not exist')
 
     def test_send_invoice_email_bv(self):
@@ -274,7 +274,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         response = self._send_invoice(self.normal_de.id)
 
-        self.assertTrue(self.normal_de.dues24_invoice)
+        self.assertTrue(self.normal_de.dues25_invoice)
 
         # Success in case membership began during the year
         self._mock_mailer()
@@ -282,18 +282,18 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         response = self._send_invoice(self.normal_de.id)
 
-        self.assertTrue(self.normal_de.dues24_invoice)
+        self.assertTrue(self.normal_de.dues25_invoice)
 
         # Error in case membership started after the end of the dues year
         self._reset_member(self.normal_de, membership_date=date(YEAR+1, 1, 1))
 
         response = self._send_invoice(self.normal_de.id)
 
-        self.assertFalse(self.normal_de.dues24_invoice)
+        self.assertFalse(self.normal_de.dues25_invoice)
         self.assert_flash(
             response, 'warning',
-            'Member 1 was not a member in 2024. Therefore, the member is not '
-            'applicable for dues in 2024.')
+            'Member 1 was not a member in 2025. Therefore, the member is not '
+            'applicable for dues in 2025.')
 
         # Error in case membership has not started
         self._reset_member(self.normal_de,
@@ -302,7 +302,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         response = self._send_invoice(self.normal_de.id)
 
-        self.assertFalse(self.normal_de.dues24_invoice)
+        self.assertFalse(self.normal_de.dues25_invoice)
         self.assert_flash(response, 'warning', 'not accepted by the board')
 
         # 1.2 Membership ended after the beginning of the dues year
@@ -316,7 +316,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         response = self._send_invoice(self.normal_de.id)
 
-        self.assertTrue(self.normal_de.dues24_invoice)
+        self.assertTrue(self.normal_de.dues25_invoice)
 
         # Success in case membership ended after the end of the year
         self._mock_mailer()
@@ -326,7 +326,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         response = self._send_invoice(self.normal_de.id)
 
-        self.assertTrue(self.normal_de.dues24_invoice)
+        self.assertTrue(self.normal_de.dues25_invoice)
 
         # Error in case membership ended before the beginning of the year
         self._reset_member(self.normal_de,
@@ -335,11 +335,11 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         response = self._send_invoice(self.normal_de.id)
 
-        self.assertFalse(self.normal_de.dues24_invoice)
+        self.assertFalse(self.normal_de.dues25_invoice)
         self.assert_flash(
             response, 'warning',
-            'Member 1 was not a member in 2024. Therefore, the member is not '
-            'applicable for dues in 2024.')
+            'Member 1 was not a member in 2025. Therefore, the member is not '
+            'applicable for dues in 2025.')
 
         # 2 User must be logged in as staff
         # Success if user is logged in as staff
@@ -352,7 +352,7 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         # Failure if user is not logged in
         self.log_out()
-        response = self.testapp.get('/dues24_invoice/1', status=403)
+        response = self.testapp.get('/dues25_invoice/1', status=403)
 
     def test_send_invoice_email_bl(self):
         """
@@ -398,8 +398,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         self._send_invoice(self.normal_de.id)
 
-        self.assertTrue(self.normal_de.dues24_invoice)
-        self.assertEqual(self.normal_de.dues24_invoice_date.date(),
+        self.assertTrue(self.normal_de.dues25_invoice)
+        self.assertEqual(self.normal_de.dues25_invoice_date.date(),
                          date.today())
 
         # 1.2 For investing members
@@ -408,8 +408,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         self._send_invoice(self.investing_de.id)
 
-        self.assertTrue(self.investing_de.dues24_invoice)
-        self.assertEqual(self.investing_de.dues24_invoice_date.date(),
+        self.assertTrue(self.investing_de.dues25_invoice)
+        self.assertEqual(self.investing_de.dues25_invoice_date.date(),
                          date.today())
 
         # 1 Due calculation for normal members
@@ -419,26 +419,26 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         self._send_invoice(self.normal_de.id)
 
         # 1.1 Calculate quarterly dues
-        self.assertEqual(self.normal_de.dues24_amount, Decimal('50.0'))
+        self.assertEqual(self.normal_de.dues25_amount, Decimal('50.0'))
 
         # 1.2 Store dues data
-        self.assertTrue(self.normal_de.dues24_invoice)
-        self.assertEqual(self.normal_de.dues24_invoice_date.date(),
+        self.assertTrue(self.normal_de.dues25_invoice)
+        self.assertEqual(self.normal_de.dues25_invoice_date.date(),
                          date.today())
-        self.assertIsNotNone(self.normal_de.dues24_invoice_no)
-        self.assertIsNotNone(self.normal_de.dues24_token)
-        self.assertEqual(self.normal_de.dues24_start, 'q1_2024')
-        self.assertFalse(self.normal_de.dues24_reduced)
-        self.assertTrue(self.normal_de.dues24_amount_reduced.is_nan())
-        self.assertEqual(self.normal_de.dues24_balance, Decimal('50.0'))
-        self.assertFalse(self.normal_de.dues24_balanced)
-        self.assertFalse(self.normal_de.dues24_paid)
-        self.assertEqual(self.normal_de.dues24_amount_paid, Decimal('0.0'))
-        self.assertIsNone(self.normal_de.dues24_paid_date)
+        self.assertIsNotNone(self.normal_de.dues25_invoice_no)
+        self.assertIsNotNone(self.normal_de.dues25_token)
+        self.assertEqual(self.normal_de.dues25_start, 'q1_2025')
+        self.assertFalse(self.normal_de.dues25_reduced)
+        self.assertTrue(self.normal_de.dues25_amount_reduced.is_nan())
+        self.assertEqual(self.normal_de.dues25_balance, Decimal('50.0'))
+        self.assertFalse(self.normal_de.dues25_balanced)
+        self.assertFalse(self.normal_de.dues25_paid)
+        self.assertEqual(self.normal_de.dues25_amount_paid, Decimal('0.0'))
+        self.assertIsNone(self.normal_de.dues25_paid_date)
 
         # 1.3 Store invoice data
-        invoice = db_session.query(Dues24Invoice).filter(
-            Dues24Invoice.member_id == 1).first()
+        invoice = db_session.query(Dues25Invoice).filter(
+            Dues25Invoice.member_id == 1).first()
         self.assertIsNotNone(invoice.invoice_no)
         self.assertIsNotNone(invoice.invoice_no_string)
         self.assertEqual(invoice.invoice_date.date(), date.today())
@@ -464,8 +464,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         self._send_invoice(self.investing_de.id)
 
-        self.assertTrue(self.investing_de.dues24_invoice)
-        self.assertEqual(self.investing_de.dues24_invoice_date.date(),
+        self.assertTrue(self.investing_de.dues25_invoice)
+        self.assertEqual(self.investing_de.dues25_invoice_date.date(),
                          date.today())
 
         # 3 Send email depending on membership type and entity type
@@ -478,8 +478,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         message = self._get_mock_mailer_message(mailer)
         self.assertTrue('You will find the invoice here:' in message.body)
-        self.assertTrue('/dues24_invoice_no/{}/C3S-dues24-'.format(
-            self.normal_en.dues24_token) in message.body)
+        self.assertTrue('/dues25_invoice_no/{}/C3S-dues25-'.format(
+            self.normal_en.dues25_token) in message.body)
 
         # German
         mailer = self._mock_mailer()
@@ -490,8 +490,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         message = self._get_mock_mailer_message(mailer)
         self.assertTrue(
             'Die Rechnung findest Du unter folgendem Link:' in message.body)
-        self.assertTrue('/dues24_invoice_no/{}/C3S-dues24-'.format(
-            self.normal_de.dues24_token) in message.body)
+        self.assertTrue('/dues25_invoice_no/{}/C3S-dues25-'.format(
+            self.normal_de.dues25_token) in message.body)
 
         # French -> gets English email
         mailer = self._mock_mailer()
@@ -501,8 +501,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         message = self._get_mock_mailer_message(mailer)
         self.assertTrue('You will find the invoice here:' in message.body)
-        self.assertTrue('/dues24_invoice_no/{}/C3S-dues24-'.format(
-            self.normal_fr.dues24_token) in message.body)
+        self.assertTrue('/dues25_invoice_no/{}/C3S-dues25-'.format(
+            self.normal_fr.dues25_token) in message.body)
 
         # 3.2 Investing members get email
         # 3.2.1 For legal entities with request for amount based on turnover
@@ -581,25 +581,25 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         # 4.1 For normal members
         self._mock_mailer()
         self._reset_member(self.normal_en)
-        self.assertFalse(self.normal_en.dues24_invoice)
-        self.assertIsNone(self.normal_en.dues24_invoice_date)
+        self.assertFalse(self.normal_en.dues25_invoice)
+        self.assertIsNone(self.normal_en.dues25_invoice_date)
 
         self._send_invoice(self.normal_en.id)
 
-        self.assertTrue(self.normal_en.dues24_invoice)
-        self.assertEqual(self.normal_en.dues24_invoice_date.date(),
+        self.assertTrue(self.normal_en.dues25_invoice)
+        self.assertEqual(self.normal_en.dues25_invoice_date.date(),
                          date.today())
 
         # 4.2 For investing members
         self._mock_mailer()
         self._reset_member(self.investing_en)
-        self.assertFalse(self.investing_en.dues24_invoice)
-        self.assertIsNone(self.investing_en.dues24_invoice_date)
+        self.assertFalse(self.investing_en.dues25_invoice)
+        self.assertIsNone(self.investing_en.dues25_invoice_date)
 
         self._send_invoice(self.investing_en.id)
 
-        self.assertTrue(self.investing_en.dues24_invoice)
-        self.assertEqual(self.investing_en.dues24_invoice_date.date(),
+        self.assertTrue(self.investing_en.dues25_invoice)
+        self.assertEqual(self.investing_en.dues25_invoice_date.date(),
                          date.today())
 
         # 5 If called again only resend email but only calculate dues once
@@ -607,8 +607,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         mailer = self._mock_mailer()
         self._reset_member(self.normal_en, membership_date=date(YEAR-1, 12, 31))
         self._send_invoice(self.normal_en.id)
-        self.assertEqual(self.normal_en.dues24_amount, Decimal('50.0'))
-        self.assertEqual(self.normal_en.dues24_start, 'q1_2024')
+        self.assertEqual(self.normal_en.dues25_amount, Decimal('50.0'))
+        self.assertEqual(self.normal_en.dues25_start, 'q1_2025')
         self.normal_en.membership_date = date(YEAR, 10, 1)
         self._mock_mailer()
 
@@ -616,28 +616,28 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
 
         message = self._get_mock_mailer_message(mailer)
         self.assertTrue('You will find the invoice here:' in message.body)
-        self.assertEqual(self.normal_en.dues24_amount, Decimal('50.0'))
-        self.assertEqual(self.normal_en.dues24_start, 'q1_2024')
+        self.assertEqual(self.normal_en.dues25_amount, Decimal('50.0'))
+        self.assertEqual(self.normal_en.dues25_start, 'q1_2025')
 
         # Investing
         mailer = self._mock_mailer()
         self._reset_member(self.investing_en,
                            membership_date=date(YEAR-1, 12, 31))
         self._send_invoice(self.investing_en.id)
-        self.assertTrue(self.investing_en.dues24_invoice)
+        self.assertTrue(self.investing_en.dues25_invoice)
         self._mock_mailer()
 
         self._send_invoice(self.investing_en.id)
 
         message = self._get_mock_mailer_message(mailer)
         self.assertTrue('Since you are an investing member' in message.body)
-        self.assertTrue(self.investing_en.dues24_invoice)
+        self.assertTrue(self.investing_en.dues25_invoice)
 
     def _send_invoice(self, member_id):
         """
         Send the invoice by calling the TestApp URL
         """
-        response = self.testapp.get('/dues24_invoice/{}'.format(member_id),
+        response = self.testapp.get('/dues25_invoice/{}'.format(member_id),
                                     headers={'Referer': 'test'},
                                     status=302)
         return response.follow()
@@ -653,8 +653,8 @@ class MembershipDuesIntegration(IntegrationTestCaseBase):
         member.membership_date = membership_date
         member.membership_accepted = membership_accepted
         member.membership_loss_date = membership_loss_date
-        member.dues24_invoice = False
-        member.dues24_invoice_date = None
+        member.dues25_invoice = False
+        member.dues25_invoice_date = None
         self.get_db_session().flush()
 
     def _mock_mailer(self):

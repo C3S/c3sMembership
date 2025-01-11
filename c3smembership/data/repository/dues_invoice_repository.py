@@ -32,6 +32,7 @@ from c3smembership.data.model.base.dues21invoice import Dues21Invoice
 from c3smembership.data.model.base.dues22invoice import Dues22Invoice
 from c3smembership.data.model.base.dues23invoice import Dues23Invoice
 from c3smembership.data.model.base.dues24invoice import Dues24Invoice
+from c3smembership.data.model.base.dues25invoice import Dues25Invoice
 
 
 class DuesInvoiceRepository(object):
@@ -55,6 +56,7 @@ class DuesInvoiceRepository(object):
         2022: Dues22Invoice,
         2023: Dues23Invoice,
         2024: Dues24Invoice,
+        2025: Dues25Invoice,
     }
     _PAYMENT_FIELDS = {
         2015: {
@@ -96,6 +98,10 @@ class DuesInvoiceRepository(object):
         2024: {
             'paid_date': C3sMember.dues24_paid_date,
             'amount_paid': C3sMember.dues24_amount_paid,
+        },
+        2025: {
+            'paid_date': C3sMember.dues25_paid_date,
+            'amount_paid': C3sMember.dues25_amount_paid,
         },
     }
 
@@ -308,6 +314,9 @@ class DuesInvoiceRepository(object):
         if year == 2024:
             member.dues24_invoice_no = invoice_number
             member.dues24_token = invoice_token
+        if year == 2025:
+            member.dues25_invoice_no = invoice_number
+            member.dues25_token = invoice_token
         DBSession().flush()
 
         return invoice
@@ -350,6 +359,9 @@ class DuesInvoiceRepository(object):
         if year == 2024:
             member.set_dues24_amount(dues_calculation.amount)
             member.dues24_start = dues_calculation.code
+        if year == 2025:
+            member.set_dues25_amount(dues_calculation.amount)
+            member.dues25_start = dues_calculation.code
         DBSession().flush()
 
     @classmethod
@@ -390,6 +402,9 @@ class DuesInvoiceRepository(object):
         if year == 2024:
             member.dues24_invoice = True
             member.dues24_invoice_date = invoice_date
+        if year == 2025:
+            member.dues25_invoice = True
+            member.dues25_invoice_date = invoice_date
         DBSession().flush()
 
     @staticmethod
@@ -411,6 +426,7 @@ class DuesInvoiceRepository(object):
             2022: Dues22Invoice,
             2023: Dues23Invoice,
             2024: Dues24Invoice,
+            2025: Dues25Invoice,
         }
         return year_classes[year]
 

@@ -47,6 +47,9 @@ class TestPaymentRepository(unittest.TestCase):
             dues24_paid=None,
             dues24_payment_date=None, dues24_payment_token=None,
             dues24_payment_amount=None,
+            dues25_paid=None,
+            dues25_payment_date=None, dues25_payment_token=None,
+            dues25_payment_amount=None,
         ):
         member = C3sMember(
             firstname=firstname,
@@ -118,6 +121,11 @@ class TestPaymentRepository(unittest.TestCase):
         member.dues24_amount_paid = dues24_payment_amount
         member.dues24_paid_date = dues24_payment_date
         member.dues24_token = dues24_payment_token
+
+        member.dues25_paid = dues25_paid
+        member.dues25_amount_paid = dues25_payment_amount
+        member.dues25_paid_date = dues25_payment_date
+        member.dues25_token = dues25_payment_token
         return member
 
     def setUp(self):
@@ -187,6 +195,10 @@ class TestPaymentRepository(unittest.TestCase):
                 dues24_payment_date=date(2024, 4, 5),
                 dues24_payment_token='JS24',
                 dues24_payment_amount=Decimal('24.24'),
+                dues25_paid=True,
+                dues25_payment_date=date(2025, 4, 5),
+                dues25_payment_token='JS25',
+                dues25_payment_amount=Decimal('25.25'),
             ))
             DBSession.add(self._create_member(
                 membership_number=2,
@@ -250,7 +262,7 @@ class TestPaymentRepository(unittest.TestCase):
 
         # 1. Test total number of payments
         payments = PaymentRepository.get_payments(1, 100)
-        self.assertEqual(len(payments), 14)
+        self.assertEqual(len(payments), 15)
 
         # 2. Test first payment for default sorting
         payments = PaymentRepository.get_payments(1, 1)
@@ -352,7 +364,7 @@ class TestPaymentRepository(unittest.TestCase):
         # Test only from date without to date
         payments = PaymentRepository.get_payments(
             1, 100, from_date=date(2016, 2, 2))
-        self.assertEqual(len(payments), 11)
+        self.assertEqual(len(payments), 12)
 
         # Test only to date without from date
         payments = PaymentRepository.get_payments(
@@ -387,7 +399,7 @@ class TestPaymentRepository(unittest.TestCase):
         # 1. Test sort property
         payments = PaymentRepository.get_payments(
             1, 100, sort_property='membership_number')
-        self.assertEqual(len(payments), 14)
+        self.assertEqual(len(payments), 15)
         self.assertEqual(payments[0]['membership_number'], 1)
         self.assertEqual(payments[1]['membership_number'], 1)
         self.assertEqual(payments[2]['membership_number'], 1)
@@ -397,15 +409,16 @@ class TestPaymentRepository(unittest.TestCase):
         self.assertEqual(payments[6]['membership_number'], 1)
         self.assertEqual(payments[7]['membership_number'], 1)
         self.assertEqual(payments[8]['membership_number'], 1)
-        self.assertEqual(payments[9]['membership_number'], 2)
+        self.assertEqual(payments[9]['membership_number'], 1)
         self.assertEqual(payments[10]['membership_number'], 2)
-        self.assertEqual(payments[11]['membership_number'], 3)
+        self.assertEqual(payments[11]['membership_number'], 2)
         self.assertEqual(payments[12]['membership_number'], 3)
         self.assertEqual(payments[13]['membership_number'], 3)
+        self.assertEqual(payments[14]['membership_number'], 3)
 
         payments = PaymentRepository.get_payments(
             1, 100, sort_property='firstname')
-        self.assertEqual(len(payments), 14)
+        self.assertEqual(len(payments), 15)
         self.assertEqual(payments[0]['firstname'], 'Cassandra')
         self.assertEqual(payments[1]['firstname'], 'Cassandra')
         self.assertEqual(payments[2]['firstname'], 'Cassandra')
@@ -418,8 +431,9 @@ class TestPaymentRepository(unittest.TestCase):
         self.assertEqual(payments[9]['firstname'], 'Jane')
         self.assertEqual(payments[10]['firstname'], 'Jane')
         self.assertEqual(payments[11]['firstname'], 'Jane')
-        self.assertEqual(payments[12]['firstname'], 'John')
+        self.assertEqual(payments[12]['firstname'], 'Jane')
         self.assertEqual(payments[13]['firstname'], 'John')
+        self.assertEqual(payments[14]['firstname'], 'John')
 
         # 2. Test sort direction
         with self.assertRaises(ValueError):

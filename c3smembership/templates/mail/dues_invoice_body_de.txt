@@ -1,14 +1,14 @@
 Hallo {salutation},
 
-am 27. Juni 2023 hat die ordentliche Generalversammlung der C3S SCE
+am 23. Juni 2024 hat die ordentliche Generalversammlung der C3S SCE
 eine Verlängerung der vorläufigen Beitragsordnung beschlossen. Sie sieht
 weiterhin Mitgliedsbeiträge für ordentliche Mitglieder vor, damit wir unsere
 laufenden Kosten decken können.
 
   https://archive.c3s.cc/aktuell/legal/C3S_SCE_membership_dues_de.pdf
 
-Der Mitgliedsbeitrag 2024 für ordentliche Mitglieder beträgt demnach
-50 Euro. Er ist niedriger, falls du später als im 1. Quartal 2024
+Der Mitgliedsbeitrag 2025 für ordentliche Mitglieder beträgt demnach
+50 Euro. Er ist niedriger, falls du später als im 1. Quartal 2025
 beigetreten bist.
 
 Bitte überweise {dues_amount} Euro auf folgendes Konto der C3S SCE:

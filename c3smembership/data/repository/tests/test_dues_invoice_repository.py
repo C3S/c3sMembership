@@ -29,6 +29,7 @@ from c3smembership.data.model.base.dues21invoice import Dues21Invoice
 from c3smembership.data.model.base.dues22invoice import Dues22Invoice
 from c3smembership.data.model.base.dues23invoice import Dues23Invoice
 from c3smembership.data.model.base.dues24invoice import Dues24Invoice
+from c3smembership.data.model.base.dues25invoice import Dues25Invoice
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
 
@@ -94,6 +95,8 @@ class TestDuesInvoiceRepository(unittest.TestCase):
             member1.dues23_amount_paid = Decimal('23.11')
             member1.dues24_paid_date = date(2024, 11, 24)
             member1.dues24_amount_paid = Decimal('24.11')
+            member1.dues24_paid_date = date(2025, 11, 25)
+            member1.dues24_amount_paid = Decimal('25.11')
             self.db_session.add(member1)
             self.db_session.flush()
             self.db_session.add(
@@ -218,6 +221,15 @@ class TestDuesInvoiceRepository(unittest.TestCase):
                               membership_no=member1.membership_number,
                               email=member1.email,
                               token='24WXYZ7890'))
+            self.db_session.add(
+                Dues25Invoice(invoice_no=2025,
+                              invoice_no_string='dues25-1234',
+                              invoice_date=date(2025, 2, 25),
+                              invoice_amount=Decimal('1234.25'),
+                              member_id=member1.id,
+                              membership_no=member1.membership_number,
+                              email=member1.email,
+                              token='25WXYZ7890'))
             self.db_session.flush()
 
     def tearDown(self):
@@ -232,7 +244,7 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         Test the get_all method
         """
         invoices = DuesInvoiceRepository.get_all()
-        self.assertEqual(len(invoices), 12)
+        self.assertEqual(len(invoices), 13)
 
         invoices = DuesInvoiceRepository.get_all([])
         self.assertEqual(len(invoices), 0)
@@ -339,7 +351,7 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertEqual(invoices[4].invoice_no, 2020)
 
         invoices = DuesInvoiceRepository.get_by_membership_number(9)
-        self.assertEqual(len(invoices), 12)
+        self.assertEqual(len(invoices), 13)
 
     def test_get_max_invoice_number(self):
         """
@@ -654,6 +666,14 @@ class TestDuesInvoiceRepository(unittest.TestCase):
         self.assertEqual(member.dues24_amount, Decimal('50.0'))
         self.assertEqual(member.dues24_start, 'q1_2024')
 
+        # 2025
+        dues_calculation = DuesCalculation(Decimal('50.0'), 'q1_2025')
+
+        DuesInvoiceRepository.store_dues(2025, member, dues_calculation)
+
+        self.assertEqual(member.dues25_amount, Decimal('50.0'))
+        self.assertEqual(member.dues25_start, 'q1_2025')
+
     def test_record_dues_email_sent(self):
         """
         Test the record_dues_email_sent method
@@ -749,3 +769,12 @@ class TestDuesInvoiceRepository(unittest.TestCase):
 
         self.assertTrue(member.dues24_invoice)
         self.assertEqual(member.dues24_invoice_date.date(), date.today())
+
+        # 2025
+        member.dues25_invoice = None
+        member.dues25_invoice_date = None
+
+        DuesInvoiceRepository.record_dues_email_sent(2025, member)
+
+        self.assertTrue(member.dues25_invoice)
+        self.assertEqual(member.dues25_invoice_date.date(), date.today())

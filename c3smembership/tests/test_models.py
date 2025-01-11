@@ -28,6 +28,7 @@ from c3smembership.data.model.base.dues21invoice import Dues21Invoice
 from c3smembership.data.model.base.dues22invoice import Dues22Invoice
 from c3smembership.data.model.base.dues23invoice import Dues23Invoice
 from c3smembership.data.model.base.dues24invoice import Dues24Invoice
+from c3smembership.data.model.base.dues25invoice import Dues25Invoice
 from c3smembership.data.model.base.group import Group
 from c3smembership.data.model.base.staff import Staff
 from c3smembership.data.repository.dues_invoice_repository import \
@@ -882,6 +883,83 @@ class C3sMembershipModelTests(C3sMembershipModelTestBase):
 
         instance.membership_loss_date = date(year-1, 12, 31)
         invoicees = my_membership_signee_class.get_dues24_invoicees(27)
+        self.assertEqual(len(invoicees), 0)
+
+    def test_get_dues25_invoicees(self):
+        """
+        test: get all members that haven't had their invoices sent
+        """
+        year = 2025
+
+        instance = self._make_one()
+        instance2 = self._make_another_one()
+        self.session.add(instance)
+        self.session.add(instance2)
+        self.session.flush()
+        my_membership_signee_class = self._get_target_class()
+
+        instance.membership_accepted = False
+        instance.membership_date = None
+        instance2.membership_accepted = False
+        instance2.membership_date = None
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 0)
+
+        # change details so they be found
+        instance.membership_accepted = True
+        instance.membership_date = date(year-1, 12, 1)
+        instance2.membership_accepted = False
+        instance2.membership_date = None
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_accepted = True
+        instance.membership_date = date(year-1, 12, 1)
+        instance2.membership_accepted = True
+        instance2.membership_date = date(year-1, 12, 2)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 2)
+
+        # test boundary cases for membership date with one instance
+        self.session.delete(instance2)
+        self.session.flush()
+        instance.membership_date = date(year, 1, 1)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_date = date(year, 12, 31)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_date = date(year-1, 12, 31)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_date = date(year + 1, 1, 1)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 0)
+
+        # test membership loss
+        instance.membership_date = date(year-1, 2, 3)
+
+        instance.membership_loss_date = None
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_loss_date = date(year + 1, 1, 1)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_loss_date = date(year, 12, 31)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_loss_date = date(year, 1, 1)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
+        self.assertEqual(len(invoicees), 1)
+
+        instance.membership_loss_date = date(year-1, 12, 31)
+        invoicees = my_membership_signee_class.get_dues25_invoicees(27)
         self.assertEqual(len(invoicees), 0)
 
     def test_delete_by_id(self):
@@ -4044,6 +4122,165 @@ class Dues24InvoiceModelTests(unittest.TestCase):
             member2.set_dues24_payment(D('95.65'), date(2015, 11, 5))
             member3.set_dues24_payment(D('-85.12'), date(2015, 11, 30))
 
+class Dues25InvoiceModelTests(unittest.TestCase):
+    """
+    test the dues25 invoice model
+    """
+    def setUp(self):
+        self.config = testing.setUp()
+        self.config.include('pyramid_mailer.testing')
+        engine = create_engine('sqlite:///:memory:')
+        DBSession.configure(bind=engine)
+        self.session = DBSession()
+        Base.metadata.create_all(engine)
+
+        with transaction.manager:
+            member1 = C3sMember(
+                firstname='SomeFirstnäme',
+                lastname='SomeLastnäme',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
+                date_of_birth=date.today(),
+                email_is_confirmed=False,
+                email_confirm_code='ABCDEFGFOO',
+                password='arandompassword',
+                date_of_submission=date.today(),
+                membership_type='normal',
+                member_of_colsoc=True,
+                name_of_colsoc="GEMA",
+                num_shares='23',
+            )
+            DBSession.add(member1)
+
+            member2 = C3sMember(
+                firstname='Franziska',
+                lastname='Musterfrau',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
+                date_of_birth=date.today(),
+                email_is_confirmed=False,
+                email_confirm_code='ABCDEFGFO1',
+                password='arandompassword',
+                date_of_submission=date.today(),
+                membership_type='normal',
+                member_of_colsoc=False,
+                name_of_colsoc='',
+                num_shares='23',
+            )
+            DBSession.add(member2)
+
+            member3 = C3sMember(
+                firstname='Jane',
+                lastname='Somebody',
+                email='some@shri.de',
+                address1="addr one",
+                address2="addr two",
+                postcode="12345",
+                city="Footown Mäh",
+                country="Foocountry",
+                locale="DE",
+                date_of_birth=date.today(),
+                email_is_confirmed=False,
+                email_confirm_code='ABCDEFGFO2',
+                password='arandompassword',
+                date_of_submission=date.today(),
+                membership_type='normal',
+                member_of_colsoc=False,
+                name_of_colsoc='',
+                num_shares='23',
+            )
+            DBSession.add(member3)
+
+            dues1 = Dues25Invoice(
+                invoice_no=1,
+                invoice_no_string='C3S-dues25-0001',
+                invoice_date=date(2015, 10, 0o1),
+                invoice_amount=D('-37.50'),
+                member_id=1,
+                membership_no=1,
+                email='test@example.com',
+                token='ABCDEFGH',
+            )
+            DBSession.add(dues1)
+
+            dues2 = Dues25Invoice(
+                invoice_no=2,
+                invoice_no_string='C3S-dues25-0002-S',
+                invoice_date=date(2015, 10, 0o2),
+                invoice_amount=D('16.25'),
+                member_id=1,
+                membership_no=1,
+                email='test@example.com',
+                token='fa4wfjlasjfd',
+            )
+            dues2.is_reversal = True
+            DBSession.add(dues2)
+
+            dues3 = Dues25Invoice(
+                invoice_no=3,
+                invoice_no_string='C3S-dues25-0003',
+                invoice_date=date(2015, 11, 25),
+                invoice_amount=D('74.58'),
+                member_id=1,
+                membership_no=2,
+                email='test@example.com',
+                token='Jleifjsw9e',
+            )
+            DBSession.add(dues3)
+
+            dues4 = Dues25Invoice(
+                invoice_no=4,
+                invoice_no_string='C3S-dues25-0004-S',
+                invoice_date=date(2015, 11, 27),
+                invoice_amount=D('24.85'),
+                member_id=1,
+                membership_no=2,
+                email='test@example.com',
+                token='f348h98sdf',
+            )
+            dues4.is_reversal = True
+            DBSession.add(dues4)
+
+            dues5 = Dues25Invoice(
+                invoice_no=5,
+                invoice_no_string='C3S-dues25-0005',
+                invoice_date=date(2015, 11, 29),
+                invoice_amount=D('12.89'),
+                member_id=1,
+                membership_no=3,
+                email='test@example.com',
+                token='sgdfoiddfg',
+            )
+            DBSession.add(dues5)
+
+            dues6 = Dues25Invoice(
+                invoice_no=6,
+                invoice_no_string='C3S-dues25-0006-S',
+                invoice_date=date(2015, 11, 30),
+                invoice_amount=D('77.79'),
+                member_id=1,
+                membership_no=3,
+                email='test@example.com',
+                token='3o948n',
+            )
+            dues6.is_reversal = True
+            DBSession.add(dues6)
+            DBSession.flush()
+
+            member1.set_dues25_payment(D('12.34'), date(2015, 10, 31))
+            member2.set_dues25_payment(D('95.65'), date(2015, 11, 5))
+            member3.set_dues25_payment(D('-85.12'), date(2015, 11, 30))
+
     def tearDown(self):
         self.session.close()
         DBSession.remove()
@@ -4052,21 +4289,21 @@ class Dues24InvoiceModelTests(unittest.TestCase):
         '''
         test get_all
         '''
-        res = DuesInvoiceRepository.get_all([2024])
+        res = DuesInvoiceRepository.get_all([2025])
         self.assertEqual(len(res), 6)
 
     def test_get_by_invoice_no(self):
         '''
         test get_by_invoice_no
         '''
-        res = DuesInvoiceRepository.get_by_number(1, 2024)
+        res = DuesInvoiceRepository.get_by_number(1, 2025)
         self.assertEqual(res.id, 1)
 
     def test_get_monthly_stats(self):
         """
         Test get_monthly_stats.
         """
-        stats = DuesInvoiceRepository.get_monthly_stats(2024)
+        stats = DuesInvoiceRepository.get_monthly_stats(2025)
         self.assertEqual(len(stats), 2)
         self.assertEqual(stats[0]['month'], datetime(2015, 10, 1))
         self.assertAlmostEqual(stats[0]['amount_invoiced_normal'], D('-37.50'))
@@ -4086,9 +4323,9 @@ class Dues24InvoiceModelTests(unittest.TestCase):
 
         # try to make another invoice with the same number
         def trigger_integrity_error_1():
-            dues2 = Dues24Invoice(
+            dues2 = Dues25Invoice(
                 invoice_no=1,
-                invoice_no_string='C3S-dues24-0001',
+                invoice_no_string='C3S-dues25-0001',
                 invoice_date=date.today(),
                 invoice_amount=str(D('-37.50').to_eng_string()),
                 member_id=1,
@@ -4102,14 +4339,14 @@ class Dues24InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_1)
         self.session.rollback()
 
-        res = DuesInvoiceRepository.get_all([2024])
+        res = DuesInvoiceRepository.get_all([2025])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with the same string
         def trigger_integrity_error_2():
-            dues2 = Dues24Invoice(
+            dues2 = Dues25Invoice(
                 invoice_no=2,
-                invoice_no_string='C3S-dues24-0001',
+                invoice_no_string='C3S-dues25-0001',
                 invoice_date=date.today(),
                 invoice_amount=str(D('-37.50').to_eng_string()),
                 member_id=1,
@@ -4123,15 +4360,15 @@ class Dues24InvoiceModelTests(unittest.TestCase):
         self.assertRaises(IntegrityError, trigger_integrity_error_2)
         self.session.rollback()
 
-        res = DuesInvoiceRepository.get_all([2024])
+        res = DuesInvoiceRepository.get_all([2025])
         self.assertEqual(len(res), 6)
 
         # try to make another invoice with a non-decimal amount
         # InvalidOperation: Invalid literal for Decimal: '-37.50.20'
         def trigger_invalid_operation():
-            dues2 = Dues24Invoice(
+            dues2 = Dues25Invoice(
                 invoice_no=5,
-                invoice_no_string='C3S-dues24-0002',
+                invoice_no_string='C3S-dues25-0002',
                 invoice_date=date.today(),
                 invoice_amount=str(D('-37.50.20').to_eng_string()),
                 member_id=1,
@@ -4146,13 +4383,13 @@ class Dues24InvoiceModelTests(unittest.TestCase):
         # trigger_invalid_operation()
         self.session.rollback()
 
-        res = DuesInvoiceRepository.get_all([2024])
+        res = DuesInvoiceRepository.get_all([2025])
         self.assertEqual(len(res), 6)
 
-        # now really store a new Dues24Invoice
-        dues3 = Dues24Invoice(
+        # now really store a new Dues25Invoice
+        dues3 = Dues25Invoice(
             invoice_no=7,
-            invoice_no_string='C3S-dues24-0002',
+            invoice_no_string='C3S-dues25-0002',
             invoice_date=date.today(),
             # invoice_amount=unicode(D('-37.50').to_eng_string()),
             invoice_amount=D('-37.50').to_eng_string(),
@@ -4164,6 +4401,6 @@ class Dues24InvoiceModelTests(unittest.TestCase):
         DBSession.add(dues3)
         DBSession.flush()
 
-        res = DuesInvoiceRepository.get_all([2024])
+        res = DuesInvoiceRepository.get_all([2025])
         self.assertEqual(len(res), 7)
         self.assertEqual(dues3.id, 7)
