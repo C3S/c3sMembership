@@ -193,8 +193,8 @@ class TestJoinForm:
 
         # load the page with the form, choose german
         browser.get(f"{url}?de")
-        source = browser.page_source
         screenshot('page-loaded')
+        source = browser.page_source
 
         assert 'Mitgliedschaftsantrag' in source
 
@@ -228,8 +228,8 @@ class TestJoinForm:
 
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Nach Anfordern der Bestätigungsmail' in source
 
@@ -242,8 +242,8 @@ class TestJoinForm:
 
         # back to the form
         browser.find_element(By.ID, 'back').click()
-        source = browser.page_source
         screenshot("form-back")
+        source = browser.page_source
 
         assert browser.find_element(
                By.NAME, 'lastname').get_attribute('value') == 'Scheid'
@@ -281,8 +281,8 @@ class TestJoinForm:
         # ok, all data checked, submit again
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Bitte beachten: Es gab Fehler. Bitte Eingaben unten' in source
 
@@ -299,15 +299,15 @@ class TestJoinForm:
 
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Bitte beachten: Es gab fehler' not in source
         assert 'addr two plus' in source
 
         browser.find_element(By.ID, 'next').click()
-        source = browser.page_source
         screenshot("form-next")
+        source = browser.page_source
 
         assert 'C3S Mitgliedsantrag: Bitte E-Mails abrufen.' in source
         assert 'Eine E-Mail wurde verschickt,' in source
@@ -326,8 +326,8 @@ class TestJoinForm:
 
         # load the page with the form, choose german
         browser.get(f"{url}?en")
-        source = browser.page_source
         screenshot('page-loaded')
+        source = browser.page_source
 
         assert 'Application for Membership' in source
 
@@ -361,8 +361,8 @@ class TestJoinForm:
 
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Click the button to have an email' in source
 
@@ -376,8 +376,8 @@ class TestJoinForm:
 
         # back to the form
         browser.find_element(By.ID, 'back').click()
-        source = browser.page_source
         screenshot("form-back")
+        source = browser.page_source
 
         assert browser.find_element(
                By.NAME, 'lastname').get_attribute('value') == 'Scheid'
@@ -415,8 +415,8 @@ class TestJoinForm:
         # ok, all data checked, submit again
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Please note: There were errors, please check the' in source
 
@@ -433,15 +433,15 @@ class TestJoinForm:
 
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Please note: There were errors, please check the' not in source
         assert 'addr two plus' in source
 
         browser.find_element(By.ID, 'next').click()
-        source = browser.page_source
         screenshot("form-next")
+        source = browser.page_source
 
         assert 'C3S Membership Application: Check your email' in source
         assert 'An email was sent,' in source
@@ -467,8 +467,8 @@ class TestEmailVerification:
         Thus, an half-ready application must be present in the DB.
         """
         browser.get(f"{url}/verify/uat.yes@example.com/ABCDEFGHIJ?de")
-        source = browser.page_source
         screenshot("page-loaded")
+        source = browser.page_source
 
         assert 'Bitte gib Dein Passwort ein, um' in source
         assert 'Deine E-Mail-Adresse zu bestätigen.' in source
@@ -478,8 +478,8 @@ class TestEmailVerification:
         browser.find_element(By.NAME, 'password').send_keys('')
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Bitte das Passwort eingeben.' in source
         assert 'Hier geht es zum PDF...' in source
@@ -488,8 +488,8 @@ class TestEmailVerification:
         browser.find_element(By.NAME, 'password').send_keys('schmoo')
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Bitte das Passwort eingeben.' in source
         assert 'Hier geht es zum PDF...' in source
@@ -498,8 +498,8 @@ class TestEmailVerification:
         browser.find_element(By.NAME, 'password').send_keys('berries')
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Lade Dein PDF...' in source
         assert 'C3S_SCE_AFM_Firstn_meLastname.pdf' in source
@@ -513,8 +513,8 @@ class TestEmailVerification:
         Thus, an half-ready application must be present in the DB.
         """
         browser.get(f"{url}/verify/uat.yes@example.com/ABCDEFGHIJ?en")
-        source = browser.page_source
         screenshot("page-loaded")
+        source = browser.page_source
 
         # check text on page
         assert 'Please enter your password in order ' in source
@@ -525,8 +525,8 @@ class TestEmailVerification:
         browser.find_element(By.NAME, 'password').send_keys('')
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Please enter your password.' in source
 
@@ -534,8 +534,8 @@ class TestEmailVerification:
         browser.find_element(By.NAME, 'password').send_keys('schmoo')
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Please enter your password.' in source
 
@@ -543,8 +543,8 @@ class TestEmailVerification:
         browser.find_element(By.NAME, 'password').send_keys('berries')
         screenshot("form-edited")
         browser.find_element(By.NAME, 'submit').click()
-        source = browser.page_source
         screenshot("form-sent")
+        source = browser.page_source
 
         assert 'Load your PDF' in source
         assert 'C3S_SCE_AFM_Firstn_meLastname.pdf' in source
