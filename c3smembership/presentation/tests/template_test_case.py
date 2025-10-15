@@ -15,7 +15,7 @@ class TemplateTestCase(unittest.TestCase):
     Test template rendering
     """
 
-    def __init__(self, methodName, template_path, routes):
+    def __init__(self, methodName, template_path="", routes=[]):
         """
         Initialize the TemplateTestCase instance
 
