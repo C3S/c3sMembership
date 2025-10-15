@@ -176,11 +176,6 @@ RUN pip install --use-pep517 -r /requirements_testing.txt
 ### development
 FROM pyramid_testing_compiled AS pyramid_development_compiled
 COPY requirements_development.txt /requirements_development.txt
-
-ARG DEBUGGER_DEBUGPY
-RUN if [ ${DEBUGGER_DEBUGPY} -ne 0 ]; then pip install \
-        debugpy==1.8.0; \
-    fi
 RUN pip install --use-pep517 -r /requirements_development.txt
 
 ### result

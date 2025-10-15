@@ -31,7 +31,6 @@ PRODUCTION=(
     pyramid-tm
     python-gnupg
     requests
-    slate
     zope.sqlalchemy
 )
 STAGING=()
@@ -46,7 +45,6 @@ TESTING=(
     pyquery
     selenium
     sphinx
-    sphinx-rtd-theme
     sphinxcontrib-plantuml
     waitress
     WebTest
@@ -68,28 +66,32 @@ EXCLUDE=(
 pip -q install pipdeptree
 
 # production
-pipdeptree --warn silence --exclude $(IFS=, ; echo "${EXCLUDE[*]:--}") \
-           --freeze --packages $(IFS=, ; echo "${PRODUCTION[*]:--}") \
+[ $PRODUCTION ] && \
+    pipdeptree --exclude "$(IFS=, ; echo "${EXCLUDE[*]:--}")" \
+               --freeze --packages "$(IFS=, ; echo "${PRODUCTION[*]:--}")" \
     > requirements_production.txt
 
 # staging
 echo "-r requirements_production.txt" > requirements_staging.txt
-pipdeptree --warn silence --exclude $(IFS=, ; echo "${EXCLUDE[*]:--}") \
-           --freeze --packages $(IFS=, ; echo "${STAGING[*]:--}") \
+[ $STAGING ] && \
+    pipdeptree --exclude $(IFS=, ; echo "${EXCLUDE[*]:--}") \
+               --freeze --packages $(IFS=, ; echo "${STAGING[*]:--}") \
     >> requirements_staging.txt
 
 # testing
 echo "-r requirements_production.txt" > requirements_testing.txt
 echo "-r requirements_staging.txt" >> requirements_testing.txt
-pipdeptree --warn silence --exclude $(IFS=, ; echo "${EXCLUDE[*]:--}") \
-           --freeze --packages $(IFS=, ; echo "${TESTING[*]:--}") \
+[ $TESTING ] && \
+    pipdeptree --exclude $(IFS=, ; echo "${EXCLUDE[*]:--}") \
+               --freeze --packages $(IFS=, ; echo "${TESTING[*]:--}") \
     >> requirements_testing.txt
 
 # development
 echo "-r requirements_production.txt" > requirements_development.txt
 echo "-r requirements_staging.txt" >> requirements_development.txt
 echo "-r requirements_testing.txt" >> requirements_development.txt
-pipdeptree --warn silence --exclude $(IFS=, ; echo "${EXCLUDE[*]:--}") \
-           --freeze --packages $(IFS=, ; echo "${DEVELOPMENT[*]:--}") \
+[ $DEVELOPMENT ] && \
+    pipdeptree --exclude $(IFS=, ; echo "${EXCLUDE[*]:--}") \
+               --freeze --packages $(IFS=, ; echo "${DEVELOPMENT[*]:--}") \
     >> requirements_development.txt
 
