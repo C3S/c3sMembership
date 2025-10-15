@@ -20,7 +20,7 @@ class TestMembershipMemberDetail(TemplateTestCase):
     """
 
     def __init__(self, methodName='runTest'):
-        super(TestMembershipMemberDetail, self).__init__(
+        super().__init__(
             methodName,
             (
                 'c3smembership:presentation/templates/page-elements/'
@@ -39,7 +39,7 @@ class TestMembershipMemberDetail(TemplateTestCase):
                 'general_assembly_invitations': [],
             })
         self.assertTrue(
-            'There are no general assemblies relevant for this member.' \
+            'There are no general assemblies relevant for this member.'
             in html)
 
     def test_general_assemblies(self):

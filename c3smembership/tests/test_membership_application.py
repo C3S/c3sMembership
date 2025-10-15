@@ -199,7 +199,8 @@ class MembershipApplicationTest(unittest.TestCase):
         self.assertTrue('Date of Birth: 1980-01-02' in body)
         self.assertTrue('Type of Membership:normal' in body)
         self.assertTrue('Member of other Collecting Society: yes' in body)
-        self.assertTrue('Membership(s): Svenska Tonsättares Internationella Musikbyrå' in body)
+        self.assertTrue('Membership(s): Svenska Tonsättares Internationella '
+                        'Musikbyrå' in body)
         self.assertTrue('Number of Shares: 15' in body)
         self.assertTrue('Cost of Shares (50 € each): 750 €' in body)
         res = self.testapp.get('/check_email', status=200)
@@ -208,7 +209,8 @@ class MembershipApplicationTest(unittest.TestCase):
         mailer = self.get_mailer(None)
         email = mailer.get_email()
         self.assertEqual(email.recipients, ['soenke@example.com'])
-        self.assertEqual(email.subject, 'C3S: confirm your email address and load your PDF')
+        self.assertEqual(email.subject, 'C3S: confirm your email address and '
+                                        'load your PDF')
 
         # 4. Confirm email address via confirmation link
         match = re.search(
@@ -246,7 +248,8 @@ class MembershipApplicationTest(unittest.TestCase):
         self.assertTrue('Membership accepted No' in body)
         self.assertTrue('Entity type Natural person' in body)
         self.assertTrue('Membership type normal' in body)
-        self.assertTrue('Member of collecting societies Yes Svenska Tonsättares Internationella Musikbyrå' in body)
+        self.assertTrue('Member of collecting societies Yes Svenska '
+                        'Tonsättares Internationella Musikbyrå' in body)
         self.assertTrue('Date of submission' in body)
         self.assertTrue('Signature received No' in body)
         self.assertTrue('Signature confirmed No' in body)

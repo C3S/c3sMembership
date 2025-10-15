@@ -38,7 +38,7 @@ class TemplateTestCase(unittest.TestCase):
             ...             'member.pt',
             ...             [('member', /member/{number}')])
         """
-        super(TemplateTestCase, self).__init__(methodName)
+        super().__init__(methodName)
         self._template_path = template_path
         self._routes = routes
 
