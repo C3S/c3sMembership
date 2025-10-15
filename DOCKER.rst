@@ -32,7 +32,7 @@ Files
     │
     ├── docker-entrypoint.sh    # entrypoint for docker commands
     ├── docker_development.ini  # pyramid config file for docker environment
-    ├── requirements.sh         # sorts pip requirements by application context
+    ├── requirements.sh         # lock and upgrade pip packages for application contexts
     │
     └── DOCKER.rst              # this readme
 
@@ -60,7 +60,7 @@ Configure git user name/email/signing (optional):
     git config user.signingkey "<GPGKEYID>"
     git config commit.gpgsign true
 
-Configure `/etc/hosts` (optional):
+Configure `/etc/hosts`:
 
     127.0.0.1   yes.test
 
@@ -113,6 +113,16 @@ Stop all services:
     docker compose down --remove-orphans
 
 
+Upgrade
+-------
+
+Upgrade pip packages:
+
+    docker compose run --rm server requirements.sh --upgrade
+    COMPOSE_PROFILES=development,testing,documentation docker compose build --pull
+    docker compose run --rm tests
+
+
 Develop
 -------
 
@@ -132,8 +142,8 @@ Run tests multiple times from within the container:
 
     docker compose run --rm tests bash
     > ./test.sh
-    > pytest
-    > pytest -v -x
+    > pytest c3smembership
+    > pytest -v -x c3smembership
 
 Run specific tests verbose, cancel on first error:
 
