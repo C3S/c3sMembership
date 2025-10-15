@@ -87,6 +87,9 @@ def encrypt_with_gnupg(data, keyid=""):
 
     # encrypt
     encrypted = gpg.encrypt(to_encrypt, keyid, always_trust=True)
+    if not encrypted.ok:
+        print(f"gpg encryption failed: {encrypted.status}, "
+              f"{encrypted.status_reason}")
 
     if DEBUG:  # pragma: no cover
         print(("encrypt_with_gnupg: type(encrypted): %s") % type(encrypted))
