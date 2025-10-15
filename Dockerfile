@@ -77,7 +77,8 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 ENV VIRTUAL_ENV=/opt/venv
 # upgrade essential pip packages
-RUN python3 -m pip install --upgrade pip wheel setuptools
+# setuptools<81: https://github.com/Pylons/pyramid/issues/3731
+RUN python3 -m pip install --upgrade pip wheel "setuptools<81"
 
 ### staging
 FROM python_production AS python_staging
