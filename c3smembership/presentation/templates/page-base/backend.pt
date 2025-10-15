@@ -125,12 +125,12 @@
         <div class="container-fluid">
             <div class="row">
                 <nav class="col-md-2 sidebar menu">
-                    <ul class="nav flex-column">
-                        <li class="nav-item${menu_active_class(request.matched_route.name, menu_item)}" tal:repeat="menu_item menu">
-                            <a class="nav-link${menu_active_class(request.matched_route.name, menu_item)}"
-                                    href="${request.route_url(menu_item['route']) if 'route' in menu_item else '#'}">
-                                <i class="${menu_item['class'] if 'class' in menu_item else ''}"></i>
-                                ${menu_item['caption'] if 'caption' in menu_item else ''}
+                    <ul class="nav flex-column" tal:condition="menu">
+                        <li class="nav-item${menu_active_class(request.matched_route.name, main_menu_item)}" tal:repeat="main_menu_item menu">
+                            <a class="nav-link${menu_active_class(request.matched_route.name, main_menu_item)}"
+                                    href="${request.route_url(main_menu_item['route']) if 'route' in main_menu_item else '#'}">
+                                <i class="${main_menu_item['class'] if 'class' in main_menu_item else ''}"></i>
+                                ${main_menu_item['caption'] if 'caption' in main_menu_item else ''}
                             </a>
                             <!--!
                             TODO: Show submenu only when menu item or submenu
@@ -139,12 +139,12 @@
                             There are pages like edit member which don't have
                             a menu item. In case
                             <ul class="nav flex-column"
-                                    tal:condition="'sub-menu' in menu_item and submenu_active(request.matched_route.name, menu_item)">
+                                    tal:condition="'sub-menu' in main_menu_item and submenu_active(request.matched_route.name, main_menu_item)">
                             -->
                             <ul class="nav flex-column"
-                                    tal:condition="'sub-menu' in menu_item">
+                                    tal:condition="'sub-menu' in main_menu_item">
                                 <li class="nav-item${menu_active_class(request.matched_route.name, sub_menu_item)}"
-                                        tal:repeat="sub_menu_item menu_item['sub-menu']">
+                                        tal:repeat="sub_menu_item main_menu_item['sub-menu']">
                                     <a class="nav-link${menu_active_class(request.matched_route.name, sub_menu_item)}"
                                             href="${request.route_url(sub_menu_item['route']) if 'route' in sub_menu_item else '#'}">
                                         <i class="${sub_menu_item['class'] if 'class' in sub_menu_item else ''}"></i>
