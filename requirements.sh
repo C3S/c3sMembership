@@ -8,10 +8,21 @@
 #   - requirements_testing.txt
 #   - requirements_development.txt
 #
+# usage:
+#
+# freeze current pip package versions:
+#
+#   $ docker compose run --rm server requirements.sh
+#
+# upgrade pip package versions:
+#
+#   $ docker compose run --rm server requirements.sh --upgrade
+#
 # find out top-level dependencies:
 #
-#   $ pip install pipdeptree
-#   $ pipdeptree --warn silence | grep -E '^\w+'
+#   $ docker compose run --rm server bash
+#   > pip install pipdeptree
+#   > pipdeptree --warn silence | grep -E '^\w+'
 
 # define top level packages
 PRODUCTION=(
@@ -49,9 +60,9 @@ TESTING=(
     WebTest
 )
 DEVELOPMENT=(
+    debugpy
     pdbpp
     pyramid-debugtoolbar
-    debugpy
 )
 EXCLUDE=(
     c3smembership
@@ -60,6 +71,14 @@ EXCLUDE=(
     setuptools
     wheel
 )
+
+# upgrade
+if [ "$1" == "--upgrade" ]; then
+    python -m venv /tmp/venv
+    source /tmp/venv/bin/activate
+    pip install --use-pep517 --upgrade -e . \
+        ${PRODUCTION[*]} ${STAGING[*]} ${TESTING[*]} ${DEVELOPMENT[*]}
+fi
 
 # install pipdeptree
 pip -q install pipdeptree
