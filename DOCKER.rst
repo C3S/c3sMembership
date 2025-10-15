@@ -12,7 +12,7 @@ Services
 |               |                         | | staging       |             |
 |               |                         | | development   |             |
 +---------------+-------------------------+-----------------+-------------+
-| mail          | Mailhog Test Mailserver | development     | 8025: http  |
+| mail          | Mailpit Test Mailserver | development     | 8025: http  |
 +---------------+-------------------------+-----------------+-------------+
 | tests         | Pyramid App             | testing         |             |
 +---------------+-------------------------+-----------------+-------------+
