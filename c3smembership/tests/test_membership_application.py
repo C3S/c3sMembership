@@ -212,7 +212,7 @@ class MembershipApplicationTest(unittest.TestCase):
 
         # 4. Confirm email address via confirmation link
         match = re.search(
-            'localhost(?P<url>[^\s]+)',
+            'localhost(?P<url>[^\\s]+)',
             email.body)
 
         self.assertTrue(match is not None)
