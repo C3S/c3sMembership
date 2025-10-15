@@ -23,7 +23,6 @@ PRODUCTION=(
     fdfgen
     lingua
     pbkdf2
-    pdfminer
     pycountry
     pyramid-beaker
     pyramid-chameleon
