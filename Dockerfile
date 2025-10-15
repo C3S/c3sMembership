@@ -1,6 +1,6 @@
-ARG ENVIRONMENT
-ARG WORKDIR
-ARG DEBUGGER_DEBUGPY
+ARG ENVIRONMENT=development
+ARG WORKDIR=/code
+ARG DEBUGGER_DEBUGPY=0
 
 
 #==============================================================================
@@ -77,7 +77,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 ENV VIRTUAL_ENV=/opt/venv
 # upgrade essential pip packages
-RUN python3 -m pip install --upgrade pip wheel
+RUN python3 -m pip install --upgrade pip wheel setuptools
 
 ### staging
 FROM python_production AS python_staging
@@ -113,6 +113,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         texlive-lang-german \
         texlive-luatex \
     && rm -rf /var/lib/apt/lists/*
+ARG UID
+ARG GID
+RUN install -d -o $UID -g $GID /.cache
 
 ### staging
 FROM pyramid_production AS pyramid_staging
@@ -158,27 +161,27 @@ RUN curl -L 'http://downloads.sourceforge.net/project/plantuml/plantuml.jar' \
 ### production
 FROM compile AS pyramid_production_compiled
 COPY requirements_production.txt /requirements_production.txt
-RUN pip install -r /requirements_production.txt
+RUN pip install --use-pep517 -r /requirements_production.txt
 
 ### staging
 FROM pyramid_production_compiled AS pyramid_staging_compiled
 COPY requirements_staging.txt /requirements_staging.txt
-RUN pip install -r /requirements_staging.txt
+RUN pip install --use-pep517 -r /requirements_staging.txt
 
 ### testing
 FROM pyramid_staging_compiled AS pyramid_testing_compiled
 COPY requirements_testing.txt /requirements_testing.txt
-RUN pip install -r /requirements_testing.txt
+RUN pip install --use-pep517 -r /requirements_testing.txt
 
 ### development
 FROM pyramid_testing_compiled AS pyramid_development_compiled
 COPY requirements_development.txt /requirements_development.txt
-RUN pip install -r /requirements_development.txt
 
 ARG DEBUGGER_DEBUGPY
 RUN if [ ${DEBUGGER_DEBUGPY} -ne 0 ]; then pip install \
         debugpy==1.8.0; \
     fi
+RUN pip install --use-pep517 -r /requirements_development.txt
 
 ### result
 FROM pyramid_${ENVIRONMENT}_compiled AS pyramid_compiled

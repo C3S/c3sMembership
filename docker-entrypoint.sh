@@ -10,7 +10,7 @@ fi
 # install c3smembership module and set flagfile
 if ! [ -f /tmp/.pip_module_c3smembership_installed ]; then
     echo "installing module c3smembership ..."
-    pip install -q -e .
+    pip install --use-pep517 -q -e .
     touch /tmp/.pip_module_c3smembership_installed
 fi
 
