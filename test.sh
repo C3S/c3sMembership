@@ -5,4 +5,5 @@ pytest -x -v \
     --cov-report html:cov.html \
     --cov-report xml:cov.xml \
     --junitxml junit.xml \
-    --cov c3smembership c3smembership/
+    --cov c3smembership c3smembership/ \
+    $@
