@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <?python
-    def menu_active_class(matched_route, menu_item):
-        return ' active' if submenu_active(matched_route, menu_item) else ''
-
     def submenu_active(matched_route, menu_item):
         menu_item_route = menu_item['route'] if 'route' in menu_item else ''
         if matched_route == menu_item_route:
             return True
         if 'sub-menu' in menu_item:
             for sub_menu_item in menu_item['sub-menu']:
-                if menu_active_class(matched_route, sub_menu_item):
+                sub_menu_item_route = sub_menu_item['route'] if 'route' in sub_menu_item else ''
+                if matched_route == sub_menu_item_route:
                     return True
         return False
+
+    def menu_active_class(matched_route, menu_item):
+        return ' active' if submenu_active(matched_route, menu_item) else ''
 
     menu = [
         # {
