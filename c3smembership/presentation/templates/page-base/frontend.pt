@@ -54,7 +54,8 @@
                 </div>
             </div>
             <div>
-                &copy; Copyright 2014-2023, C3S SCE.
+                <?python from datetime import datetime; current_year = datetime.now().year ?>
+                &copy; Copyright 2014-${current_year}, C3S SCE.
                 <a href="https://www.c3s.cc/en/contact-us/"
                         i18n:attributes="href footer-contact-href"
                         i18n:translate="footer-contact">
