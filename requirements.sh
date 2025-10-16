@@ -27,6 +27,7 @@
 # define top level packages
 PRODUCTION=(
     alembic
+    babel
     bcrypt
     colorama
     cornice
