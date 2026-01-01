@@ -568,6 +568,29 @@ class C3sMember(Base):
         DatabaseDecimal(12, 2), default=Decimal('0'))
     dues25_paid_date = Column(DateTime())
 
+    # membership dues for 2026
+    dues26_invoice = Column(Boolean, default=False)
+    dues26_invoice_date = Column(DateTime())
+    dues26_invoice_no = Column(Integer())
+    dues26_token = Column(Unicode(10))
+    dues26_start = Column(Unicode(255))
+    dues26_amount = Column(
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    dues26_reduced = Column(Boolean, default=False)
+    _dues26_amount_reduced = Column(
+        'dues26_amount_reduced',
+        DatabaseDecimal(12, 2), default=Decimal('NaN'))
+    # balance
+    _dues26_balance = Column(
+        'dues26_balance',
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues26_balanced = Column(Boolean, default=True)
+    # payment
+    dues26_paid = Column(Boolean, default=False)
+    dues26_amount_paid = Column(
+        DatabaseDecimal(12, 2), default=Decimal('0'))
+    dues26_paid_date = Column(DateTime())
+
     # privacy
     privacy_consent = Column(DateTime(), nullable=True)
 
@@ -1064,6 +1087,41 @@ class C3sMember(Base):
             and \
             self.dues25_amount_reduced != self.dues25_amount
 
+    @hybrid_property
+    def dues26_balance(self):
+        """
+        Get the 2026 dues balance, i.e. amount due subtracted by amount paid.
+        """
+        return self._dues26_balance
+
+    @dues26_balance.setter
+    def dues26_balance(self, dues26_balance):
+        """
+        Set the 2026 dues balance.
+
+        If balance is set to 0 the balanced flag is set to True.
+        """
+        self._dues26_balance = dues26_balance
+        self.dues26_balanced = self._dues26_balance == Decimal('0')
+
+    @hybrid_property
+    def dues26_amount_reduced(self):
+        """
+        Get the reduced amount for 2026 dues.
+        """
+        return self._dues26_amount_reduced
+
+    @dues26_amount_reduced.setter
+    def dues26_amount_reduced(self, dues26_amount_reduced):
+        """
+        Set the reduced 2026 dues amount.
+        """
+        self._dues26_amount_reduced = dues26_amount_reduced
+        self.dues26_reduced = \
+            not math.isnan(self.dues26_amount_reduced) \
+            and \
+            self.dues26_amount_reduced != self.dues26_amount
+
     @classmethod
     def get_by_code(cls, email_confirm_code):
         """
@@ -1442,6 +1500,39 @@ class C3sMember(Base):
             and_(
                 cls.membership_accepted == True,
                 cls.dues25_invoice == False,
+                cls.membership_date < date(invoice_year+1, 1, 1),
+                cls.membership_type.in_(['normal', 'investing']),
+                or_(
+                    cls.membership_loss_date == None,
+                    cls.membership_loss_date >= date(invoice_year, 1, 1),
+                ),
+            )).slice(0, num).all()
+
+    @classmethod
+    def get_dues26_invoicees(cls, num):
+        """
+        Get a given number *n* of members to send dues invoices to.
+
+        Queries the database for members, where
+
+        * members are accepted
+        * members have not received their dues invoice email yet
+
+        Args:
+          num is the number *n* of C3sMembers to return
+
+        Returns:
+          a list of *n* member objects
+        """
+
+        # In SqlAlchemy the True comparison must be done as "a == True" and not
+        # in the python default way "a is True". Therefore:
+        # pylint: disable=singleton-comparison
+        invoice_year = 2026
+        return DBSession.query(cls).filter(
+            and_(
+                cls.membership_accepted == True,
+                cls.dues26_invoice == False,
                 cls.membership_date < date(invoice_year+1, 1, 1),
                 cls.membership_type.in_(['normal', 'investing']),
                 or_(
@@ -2372,6 +2463,40 @@ class C3sMember(Base):
             self.dues25_amount_reduced = reduced_amount
         else:
             self.dues25_amount_reduced = Decimal('NaN')
+
+    def set_dues26_payment(self, paid_amount, paid_date):
+        if math.isnan(self.dues26_amount_paid):
+            dues26_amount_paid = Decimal('0')
+        else:
+            dues26_amount_paid = self.dues26_amount_paid
+
+        self.dues26_paid = True
+        self.dues26_amount_paid = dues26_amount_paid + paid_amount
+        self.dues26_paid_date = paid_date
+        self.dues26_balance = self.dues26_balance - paid_amount
+
+    def set_dues26_amount(self, dues_amount):
+        if math.isnan(self.dues26_amount) \
+                or not isinstance(self.dues26_amount, Decimal):
+            dues26_amount = Decimal('0')
+        else:
+            dues26_amount = self.dues26_amount
+
+        self.dues26_balance = self.dues26_balance - dues26_amount + Decimal(
+            dues_amount)
+        self.dues26_amount = dues_amount
+
+    def set_dues26_reduced_amount(self, reduced_amount):
+        if reduced_amount != self.dues26_amount:
+            previous_amount_in_balance = (
+                self.dues26_amount_reduced
+                if self.dues26_reduced
+                else self.dues26_amount)
+            self.dues26_balance = self.dues26_balance - \
+                previous_amount_in_balance + reduced_amount
+            self.dues26_amount_reduced = reduced_amount
+        else:
+            self.dues26_amount_reduced = Decimal('NaN')
 
     def get_url_safe_name(self):
         """

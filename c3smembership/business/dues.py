@@ -297,6 +297,7 @@ def _get_year_invoice_number(year, member):
         2023: member.dues23_invoice_no,
         2024: member.dues24_invoice_no,
         2025: member.dues25_invoice_no,
+        2026: member.dues26_invoice_no,
     }
     return year_invoice_number[year]
 
@@ -319,5 +320,6 @@ def _invoice_calculated(year, member):
         2023: member.dues23_invoice,
         2024: member.dues24_invoice,
         2025: member.dues25_invoice,
+        2026: member.dues26_invoice,
     }
     return year_invoice_calculated[year]

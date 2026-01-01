@@ -89,7 +89,7 @@
                 </th>
                 <th>Email</th>
                 <th>
-                    Dues 2025<br/>Invoice
+                    Dues 2026<br/>Invoice
                 </th>
                 <th>
                     Certificate
@@ -129,14 +129,14 @@
                             class="fas fa-at"></a>
                 </td>
                 <td class="icons">
-                    <div tal:omit-tag="" tal:condition="not member.membership_date > date(2025, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(2024, 12, 31))">
-                        <a tal:condition="member.dues25_invoice is False"
-                                href="${request.route_url('send_dues25_invoice_email', member_id=member.id)}"
+                    <div tal:omit-tag="" tal:condition="not member.membership_date > date(2026, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(2025, 12, 31))">
+                        <a tal:condition="member.dues26_invoice is False"
+                                href="${request.route_url('send_dues26_invoice_email', member_id=member.id)}"
                                 title="Dues invoice not sent yet. Click to send!"
                                 class="fas fa-envelope text-danger"></a>
-                        <a tal:condition="member.dues25_invoice is True"
-                                href="${request.route_url('send_dues25_invoice_email', member_id=member.id)}"
-                                title="Invoice sent at ${member.dues25_invoice_date.strftime('%d.%m.%Y %H:%M')}"
+                        <a tal:condition="member.dues26_invoice is True"
+                                href="${request.route_url('send_dues26_invoice_email', member_id=member.id)}"
+                                title="Invoice sent at ${member.dues26_invoice_date.strftime('%d.%m.%Y %H:%M')}"
                                 class="fas fa-envelope text-success"></a>
                     </div>
                 </td>

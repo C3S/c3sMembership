@@ -7,6 +7,11 @@
     <tal:block metal:fill-slot="content">
         <h1>Membership Dues</h1>
         <p>
+            <a href="${request.route_url('dues26_listing')}" class="btn btn-primary">
+                List of Dues Invoices for 2026
+            </a>
+        </p>
+        <p>
             <a href="${request.route_url('dues25_listing')}" class="btn btn-primary">
                 List of Dues Invoices for 2025
             </a>
@@ -66,9 +71,9 @@
                 Dues invoices archiving
             </a>
         </p>
-        <h2>Mail Invoices for Membership Dues 2025</h2>
+        <h2>Mail Invoices for Membership Dues 2026</h2>
         <p>
-            <a href="${request.route_url('send_dues25_invoice_batch', number=5)}"
+            <a href="${request.route_url('send_dues26_invoice_batch', number=5)}"
                     title="Send 5 Invoices for Membership Dues"
                     class="btn btn-primary">
                 Send 5 Invoices for Membership Dues
@@ -76,7 +81,7 @@
         </p>
         <p>
             Send a specific number of invoices at once:
-            <form method='POST' action="${request.route_url('send_dues25_invoice_batch', number='foo')}">
+            <form method='POST' action="${request.route_url('send_dues26_invoice_batch', number='foo')}">
                 <input type='text' name='number' placeholder='123'></input>
                 <input type='submit' name='submit' value="Send"></input>
             </form>
