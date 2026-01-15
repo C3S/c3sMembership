@@ -24,6 +24,7 @@ c) with higher turnover: raise fee accordingly.
 If you want to support us, please transfer your voluntary contribution
 to the following account:
 
+  Payee: Cultural Commons Collecting Society SCE m. beschraenkter
   Purpose: C3S-FZ-{membership_number}
   IBAN: DE79 8309 4495 0003 2643 78
   BIC: GENODEF1ETK

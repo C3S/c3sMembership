@@ -1,3 +1,11 @@
+1.35.1
+======
+
+
+- Add exact payee to payment information for IBAN name validation.
+
+
+
 1.35
 ====
 

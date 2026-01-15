@@ -17,6 +17,7 @@ einen Beitrag leisten würdest.
 Wenn Du uns unterstützen möchtest, überweise Deine freiwillige
 Zuwendung auf folgendes Konto:
 
+  Empfänger: Cultural Commons Collecting Society SCE m. beschraenkter
   Verwendungszweck: C3S-FZ-{membership_number}
   IBAN: DE79 8309 4495 0003 2643 78
   BIC: GENODEF1ETK

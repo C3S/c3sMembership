@@ -7,6 +7,7 @@ We therefore reduce your dues to {dues_amount} €.
 Please transfer the above-mentioned amount to the following account
 of the C3S SCE:
 
+  Payee: Cultural Commons Collecting Society SCE m. beschraenkter
   Purpose: {invoice_number}, member no. {membership_number}
   IBAN: DE79 8309 4495 0003 2643 78
   BIC: GENODEF1ETK

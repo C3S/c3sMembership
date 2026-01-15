@@ -7,6 +7,7 @@ Wir geben Deinem Antrag statt und reduzieren Deinen Beitrag auf
 
 Bitte überweise die genannte Summe auf folgendes Konto der C3S SCE:
 
+  Empfänger: Cultural Commons Collecting Society SCE m. beschraenkter
   Verwendungszweck: {invoice_number}, Mitglied Nr. {membership_number}
   IBAN: DE79 8309 4495 0003 2643 78
   BIC: GENODEF1ETK

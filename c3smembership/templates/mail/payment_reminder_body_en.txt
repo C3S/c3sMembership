@@ -8,9 +8,10 @@ However, you still have to transfer {shares_value} Euro for
 the {shares_count} shares you purchased. Please transfer the aforementioned
 amount to this bank account of C3S SCE:
 
-IBAN: DE79 8309 4495 0003 2643 78
-BIC: GENODEF1ETK
-Bank: Ethikbank
+  Empfänger: Cultural Commons Collecting Society SCE m. beschraenkter
+  IBAN: DE79 8309 4495 0003 2643 78
+  BIC: GENODEF1ETK
+  Bank: Ethikbank
 
 When transfering money for your shares to us, please use the following
 confirmation code as reference: {transfer_purpose}

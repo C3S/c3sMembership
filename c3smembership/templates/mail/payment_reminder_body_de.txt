@@ -8,9 +8,10 @@ Du versäumt, die Überweisung von {shares_value} Euro für {shares_count}
 Anteile vorzunehmen. Bitte überweise die genannte Summe auf folgendes Konto
 der C3S SCE:
 
-IBAN: DE79 8309 4495 0003 2643 78
-BIC: GENODEF1ETK
-Bank: Ethikbank
+  Empfänger: Cultural Commons Collecting Society SCE m. beschraenkter
+  IBAN: DE79 8309 4495 0003 2643 78
+  BIC: GENODEF1ETK
+  Bank: Ethikbank
 
 Bei der Überweisung des Geldes für die Genossenschaftsanteile bitte den 
 folgenden Verwendungszweck angeben: {transfer_purpose}
