@@ -8,56 +8,12 @@
     <tr>
         <th>Position</th>
         <th>Amount</th>
-    </tr>
+    </tr>    
+    <!-- vvv  please insert new years here  vvv -->
     <tr>
-        <?python balance += member.dues15_balance ?>
-        <td>Membership dues 2015</td>
-        <td>${-member.dues15_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues16_balance ?>
-        <td>Membership dues 2016</td>
-        <td>${-member.dues16_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues17_balance ?>
-        <td>Membership dues 2017</td>
-        <td>${-member.dues17_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues18_balance ?>
-        <td>Membership dues 2018</td>
-        <td>${-member.dues18_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues19_balance ?>
-        <td>Membership dues 2019</td>
-        <td>${-member.dues19_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues20_balance ?>
-        <td>Membership dues 2020</td>
-        <td>${-member.dues20_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues21_balance ?>
-        <td>Membership dues 2021</td>
-        <td>${-member.dues21_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues22_balance ?>
-        <td>Membership dues 2022</td>
-        <td>${-member.dues22_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues23_balance ?>
-        <td>Membership dues 2023</td>
-        <td>${-member.dues23_balance}</td>
-    </tr>
-    <tr>
-        <?python balance += member.dues24_balance ?>
-        <td>Membership dues 2024</td>
-        <td>${-member.dues24_balance}</td>
+        <?python balance += member.dues26_balance ?>
+        <td>Membership dues 2026</td>
+        <td>${-member.dues26_balance}</td>
     </tr>
     <tr>
         <?python balance += member.dues25_balance ?>
@@ -65,10 +21,56 @@
         <td>${-member.dues25_balance}</td>
     </tr>
     <tr>
-        <?python balance += member.dues26_balance ?>
-        <td>Membership dues 2026</td>
-        <td>${-member.dues26_balance}</td>
+        <?python balance += member.dues24_balance ?>
+        <td>Membership dues 2024</td>
+        <td>${-member.dues24_balance}</td>
     </tr>
+    <tr>
+        <?python balance += member.dues23_balance ?>
+        <td>Membership dues 2023</td>
+        <td>${-member.dues23_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues22_balance ?>
+        <td>Membership dues 2022</td>
+        <td>${-member.dues22_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues21_balance ?>
+        <td>Membership dues 2021</td>
+        <td>${-member.dues21_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues20_balance ?>
+        <td>Membership dues 2020</td>
+        <td>${-member.dues20_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues19_balance ?>
+        <td>Membership dues 2019</td>
+        <td>${-member.dues19_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues18_balance ?>
+        <td>Membership dues 2018</td>
+        <td>${-member.dues18_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues17_balance ?>
+        <td>Membership dues 2017</td>
+        <td>${-member.dues17_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues16_balance ?>
+        <td>Membership dues 2016</td>
+        <td>${-member.dues16_balance}</td>
+    </tr>
+    <tr>
+        <?python balance += member.dues15_balance ?>
+        <td>Membership dues 2015</td>
+        <td>${-member.dues15_balance}</td>
+    </tr>
+    <!-- please insert new years in line 12 :) -->
     <tr>
         <?python
             balanced = (balance == 0.0)
