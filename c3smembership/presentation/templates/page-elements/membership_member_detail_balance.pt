@@ -8,7 +8,24 @@
     <tr>
         <th>Position</th>
         <th>Amount</th>
-    </tr>    
+    </tr>
+    <tr>
+        <?python
+            balanced = (balance == 0.0)
+            negative_balance = (-balance < 0.0)
+            positive_balance = (-balance > 0.0)
+        ?>
+        <th>Account balance</th>
+        <th tal:condition="not balanced and negative_balance" class="alert alert-danger">
+            ${-balance}
+        </th>
+        <th tal:condition="not balanced and positive_balance" class="alert alert-warning">
+            +${-balance}
+        </th>
+        <th tal:condition="balanced" class="alert alert-success">
+            ${-balance}
+        </th>
+    </tr>
     <!-- vvv  please insert new years here  vvv -->
     <tr>
         <?python balance += member.dues26_balance ?>
@@ -71,22 +88,5 @@
         <td>${-member.dues15_balance}</td>
     </tr>
     <!-- please insert new years in line 12 :) -->
-    <tr>
-        <?python
-            balanced = (balance == 0.0)
-            negative_balance = (-balance < 0.0)
-            positive_balance = (-balance > 0.0)
-        ?>
-        <th>Account balance</th>
-        <th tal:condition="not balanced and negative_balance" class="alert alert-danger">
-            ${-balance}
-        </th>
-        <th tal:condition="not balanced and positive_balance" class="alert alert-warning">
-            +${-balance}
-        </th>
-        <th tal:condition="balanced" class="alert alert-success">
-            ${-balance}
-        </th>
-    </tr>
 </table>
 </div>
