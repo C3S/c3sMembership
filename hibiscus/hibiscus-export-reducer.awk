@@ -11,7 +11,7 @@ BEGIN {
 }
 
 FNR == 1 {
-    if ($0 != "\"#\";\"IBAN\";\"BIC\";\"Konto\";\"Gegenkonto\";\"Gegenkonto BLZ\";\"Gegenkonto Inhaber\";\"Betrag\";\"Valuta\";\"Datum\";\"Verwendungszweck\";\"Verwendungszweck 2\";\"Zwischensumme\";\"Primanota\";\"Kundenreferenz\";\"Kategorie\";\"Notiz\";\"Weitere Verwendungszwecke\";\"Art\";\"Vormerkbuchung\";\"End-to-End ID\"")
+    if ($0 != "\"#\";\"IBAN\";\"BIC\";\"Konto\";\"Gegenkonto\";\"Gegenkonto BLZ\";\"Gegenkonto Inhaber\";\"Betrag\";\"Valuta\";\"Datum\";\"Verwendungszweck\";\"Verwendungszweck 2\";\"Zwischensumme\";\"Primanota\";\"Kundenreferenz\";\"Kategorie\";\"Notiz\";\"Weitere Verwendungszwecke\";\"Art\";\"Vormerkbuchung\";\"End-to-End ID\";\"Kategorie-Pfad\";\"Mandatsreferenz\";\"Gläubiger ID\"")
     {
         print "Warning: Hibiscus column scheme has changed. Please check if this little awk script still matches the right columns." > "/dev/stderr"
         print "" > "/dev/stderr"
