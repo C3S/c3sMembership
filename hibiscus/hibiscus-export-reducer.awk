@@ -24,7 +24,7 @@ FNR > 1 {
     if ($12 != "\"\"") reference = substr(reference, 0, length(reference)-1) " " substr($12, 1)
     if ($18 != "\"\"") reference = substr(reference, 0, length(reference)-1) " " substr($18, 1)
     #                            prefix  year                -code
-    position = match(reference, /C3S[- ]?dues[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][^0-9]/);  # code expected to have exact four digits
+    position = match(reference, /[cC]3[sS][- ]?dues[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][^0-9]/);  # code expected to have exact four digits
     if (position > 0)  # && substr(reference, position+8, 4) == year)  <- uncomment, if you want to filter only payments of the current year
     {
         if (outcsv == "")
