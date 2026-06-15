@@ -1,14 +1,14 @@
-alembic==1.17.0
-  SQLAlchemy==1.4.54
-    greenlet==3.2.4
-  Mako==1.3.10
+alembic==1.18.4
+  Mako==1.3.12
     MarkupSafe==3.0.3
+  SQLAlchemy==1.4.54
+    greenlet==3.5.1
   typing_extensions==4.15.0
-babel==2.17.0
+babel==2.18.0
 bcrypt==5.0.0
 colorama==0.4.6
 cornice==6.1.0
-  pyramid==2.0.2
+  pyramid==2.1
     hupper==1.12.1
     plaster==1.1.2
     plaster-pastedeploy==1.0.1
@@ -16,14 +16,14 @@ cornice==6.1.0
       plaster==1.1.2
     translationstring==1.4
     venusian==3.1.1
-    WebOb==1.8.9
+    WebOb==1.8.10
     zope.deprecation==6.0
-    zope.interface==8.0.1
-deform==2.0.15
+    zope.interface==8.5
+deform==3.0.1
   Chameleon==4.6.0
   colander==2.0
-    translationstring==1.4
     iso8601==2.1.0
+    translationstring==1.4
   iso8601==2.1.0
   peppercorn==0.6
   translationstring==1.4
@@ -34,9 +34,10 @@ lingua==1.5
   xlrd==2.0.2
   xlwt==1.3.0
 pbkdf2==1.3
-pycountry==24.6.1
+pycountry==26.2.16
 pyramid_beaker==0.9
-  pyramid==2.0.2
+  Beaker==1.14.1
+  pyramid==2.1
     hupper==1.12.1
     plaster==1.1.2
     plaster-pastedeploy==1.0.1
@@ -44,25 +45,24 @@ pyramid_beaker==0.9
       plaster==1.1.2
     translationstring==1.4
     venusian==3.1.1
-    WebOb==1.8.9
+    WebOb==1.8.10
     zope.deprecation==6.0
-    zope.interface==8.0.1
-  Beaker==1.13.0
+    zope.interface==8.5
 pyramid_chameleon==0.3
-  pyramid==2.0.2
-    hupper==1.12.1
-    plaster==1.1.2
-    plaster-pastedeploy==1.0.1
-      PasteDeploy==3.1.0
-      plaster==1.1.2
-    translationstring==1.4
-    venusian==3.1.1
-    WebOb==1.8.9
-    zope.deprecation==6.0
-    zope.interface==8.0.1
   Chameleon==4.6.0
+  pyramid==2.1
+    hupper==1.12.1
+    plaster==1.1.2
+    plaster-pastedeploy==1.0.1
+      PasteDeploy==3.1.0
+      plaster==1.1.2
+    translationstring==1.4
+    venusian==3.1.1
+    WebOb==1.8.10
+    zope.deprecation==6.0
+    zope.interface==8.5
 pyramid-mailer==0.15.1
-  pyramid==2.0.2
+  pyramid==2.1
     hupper==1.12.1
     plaster==1.1.2
     plaster-pastedeploy==1.0.1
@@ -70,17 +70,14 @@ pyramid-mailer==0.15.1
       plaster==1.1.2
     translationstring==1.4
     venusian==3.1.1
-    WebOb==1.8.9
+    WebOb==1.8.10
     zope.deprecation==6.0
-    zope.interface==8.0.1
-  repoze.sendmail==4.4.1
-    transaction==5.0
-      zope.interface==8.0.1
-    zope.interface==8.0.1
-  transaction==5.0
-    zope.interface==8.0.1
+    zope.interface==8.5
+  repoze-sendmail==4.5
+  transaction==5.1
+    zope.interface==8.5
 pyramid_tm==2.6
-  pyramid==2.0.2
+  pyramid==2.1
     hupper==1.12.1
     plaster==1.1.2
     plaster-pastedeploy==1.0.1
@@ -88,21 +85,22 @@ pyramid_tm==2.6
       plaster==1.1.2
     translationstring==1.4
     venusian==3.1.1
-    WebOb==1.8.9
+    WebOb==1.8.10
     zope.deprecation==6.0
-    zope.interface==8.0.1
-  transaction==5.0
-    zope.interface==8.0.1
-python-gnupg==0.5.5
-requests==2.32.5
-  charset-normalizer==3.4.4
-  idna==3.11
-  urllib3==2.5.0
-  certifi==2025.10.5
-zope.sqlalchemy==4.0
-  packaging==25.0
+    zope.interface==8.5
+  transaction==5.1
+    zope.interface==8.5
+python-gnupg==0.5.6
+requests==2.34.2
+  certifi==2026.5.20
+  charset-normalizer==3.4.7
+  idna==3.18
+  urllib3==2.7.0
+    PySocks==1.7.1
+zope.sqlalchemy==4.1
+  packaging==26.2
   SQLAlchemy==1.4.54
-    greenlet==3.2.4
-  transaction==5.0
-    zope.interface==8.0.1
-  zope.interface==8.0.1
+    greenlet==3.5.1
+  transaction==5.1
+    zope.interface==8.5
+  zope.interface==8.5

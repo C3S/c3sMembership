@@ -118,8 +118,23 @@ Upgrade
 
 Upgrade pip packages:
 
+    # upgrade
     docker compose run --rm server requirements.sh --upgrade
+
+    # rebuild images with new packages
     COMPOSE_PROFILES=development,testing,documentation docker compose build --pull
+
+    # check version diff and major upgrade changelogs for important packages
+    git diff
+
+    # update selenium image version to match pip version
+    vi compose.yaml
+
+    # rebuild images with new selenium version
+    COMPOSE_PROFILES=development,testing,documentation docker compose build --pull
+    docker compose run --rm browser
+
+    # run tests
     docker compose run --rm tests
 
 

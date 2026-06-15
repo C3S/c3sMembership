@@ -85,7 +85,7 @@ services:
       SELENIUM_SCREENSHOTS: ${SELENIUM_SCREENSHOTS}
 
   browser:
-    image: selenium/standalone-chrome:4.36.0
+    image: selenium/standalone-chrome:4.44.0
     profiles:
       - testing
     volumes:

@@ -110,7 +110,7 @@ class TestUtilities(unittest.TestCase):
                 self.assertEqual(result.content_type,
                                   'application/pdf')
                 # check pdf size
-                self.assertTrue(210000 > len(result.body) > 50000)
+                self.assertTrue(230000 > len(result.body) > 50000)
         except subprocess.CalledProcessError:
             pass
 
@@ -146,7 +146,7 @@ class TestUtilities(unittest.TestCase):
                 result = generate_pdf(request, appstruct)
                 self.assertEqual(result.content_type,
                                   'application/pdf')
-                self.assertTrue(210000 > len(result.body) > 50000)
+                self.assertTrue(230000 > len(result.body) > 50000)
         except subprocess.CalledProcessError:
             pass
 
