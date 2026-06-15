@@ -137,6 +137,21 @@ Upgrade pip packages:
     # run tests
     docker compose run --rm tests
 
+    # push on staging
+    membership@yes-staging STG % su membership
+    cd ~
+    source venv/bin/activate
+    git pull
+    pip install -e . -r requirements_staging.txt
+    sudo /usr/bin/systemctl restart apache2
+
+    # push on production
+    membership@yes-production STG % su membership
+    cd ~
+    source venv/bin/activate
+    git pull
+    pip install -e . -r requirements_production.txt
+    sudo /usr/bin/systemctl restart apache2
 
 Develop
 -------
