@@ -283,43 +283,11 @@ def _get_year_invoice_number(year, member):
     """
     Get the year's invoice number
     """
-    # TODO: This is only a workaround until the data model has been cleaned up
-    # and there is an extra table to record dues per year and member.
-    year_invoice_number = {
-        2015: member.dues15_invoice_no,
-        2016: member.dues16_invoice_no,
-        2017: member.dues17_invoice_no,
-        2018: member.dues18_invoice_no,
-        2019: member.dues19_invoice_no,
-        2020: member.dues20_invoice_no,
-        2021: member.dues21_invoice_no,
-        2022: member.dues22_invoice_no,
-        2023: member.dues23_invoice_no,
-        2024: member.dues24_invoice_no,
-        2025: member.dues25_invoice_no,
-        2026: member.dues26_invoice_no,
-    }
-    return year_invoice_number[year]
+    return member.get_dues(year).invoice_no
 
 
 def _invoice_calculated(year, member):
     """
     Check whether the invoice for the year was calculated
     """
-    # TODO: This is only a workaround until the data model has been cleaned up
-    # and there is an extra table to record dues per year and member.
-    year_invoice_calculated = {
-        2015: member.dues15_invoice,
-        2016: member.dues16_invoice,
-        2017: member.dues17_invoice,
-        2018: member.dues18_invoice,
-        2019: member.dues19_invoice,
-        2020: member.dues20_invoice,
-        2021: member.dues21_invoice,
-        2022: member.dues22_invoice,
-        2023: member.dues23_invoice,
-        2024: member.dues24_invoice,
-        2025: member.dues25_invoice,
-        2026: member.dues26_invoice,
-    }
-    return year_invoice_calculated[year]
+    return member.get_dues(year).invoice

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-This module holds code for Membership Dues.
+Year-agnostic membership dues views.
+
+This single module replaces the former per-year ``dues_2015`` ... ``dues_2026``
+view modules. Every view callable is parametrized by ``year`` and registered for
+each configured year in
+:mod:`c3smembership.presentation.configuration.dues_config`.
 
 * Send email to a member:
 
@@ -32,7 +37,6 @@ import babel.numbers
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
-from pyramid.view import view_config
 from pyramid_mailer.message import Message
 
 from c3smembership.business.dues import (
@@ -43,21 +47,22 @@ from c3smembership.business.dues import (
     DuesEmailSender,
 )
 from c3smembership.business.dues_calculation import QuarterlyDuesCalculator
-from c3smembership.data.model.base import DBSession
-from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues21invoice import Dues21Invoice
-from c3smembership.data.repository.dues_invoice_repository import \
-    DuesInvoiceRepository
-from c3smembership.mail_utils import send_message
-from c3smembership.presentation.views.membership_listing import (
-    get_memberhip_listing_redirect)
-from c3smembership.presentation.view_processing.colander_validation import (
-    ColanderMatchdictValidator, )
-from c3smembership.presentation.schemas.member import MemberIdMatchdict
 from c3smembership.business.dues_texts import (
     make_dues_reduction_email,
     make_dues_exemption_email,
 )
+from c3smembership.data.model.base import DBSession
+from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.data.model.base.dues_invoice import DuesInvoice
+from c3smembership.data.repository.dues_invoice_repository import \
+    DuesInvoiceRepository
+from c3smembership.mail_utils import send_message
+from c3smembership.presentation.views.dues_years import (  # noqa: F401
+    DUES_YEARS,
+    LATEST_DUES_YEAR,
+)
+from c3smembership.presentation.views.membership_listing import (
+    get_memberhip_listing_redirect)
 from c3smembership.tex_tools import TexTools
 
 LOG = logging.getLogger(__name__)
@@ -70,15 +75,41 @@ PDF_BACKGROUNDS = {
     'blank': PDFLATEX_DIR + '/{}/' + 'Urkunde_Hintergrund_blank.pdf',
 }
 
-LATEX_TEMPLATES = {
-    'invoice_de': PDFLATEX_DIR + '/{}/' + 'dues21_invoice_de.tex',
-    'invoice_en': PDFLATEX_DIR + '/{}/' + 'dues21_invoice_en.tex',
-    'storno_de': PDFLATEX_DIR + '/{}/' + 'dues21_storno_de.tex',
-    'storno_en': PDFLATEX_DIR + '/{}/' + 'dues21_storno_en.tex',
+# Most years use the regular ``duesNN_<kind>.tex`` naming. The first dues year
+# (2015) uses versioned file names which are mapped here.
+LATEX_TEMPLATE_OVERRIDES = {
+    2015: {
+        'invoice_de': 'dues15_invoice_de_v0.2.tex',
+        'invoice_en': 'dues15_invoice_en_v0.2.tex',
+        'storno_de': 'dues15_storno_de_v0.1.tex',
+        'storno_en': 'dues15_storno_en_v0.1.tex',
+    },
 }
 
-YEAR = 2021
-DUES_CALCULATOR = QuarterlyDuesCalculator(Decimal('50'), YEAR)
+
+def latex_template(year, kind):
+    """
+    Get the absolute LaTeX template path pattern for the year and kind.
+
+    Args:
+        year (int): The dues year, e.g. 2026.
+        kind (str): One of ``invoice_de``, ``invoice_en``, ``storno_de``,
+            ``storno_en``.
+
+    Returns:
+        A path pattern still containing the ``{}`` placeholder for the
+        certificate template directory.
+    """
+    overrides = LATEX_TEMPLATE_OVERRIDES.get(year, {})
+    filename = overrides.get(kind, 'dues{0}_{1}.tex'.format(year % 100, kind))
+    return PDFLATEX_DIR + '/{}/' + filename
+
+
+def dues_calculator(year):
+    """
+    Get the quarterly dues calculator for the year.
+    """
+    return QuarterlyDuesCalculator(Decimal('50'), year)
 
 
 def get_euro_string(euro_amount):
@@ -92,7 +123,7 @@ def get_euro_string(euro_amount):
     euro_string = babel.numbers.format_currency(euro_amount,
                                                 'EUR',
                                                 locale='de_DE')
-    return euro_string.replace('\u20ac', '').replace('\xa0', '')
+    return euro_string.replace('€', '').replace('\xa0', '')
 
 
 class PyramidInvoiceUrlCreator(InvoiceUrlCreator):
@@ -122,43 +153,12 @@ class PyramidInvoiceUrlCreator(InvoiceUrlCreator):
         Returns:
             A string representing the invoice URL.
         """
-        invoice_year_route = ''
-        invoice_code = ''
-        invoice_number = ''
-
-        if year == 2015:
-            invoice_year_route = 'make_dues15_invoice_no_pdf'
-            invoice_code = member.dues15_token
-            invoice_number = member.dues15_invoice_no
-        if year == 2016:
-            invoice_year_route = 'make_dues16_invoice_no_pdf'
-            invoice_code = member.dues16_token
-            invoice_number = member.dues16_invoice_no
-        if year == 2017:
-            invoice_year_route = 'make_dues17_invoice_no_pdf'
-            invoice_code = member.dues17_token
-            invoice_number = member.dues17_invoice_no
-        if year == 2018:
-            invoice_year_route = 'make_dues18_invoice_no_pdf'
-            invoice_code = member.dues18_token
-            invoice_number = member.dues18_invoice_no
-        if year == 2019:
-            invoice_year_route = 'make_dues19_invoice_no_pdf'
-            invoice_code = member.dues19_token
-            invoice_number = member.dues19_invoice_no
-        if year == 2020:
-            invoice_year_route = 'make_dues20_invoice_no_pdf'
-            invoice_code = member.dues20_token
-            invoice_number = member.dues20_invoice_no
-        if year == 2021:
-            invoice_year_route = 'make_dues21_invoice_no_pdf'
-            invoice_code = member.dues21_token
-            invoice_number = member.dues21_invoice_no
-
-        return self._request.route_url(invoice_year_route,
-                                       email=member.email,
-                                       code=invoice_code,
-                                       i=str(invoice_number).zfill(4))
+        dues = member.get_dues(year)
+        return self._request.route_url(
+            'make_dues{0}_invoice_no_pdf'.format(year % 100),
+            email=member.email,
+            code=dues.token,
+            i=str(dues.invoice_no).zfill(4))
 
 
 class PyramidDuesEmailSender(DuesEmailSender):
@@ -199,25 +199,19 @@ class PyramidDuesEmailSender(DuesEmailSender):
             send_message(self._request, message)
 
 
-@view_config(
-    permission='manage',
-    route_name='send_dues21_invoice_email',
-    pre_processor=ColanderMatchdictValidator(
-        MemberIdMatchdict(error_route='dues')),
-)
-def send_dues21_invoice_email(request, member_id=None):
+def send_invoice_email(request, year, member_id=None):
     """
     Calculate dues, create invoice and send invoice emails
 
     Args:
         request: The Pyramid request containing a matchdict with set member_id.
-        member_id: Optional. The member ID in case the view is called as a#
+        year: The dues year.
+        member_id: Optional. The member ID in case the view is called as a
             method.
 
     Input validation: Member must exist. The matchdict member_id or member_id
     parameter must correspond to an existing member.
     """
-
     if member_id is not None:
         member = C3sMember.get_by_id(member_id)
         if member is None:
@@ -226,32 +220,32 @@ def send_dues21_invoice_email(request, member_id=None):
         member = request.validated_matchdict['member']
 
     try:
-        invoice = calculate_dues_create_invoice(YEAR, member)
-        send_dues_invoice_email(YEAR, member, invoice,
+        invoice = calculate_dues_create_invoice(year, member)
+        send_dues_invoice_email(year, member, invoice,
                                 PyramidInvoiceUrlCreator(request),
                                 PyramidDuesEmailSender(request))
     except DuesNotApplicableError as dues_not_applicable_error:
         request.session.flash(str(dues_not_applicable_error), 'warning')
         return get_memberhip_listing_redirect(request)
 
-    return send_invoice_email_redirect(request, member)
+    return send_invoice_email_redirect(request, year, member)
 
 
-def send_invoice_email_redirect(request, member):
+def send_invoice_email_redirect(request, year, member):
     """
     Perform redirect after invoice email sending according to the referer.
     """
     if 'detail' in request.referer:
         return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(year % 100))
     if 'dues' in request.referer:
         return HTTPFound(request.route_url('dues'))
 
     return get_memberhip_listing_redirect(request, member.id)
 
 
-@view_config(permission='manage', route_name='send_dues21_invoice_batch')
-def send_dues21_invoice_batch(request):
+def send_invoice_batch(request, year):
     """
     Send dues invoice to n members at the same time (batch processing).
 
@@ -267,7 +261,7 @@ def send_dues21_invoice_batch(request):
         except KeyError:  # pragma: no cover
             number = 5
 
-    invoicees = C3sMember.get_dues21_invoicees(number)
+    invoicees = C3sMember.get_dues_invoicees(year, number)
 
     if len(invoicees) == 0:
         request.session.flash('no invoicees left. all done!', 'success')
@@ -278,7 +272,7 @@ def send_dues21_invoice_batch(request):
     request.referrer = 'dues'
 
     for member in invoicees:
-        send_dues21_invoice_email(request=request, member_id=member.id)
+        send_invoice_email(request=request, year=year, member_id=member.id)
         emails_sent += 1
         membership_numbers_sent.append(member.membership_number)
 
@@ -289,7 +283,7 @@ def send_dues21_invoice_batch(request):
     return HTTPFound(request.route_url('dues'))
 
 
-def get_dues21_invoice(invoice, request):
+def get_invoice_response(invoice, request):
     """
     Gets the invoice and returns a PDF response.
 
@@ -319,37 +313,34 @@ def get_dues21_invoice(invoice, request):
     return response
 
 
-@view_config(route_name='dues21_invoice_pdf_backend', permission='manage')
-def make_dues21_invoice_pdf_backend(request):
+def make_invoice_pdf_backend(request, year):
     """
     Show the invoice to a backend user
     """
     invoice_number = request.matchdict['invoice_number']
     invoice = DuesInvoiceRepository.get_by_number(invoice_number.lstrip('0'),
-                                                  YEAR)
-    return get_dues21_invoice(invoice, request)
+                                                  year)
+    return get_invoice_response(invoice, request)
 
 
-@view_config(route_name='dues21_reversal_pdf_backend', permission='manage')
-def make_dues21_reversal_pdf_backend(request):
+def make_reversal_pdf_backend(request, year):
     """
-    Show the invoice to a backend user
+    Show the reversal invoice to a backend user
     """
     invoice_number = request.matchdict['invoice_number']
     invoice = DuesInvoiceRepository.get_by_number(invoice_number.lstrip('0'),
-                                                  YEAR)
-    return get_dues21_invoice(invoice, request)
+                                                  year)
+    return get_invoice_response(invoice, request)
 
 
-@view_config(route_name='make_dues21_invoice_no_pdf')
-def make_dues21_invoice_no_pdf(request):
+def make_invoice_no_pdf(request, year):
     """
     Show the invoice to a member verified by a URL token
     """
     token = request.matchdict['code']
     invoice_number = request.matchdict['i']
     invoice = DuesInvoiceRepository.get_by_number(invoice_number.lstrip('0'),
-                                                  YEAR)
+                                                  year)
 
     member = None
     token_is_invalid = True
@@ -364,17 +355,17 @@ def make_dues21_invoice_no_pdf(request):
         request.session.flash("No invoice found!", 'warning')
         return HTTPFound(request.route_url('error'))
 
-    if older_than_a_year or member.dues21_paid:
+    if older_than_a_year or member.get_dues(year).paid:
         request.session.flash(
             'This invoice cannot be downloaded anymore. '
             'Please contact office@c3s.cc for further information.',
             'warning')
         return HTTPFound(request.route_url('error'))
 
-    return get_dues21_invoice(invoice, request)
+    return get_invoice_response(invoice, request)
 
 
-def get_dues21_invoice_archive_path():
+def get_invoice_archive_path():
     """
     Get the invoice archive path
     """
@@ -386,28 +377,28 @@ def get_dues21_invoice_archive_path():
     return invoice_archive_path
 
 
-def get_dues21_archive_invoice_filename(invoice):
+def get_archive_invoice_filename(invoice):
     """
     Get the archive filename of the invoice
     """
-    return os.path.join(get_dues21_invoice_archive_path(),
+    return os.path.join(get_invoice_archive_path(),
                         '{0}.pdf'.format(invoice.invoice_no_string))
 
 
-def archive_dues21_invoice(pdf_file, invoice):
+def archive_invoice(pdf_file, invoice):
     """
     Archive the invoice if it is not yet archived
     """
-    invoice_archive_filename = get_dues21_archive_invoice_filename(invoice)
+    invoice_archive_filename = get_archive_invoice_filename(invoice)
     if not os.path.isfile(invoice_archive_filename):
         shutil.copyfile(pdf_file.name, invoice_archive_filename)
 
 
-def get_dues21_archive_invoice(invoice):
+def get_archive_invoice(invoice):
     """
     Get the invoice from the archive
     """
-    invoice_archive_filename = get_dues21_archive_invoice_filename(invoice)
+    invoice_archive_filename = get_archive_invoice_filename(invoice)
     if os.path.isfile(invoice_archive_filename):
         return open(invoice_archive_filename, 'rb')
 
@@ -431,7 +422,6 @@ def create_pdf(tex_vars, tpl_tex, invoice, template):
     tex_cmd = '"' + tex_cmd + '"'
 
     # make latex show ß correctly in pdf:
-    # not necessary since latex version 2018-04
     tex_cmd = tex_cmd.replace('ß', '\\ss{}')
 
     cmd = [
@@ -454,7 +444,7 @@ def create_pdf(tex_vars, tpl_tex, invoice, template):
 
     # archive
     if os.fstat(receipt_pdf.fileno()).st_size:
-        archive_dues21_invoice(receipt_pdf, invoice)
+        archive_invoice(receipt_pdf, invoice)
 
     return receipt_pdf
 
@@ -464,21 +454,22 @@ def make_invoice_pdf_pdflatex(invoice, template):
     This function uses pdflatex to create a PDF
     as receipt for the members membership dues.
 
-    default output is the current invoice.
-    if i_no is suplied, the relevant invoice number is produced
+    The dues year is taken from the invoice.
     """
+    archived_invoice = get_archive_invoice(invoice)
+    if archived_invoice is not None:
+        return archived_invoice
 
-    dues21_archive_invoice = get_dues21_archive_invoice(invoice)
-    if dues21_archive_invoice is not None:
-        return dues21_archive_invoice
-
+    year = invoice.year
     member = C3sMember.get_by_id(invoice.member_id)
+    calculator = dues_calculator(year)
 
     template_name = 'invoice_de' if 'de' in member.locale else 'invoice_en'
     bg_pdf = PDF_BACKGROUNDS['blank'].format(template)
-    tpl_tex = LATEX_TEMPLATES[template_name].format(template)
+    tpl_tex = latex_template(year, template_name).format(template)
 
     # on invoice, print start quarter or "reduced". prepare string:
+    is_altered_str = ''
     if (not invoice.is_reversal and invoice.is_altered
             and invoice.preceding_invoice_no is not None):
         is_altered_str = 'angepasst' if (
@@ -488,8 +479,12 @@ def make_invoice_pdf_pdflatex(invoice, template):
     invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
 
     # set variables for tex command
-    dues_start = DUES_CALCULATOR.get_description(
-        DUES_CALCULATOR.calculate_quarter(member), member.locale)
+    dues_start = calculator.get_description(
+        calculator.calculate_quarter(member), member.locale)
+
+    # the account balance is the sum of all the member's dues balances
+    account_balance = -sum(
+        (dues.balance for dues in member.dues), Decimal('0'))
 
     tex_vars = {
         'personalFirstname': member.firstname,
@@ -501,11 +496,7 @@ def make_invoice_pdf_pdflatex(invoice, template):
         'personalMShipNo': str(member.membership_number),
         'invoiceNo': invoice_no,
         'invoiceDate': invoice_date,
-        'account':
-            get_euro_string(-member.dues15_balance - member.dues16_balance -
-                            member.dues17_balance - member.dues18_balance -
-                            member.dues19_balance - member.dues20_balance -
-                            member.dues21_balance),
+        'account': get_euro_string(account_balance),
         'duesStart': is_altered_str if (invoice.is_altered) else dues_start,
         'duesAmount': get_euro_string(invoice.invoice_amount),
         'lang': 'de',
@@ -515,260 +506,22 @@ def make_invoice_pdf_pdflatex(invoice, template):
     return create_pdf(tex_vars, tpl_tex, invoice, template)
 
 
-@view_config(
-    route_name='dues21_listing',
-    permission='manage',
-    renderer='c3smembership.presentation:templates/pages/dues21_list.pt')
-def dues21_listing(request):
-    """
-    a listing of all invoices.
-    shall show both active/valid and cancelled/invalid invoices.
-    """
-    # pylint: disable=unused-argument
-    dues21_invoices = DuesInvoiceRepository.get_all([YEAR])
-    return {
-        'count': len(dues21_invoices),
-        '_today': date.today(),
-        'invoices': dues21_invoices,
-    }
-
-
-@view_config(
-    route_name='dues21_reduction',
-    permission='manage',
-    renderer='c3smembership.presentation:templates/pages/dues21_list.pt')
-def dues21_reduction(request):
-    """
-    reduce a members dues upon valid request to do so.
-
-    * change payable amount for member
-    * cancel old invoice by issuing a cancellation
-    * issue a new invoice with the new amount (if new amount != 0)
-
-    this will only work for *normal* members.
-    """
-    member_id = request.matchdict.get('member_id')
-    member = C3sMember.get_by_id(member_id)  # is in database
-    if (member is None or not member.membership_accepted
-            or not member.dues21_invoice):
-        request.session.flash(
-            "Member not found or not a member or no invoice to reduce",
-            'dues21notice_message_to_staff'  # message queue for staff
-        )
-        return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
-
-    # sanity check: the given amount is a positive decimal
-    try:
-        reduced_amount = Decimal(request.POST['amount'])
-        assert not reduced_amount.is_signed()
-    except (KeyError, AssertionError):  # pragma: no cover
-        request.session.flash(
-            ("Invalid amount to reduce to: '{}' "
-             "Use the dot ('.') as decimal mark, e.g. '23.42'".format(
-                 request.POST['amount'])),
-            'dues21_message_to_staff'  # message queue for user
-        )
-        return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
-
-    # The hidden input 'confirmed' must have the value 'yes' which is set by
-    # the confirmation dialog.
-    reduction_confirmed = request.POST['confirmed']
-    if reduction_confirmed != 'yes':
-        request.session.flash(
-            'Die Reduktion wurde nicht bestätigt.',
-            'dues21_message_to_staff'  # message queue for staff
-        )
-        return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
-
-    # check the reduction amount: same as default calculated amount?
-    if (not member.dues21_reduced and member.dues21_amount == reduced_amount):
-        request.session.flash(
-            "Dieser Beitrag ist der default-Beitrag!",
-            'dues21_message_to_staff'  # message queue for staff
-        )
-        return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
-
-    if (member.dues21_reduced
-            and reduced_amount == member.dues21_amount_reduced):
-        request.session.flash(
-            "Auf diesen Beitrag wurde schon reduziert!",
-            'dues21_message_to_staff'  # message queue for staff
-        )
-        return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
-
-    if (member.dues21_reduced and reduced_amount > member.dues21_amount_reduced
-            or reduced_amount > member.dues21_amount):
-        request.session.flash(
-            'Beitrag darf nicht über den berechneten oder bereits'
-            'reduzierten Wert gesetzt werden.',
-            'dues21_message_to_staff'  # message queue for staff
-        )
-        return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
-
-    # prepare: get highest invoice no from db
-    max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(YEAR)
-
-    # things to be done:
-    # * change dues amount for that member
-    # * cancel old invoice by issuing a reversal invoice
-    # * issue a new invoice with the new amount
-
-    member.set_dues21_reduced_amount(reduced_amount)
-    request.session.flash('reduction to {}'.format(reduced_amount),
-                          'dues21_message_to_staff')
-
-    old_invoice = DuesInvoiceRepository.get_by_number(member.dues21_invoice_no,
-                                                      YEAR)
-    old_invoice.is_cancelled = True
-
-    reversal_invoice_amount = -Decimal(old_invoice.invoice_amount)
-
-    # prepare reversal invoice number
-    new_invoice_no = max_invoice_no + 1
-    # create reversal invoice
-    reversal_invoice = Dues21Invoice(
-        invoice_no=new_invoice_no,
-        invoice_no_string=('C3S-dues{0}-{1}-S'.format(
-            YEAR,
-            str(new_invoice_no).zfill(4))),
-        invoice_date=datetime.today(),
-        invoice_amount=reversal_invoice_amount.to_eng_string(),
-        member_id=member.id,
-        membership_no=member.membership_number,
-        email=member.email,
-        token=member.dues21_token,
-    )
-    reversal_invoice.preceding_invoice_no = old_invoice.invoice_no
-    reversal_invoice.is_reversal = True
-    DBSession().add(reversal_invoice)
-    DBSession().flush()
-    old_invoice.succeeding_invoice_no = new_invoice_no
-
-    # check if this is an exemption (reduction to zero)
-    is_exemption = False  # sane default
-    # check if reduction to zero
-    if reduced_amount.is_zero():
-        is_exemption = True
-
-    if not is_exemption:
-        # create new invoice
-        new_invoice = Dues21Invoice(
-            invoice_no=new_invoice_no + 1,
-            invoice_no_string=('C3S-dues{0}-{1}'.format(
-                YEAR,
-                str(new_invoice_no + 1).zfill(4))),
-            invoice_date=datetime.today(),
-            invoice_amount='' + str(reduced_amount),
-            member_id=member.id,
-            membership_no=member.membership_number,
-            email=member.email,
-            token=member.dues21_token,
-        )
-        new_invoice.is_altered = True
-        new_invoice.preceding_invoice_no = reversal_invoice.invoice_no
-        reversal_invoice.succeeding_invoice_no = new_invoice_no + 1
-        DBSession().add(new_invoice)
-
-        # in the members record, store the current invoice no
-        member.dues21_invoice_no = new_invoice_no + 1
-
-        DBSession().flush()  # persist newer invoices
-
-    reversal_url = (request.route_url(
-        'make_dues21_reversal_invoice_pdf',
-        email=member.email,
-        code=member.dues21_token,
-        no=str(reversal_invoice.invoice_no).zfill(4)))
-    if is_exemption:
-        email_subject, email_body = make_dues_exemption_email(
-            member, reversal_url)
-    else:
-        invoice_url = (request.route_url('make_dues21_invoice_no_pdf',
-                                         email=member.email,
-                                         code=member.dues21_token,
-                                         i=str(new_invoice_no + 1).zfill(4)))
-        email_subject, email_body = make_dues_reduction_email(
-            member, new_invoice, invoice_url, reversal_url)
-
-    message = Message(
-        subject=email_subject,
-        sender=request.registry.settings['c3smembership.notification_sender'],
-        recipients=[member.email],
-        body=email_body,
-    )
-    if is_exemption:
-        request.session.flash('exemption email was sent to user!',
-                              'dues21_message_to_staff')
-    else:
-        request.session.flash('update email was sent to user!',
-                              'dues21_message_to_staff')
-    send_message(request, message)
-    return HTTPFound(
-        request.route_url('detail', member_id=member_id) + '#dues21')
-
-
-@view_config(route_name='make_dues21_reversal_invoice_pdf')
-def make_dues21_reversal_invoice_pdf(request):
-    """
-    This view checks supplied information (in URL) against info in database
-    -- especially the invoice number --
-    and conditionally returns
-    - an error message or
-    - a PDF
-    """
-    token = request.matchdict['code']
-    invoice_number = request.matchdict['no']
-    invoice = DuesInvoiceRepository.get_by_number(invoice_number.lstrip('0'),
-                                                  YEAR)
-
-    member = None
-    token_is_invalid = True
-    older_than_a_year = True
-    if invoice is not None:
-        member = C3sMember.get_by_id(invoice.member_id)
-        token_is_invalid = token != invoice.token
-        older_than_a_year = (date.today() - invoice.invoice_date.date() >
-                             timedelta(days=365))
-
-    if invoice is None or token_is_invalid or not invoice.is_reversal:
-        request.session.flash("No invoice found!", 'warning')
-        return HTTPFound(request.route_url('error'))
-
-    if older_than_a_year or member.dues21_paid:
-        request.session.flash(
-            'This invoice cannot be downloaded anymore. '
-            'Please contact office@c3s.cc for further information.',
-            'warning')
-        return HTTPFound(request.route_url('error'))
-
-    template = request.registry.settings['c3smembership.certificate_template']
-    pdf_file = make_reversal_pdf_pdflatex(invoice, template)
-    response = Response(content_type='application/pdf')
-    pdf_file.seek(0)  # rewind to beginning
-    response.app_iter = open(pdf_file.name, "rb")
-    return response
-
-
 def make_reversal_pdf_pdflatex(invoice, template):
     """
     This function uses pdflatex to create a PDF
     as reversal invoice: cancel and balance out a former invoice.
+
+    The dues year is taken from the invoice.
     """
+    archived_invoice = get_archive_invoice(invoice)
+    if archived_invoice is not None:
+        return archived_invoice
 
-    dues21_archive_invoice = get_dues21_archive_invoice(invoice)
-    if dues21_archive_invoice is not None:
-        return dues21_archive_invoice
-
+    year = invoice.year
     member = C3sMember.get_by_id(invoice.member_id)
     template_name = 'storno_de' if 'de' in member.locale else 'storno_en'
     bg_pdf = PDF_BACKGROUNDS['blank'].format(template)
-    tpl_tex = LATEX_TEMPLATES[template_name].format(template)
+    tpl_tex = latex_template(year, template_name).format(template)
     invoice_no = str(invoice.invoice_no).zfill(4) + '-S'
     invoice_date = invoice.invoice_date.strftime('%d. %m. %Y')
 
@@ -785,7 +538,7 @@ def make_reversal_pdf_pdflatex(invoice, template):
         'invoiceDate': invoice_date,
         'duesAmount': get_euro_string(invoice.invoice_amount),
         'origInvoiceRef': ('C3S-dues{0}-{1}'.format(
-            YEAR,
+            year,
             str(invoice.preceding_invoice_no).zfill(4))),
         'lang': 'de',
         'pdfBackground': bg_pdf,
@@ -794,21 +547,265 @@ def make_reversal_pdf_pdflatex(invoice, template):
     return create_pdf(tex_vars, tpl_tex, invoice, template)
 
 
-@view_config(route_name='dues21_notice', permission='manage')
-def dues21_notice(request):
+def dues_listing(request, year):
+    """
+    A listing of all invoices for the dues year.
+
+    Shows both active/valid and cancelled/invalid invoices.
+    """
+    invoices = DuesInvoiceRepository.get_all([year])
+    return {
+        'year': year,
+        'count': len(invoices),
+        '_today': date.today(),
+        'invoices': invoices,
+    }
+
+
+def dues_reduction(request, year):
+    """
+    reduce a members dues upon valid request to do so.
+
+    * change payable amount for member
+    * cancel old invoice by issuing a cancellation
+    * issue a new invoice with the new amount (if new amount != 0)
+
+    this will only work for *normal* members.
+    """
+    short = year % 100
+    member_id = request.matchdict.get('member_id')
+    member = C3sMember.get_by_id(member_id)  # is in database
+    dues = member.get_dues(year) if member is not None else None
+    if (member is None or not member.membership_accepted
+            or not dues.invoice):
+        request.session.flash(
+            "Member not found or not a member or no invoice to reduce",
+            'dues{0}notice_message_to_staff'.format(short)
+        )
+        return HTTPFound(
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
+
+    # sanity check: the given amount is a positive decimal
+    try:
+        reduced_amount = Decimal(request.POST['amount'])
+        assert not reduced_amount.is_signed()
+    except (KeyError, AssertionError):  # pragma: no cover
+        request.session.flash(
+            ("Invalid amount to reduce to: '{}' "
+             "Use the dot ('.') as decimal mark, e.g. '26.42'".format(
+                 request.POST['amount'])),
+            'dues{0}_message_to_staff'.format(short)
+        )
+        return HTTPFound(
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
+
+    # The hidden input 'confirmed' must have the value 'yes' which is set by
+    # the confirmation dialog.
+    reduction_confirmed = request.POST['confirmed']
+    if reduction_confirmed != 'yes':
+        request.session.flash(
+            'Die Reduktion wurde nicht bestätigt.',
+            'dues{0}_message_to_staff'.format(short)
+        )
+        return HTTPFound(
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
+
+    # check the reduction amount: same as default calculated amount?
+    if (not dues.reduced and dues.amount == reduced_amount):
+        request.session.flash(
+            "Dieser Beitrag ist der default-Beitrag!",
+            'dues{0}_message_to_staff'.format(short)
+        )
+        return HTTPFound(
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
+
+    if (dues.reduced and reduced_amount == dues.amount_reduced):
+        request.session.flash(
+            "Auf diesen Beitrag wurde schon reduziert!",
+            'dues{0}_message_to_staff'.format(short)
+        )
+        return HTTPFound(
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
+
+    if (dues.reduced and reduced_amount > dues.amount_reduced
+            or reduced_amount > dues.amount):
+        request.session.flash(
+            'Beitrag darf nicht über den berechneten oder bereits'
+            'reduzierten Wert gesetzt werden.',
+            'dues{0}_message_to_staff'.format(short)
+        )
+        return HTTPFound(
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
+
+    # prepare: get highest invoice no from db
+    max_invoice_no = DuesInvoiceRepository.get_max_invoice_number(year)
+
+    # things to be done:
+    # * change dues amount for that member
+    # * cancel old invoice by issuing a reversal invoice
+    # * issue a new invoice with the new amount
+
+    dues.set_reduced_amount(reduced_amount)
+    request.session.flash('reduction to {}'.format(reduced_amount),
+                          'dues{0}_message_to_staff'.format(short))
+
+    old_invoice = DuesInvoiceRepository.get_by_number(dues.invoice_no, year)
+    old_invoice.is_cancelled = True
+
+    reversal_invoice_amount = -Decimal(old_invoice.invoice_amount)
+
+    # prepare reversal invoice number
+    new_invoice_no = max_invoice_no + 1
+    # create reversal invoice
+    reversal_invoice = DuesInvoice(
+        year=year,
+        invoice_no=new_invoice_no,
+        invoice_no_string=('C3S-dues{0}-{1}-S'.format(
+            year,
+            str(new_invoice_no).zfill(4))),
+        invoice_date=datetime.today(),
+        invoice_amount=reversal_invoice_amount.to_eng_string(),
+        member_id=member.id,
+        membership_no=member.membership_number,
+        email=member.email,
+        token=dues.token,
+    )
+    reversal_invoice.preceding_invoice_no = old_invoice.invoice_no
+    reversal_invoice.is_reversal = True
+    DBSession().add(reversal_invoice)
+    DBSession().flush()
+    old_invoice.succeeding_invoice_no = new_invoice_no
+
+    # check if this is an exemption (reduction to zero)
+    is_exemption = False  # sane default
+    # check if reduction to zero
+    if reduced_amount.is_zero():
+        is_exemption = True
+
+    if not is_exemption:
+        # create new invoice
+        new_invoice = DuesInvoice(
+            year=year,
+            invoice_no=new_invoice_no + 1,
+            invoice_no_string=('C3S-dues{0}-{1}'.format(
+                year,
+                str(new_invoice_no + 1).zfill(4))),
+            invoice_date=datetime.today(),
+            invoice_amount='' + str(reduced_amount),
+            member_id=member.id,
+            membership_no=member.membership_number,
+            email=member.email,
+            token=dues.token,
+        )
+        new_invoice.is_altered = True
+        new_invoice.preceding_invoice_no = reversal_invoice.invoice_no
+        reversal_invoice.succeeding_invoice_no = new_invoice_no + 1
+        DBSession().add(new_invoice)
+
+        # in the member's dues account, store the current invoice no
+        dues.invoice_no = new_invoice_no + 1
+
+        DBSession().flush()  # persist newer invoices
+
+    reversal_url = (request.route_url(
+        'make_dues{0}_reversal_invoice_pdf'.format(short),
+        email=member.email,
+        code=dues.token,
+        no=str(reversal_invoice.invoice_no).zfill(4)))
+    if is_exemption:
+        email_subject, email_body = make_dues_exemption_email(
+            member, reversal_url)
+    else:
+        invoice_url = (request.route_url(
+            'make_dues{0}_invoice_no_pdf'.format(short),
+            email=member.email,
+            code=dues.token,
+            i=str(new_invoice_no + 1).zfill(4)))
+        email_subject, email_body = make_dues_reduction_email(
+            member, new_invoice, invoice_url, reversal_url)
+
+    message = Message(
+        subject=email_subject,
+        sender=request.registry.settings['c3smembership.notification_sender'],
+        recipients=[member.email],
+        body=email_body,
+    )
+    if is_exemption:
+        request.session.flash('exemption email was sent to user!',
+                              'dues{0}_message_to_staff'.format(short))
+    else:
+        request.session.flash('update email was sent to user!',
+                              'dues{0}_message_to_staff'.format(short))
+    send_message(request, message)
+    return HTTPFound(
+        request.route_url('detail', member_id=member_id)
+        + '#dues{0}'.format(short))
+
+
+def make_reversal_invoice_pdf(request, year):
+    """
+    This view checks supplied information (in URL) against info in database
+    -- especially the invoice number --
+    and conditionally returns
+    - an error message or
+    - a PDF
+    """
+    token = request.matchdict['code']
+    invoice_number = request.matchdict['no']
+    invoice = DuesInvoiceRepository.get_by_number(invoice_number.lstrip('0'),
+                                                  year)
+
+    member = None
+    token_is_invalid = True
+    older_than_a_year = True
+    if invoice is not None:
+        member = C3sMember.get_by_id(invoice.member_id)
+        token_is_invalid = token != invoice.token
+        older_than_a_year = (date.today() - invoice.invoice_date.date() >
+                             timedelta(days=365))
+
+    if invoice is None or token_is_invalid or not invoice.is_reversal:
+        request.session.flash("No invoice found!", 'warning')
+        return HTTPFound(request.route_url('error'))
+
+    if older_than_a_year or member.get_dues(year).paid:
+        request.session.flash(
+            'This invoice cannot be downloaded anymore. '
+            'Please contact office@c3s.cc for further information.',
+            'warning')
+        return HTTPFound(request.route_url('error'))
+
+    template = request.registry.settings['c3smembership.certificate_template']
+    pdf_file = make_reversal_pdf_pdflatex(invoice, template)
+    response = Response(content_type='application/pdf')
+    pdf_file.seek(0)  # rewind to beginning
+    response.app_iter = open(pdf_file.name, "rb")
+    return response
+
+
+def dues_notice(request, year):
     """
     notice of arrival for transferral of dues
     """
+    short = year % 100
     member_id = request.matchdict.get('member_id')
     member = C3sMember.get_by_id(member_id)  # is in database
+    dues = member.get_dues(year) if member is not None else None
     if (member is None or not member.membership_accepted
-            or not member.dues21_invoice):
+            or not dues.invoice):
         request.session.flash(
             "Member not found or not a member or no invoice to pay for",
-            'dues21notice_message_to_staff'  # message queue for staff
+            'dues{0}notice_message_to_staff'.format(short)
         )
         return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
 
     # sanity check: the given amount is a positive decimal
     try:
@@ -817,12 +814,13 @@ def dues21_notice(request):
     except (KeyError, AssertionError, InvalidOperation):  # pragma: no cover
         request.session.flash(
             ("Invalid amount to pay: '{}' "
-             "Use the dot ('.') as decimal mark, e.g. '23.42'".format(
+             "Use the dot ('.') as decimal mark, e.g. '26.42'".format(
                  request.POST['amount'])),
-            'dues21notice_message_to_staff'  # message queue for user
+            'dues{0}notice_message_to_staff'.format(short)
         )
         return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
 
     # sanity check: the given date is a valid date
     try:
@@ -832,13 +830,15 @@ def dues21_notice(request):
             ("Invalid date for payment: '{}' "
              "Use YYYY-MM-DD, e.g. '1999-09-11'".format(
                  request.POST['payment_date'])),
-            'dues21notice_message_to_staff'  # message queue for user
+            'dues{0}notice_message_to_staff'.format(short)
         )
         return HTTPFound(
-            request.route_url('detail', member_id=member.id) + '#dues21')
+            request.route_url('detail', member_id=member.id)
+            + '#dues{0}'.format(short))
 
     # persist info about payment
-    member.set_dues21_payment(paid_amount, paid_date)
+    dues.set_payment(paid_amount, paid_date)
 
     return HTTPFound(
-        request.route_url('detail', member_id=member.id) + '#dues21')
+        request.route_url('detail', member_id=member.id)
+        + '#dues{0}'.format(short))

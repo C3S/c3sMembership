@@ -1,3 +1,19 @@
+1.36
+====
+
+
+- Normalise the dues data model: replace the per-year ``duesNN_*`` member
+  columns and the per-year ``duesNNinvoices`` tables with two year-agnostic
+  tables, ``dues`` and ``dues_invoices``. Collapse the per-year dues views and
+  templates into a single year-parametrised implementation. Adding a following
+  dues year now only requires bumping ``LATEST_DUES_YEAR`` and providing the
+  invoice templates.
+
+- Add a notice on the dues page indicating when a new dues year has begun and
+  whether its invoice templates are present.
+
+
+
 1.35.1
 ======
 

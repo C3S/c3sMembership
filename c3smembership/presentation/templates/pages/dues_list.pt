@@ -4,8 +4,10 @@
         xmlns:metal="http://xml.zope.org/namespaces/metal"
         metal:use-macro="backend"
         i18n:domain="c3smembership">
-    <tal:block metal:fill-slot="content">
-        <h1>Mitgliedsbeitragsrechnungen 2018</h1>
+    <tal:block metal:fill-slot="content"
+            tal:define="invoice_backend python: 'dues{0}_invoice_pdf_backend'.format(year % 100);
+                        reversal_backend python: 'dues{0}_reversal_pdf_backend'.format(year % 100)">
+        <h1>Mitgliedsbeitragsrechnungen ${year}</h1>
         <p>
             ${count} Rechnungen
         </p>
@@ -28,14 +30,14 @@
                 <td>
                     <!-- if this invoice is a normal invoice -->
                     <a tal:condition="not i.is_reversal"
-                            href="${request.route_url('dues18_invoice_pdf_backend',
+                            href="${request.route_url(invoice_backend,
                                 invoice_number=str(i.invoice_no).zfill(4))}"
                             title="download ${i.invoice_no_string}.pdf">
                         ${i.invoice_no_string}
                     </a>
                     <!-- if this invoice is a REVERSAL INVOICE -->
                     <a  tal:condition="i.is_reversal"
-                            href="${request.route_url('dues18_reversal_pdf_backend',
+                            href="${request.route_url(reversal_backend,
                                 invoice_number=str(i.invoice_no).zfill(4))}"
                             title="download ${i.invoice_no_string}-S.pdf">
                         ${i.invoice_no_string}

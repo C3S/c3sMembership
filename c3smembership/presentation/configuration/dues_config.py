@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Pyramid application configuration for membership dues.
+
+Routes and views for all dues years are generated in a loop over
+:data:`c3smembership.presentation.views.dues_year.DUES_YEARS`. Adding a new year
+only requires bumping ``LATEST_DUES_YEAR`` in
+:mod:`c3smembership.presentation.views.dues_year` and providing the LaTeX
+templates -- no per-year code or data model change.
 """
 
 import os
@@ -16,56 +22,32 @@ from c3smembership.business.dues_invoice_archiving import (
 from c3smembership.business.payment_information import PaymentInformation
 
 from c3smembership.presentation.configuration import Configuration
-from c3smembership.presentation.views.dues_2015 import (
-    make_invoice_pdf_pdflatex as make_invoice_2015,
-    make_reversal_pdf_pdflatex as make_reversal_2015,
-)
-from c3smembership.presentation.views.dues_2016 import (
-    make_invoice_pdf_pdflatex as make_invoice_2016,
-    make_reversal_pdf_pdflatex as make_reversal_2016,
-)
-from c3smembership.presentation.views.dues_2017 import (
-    make_invoice_pdf_pdflatex as make_invoice_2017,
-    make_reversal_pdf_pdflatex as make_reversal_2017,
-)
-from c3smembership.presentation.views.dues_2018 import (
-    make_invoice_pdf_pdflatex as make_invoice_2018,
-    make_reversal_pdf_pdflatex as make_reversal_2018,
-)
-from c3smembership.presentation.views.dues_2019 import (
-    make_invoice_pdf_pdflatex as make_invoice_2019,
-    make_reversal_pdf_pdflatex as make_reversal_2019,
-)
-from c3smembership.presentation.views.dues_2020 import (
-    make_invoice_pdf_pdflatex as make_invoice_2020,
-    make_reversal_pdf_pdflatex as make_reversal_2020,
-)
-from c3smembership.presentation.views.dues_2021 import (
-    make_invoice_pdf_pdflatex as make_invoice_2021,
-    make_reversal_pdf_pdflatex as make_reversal_2021,
-)
-from c3smembership.presentation.views.dues_2022 import (
-    make_invoice_pdf_pdflatex as make_invoice_2022,
-    make_reversal_pdf_pdflatex as make_reversal_2022,
-)
-from c3smembership.presentation.views.dues_2023 import (
-    make_invoice_pdf_pdflatex as make_invoice_2023,
-    make_reversal_pdf_pdflatex as make_reversal_2023,
-)
-from c3smembership.presentation.views.dues_2024 import (
-    make_invoice_pdf_pdflatex as make_invoice_2024,
-    make_reversal_pdf_pdflatex as make_reversal_2024,
-)
-from c3smembership.presentation.views.dues_2025 import (
-    make_invoice_pdf_pdflatex as make_invoice_2025,
-    make_reversal_pdf_pdflatex as make_reversal_2025,
-)
-from c3smembership.presentation.views.dues_2026 import (
-    make_invoice_pdf_pdflatex as make_invoice_2026,
-    make_reversal_pdf_pdflatex as make_reversal_2026,
-)
+from c3smembership.presentation.schemas.member import MemberIdMatchdict
+from c3smembership.presentation.view_processing.colander_validation import (
+    ColanderMatchdictValidator)
+from c3smembership.presentation.views import dues_year
+from c3smembership.presentation.views.dues_year import DUES_YEARS
 from c3smembership.presentation.views.payment_list import \
     payment_content_size_provider
+
+
+DUES_LIST_RENDERER = (
+    'c3smembership.presentation:templates/pages/dues_list.pt')
+
+# The first dues years offered backward compatible invoice PDF routes which
+# contained the member's email address in the URL.
+EMAIL_ROUTE_YEARS = (2015, 2016)
+
+
+def _year_view(view_func, year):
+    """
+    Bind a year-parametrized dues view function to a specific year.
+
+    Returns a Pyramid view callable with the ``view(request)`` signature.
+    """
+    def view(request):
+        return view_func(request, year)
+    return view
 
 
 class DuesConfig(Configuration):
@@ -78,6 +60,7 @@ class DuesConfig(Configuration):
         Add the configuration of the module to the Pyramid configuration.
         """
         self.configure_routes()
+        self.configure_views()
         self.configure_registry()
 
     def configure_registry(self):
@@ -95,54 +78,13 @@ class DuesConfig(Configuration):
             invoices_archive_path,
             self.config.registry.settings['c3smembership.certificate_template']
         )
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2015,
-            make_invoice_2015,
-            make_reversal_2015)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2016,
-            make_invoice_2016,
-            make_reversal_2016)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2017,
-            make_invoice_2017,
-            make_reversal_2017)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2018,
-            make_invoice_2018,
-            make_reversal_2018)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2019,
-            make_invoice_2019,
-            make_reversal_2019)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2020,
-            make_invoice_2020,
-            make_reversal_2020)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2021,
-            make_invoice_2021,
-            make_reversal_2021)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2022,
-            make_invoice_2022,
-            make_reversal_2022)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2023,
-            make_invoice_2023,
-            make_reversal_2023)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2024,
-            make_invoice_2024,
-            make_reversal_2024)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2025,
-            make_invoice_2025,
-            make_reversal_2025)
-        self.config.registry.dues_invoice_archiving.configure_year(
-            2026,
-            make_invoice_2026,
-            make_reversal_2026)
+        # The PDF generators derive the year from the invoice itself, so the
+        # same callables can be configured for every year.
+        for year in DUES_YEARS:
+            self.config.registry.dues_invoice_archiving.configure_year(
+                year,
+                dues_year.make_invoice_pdf_pdflatex,
+                dues_year.make_reversal_pdf_pdflatex)
 
         # Payments
         self.config.registry.payment_information = PaymentInformation(
@@ -160,312 +102,132 @@ class DuesConfig(Configuration):
         routes = [
             # Dues
             ('dues', '/dues'),
+        ]
 
-            # membership dues 2015
-            (
-                'dues15_invoice_pdf_backend',
-                '/dues15_invoice/C3S-dues15-{invoice_number}.pdf'
-            ),
-            (
-                'dues15_reversal_pdf_backend',
-                '/dues15_reversal/C3S-dues15-{invoice_number}-S.pdf'
-            ),
-            ('send_dues15_invoice_email', '/dues15_invoice/{member_id}'),
-            ('send_dues15_invoice_batch', '/dues15_invoice_batch'),
-            (
-                'make_dues15_invoice_no_pdf',
-                '/dues15_invoice_no/{code}/C3S-dues15-{i}.pdf'
-            ),
-            # for backward compatibility
-            (
-                'make_dues15_invoice_no_pdf_email',
-                '/dues15_invoice_no/{email}/{code}/C3S-dues15-{i}.pdf'
-            ),
-            ('dues15_reduction', '/dues15_reduction/{member_id}'),
-            (
-                'make_dues15_reversal_invoice_pdf',
-                '/dues15_reversal/{code}/C3S-dues15-{no}-S.pdf'
-            ),
-            # for backward compatibility
-            (
-                'make_dues15_reversal_invoice_pdf_email',
-                '/dues15_reversal/{email}/{code}/C3S-dues15-{no}-S.pdf'
-            ),
-            ('dues15_notice', '/dues15_notice/{member_id}'),
-            ('dues15_listing', '/dues15_listing'),
+        for year in DUES_YEARS:
+            short = year % 100
+            routes.extend([
+                (
+                    'dues{0}_invoice_pdf_backend'.format(short),
+                    '/dues{0}_invoice/C3S-dues{0}-{{invoice_number}}.pdf'
+                    .format(short)
+                ),
+                (
+                    'dues{0}_reversal_pdf_backend'.format(short),
+                    '/dues{0}_reversal/C3S-dues{0}-{{invoice_number}}-S.pdf'
+                    .format(short)
+                ),
+                (
+                    'send_dues{0}_invoice_email'.format(short),
+                    '/dues{0}_invoice/{{member_id}}'.format(short)
+                ),
+                (
+                    'send_dues{0}_invoice_batch'.format(short),
+                    '/dues{0}_invoice_batch'.format(short)
+                ),
+                (
+                    'make_dues{0}_invoice_no_pdf'.format(short),
+                    '/dues{0}_invoice_no/{{code}}/C3S-dues{0}-{{i}}.pdf'
+                    .format(short)
+                ),
+                (
+                    'dues{0}_reduction'.format(short),
+                    '/dues{0}_reduction/{{member_id}}'.format(short)
+                ),
+                (
+                    'make_dues{0}_reversal_invoice_pdf'.format(short),
+                    '/dues{0}_reversal/{{code}}/C3S-dues{0}-{{no}}-S.pdf'
+                    .format(short)
+                ),
+                (
+                    'dues{0}_notice'.format(short),
+                    '/dues{0}_notice/{{member_id}}'.format(short)
+                ),
+                (
+                    'dues{0}_listing'.format(short),
+                    '/dues{0}_listing'.format(short)
+                ),
+            ])
+            if year in EMAIL_ROUTE_YEARS:
+                # backward compatibility: URLs containing the email address
+                routes.extend([
+                    (
+                        'make_dues{0}_invoice_no_pdf_email'.format(short),
+                        '/dues{0}_invoice_no/{{email}}/{{code}}/'
+                        'C3S-dues{0}-{{i}}.pdf'.format(short)
+                    ),
+                    (
+                        'make_dues{0}_reversal_invoice_pdf_email'.format(short),
+                        '/dues{0}_reversal/{{email}}/{{code}}/'
+                        'C3S-dues{0}-{{no}}-S.pdf'.format(short)
+                    ),
+                ])
 
-            # membership dues 2016
-            (
-                'dues16_invoice_pdf_backend',
-                '/dues16_invoice/C3S-dues16-{invoice_number}.pdf'
-            ),
-            (
-                'dues16_reversal_pdf_backend',
-                '/dues16_reversal/C3S-dues16-{invoice_number}-S.pdf'
-            ),
-            ('send_dues16_invoice_email', '/dues16_invoice/{member_id}'),
-            ('send_dues16_invoice_batch', '/dues16_invoice_batch'),
-            (
-                'make_dues16_invoice_no_pdf',
-                '/dues16_invoice_no/{code}/C3S-dues16-{i}.pdf'
-            ),
-            # for backward compatibility
-            (
-                'make_dues16_invoice_no_pdf_email',
-                '/dues16_invoice_no/{email}/{code}/C3S-dues16-{i}.pdf'
-            ),
-            ('dues16_reduction', '/dues16_reduction/{member_id}'),
-            (
-                'make_dues16_reversal_invoice_pdf',
-                '/dues16_reversal/{code}/C3S-dues16-{no}-S.pdf'
-            ),
-            # for backward compatibility
-            (
-                'make_dues16_reversal_invoice_pdf_email',
-                '/dues16_reversal/{email}/{code}/C3S-dues16-{no}-S.pdf'
-            ),
-            ('dues16_notice', '/dues16_notice/{member_id}'),
-            ('dues16_listing', '/dues16_listing'),
-
-            # membership dues 2017
-            (
-                'dues17_invoice_pdf_backend',
-                '/dues17_invoice/C3S-dues17-{invoice_number}.pdf'
-            ),
-            (
-                'dues17_reversal_pdf_backend',
-                '/dues17_reversal/C3S-dues17-{invoice_number}-S.pdf'
-            ),
-            ('send_dues17_invoice_email', '/dues17_invoice/{member_id}'),
-            ('send_dues17_invoice_batch', '/dues17_invoice_batch'),
-            (
-                'make_dues17_invoice_no_pdf',
-                '/dues17_invoice_no/{code}/C3S-dues17-{i}.pdf'
-            ),
-            ('dues17_reduction', '/dues17_reduction/{member_id}'),
-            (
-                'make_dues17_reversal_invoice_pdf',
-                '/dues17_reversal/{code}/C3S-dues17-{no}-S.pdf'
-            ),
-            ('dues17_notice', '/dues17_notice/{member_id}'),
-            ('dues17_listing', '/dues17_listing'),
-
-            # membership dues 2018
-            (
-                'dues18_invoice_pdf_backend',
-                '/dues18_invoice/C3S-dues18-{invoice_number}.pdf'
-            ),
-            (
-                'dues18_reversal_pdf_backend',
-                '/dues18_reversal/C3S-dues18-{invoice_number}-S.pdf'
-            ),
-            ('send_dues18_invoice_email', '/dues18_invoice/{member_id}'),
-            ('send_dues18_invoice_batch', '/dues18_invoice_batch'),
-            (
-                'make_dues18_invoice_no_pdf',
-                '/dues18_invoice_no/{code}/C3S-dues18-{i}.pdf'
-            ),
-            ('dues18_reduction', '/dues18_reduction/{member_id}'),
-
-            (
-                'make_dues18_reversal_invoice_pdf',
-                '/dues18_reversal/{code}/C3S-dues18-{no}-S.pdf'
-            ),
-            ('dues18_notice', '/dues18_notice/{member_id}'),
-            ('dues18_listing', '/dues18_listing'),
-
-            # membership dues 2019
-            (
-                'dues19_invoice_pdf_backend',
-                '/dues19_invoice/C3S-dues19-{invoice_number}.pdf'
-            ),
-            (
-                'dues19_reversal_pdf_backend',
-                '/dues19_reversal/C3S-dues19-{invoice_number}-S.pdf'
-            ),
-            ('send_dues19_invoice_email', '/dues19_invoice/{member_id}'),
-            ('send_dues19_invoice_batch', '/dues19_invoice_batch'),
-            (
-                'make_dues19_invoice_no_pdf',
-                '/dues19_invoice_no/{code}/C3S-dues19-{i}.pdf'
-            ),
-            ('dues19_reduction', '/dues19_reduction/{member_id}'),
-            (
-                'make_dues19_reversal_invoice_pdf',
-                '/dues19_reversal/{code}/C3S-dues19-{no}-S.pdf'
-            ),
-            ('dues19_notice', '/dues19_notice/{member_id}'),
-            ('dues19_listing', '/dues19_listing'),
-
-            # membership dues 2020
-            (
-                'dues20_invoice_pdf_backend',
-                '/dues20_invoice/C3S-dues20-{invoice_number}.pdf'
-            ),
-            (
-                'dues20_reversal_pdf_backend',
-                '/dues20_reversal/C3S-dues20-{invoice_number}-S.pdf'
-            ),
-            ('send_dues20_invoice_email', '/dues20_invoice/{member_id}'),
-            ('send_dues20_invoice_batch', '/dues20_invoice_batch'),
-            (
-                'make_dues20_invoice_no_pdf',
-                '/dues20_invoice_no/{code}/C3S-dues20-{i}.pdf'
-            ),
-            ('dues20_reduction', '/dues20_reduction/{member_id}'),
-            (
-                'make_dues20_reversal_invoice_pdf',
-                '/dues20_reversal/{code}/C3S-dues20-{no}-S.pdf'
-            ),
-            ('dues20_notice', '/dues20_notice/{member_id}'),
-            ('dues20_listing', '/dues20_listing'),
-
-            # membership dues 2021
-            (
-                'dues21_invoice_pdf_backend',
-                '/dues21_invoice/C3S-dues21-{invoice_number}.pdf'
-            ),
-            (
-                'dues21_reversal_pdf_backend',
-                '/dues21_reversal/C3S-dues21-{invoice_number}-S.pdf'
-            ),
-            ('send_dues21_invoice_email', '/dues21_invoice/{member_id}'),
-            ('send_dues21_invoice_batch', '/dues21_invoice_batch'),
-            (
-                'make_dues21_invoice_no_pdf',
-                '/dues21_invoice_no/{code}/C3S-dues21-{i}.pdf'
-            ),
-            ('dues21_reduction', '/dues21_reduction/{member_id}'),
-            (
-                'make_dues21_reversal_invoice_pdf',
-                '/dues21_reversal/{code}/C3S-dues21-{no}-S.pdf'
-            ),
-            ('dues21_notice', '/dues21_notice/{member_id}'),
-            ('dues21_listing', '/dues21_listing'),
-
-            # membership dues 2022
-            (
-                'dues22_invoice_pdf_backend',
-                '/dues22_invoice/C3S-dues22-{invoice_number}.pdf'
-            ),
-            (
-                'dues22_reversal_pdf_backend',
-                '/dues22_reversal/C3S-dues22-{invoice_number}-S.pdf'
-            ),
-            ('send_dues22_invoice_email', '/dues22_invoice/{member_id}'),
-            ('send_dues22_invoice_batch', '/dues22_invoice_batch'),
-            (
-                'make_dues22_invoice_no_pdf',
-                '/dues22_invoice_no/{code}/C3S-dues22-{i}.pdf'
-            ),
-            ('dues22_reduction', '/dues22_reduction/{member_id}'),
-            (
-                'make_dues22_reversal_invoice_pdf',
-                '/dues22_reversal/{code}/C3S-dues22-{no}-S.pdf'
-            ),
-            ('dues22_notice', '/dues22_notice/{member_id}'),
-            ('dues22_listing', '/dues22_listing'),
-
-            # membership dues 2023
-            (
-                'dues23_invoice_pdf_backend',
-                '/dues23_invoice/C3S-dues23-{invoice_number}.pdf'
-            ),
-            (
-                'dues23_reversal_pdf_backend',
-                '/dues23_reversal/C3S-dues23-{invoice_number}-S.pdf'
-            ),
-            ('send_dues23_invoice_email', '/dues23_invoice/{member_id}'),
-            ('send_dues23_invoice_batch', '/dues23_invoice_batch'),
-            (
-                'make_dues23_invoice_no_pdf',
-                '/dues23_invoice_no/{code}/C3S-dues23-{i}.pdf'
-            ),
-            ('dues23_reduction', '/dues23_reduction/{member_id}'),
-            (
-                'make_dues23_reversal_invoice_pdf',
-                '/dues23_reversal/{code}/C3S-dues23-{no}-S.pdf'
-            ),
-            ('dues23_notice', '/dues23_notice/{member_id}'),
-            ('dues23_listing', '/dues23_listing'),
-
-            # membership dues 2024
-            (
-                'dues24_invoice_pdf_backend',
-                '/dues24_invoice/C3S-dues24-{invoice_number}.pdf'
-            ),
-            (
-                'dues24_reversal_pdf_backend',
-                '/dues24_reversal/C3S-dues24-{invoice_number}-S.pdf'
-            ),
-            ('send_dues24_invoice_email', '/dues24_invoice/{member_id}'),
-            ('send_dues24_invoice_batch', '/dues24_invoice_batch'),
-            (
-                'make_dues24_invoice_no_pdf',
-                '/dues24_invoice_no/{code}/C3S-dues24-{i}.pdf'
-            ),
-            ('dues24_reduction', '/dues24_reduction/{member_id}'),
-            (
-                'make_dues24_reversal_invoice_pdf',
-                '/dues24_reversal/{code}/C3S-dues24-{no}-S.pdf'
-            ),
-            ('dues24_notice', '/dues24_notice/{member_id}'),
-            ('dues24_listing', '/dues24_listing'),
-
-            # membership dues 2025
-            (
-                'dues25_invoice_pdf_backend',
-                '/dues25_invoice/C3S-dues25-{invoice_number}.pdf'
-            ),
-            (
-                'dues25_reversal_pdf_backend',
-                '/dues25_reversal/C3S-dues25-{invoice_number}-S.pdf'
-            ),
-            ('send_dues25_invoice_email', '/dues25_invoice/{member_id}'),
-            ('send_dues25_invoice_batch', '/dues25_invoice_batch'),
-            (
-                'make_dues25_invoice_no_pdf',
-                '/dues25_invoice_no/{code}/C3S-dues25-{i}.pdf'
-            ),
-            ('dues25_reduction', '/dues25_reduction/{member_id}'),
-            (
-                'make_dues25_reversal_invoice_pdf',
-                '/dues25_reversal/{code}/C3S-dues25-{no}-S.pdf'
-            ),
-            ('dues25_notice', '/dues25_notice/{member_id}'),
-            ('dues25_listing', '/dues25_listing'),
-
-            # membership dues 2026
-            (
-                'dues26_invoice_pdf_backend',
-                '/dues26_invoice/C3S-dues26-{invoice_number}.pdf'
-            ),
-            (
-                'dues26_reversal_pdf_backend',
-                '/dues26_reversal/C3S-dues26-{invoice_number}-S.pdf'
-            ),
-            ('send_dues26_invoice_email', '/dues26_invoice/{member_id}'),
-            ('send_dues26_invoice_batch', '/dues26_invoice_batch'),
-            (
-                'make_dues26_invoice_no_pdf',
-                '/dues26_invoice_no/{code}/C3S-dues26-{i}.pdf'
-            ),
-            ('dues26_reduction', '/dues26_reduction/{member_id}'),
-            (
-                'make_dues26_reversal_invoice_pdf',
-                '/dues26_reversal/{code}/C3S-dues26-{no}-S.pdf'
-            ),
-            ('dues26_notice', '/dues26_notice/{member_id}'),
-            ('dues26_listing', '/dues26_listing'),
-
-            # Archiving
+        # Archiving
+        routes.extend([
             ('batch_archive_pdf_invoices', '/batch_archive_pdf_invoices'),
             (
                 'background_archive_pdf_invoices',
                 '/background_archive_pdf_invoices'
             ),
-
             # Payments
             ('payment_list', '/payments'),
-        ]
+        ])
         self._add_routes(routes)
+
+    def configure_views(self):
+        """
+        Configure the membership dues views for all years.
+        """
+        config = self.config
+        for year in DUES_YEARS:
+            short = year % 100
+
+            config.add_view(
+                _year_view(dues_year.send_invoice_email, year),
+                route_name='send_dues{0}_invoice_email'.format(short),
+                permission='manage',
+                pre_processor=ColanderMatchdictValidator(
+                    MemberIdMatchdict(error_route='dues')))
+            config.add_view(
+                _year_view(dues_year.send_invoice_batch, year),
+                route_name='send_dues{0}_invoice_batch'.format(short),
+                permission='manage')
+            config.add_view(
+                _year_view(dues_year.make_invoice_pdf_backend, year),
+                route_name='dues{0}_invoice_pdf_backend'.format(short),
+                permission='manage')
+            config.add_view(
+                _year_view(dues_year.make_reversal_pdf_backend, year),
+                route_name='dues{0}_reversal_pdf_backend'.format(short),
+                permission='manage')
+            config.add_view(
+                _year_view(dues_year.make_invoice_no_pdf, year),
+                route_name='make_dues{0}_invoice_no_pdf'.format(short))
+            config.add_view(
+                _year_view(dues_year.dues_reduction, year),
+                route_name='dues{0}_reduction'.format(short),
+                permission='manage',
+                renderer=DUES_LIST_RENDERER)
+            config.add_view(
+                _year_view(dues_year.make_reversal_invoice_pdf, year),
+                route_name='make_dues{0}_reversal_invoice_pdf'.format(short))
+            config.add_view(
+                _year_view(dues_year.dues_notice, year),
+                route_name='dues{0}_notice'.format(short),
+                permission='manage')
+            config.add_view(
+                _year_view(dues_year.dues_listing, year),
+                route_name='dues{0}_listing'.format(short),
+                permission='manage',
+                renderer=DUES_LIST_RENDERER)
+
+            if year in EMAIL_ROUTE_YEARS:
+                config.add_view(
+                    _year_view(dues_year.make_invoice_no_pdf, year),
+                    route_name='make_dues{0}_invoice_no_pdf_email'
+                    .format(short))
+                config.add_view(
+                    _year_view(dues_year.make_reversal_invoice_pdf, year),
+                    route_name='make_dues{0}_reversal_invoice_pdf_email'
+                    .format(short))

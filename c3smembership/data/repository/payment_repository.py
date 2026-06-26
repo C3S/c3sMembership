@@ -35,219 +35,29 @@ class PaymentRepository(object):
         }
 
     @classmethod
-    def _get_dues15_payments(cls, members):
+    def _get_dues_payments(cls, members):
         """
-        Gets the dues payments for 2015 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues15_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues15_paid_date.date(),
-                    account='Membership dues 2015',
-                    reference=member.dues15_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues15_amount_paid)))
-        return payments
+        Gets all dues payments from the members across all years.
 
-    @classmethod
-    def _get_dues16_payments(cls, members):
+        Payments are grouped year by year (ascending) and, within a year, follow
+        the order of the members passed in.
         """
-        Gets the dues payments for 2016 from the members.
-        """
-        payments = []
+        payments_by_year = {}
         for member in members:
-            if member.dues16_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues16_paid_date.date(),
-                    account='Membership dues 2016',
-                    reference=member.dues16_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues16_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues17_payments(cls, members):
-        """
-        Gets the dues payments for 2017 from the members.
-        """
+            for dues in member.dues:
+                if dues.paid:
+                    payments_by_year.setdefault(dues.year, []).append(
+                        cls._create_payment(
+                            date=dues.paid_date.date(),
+                            account='Membership dues {0}'.format(dues.year),
+                            reference=dues.token,
+                            membership_number=member.membership_number,
+                            firstname=member.firstname,
+                            lastname=member.lastname,
+                            amount=Decimal(dues.amount_paid)))
         payments = []
-        for member in members:
-            if member.dues17_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues17_paid_date.date(),
-                    account='Membership dues 2017',
-                    reference=member.dues17_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues17_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues18_payments(cls, members):
-        """
-        Gets the dues payments for 2018 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues18_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues18_paid_date.date(),
-                    account='Membership dues 2018',
-                    reference=member.dues18_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues18_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues19_payments(cls, members):
-        """
-        Gets the dues payments for 2019 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues19_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues19_paid_date.date(),
-                    account='Membership dues 2019',
-                    reference=member.dues19_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues19_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues20_payments(cls, members):
-        """
-        Gets the dues payments for 2020 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues20_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues20_paid_date.date(),
-                    account='Membership dues 2020',
-                    reference=member.dues20_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues20_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues21_payments(cls, members):
-        """
-        Gets the dues payments for 2020 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues21_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues21_paid_date.date(),
-                    account='Membership dues 2021',
-                    reference=member.dues21_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues21_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues22_payments(cls, members):
-        """
-        Gets the dues payments for 2020 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues22_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues22_paid_date.date(),
-                    account='Membership dues 2022',
-                    reference=member.dues22_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues22_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues23_payments(cls, members):
-        """
-        Gets the dues payments for 2020 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues23_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues23_paid_date.date(),
-                    account='Membership dues 2023',
-                    reference=member.dues23_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues23_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues24_payments(cls, members):
-        """
-        Gets the dues payments for 2020 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues24_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues24_paid_date.date(),
-                    account='Membership dues 2024',
-                    reference=member.dues24_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues24_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues25_payments(cls, members):
-        """
-        Gets the dues payments for 2020 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues25_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues25_paid_date.date(),
-                    account='Membership dues 2025',
-                    reference=member.dues25_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues25_amount_paid)))
-        return payments
-
-    @classmethod
-    def _get_dues26_payments(cls, members):
-        """
-        Gets the dues payments for 2026 from the members.
-        """
-        payments = []
-        for member in members:
-            if member.dues26_paid:
-                payments.append(cls._create_payment(
-                    date=member.dues26_paid_date.date(),
-                    account='Membership dues 2026',
-                    reference=member.dues26_token,
-                    membership_number=member.membership_number,
-                    firstname=member.firstname,
-                    lastname=member.lastname,
-                    amount=Decimal(member.dues26_amount_paid)))
+        for year in sorted(payments_by_year):
+            payments += payments_by_year[year]
         return payments
 
     @classmethod
@@ -378,26 +188,10 @@ class PaymentRepository(object):
                 '"{}"" is an invalid sort property.'.format(
                     str(sort_property)))
 
-        payments = []
         members = DBSession().query(C3sMember).all()
 
         # Collect payments
-        payment_methods = [
-            cls._get_dues15_payments,
-            cls._get_dues16_payments,
-            cls._get_dues17_payments,
-            cls._get_dues18_payments,
-            cls._get_dues19_payments,
-            cls._get_dues20_payments,
-            cls._get_dues21_payments,
-            cls._get_dues22_payments,
-            cls._get_dues23_payments,
-            cls._get_dues24_payments,
-            cls._get_dues25_payments,
-            cls._get_dues26_payments,
-        ]
-        for payment_method in payment_methods:
-            payments = payments + payment_method(members)
+        payments = cls._get_dues_payments(members)
 
         # Arrange payments
         payments = cls._filter_payments(payments, from_date, to_date)

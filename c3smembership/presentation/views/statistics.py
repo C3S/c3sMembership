@@ -9,6 +9,7 @@ from c3smembership.data.model.base.c3smember import C3sMember
 from c3smembership.data.model.base.staff import Staff
 from c3smembership.data.repository.dues_invoice_repository import \
     DuesInvoiceRepository
+from c3smembership.presentation.views.dues_year import DUES_YEARS
 
 
 @view_config(
@@ -59,19 +60,14 @@ def stats_view(request):
         'num_countries': C3sMember.get_num_countries(),
         'countries_list': _cl_sorted,
 
-        # dues stats
-        'dues15_stats': DuesInvoiceRepository.get_monthly_stats(2015),
-        'dues16_stats': DuesInvoiceRepository.get_monthly_stats(2016),
-        'dues17_stats': DuesInvoiceRepository.get_monthly_stats(2017),
-        'dues18_stats': DuesInvoiceRepository.get_monthly_stats(2018),
-        'dues19_stats': DuesInvoiceRepository.get_monthly_stats(2019),
-        'dues20_stats': DuesInvoiceRepository.get_monthly_stats(2020),
-        'dues21_stats': DuesInvoiceRepository.get_monthly_stats(2021),
-        'dues22_stats': DuesInvoiceRepository.get_monthly_stats(2022),
-        'dues23_stats': DuesInvoiceRepository.get_monthly_stats(2023),
-        'dues24_stats': DuesInvoiceRepository.get_monthly_stats(2024),
-        'dues25_stats': DuesInvoiceRepository.get_monthly_stats(2025),
-        'dues26_stats': DuesInvoiceRepository.get_monthly_stats(2026),
+        # dues stats, one entry per year (descending)
+        'dues_stats': [
+            {
+                'year': year,
+                'stats': DuesInvoiceRepository.get_monthly_stats(year),
+            }
+            for year in sorted(DUES_YEARS, reverse=True)
+        ],
 
         # staff figures
         'num_staff': len(Staff.get_all())

@@ -43,18 +43,8 @@ from c3smembership.utils import get_dot_env, replace_env_vars
 # Others are not covered maybe because they are not directly imported but only
 # through view discovery. There might be a better and cleaner solution to this
 # problem but hasn't been discovered yet.
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
-from c3smembership.data.model.base.dues16invoice import Dues16Invoice
-from c3smembership.data.model.base.dues17invoice import Dues17Invoice
-from c3smembership.data.model.base.dues18invoice import Dues18Invoice
-from c3smembership.data.model.base.dues19invoice import Dues19Invoice
-from c3smembership.data.model.base.dues20invoice import Dues20Invoice
-from c3smembership.data.model.base.dues21invoice import Dues21Invoice
-from c3smembership.data.model.base.dues22invoice import Dues22Invoice
-from c3smembership.data.model.base.dues23invoice import Dues23Invoice
-from c3smembership.data.model.base.dues24invoice import Dues24Invoice
-from c3smembership.data.model.base.dues25invoice import Dues25Invoice
-from c3smembership.data.model.base.dues26invoice import Dues26Invoice
+from c3smembership.data.model.base.dues import Dues
+from c3smembership.data.model.base.dues_invoice import DuesInvoice
 from c3smembership.data.model.general_assembly import GeneralAssembly
 from c3smembership.data.model.general_assembly import GeneralAssemblyInvitation
 

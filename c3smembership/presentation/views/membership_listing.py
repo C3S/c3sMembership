@@ -4,6 +4,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from c3smembership.data.model.base.c3smember import C3sMember
+from c3smembership.presentation.views.dues_years import LATEST_DUES_YEAR
 
 
 @view_config(
@@ -42,6 +43,7 @@ def membership_listing_backend(request):
         'members': memberships,
         'invitations': invitations,
         'latest_general_assembly': latest_general_assembly,
+        'latest_dues_year': LATEST_DUES_YEAR,
     }
 
 

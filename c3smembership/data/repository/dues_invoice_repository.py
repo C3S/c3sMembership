@@ -2,11 +2,11 @@
 """
 Repository for operating with dues invoices
 
-The DuesInvoiceRepository is still being built up. It needs to abstract the
-database structures from the business and presentation layers. Once this
-abstraction is finalized the dues invoices data model can be changed to contain
-all years in one table in order to not have to alter the data model for
-following years.
+The dues invoices of all years are stored in a single ``dues_invoices`` table
+(see :class:`c3smembership.data.model.base.dues_invoice.DuesInvoice`) and the
+per-member, per-year dues accounts in a single ``dues`` table (see
+:class:`c3smembership.data.model.base.dues.Dues`). The year is a regular data
+column, so supporting a new year does not require any data model or code change.
 """
 
 from datetime import datetime
@@ -22,140 +22,14 @@ from c3smembership.data.model.base import (
     DatabaseDecimal,
 )
 from c3smembership.data.model.base.c3smember import C3sMember
-from c3smembership.data.model.base.dues15invoice import Dues15Invoice
-from c3smembership.data.model.base.dues16invoice import Dues16Invoice
-from c3smembership.data.model.base.dues17invoice import Dues17Invoice
-from c3smembership.data.model.base.dues18invoice import Dues18Invoice
-from c3smembership.data.model.base.dues19invoice import Dues19Invoice
-from c3smembership.data.model.base.dues20invoice import Dues20Invoice
-from c3smembership.data.model.base.dues21invoice import Dues21Invoice
-from c3smembership.data.model.base.dues22invoice import Dues22Invoice
-from c3smembership.data.model.base.dues23invoice import Dues23Invoice
-from c3smembership.data.model.base.dues24invoice import Dues24Invoice
-from c3smembership.data.model.base.dues25invoice import Dues25Invoice
-from c3smembership.data.model.base.dues26invoice import Dues26Invoice
+from c3smembership.data.model.base.dues import Dues
+from c3smembership.data.model.base.dues_invoice import DuesInvoice
 
 
 class DuesInvoiceRepository(object):
     """
     Repository for operating with dues invoices
-
-    The constants _DUES_INVOICE_CLASS and _PAYMENT_FIELDS are workarounds until
-    the data model is cleaned up, agnostic to the year and does not contain any
-    payment information on the member record.
     """
-    # pylint: disable=too-few-public-methods
-
-    _DUES_INVOICE_CLASS = {
-        2015: Dues15Invoice,
-        2016: Dues16Invoice,
-        2017: Dues17Invoice,
-        2018: Dues18Invoice,
-        2019: Dues19Invoice,
-        2020: Dues20Invoice,
-        2021: Dues21Invoice,
-        2022: Dues22Invoice,
-        2023: Dues23Invoice,
-        2024: Dues24Invoice,
-        2025: Dues25Invoice,
-        2026: Dues26Invoice,
-    }
-    _PAYMENT_FIELDS = {
-        2015: {
-            'paid_date': C3sMember.dues15_paid_date,
-            'amount_paid': C3sMember.dues15_amount_paid,
-        },
-        2016: {
-            'paid_date': C3sMember.dues16_paid_date,
-            'amount_paid': C3sMember.dues16_amount_paid,
-        },
-        2017: {
-            'paid_date': C3sMember.dues17_paid_date,
-            'amount_paid': C3sMember.dues17_amount_paid,
-        },
-        2018: {
-            'paid_date': C3sMember.dues18_paid_date,
-            'amount_paid': C3sMember.dues18_amount_paid,
-        },
-        2019: {
-            'paid_date': C3sMember.dues19_paid_date,
-            'amount_paid': C3sMember.dues19_amount_paid,
-        },
-        2020: {
-            'paid_date': C3sMember.dues20_paid_date,
-            'amount_paid': C3sMember.dues20_amount_paid,
-        },
-        2021: {
-            'paid_date': C3sMember.dues21_paid_date,
-            'amount_paid': C3sMember.dues21_amount_paid,
-        },
-        2022: {
-            'paid_date': C3sMember.dues22_paid_date,
-            'amount_paid': C3sMember.dues22_amount_paid,
-        },
-        2023: {
-            'paid_date': C3sMember.dues23_paid_date,
-            'amount_paid': C3sMember.dues23_amount_paid,
-        },
-        2024: {
-            'paid_date': C3sMember.dues24_paid_date,
-            'amount_paid': C3sMember.dues24_amount_paid,
-        },
-        2025: {
-            'paid_date': C3sMember.dues25_paid_date,
-            'amount_paid': C3sMember.dues25_amount_paid,
-        },
-        2026: {
-            'paid_date': C3sMember.dues26_paid_date,
-            'amount_paid': C3sMember.dues26_amount_paid,
-        },
-    }
-
-    @classmethod
-    def _get_year_classes(cls, years=None):
-        """
-        Get the dues data model classes for the years
-
-        If years is not specified then all available years are returned.
-
-        Args:
-            years (array): Defaults to None. An array of ints representing
-                years, e.g. 2019.
-
-        Returns:
-            An array of dues data model classes.
-        """
-        year_classes = []
-
-        # Fill all years if None
-        if years is None:
-            years = []
-            for year in cls._DUES_INVOICE_CLASS:
-                years.append(year)
-
-        # Get years classes
-        for year in years:
-            if year in cls._DUES_INVOICE_CLASS:
-                year_classes.append(cls._DUES_INVOICE_CLASS[year])
-        return year_classes
-
-    @classmethod
-    def _get_year_class(cls, year):
-        """
-        Get the dues data model class for the year
-
-        Args:
-            year (int): The year to which the invoice number belongs, e.g.
-                2019.
-
-        Returns:
-            The dues data model class for the year.
-        """
-        result = None
-        year_classes = cls._get_year_classes([year])
-        if len(year_classes) > 0:
-            result = year_classes[0]
-        return result
 
     @classmethod
     def get_all(cls, years=None):
@@ -174,12 +48,11 @@ class DuesInvoiceRepository(object):
         Example:
             dues_invoices = DuesInvoiceRepository.get_all([2015, 2018])
         """
-        result = []
         db_session = DBSession()
-        year_classes = cls._get_year_classes(years)
-        for year_class in year_classes:
-            result = result + db_session.query(year_class).all()
-        return result
+        query = db_session.query(DuesInvoice)
+        if years is not None:
+            query = query.filter(DuesInvoice.year.in_(years))
+        return query.order_by(DuesInvoice.year, DuesInvoice.id).all()
 
     @classmethod
     def get_by_number(cls, invoice_number, year):
@@ -195,15 +68,12 @@ class DuesInvoiceRepository(object):
         Returns:
             The invoice having the invoice number for the specified year.
         """
-        result = None
         db_session = DBSession()
-        year_class = cls._get_year_class(year)
-        if year_class is not None:
-            result = db_session \
-                .query(year_class) \
-                .filter(year_class.invoice_no == invoice_number) \
-                .first()
-        return result
+        return db_session \
+            .query(DuesInvoice) \
+            .filter(DuesInvoice.year == year) \
+            .filter(DuesInvoice.invoice_no == invoice_number) \
+            .first()
 
     @classmethod
     def get_by_membership_number(cls, membership_number, years=None):
@@ -219,18 +89,14 @@ class DuesInvoiceRepository(object):
         Returns:
             An array of invoices of the member for the year specified.
         """
-        result = []
         db_session = DBSession()
-        year_classes = cls._get_year_classes(years)
-        for year_class in year_classes:
-            result = result + db_session \
-                .query(year_class) \
-                .join(
-                    C3sMember,
-                    C3sMember.id == year_class.member_id) \
-                .filter(C3sMember.membership_number == membership_number) \
-                .all()
-        return result
+        query = db_session \
+            .query(DuesInvoice) \
+            .join(C3sMember, C3sMember.id == DuesInvoice.member_id) \
+            .filter(C3sMember.membership_number == membership_number)
+        if years is not None:
+            query = query.filter(DuesInvoice.year.in_(years))
+        return query.order_by(DuesInvoice.year, DuesInvoice.id).all()
 
     @classmethod
     def get_max_invoice_number(cls, year):
@@ -249,13 +115,12 @@ class DuesInvoiceRepository(object):
         """
         result = 0
         db_session = DBSession()
-        year_class = cls._get_year_class(year)
-        if year_class is not None:
-            max_invoice_number, = db_session \
-                .query(func.max(year_class.invoice_no)) \
-                .first()
-            if max_invoice_number is not None:
-                result = max_invoice_number
+        max_invoice_number, = db_session \
+            .query(func.max(DuesInvoice.invoice_no)) \
+            .filter(DuesInvoice.year == year) \
+            .first()
+        if max_invoice_number is not None:
+            result = max_invoice_number
         return result
 
     @classmethod
@@ -277,8 +142,8 @@ class DuesInvoiceRepository(object):
                 token can be used as a secret to invoices from being accessed
                 without permission.
         """
-        dues_invoice_class = cls._get_dues_invoice_class(year)
-        invoice = dues_invoice_class(
+        invoice = DuesInvoice(
+            year=year,
             invoice_no=invoice_number,
             invoice_no_string=invoice_number_string,
             invoice_date=datetime.now(),
@@ -290,42 +155,9 @@ class DuesInvoiceRepository(object):
         )
         DBSession().add(invoice)
 
-        if year == 2015:
-            member.dues15_invoice_no = invoice_number
-            member.dues15_token = invoice_token
-        if year == 2016:
-            member.dues16_invoice_no = invoice_number
-            member.dues16_token = invoice_token
-        if year == 2017:
-            member.dues17_invoice_no = invoice_number
-            member.dues17_token = invoice_token
-        if year == 2018:
-            member.dues18_invoice_no = invoice_number
-            member.dues18_token = invoice_token
-        if year == 2019:
-            member.dues19_invoice_no = invoice_number
-            member.dues19_token = invoice_token
-        if year == 2020:
-            member.dues20_invoice_no = invoice_number
-            member.dues20_token = invoice_token
-        if year == 2021:
-            member.dues21_invoice_no = invoice_number
-            member.dues21_token = invoice_token
-        if year == 2022:
-            member.dues22_invoice_no = invoice_number
-            member.dues22_token = invoice_token
-        if year == 2023:
-            member.dues23_invoice_no = invoice_number
-            member.dues23_token = invoice_token
-        if year == 2024:
-            member.dues24_invoice_no = invoice_number
-            member.dues24_token = invoice_token
-        if year == 2025:
-            member.dues25_invoice_no = invoice_number
-            member.dues25_token = invoice_token
-        if year == 2026:
-            member.dues26_invoice_no = invoice_number
-            member.dues26_token = invoice_token
+        dues = member.get_dues(year)
+        dues.invoice_no = invoice_number
+        dues.token = invoice_token
         DBSession().flush()
 
         return invoice
@@ -333,47 +165,11 @@ class DuesInvoiceRepository(object):
     @classmethod
     def store_dues(cls, year, member, dues_calculation):
         """
-        Store the dues
-
-        TODO: This is only a workaround until the data model has been cleaned
-        up and there is an extra table to record dues per year and member.
+        Store the calculated dues amount on the member's dues account.
         """
-        if year == 2015:
-            member.set_dues15_amount(dues_calculation.amount)
-            member.dues15_start = dues_calculation.code
-        if year == 2016:
-            member.set_dues16_amount(dues_calculation.amount)
-            member.dues16_start = dues_calculation.code
-        if year == 2017:
-            member.set_dues17_amount(dues_calculation.amount)
-            member.dues17_start = dues_calculation.code
-        if year == 2018:
-            member.set_dues18_amount(dues_calculation.amount)
-            member.dues18_start = dues_calculation.code
-        if year == 2019:
-            member.set_dues19_amount(dues_calculation.amount)
-            member.dues19_start = dues_calculation.code
-        if year == 2020:
-            member.set_dues20_amount(dues_calculation.amount)
-            member.dues20_start = dues_calculation.code
-        if year == 2021:
-            member.set_dues21_amount(dues_calculation.amount)
-            member.dues21_start = dues_calculation.code
-        if year == 2022:
-            member.set_dues22_amount(dues_calculation.amount)
-            member.dues22_start = dues_calculation.code
-        if year == 2023:
-            member.set_dues23_amount(dues_calculation.amount)
-            member.dues23_start = dues_calculation.code
-        if year == 2024:
-            member.set_dues24_amount(dues_calculation.amount)
-            member.dues24_start = dues_calculation.code
-        if year == 2025:
-            member.set_dues25_amount(dues_calculation.amount)
-            member.dues25_start = dues_calculation.code
-        if year == 2026:
-            member.set_dues26_amount(dues_calculation.amount)
-            member.dues26_start = dues_calculation.code
+        dues = member.get_dues(year)
+        dues.set_amount(dues_calculation.amount)
+        dues.start = dues_calculation.code
         DBSession().flush()
 
     @classmethod
@@ -381,70 +177,10 @@ class DuesInvoiceRepository(object):
         """
         Record the fact that the dues email was sent and when it was sent
         """
-        # TODO: This is only a workaround until the data model has been cleaned
-        # up and there is an extra table to record dues per year and member.
-        invoice_date = datetime.now()
-        if year == 2015:
-            member.dues15_invoice = True
-            member.dues15_invoice_date = invoice_date
-        if year == 2016:
-            member.dues16_invoice = True
-            member.dues16_invoice_date = invoice_date
-        if year == 2017:
-            member.dues17_invoice = True
-            member.dues17_invoice_date = invoice_date
-        if year == 2018:
-            member.dues18_invoice = True
-            member.dues18_invoice_date = invoice_date
-        if year == 2019:
-            member.dues19_invoice = True
-            member.dues19_invoice_date = invoice_date
-        if year == 2020:
-            member.dues20_invoice = True
-            member.dues20_invoice_date = invoice_date
-        if year == 2021:
-            member.dues21_invoice = True
-            member.dues21_invoice_date = invoice_date
-        if year == 2022:
-            member.dues22_invoice = True
-            member.dues22_invoice_date = invoice_date
-        if year == 2023:
-            member.dues23_invoice = True
-            member.dues23_invoice_date = invoice_date
-        if year == 2024:
-            member.dues24_invoice = True
-            member.dues24_invoice_date = invoice_date
-        if year == 2025:
-            member.dues25_invoice = True
-            member.dues25_invoice_date = invoice_date
-        if year == 2026:
-            member.dues26_invoice = True
-            member.dues26_invoice_date = invoice_date
+        dues = member.get_dues(year)
+        dues.invoice = True
+        dues.invoice_date = datetime.now()
         DBSession().flush()
-
-    @staticmethod
-    def _get_dues_invoice_class(year):
-        """
-        Get the dues invoice class for creating a database record
-
-        TODO: This is only a workaround until the data model has been cleaned
-        up and there is an extra table to record dues per year and member.
-        """
-        year_classes = {
-            2015: Dues15Invoice,
-            2016: Dues16Invoice,
-            2017: Dues17Invoice,
-            2018: Dues18Invoice,
-            2019: Dues19Invoice,
-            2020: Dues20Invoice,
-            2021: Dues21Invoice,
-            2022: Dues22Invoice,
-            2023: Dues23Invoice,
-            2024: Dues24Invoice,
-            2025: Dues25Invoice,
-            2026: Dues26Invoice,
-        }
-        return year_classes[year]
 
     @classmethod
     def token_exists(cls, token, year):
@@ -458,14 +194,12 @@ class DuesInvoiceRepository(object):
         Returns:
             Boolean indicating whether the token exists for the year.
         """
-        invoice = None
         db_session = DBSession()
-        year_class = cls._get_year_class(year)
-        if year_class is not None:
-            invoice = db_session \
-                .query(year_class) \
-                .filter(year_class.token == token) \
-                .first()
+        invoice = db_session \
+            .query(DuesInvoice) \
+            .filter(DuesInvoice.year == year) \
+            .filter(DuesInvoice.token == token) \
+            .first()
         return invoice is not None
 
     @classmethod
@@ -478,40 +212,33 @@ class DuesInvoiceRepository(object):
                 2019.
 
         Returns:
-            Sums of the normale and reversal invoices per calendar month based
+            Sums of the normal and reversal invoices per calendar month based
             on the invoice date.
         """
-        year_class = cls._get_year_class(year)
-        if year_class is None:
-            return None
-
         db_session = DBSession()
         result = []
 
         # SQLite specific: substring for SQLite as it does not support
         # date_trunc.
-        # invoice_date_month = func.date_trunc(
-        #     'month',
-        #     invoice_date)
-        paid_date = cls._PAYMENT_FIELDS[year]['paid_date']
-        amount_paid = cls._PAYMENT_FIELDS[year]['amount_paid']
-        invoice_date_month = func.substr(year_class.invoice_date, 1, 7)
-        payment_date_month = func.substr(paid_date, 1, 7)
+        invoice_date_month = func.substr(DuesInvoice.invoice_date, 1, 7)
+        payment_date_month = func.substr(Dues.paid_date, 1, 7)
 
         # collect the invoice amounts per month
         invoice_amounts_query = db_session.query(
             invoice_date_month.label('month'),
             func.sum(
                 expression.case(
-                    [(expression.not_(
-                        year_class.is_reversal), year_class.invoice_amount)],
+                    (expression.not_(
+                        DuesInvoice.is_reversal), DuesInvoice.invoice_amount),
                     else_=Decimal('0.0'))).label('amount_invoiced_normal'),
             func.sum(
                 expression.case(
-                    [(year_class.is_reversal, year_class.invoice_amount)],
+                    (DuesInvoice.is_reversal, DuesInvoice.invoice_amount),
                     else_=Decimal('0.0'))).label('amount_invoiced_reversal'),
             expression.literal_column('\'0.0\'', DatabaseDecimal).label(
-                'amount_paid')).group_by(invoice_date_month)
+                'amount_paid')) \
+            .filter(DuesInvoice.year == year) \
+            .group_by(invoice_date_month)
 
         # collect the payments per month
         member_payments_query = db_session.query(
@@ -521,8 +248,9 @@ class DuesInvoiceRepository(object):
             expression.literal_column(
                 '\'0.0\'', DatabaseDecimal
             ).label('amount_invoiced_reversal'),
-            func.sum(amount_paid).label('amount_paid')
-        ).filter(paid_date.isnot(None)) \
+            func.sum(Dues.amount_paid).label('amount_paid')
+        ).filter(Dues.year == year) \
+            .filter(Dues.paid_date.isnot(None)) \
             .group_by(payment_date_month)
 
         # union invoice amounts and payments

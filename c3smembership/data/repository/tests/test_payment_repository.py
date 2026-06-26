@@ -75,65 +75,41 @@ class TestPaymentRepository(unittest.TestCase):
             num_shares=1,
         )
         member.membership_number = membership_number
-        member.dues15_paid = dues15_paid
-        member.dues15_amount_paid = dues15_payment_amount
-        member.dues15_paid_date = dues15_payment_date
-        member.dues15_token = dues15_payment_token
 
-        member.dues16_paid = dues16_paid
-        member.dues16_amount_paid = dues16_payment_amount
-        member.dues16_paid_date, = dues16_payment_date,
-        member.dues16_token = dues16_payment_token
-
-        member.dues17_paid = dues17_paid
-        member.dues17_amount_paid = dues17_payment_amount
-        member.dues17_paid_date = dues17_payment_date
-        member.dues17_token = dues17_payment_token
-
-        member.dues18_paid = dues18_paid
-        member.dues18_amount_paid = dues18_payment_amount
-        member.dues18_paid_date = dues18_payment_date
-        member.dues18_token = dues18_payment_token
-
-        member.dues19_paid = dues19_paid
-        member.dues19_amount_paid = dues19_payment_amount
-        member.dues19_paid_date = dues19_payment_date
-        member.dues19_token = dues19_payment_token
-
-        member.dues20_paid = dues20_paid
-        member.dues20_amount_paid = dues20_payment_amount
-        member.dues20_paid_date = dues20_payment_date
-        member.dues20_token = dues20_payment_token
-
-        member.dues21_paid = dues21_paid
-        member.dues21_amount_paid = dues21_payment_amount
-        member.dues21_paid_date = dues21_payment_date
-        member.dues21_token = dues21_payment_token
-
-        member.dues22_paid = dues22_paid
-        member.dues22_amount_paid = dues22_payment_amount
-        member.dues22_paid_date = dues22_payment_date
-        member.dues22_token = dues22_payment_token
-
-        member.dues23_paid = dues23_paid
-        member.dues23_amount_paid = dues23_payment_amount
-        member.dues23_paid_date = dues23_payment_date
-        member.dues23_token = dues23_payment_token
-
-        member.dues24_paid = dues24_paid
-        member.dues24_amount_paid = dues24_payment_amount
-        member.dues24_paid_date = dues24_payment_date
-        member.dues24_token = dues24_payment_token
-
-        member.dues25_paid = dues25_paid
-        member.dues25_amount_paid = dues25_payment_amount
-        member.dues25_paid_date = dues25_payment_date
-        member.dues25_token = dues25_payment_token
-
-        member.dues26_paid = dues26_paid
-        member.dues26_amount_paid = dues26_payment_amount
-        member.dues26_paid_date = dues26_payment_date
-        member.dues26_token = dues26_payment_token
+        # payments are stored on the per-year dues accounts
+        year_payments = {
+            2015: (dues15_paid, dues15_payment_amount, dues15_payment_date,
+                   dues15_payment_token),
+            2016: (dues16_paid, dues16_payment_amount, dues16_payment_date,
+                   dues16_payment_token),
+            2017: (dues17_paid, dues17_payment_amount, dues17_payment_date,
+                   dues17_payment_token),
+            2018: (dues18_paid, dues18_payment_amount, dues18_payment_date,
+                   dues18_payment_token),
+            2019: (dues19_paid, dues19_payment_amount, dues19_payment_date,
+                   dues19_payment_token),
+            2020: (dues20_paid, dues20_payment_amount, dues20_payment_date,
+                   dues20_payment_token),
+            2021: (dues21_paid, dues21_payment_amount, dues21_payment_date,
+                   dues21_payment_token),
+            2022: (dues22_paid, dues22_payment_amount, dues22_payment_date,
+                   dues22_payment_token),
+            2023: (dues23_paid, dues23_payment_amount, dues23_payment_date,
+                   dues23_payment_token),
+            2024: (dues24_paid, dues24_payment_amount, dues24_payment_date,
+                   dues24_payment_token),
+            2025: (dues25_paid, dues25_payment_amount, dues25_payment_date,
+                   dues25_payment_token),
+            2026: (dues26_paid, dues26_payment_amount, dues26_payment_date,
+                   dues26_payment_token),
+        }
+        for year, (paid, amount, paid_date, token) in year_payments.items():
+            if paid:
+                dues = member.get_dues(year)
+                dues.paid = paid
+                dues.amount_paid = amount
+                dues.paid_date = paid_date
+                dues.token = token
         return member
 
     def setUp(self):
