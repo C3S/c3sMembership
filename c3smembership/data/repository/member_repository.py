@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 from sqlalchemy import (
     and_,
     not_,
+    or_,
 )
 from datetime import date
 
@@ -89,6 +90,52 @@ class MemberRepository(object):
             ascending.
         """
         return cls._members_query(effective_date).order_by(
+            C3sMember.lastname.asc(),
+            C3sMember.firstname.asc()).all()
+
+    @classmethod
+    def get_members_filtered(
+            cls, membership_type=None, membership_accepted=None,
+            membership_loss_threshold=None):
+        """
+        Gets members filtered by membership type, membership acceptance and
+        membership loss, sorted by lastname ascending and firstname ascending.
+
+        Args:
+            membership_type: Optional. A membership type like u'normal' or
+                u'investing' to filter by. If None, all membership types are
+                included.
+            membership_accepted: Optional. If True, only members whose
+                membership has been accepted are returned, if False only those
+                whose membership has not been accepted. If None, both are
+                included.
+            membership_loss_threshold: Optional. A date. Members whose
+                membership_loss_date lies before this date are excluded.
+                Members without a membership loss date as well as members with
+                a membership loss date on or after this date are included as
+                their membership loss is not yet effective.
+
+        Returns:
+            All members matching the filter criteria sorted by lastname
+            ascending and firstname ascending.
+        """
+        # pylint: disable=no-member
+        query = DBSession.query(C3sMember)
+        if membership_type is not None:
+            query = query.filter(
+                C3sMember.membership_type == membership_type)
+        if membership_accepted is not None:
+            if membership_accepted:
+                query = query.filter(C3sMember.membership_accepted)
+            else:
+                query = query.filter(or_(
+                    C3sMember.membership_accepted.is_(None),
+                    C3sMember.membership_accepted.is_(False)))
+        if membership_loss_threshold is not None:
+            query = query.filter(or_(
+                C3sMember.membership_loss_date.is_(None),
+                C3sMember.membership_loss_date >= membership_loss_threshold))
+        return query.order_by(
             C3sMember.lastname.asc(),
             C3sMember.firstname.asc()).all()
 

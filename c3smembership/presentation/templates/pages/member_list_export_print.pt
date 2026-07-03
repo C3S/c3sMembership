@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend"
+        i18n:domain="c3smembership">
+    <tal:block metal:fill-slot="content">
+        <h1 i18n:translate="">Member list</h1>
+        <p>
+            ${count} <tal:span i18n:translate="">members</tal:span><br />
+            <tal:span i18n:translate="">Created</tal:span> ${today},
+            <tal:span i18n:translate="">membership loss before</tal:span>
+            ${membership_loss_date}
+        </p>
+        <table class="table table-striped" rules="rows">
+            <tr class="table-striped">
+                <th tal:repeat="column_title column_titles">
+                    ${column_title}
+                </th>
+            </tr>
+            <tr tal:repeat="row rows">
+                <td tal:repeat="value row">${value}</td>
+            </tr>
+        </table>
+    </tal:block>
+</html>

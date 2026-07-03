@@ -49,6 +49,21 @@
             </a>
         </p>
 
+        <h3>Member list export</h3>
+        <p>
+            <a href="${request.route_url('member_list_export_csv')}"
+                    title="Download the member list as CSV file, e.g. for mailings."
+                    class="btn btn-primary">
+                Member list CSV export
+            </a>
+            <br />
+            <a href="${request.route_url('member_list_export_print')}"
+                    title="Show the member list as printable HTML page, e.g. for general assemblies."
+                    class="btn btn-primary">
+                Member list print list
+            </a>
+        </p>
+
         <h3>Membership list PDF</h3>
         <p>
             <a href="${request.route_url('membership_listing_date_pdf', date=date)}"

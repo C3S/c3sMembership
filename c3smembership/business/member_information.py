@@ -55,6 +55,36 @@ class MemberInformation(object):
         return self._member_repository.get_accepted_members_sorted(
             effective_date)
 
+    def get_members_filtered(
+            self, membership_type=None, membership_accepted=None,
+            membership_loss_threshold=None):
+        """
+        Gets members filtered by membership type, membership acceptance and
+        membership loss, sorted by lastname ascending and firstname ascending.
+
+        Args:
+            membership_type: Optional. A membership type like u'normal' or
+                u'investing' to filter by. If None, all membership types are
+                included.
+            membership_accepted: Optional. If True, only members whose
+                membership has been accepted are returned, if False only those
+                whose membership has not been accepted. If None, both are
+                included.
+            membership_loss_threshold: Optional. A date. Members whose
+                membership_loss_date lies before this date are excluded.
+                Members without a membership loss date as well as members with
+                a membership loss date on or after this date are included as
+                their membership loss is not yet effective.
+
+        Returns:
+            All members matching the filter criteria sorted by lastname
+            ascending and firstname ascending.
+        """
+        return self._member_repository.get_members_filtered(
+            membership_type,
+            membership_accepted,
+            membership_loss_threshold)
+
     def get_member(self, membership_number):
         """
         Gets the member of the specified membership number.

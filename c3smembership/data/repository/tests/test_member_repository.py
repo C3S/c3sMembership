@@ -281,3 +281,152 @@ class TestMemberRepository(unittest.TestCase):
         members_count = MemberRepository.get_accepted_members_count(
             date(2016, 4, 23))
         self.assertEqual(members_count, 2)
+
+
+class TestGetMembersFiltered(unittest.TestCase):
+    """
+    Tests the MemberRepository.get_members_filtered method.
+    """
+
+    @classmethod
+    def _make_member(cls, firstname, lastname, email, membership_type,
+                     email_confirm_code):
+        """
+        Creates a member for the test setup.
+        """
+        return C3sMember(
+            firstname=firstname,
+            lastname=lastname,
+            email=email,
+            address1='Some Street 123',
+            address2='',
+            postcode='12345',
+            city='Some City',
+            country='Some Country',
+            locale='DE',
+            date_of_birth=date(1980, 1, 2),
+            email_is_confirmed=False,
+            email_confirm_code=email_confirm_code,
+            password='arandompassword',
+            date_of_submission=date(2012, 1, 1),
+            membership_type=membership_type,
+            member_of_colsoc=False,
+            name_of_colsoc='',
+            num_shares=7,
+        )
+
+    def setUp(self):
+        my_settings = {'sqlalchemy.url': 'sqlite:///:memory:', }
+        engine = engine_from_config(my_settings)
+        DBSession.configure(bind=engine)
+        Base.metadata.create_all(engine)
+        with transaction.manager:
+            active_normal = self._make_member(
+                'Norman', 'Active', 'norman@example.com', 'normal',
+                'ACTIVE_NORMAL')
+            active_normal.membership_number = 'M1'
+            active_normal.membership_date = date(2013, 1, 1)
+            active_normal.membership_accepted = True
+
+            active_investing = self._make_member(
+                'Ingrid', 'Investor', 'ingrid@example.com', 'investing',
+                'ACTIVE_INVESTING')
+            active_investing.membership_number = 'M2'
+            active_investing.membership_date = date(2013, 1, 1)
+            active_investing.membership_accepted = True
+
+            membership_lost = self._make_member(
+                'Larry', 'Lost', 'larry@example.com', 'normal',
+                'MEMBERSHIP_LOST')
+            membership_lost.membership_number = 'M3'
+            membership_lost.membership_date = date(2013, 1, 1)
+            membership_lost.membership_accepted = True
+            membership_lost.membership_loss_date = date(2015, 12, 31)
+
+            applicant = self._make_member(
+                'Andrea', 'Applicant', 'andrea@example.com', 'normal',
+                'APPLICANT')
+
+            # pylint: disable=no-member
+            DBSession.add(active_normal)
+            DBSession.add(active_investing)
+            DBSession.add(membership_lost)
+            DBSession.add(applicant)
+
+    def tearDown(self):
+        # pylint: disable=no-member
+        DBSession.close()
+        # pylint: disable=no-member
+        DBSession.remove()
+
+    def test_no_filters(self):
+        """
+        Without filters all members are returned sorted by lastname and
+        firstname ascending.
+        """
+        members = MemberRepository.get_members_filtered()
+        self.assertEqual(
+            [member.lastname for member in members],
+            ['Active', 'Applicant', 'Investor', 'Lost'])
+
+    def test_membership_type_filter(self):
+        """
+        The membership type filter only matches members of the specified
+        membership type.
+        """
+        members = MemberRepository.get_members_filtered(
+            membership_type='normal')
+        self.assertEqual(
+            [member.lastname for member in members],
+            ['Active', 'Applicant', 'Lost'])
+
+        members = MemberRepository.get_members_filtered(
+            membership_type='investing')
+        self.assertEqual(
+            [member.lastname for member in members],
+            ['Investor'])
+
+    def test_membership_accepted_filter(self):
+        """
+        The membership accepted filter distinguishes members whose
+        membership has been accepted from those whose has not.
+        """
+        members = MemberRepository.get_members_filtered(
+            membership_accepted=True)
+        self.assertEqual(
+            [member.lastname for member in members],
+            ['Active', 'Investor', 'Lost'])
+
+        members = MemberRepository.get_members_filtered(
+            membership_accepted=False)
+        self.assertEqual(
+            [member.lastname for member in members],
+            ['Applicant'])
+
+    def test_membership_loss_threshold(self):
+        """
+        Only members whose membership loss date lies before the threshold
+        are excluded. On the membership loss date itself the member is
+        still a member.
+        """
+        members = MemberRepository.get_members_filtered(
+            membership_loss_threshold=date(2015, 12, 31))
+        self.assertEqual(len(members), 4)
+
+        members = MemberRepository.get_members_filtered(
+            membership_loss_threshold=date(2016, 1, 1))
+        self.assertEqual(
+            [member.lastname for member in members],
+            ['Active', 'Applicant', 'Investor'])
+
+    def test_combined_filters(self):
+        """
+        All filters are combined.
+        """
+        members = MemberRepository.get_members_filtered(
+            membership_type='normal',
+            membership_accepted=True,
+            membership_loss_threshold=date(2016, 1, 1))
+        self.assertEqual(
+            [member.lastname for member in members],
+            ['Active'])

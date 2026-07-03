@@ -59,6 +59,10 @@ class MembershipConfig(Configuration):
             ('membership_listing_date_pdf', '/aml-{date}.pdf'),
             ('membership_listing_aufstockers', '/aml_aufstockers'),
 
+            # member list export
+            ('member_list_export_csv', '/members/export/csv'),
+            ('member_list_export_print', '/members/export/print'),
+
             # membership_certificate
             ('certificate_mail', '/cert_mail/{member_id}'),
             ('certificate_pdf', '/cert/{member_id}/C3S_{name}_{token}.pdf'),
