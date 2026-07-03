@@ -17,6 +17,7 @@ dist/
 docs/_build/
 docs/design/
 env/
+env3/
 venv/
 invoices/
 certificate/*
