@@ -193,6 +193,21 @@ FROM pyramid AS server
 ARG UID
 ARG GID
 COPY --chown=${UID}:${GID} --from=pyramid_compiled /opt/venv /opt/venv
+# optionally install the Claude Code CLI for in-container, AI-assisted
+# debugging. Enabled by setting AI_USECLAUDE=1 in .env (build arg). The CLI runs
+# as the non-root ${UID} user (required for yolo mode); the API key is passed at
+# runtime via the ANTHROPIC_API_KEY environment variable (see compose.yaml).
+ARG AI_USECLAUDE=0
+ENV CLAUDE_CONFIG_DIR=/opt/claude
+RUN if [ "$AI_USECLAUDE" = "1" ]; then \
+        export NODE_OPTIONS=--dns-result-order=ipv4first \
+        && echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4 \
+        && curl -4 -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+        && apt-get install -y --no-install-recommends nodejs \
+        && rm -rf /var/lib/apt/lists/* /etc/apt/apt.conf.d/99force-ipv4 \
+        && npm install -g @anthropic-ai/claude-code \
+        && install -d -o "$UID" -g "$GID" "$CLAUDE_CONFIG_DIR" ; \
+    fi
 
 #--- base -> python -> compile -> DOCS ----------------------------------------
 

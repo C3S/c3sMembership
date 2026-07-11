@@ -2,6 +2,10 @@ networks:
   frontend:
   testing:
 
+volumes:
+  # persists the Claude Code config/auth/history across container recreations
+  claude-config:
+
 services:
 
   server:
@@ -12,6 +16,7 @@ services:
         ENVIRONMENT: ${ENVIRONMENT}
         WORKDIR: ${WORKDIR}
         DEBUGGER_DEBUGPY: ${DEBUGGER_DEBUGPY}
+        AI_USECLAUDE: ${AI_USECLAUDE:-0}
         UID: ${UID}
         GID: ${GID}
     user: ${UID}:${GID}
@@ -28,6 +33,7 @@ services:
       - "${DOCKER_PORTMAP_IP}:5253:5253"  # for debugging
     volumes:
       - .:/code
+      - claude-config:/opt/claude
     environment:
       ENVIRONMENT: ${ENVIRONMENT}
       SELENIUM_GRID_URL: ${SELENIUM_GRID_URL}

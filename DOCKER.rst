@@ -192,6 +192,41 @@ Build docs:
     docker compose run --rm documentation
     xdg-open docs/_build/html/index.html
 
+Debug with Claude Code (AI):
+
+    # 1. enable the Claude Code CLI in the server image
+    #    (.env)
+    AI_USECLAUDE=1
+
+    # 2. (re)build the server image with the CLI included
+    #    (drop --pull if your Docker cannot reach the registry over IPv6)
+    docker compose build server
+
+    # 3. run the stack
+    docker compose up
+
+    # 4. one-time login with your Claude Pro/Max subscription (uses the
+    #    subscription, NOT pay-as-you-go API credits). The container is headless,
+    #    so open the printed URL in your host browser, authorize, and paste the
+    #    code shown on the callback page back into the terminal prompt:
+    docker compose exec server claude auth login --claudeai
+    # (equivalent: `docker compose exec server bash` then `claude` then `/login`)
+    # verify:
+    docker compose exec server claude auth status
+
+    # 5. open a shell in the running server container and start Claude,
+    #    or use the integrated terminal of VS Code running in the container
+    docker compose exec server bash
+    > claude
+
+    # yolo mode (skip permission prompts) - runs as the non-root container user
+    > claude --dangerously-skip-permissions
+
+The CLI config, auth and history are persisted in the ``claude-config`` docker
+volume and survive ``docker compose down``/``up`` -- so the subscription login is
+only needed once. To use an API key (pay-as-you-go credits) instead, run
+``docker compose exec server claude auth login --console``.
+
 Backup database:
 
     cp c3sMembership.db c3sMembership.db.$(date "+%Y-%m-%d_%H-%M-%S")
