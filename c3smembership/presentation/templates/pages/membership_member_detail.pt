@@ -14,6 +14,9 @@
         <a href="${request.route_url('edit', _id=member.id)}" class="btn btn-warning">edit</a>
         <a href="${request.route_url('delete_entry', memberid=member.id)}"
                 class="btn btn-danger"
+                id="delete-link"
+                member-id="${member.id}"
+                member-name="${member.firstname} ${member.lastname}"
                 tal:condition="not member.membership_accepted">
             delete
         </a>
@@ -138,6 +141,15 @@
                 if (window.location.hash != "") {
                     $('.nav-tabs a[href="' + window.location.hash + '"]').tab('show');
                 }
+                $("#delete-link").click(function(event) {
+                    event.preventDefault();
+                    var member_id = $(this).attr('member-id');
+                    var member_name = $(this).attr('member-name');
+                    var answer = confirm("Do you want to delete member " + member_id + " \"" + member_name + "\"?");
+                    if (answer) {
+                        window.location.href = $(this).attr('href') + "?deletion_confirmed=1";
+                    }
+                });
             });
         </script>
         <div metal:use-macro="load: c3smembership.presentation:templates/page-elements/membership_member_detail_dues_js.pt"></div>

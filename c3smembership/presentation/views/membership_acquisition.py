@@ -500,8 +500,33 @@ def delete_afms(request):
             return {
                 'resetform': error.render()
             }
+        skipped = []
         for i in range(_first, _last+1):
+            member = C3sMember.get_by_id(i)
+            if member is None:
+                continue
+            if member.membership_accepted:
+                skipped.append(i)
+                continue
             C3sMember.delete_by_id(i)
+            LOG.info(
+                "member.id %s was deleted by %s",
+                i,
+                request.user.login,
+            )
+        if skipped:
+            LOG.warning(
+                'deletion of member.ids %s refused: membership accepted. '
+                'Requested by %s.',
+                skipped,
+                request.user.login,
+            )
+            request.session.flash(
+                'The following ids are accepted members and were not '
+                'deleted: {}. Accepted members must go through the '
+                'membership loss process.'.format(
+                    ', '.join(str(i) for i in skipped)),
+                'danger')
         return HTTPFound(request.route_url('dashboard'))
     return {
         'delete_form': delete_range_form.render()

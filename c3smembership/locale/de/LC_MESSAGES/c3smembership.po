@@ -297,7 +297,7 @@ msgstr "Anwenden"
 #: c3smembership/presentation/views/membership_member_edit.py:418
 #: c3smembership/presentation/views/membership_member_new.py:142
 msgid "Reset"
-msgstr "Löschen"
+msgstr "Änderungen verwerfen und neu laden"
 
 #: c3smembership/presentation/templates/deform/checked_password.pt:18
 msgid "Confirm Password"

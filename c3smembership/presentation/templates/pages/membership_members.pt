@@ -162,35 +162,12 @@
                             class="fas fa-edit"
                             title="Edit">
                     </a>
-                    <a href="${request.route_url('delete_entry', memberid=member.id, _query={'redirect': 'membership_listing_backend'})}"
-                            class="fas fa-trash delete-link"
-                            title="Delete"
-                            id="delete-link-${member.id}"
-                            member-id="${member.id}"
-                            member-name="${member.firstname} ${member.lastname}">
-                    </a>
                 </td>
             </tr>
         </table>
         <p metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links.pt"></p>
     </tal:block>
     <tal:block metal:fill-slot="javascript">
-        <script type="text/javascript">
-            $().ready(function() {
-                $(".delete-link").click(function(event) {
-                    event.preventDefault();
-                    member_id = $(this).attr('member-id');
-                    member_name = $(this).attr('member-name');
-
-                    answer = confirm("Do you want to delete member " + member_id + " \"" + member_name + "\"?");
-                    if (answer) {
-                        deleteUrl = "${request.route_url('delete_entry', memberid='{memberid}', _query={'redirect': 'dashboard'})}";
-                        deleteUrl = deleteUrl.replace(encodeURIComponent("{memberid}"), member_id) + "&amp;deletion_confirmed=1";
-                        window.location.href = deleteUrl;
-                    }
-                });
-            });
-        </script>
         <script src="${request.static_url('deform:static/scripts/deform.js')}"
                 type="text/javascript"></script>
         <script metal:use-macro="load: c3smembership.presentation:templates/page-elements/pagination_page_links_javascript.pt"></script>
