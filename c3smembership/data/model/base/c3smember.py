@@ -126,7 +126,7 @@ class C3sMember(Base):
 
     We remember this so we know which language to address her with.
     """
-    date_of_birth = Column(Date(), nullable=False)
+    date_of_birth = Column(Date(), nullable=True)
     email_is_confirmed = Column(Boolean, default=False)
     email_confirm_code = Column(Unicode(255), unique=True)  # reference code
     """The Code used as reference when registering for membership:
@@ -328,6 +328,13 @@ class C3sMember(Base):
     # privacy
     privacy_consent = Column(DateTime(), nullable=True)
 
+    anonymized = Column(DateTime(), nullable=True)
+    """DateTime
+
+    * timestamp of anonymization, Art. 17 / Art. 5(1)(e) DSGVO.
+    * None means the dataset has not been anonymized.
+    """
+
     def __init__(self, firstname, lastname, email, password,
                  address1, address2, postcode, city, country, locale,
                  date_of_birth, email_is_confirmed, email_confirm_code,
@@ -395,6 +402,51 @@ class C3sMember(Base):
         if create:
             self.dues.append(dues)
         return dues
+
+    def anonymize(self):
+        """
+        Anonymize the dataset by clearing all personal data.
+
+        Implements erasure according to Art. 17 and Art. 5(1)(e) DSGVO
+        while keeping the statutory ledger data (membership number, type,
+        membership and loss dates, shares and dues relations) which are
+        subject to retention according to GenG §30, HGB §257 and AO §147.
+
+        The unique reference code ``email_confirm_code`` is rewritten to a
+        deterministic non-personal value because it is used as a reference
+        in invoices and bank transfers. ``country`` is kept for the
+        statistics views; ``postcode`` and ``date_of_birth`` are cleared
+        because in combination they allow re-identification.
+
+        Sets ``anonymized`` to the current timestamp, which marks the
+        dataset as anonymized.
+        """
+        self.firstname = None
+        self.lastname = None
+        self.email = None
+        self._password = None
+        self.address1 = None
+        self.address2 = None
+        self.postcode = None
+        self.city = None
+        self.date_of_birth = None
+        self.locale = None
+        self.accountant_comment = None
+        self.name_of_colsoc = None
+        self.court_of_law = None
+        self.registration_number = None
+        self.certificate_token = None
+        self.mtype_confirm_token = None
+        self.email_confirm_token = None
+        self.email_confirm_code = u'ANON-{}'.format(self.id)
+        self.anonymized = datetime.now()
+
+    @property
+    def is_anonymized(self):
+        """
+        Indicate whether the dataset has been anonymized.
+        """
+        return self.anonymized is not None
 
     @classmethod
     def get_by_code(cls, email_confirm_code):
