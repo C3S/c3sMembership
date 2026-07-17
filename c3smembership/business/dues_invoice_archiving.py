@@ -90,6 +90,28 @@ class DuesInvoiceArchiving(object):
                 invoice, self._certificate_template)
         return pdf_file
 
+    def remove_archived_invoices(self, invoices):
+        """
+        Remove the archived PDF files of the invoices, if present.
+
+        Used by the data protection erasure workflow because the invoice
+        PDFs contain the member's name and address.
+
+        Args:
+            invoices: The invoices whose archived PDF files are removed.
+
+        Returns:
+            An array of the invoice number strings whose archived PDF
+            files were removed.
+        """
+        removed = []
+        for invoice in invoices:
+            filename = self._get_archive_filename(invoice)
+            if os.path.isfile(filename):
+                os.remove(filename)
+                removed.append(invoice.invoice_no_string)
+        return removed
+
     def get_missing_invoices(self, year):
         """
         Get the missing invoices for a given year

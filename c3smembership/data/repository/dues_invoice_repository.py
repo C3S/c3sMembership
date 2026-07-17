@@ -99,6 +99,29 @@ class DuesInvoiceRepository(object):
         return query.order_by(DuesInvoice.year, DuesInvoice.id).all()
 
     @classmethod
+    def get_by_member_id(cls, member_id):
+        """
+        Get all dues invoices of a member by the member's technical ID
+
+        In contrast to get_by_membership_number this also works for
+        datasets which never acquired membership and therefore do not have
+        a membership number.
+
+        Args:
+            member_id (int): The technical ID of the member for which the
+                invoices are retrieved.
+
+        Returns:
+            An array of all invoices of the member.
+        """
+        db_session = DBSession()
+        return db_session \
+            .query(DuesInvoice) \
+            .filter(DuesInvoice.member_id == member_id) \
+            .order_by(DuesInvoice.year, DuesInvoice.id) \
+            .all()
+
+    @classmethod
     def get_max_invoice_number(cls, year):
         """
         Get the maximum invoice number for a specific year

@@ -117,10 +117,12 @@ class MemberRepository(object):
 
         Returns:
             All members matching the filter criteria sorted by lastname
-            ascending and firstname ascending.
+            ascending and firstname ascending. Anonymized datasets are
+            excluded as they do not contain personal data anymore.
         """
         # pylint: disable=no-member
-        query = DBSession.query(C3sMember)
+        query = DBSession.query(C3sMember).filter(
+            C3sMember.anonymized.is_(None))
         if membership_type is not None:
             query = query.filter(
                 C3sMember.membership_type == membership_type)
@@ -138,6 +140,59 @@ class MemberRepository(object):
         return query.order_by(
             C3sMember.lastname.asc(),
             C3sMember.firstname.asc()).all()
+
+    @classmethod
+    def get_lost_members_before(cls, loss_date_before):
+        """
+        Gets members which lost membership before the specified date and
+        have not been anonymized yet.
+
+        Used to determine erasure candidates whose statutory retention
+        period has expired.
+
+        Args:
+            loss_date_before: A date. Members whose membership_loss_date
+                lies strictly before this date are returned.
+
+        Returns:
+            All not yet anonymized members whose membership loss date lies
+            before the specified date, sorted by membership loss date
+            ascending.
+        """
+        # pylint: disable=no-member
+        return DBSession.query(C3sMember).filter(and_(
+            C3sMember.anonymized.is_(None),
+            C3sMember.membership_loss_date.isnot(None),
+            C3sMember.membership_loss_date < loss_date_before,
+        )).order_by(C3sMember.membership_loss_date.asc()).all()
+
+    @classmethod
+    def get_stale_applications_before(cls, submitted_before):
+        """
+        Gets membership applications which never completed the acquisition
+        process, were submitted before the specified date and have not
+        been anonymized yet.
+
+        Duplicates are included as they are never accepted as members.
+
+        Args:
+            submitted_before: A date. Applications whose date_of_submission
+                lies strictly before this date are returned.
+
+        Returns:
+            All not yet anonymized, not accepted applications without a
+            membership number submitted before the specified date, sorted
+            by date of submission ascending.
+        """
+        # pylint: disable=no-member
+        return DBSession.query(C3sMember).filter(and_(
+            C3sMember.anonymized.is_(None),
+            or_(
+                C3sMember.membership_accepted.is_(None),
+                C3sMember.membership_accepted.is_(False)),
+            C3sMember.membership_number.is_(None),
+            C3sMember.date_of_submission < submitted_before,
+        )).order_by(C3sMember.date_of_submission.asc()).all()
 
     @classmethod
     def _members_query(cls, effective_date=None):
