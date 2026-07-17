@@ -11,7 +11,16 @@
         <h1 tal:condition="member.membership_accepted">
             Member details
         </h1>
-        <a href="${request.route_url('edit', _id=member.id)}" class="btn btn-warning">edit</a>
+        <p tal:condition="member.anonymized is not None">
+            <span class="badge badge-secondary">
+                anonymized on ${member.anonymized.strftime('%d.%m.%Y')}
+            </span>
+            All personal data of this dataset has been erased
+            (Art. 17 DSGVO). Only the statutory ledger data is kept.
+        </p>
+        <a href="${request.route_url('edit', _id=member.id)}"
+                class="btn btn-warning"
+                tal:condition="member.anonymized is None">edit</a>
         <a href="${request.route_url('delete_entry', memberid=member.id)}"
                 class="btn btn-danger"
                 id="delete-link"

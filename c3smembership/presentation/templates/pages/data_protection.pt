@@ -1,0 +1,155 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xml:lang="en"
+        xmlns:tal="http://xml.zope.org/namespaces/tal"
+        xmlns:metal="http://xml.zope.org/namespaces/metal"
+        metal:use-macro="backend"
+        i18n:domain="c3smembership">
+    <tal:block metal:fill-slot="content">
+        <h1>Data protection: retention review</h1>
+        <p>
+            The following datasets have passed their retention period and
+            are to be anonymized (Art. 17, Art. 5(1)(e) DSGVO).
+            Anonymization clears all personal data but keeps the statutory
+            ledger data (membership number, shares, dues). It cannot be
+            undone. Archived invoice PDFs of the dataset are deleted.
+        </p>
+        <form method="post"
+                id="anonymization_form"
+                action="${request.route_url('data_protection')}">
+            <input type="hidden"
+                    id="anonymization_confirmed"
+                    name="anonymization_confirmed"
+                    value="0"/>
+
+            <h2>Former members past retention
+                (${python: len(lost_members)})</h2>
+            <p>
+                Members whose membership loss lies past the retention
+                period of ${member_retention_years} years counted from the
+                end of the year of the loss (HGB §257, AO §147), i.e.
+                membership lost before
+                ${python: member_retention_cutoff.strftime('%d.%m.%Y')}.
+            </p>
+            <p tal:condition="not lost_members">
+                <em>No former members past retention.</em>
+            </p>
+            <table class="table table-striped"
+                    tal:condition="lost_members">
+                <tr>
+                    <th>
+                        <input type="checkbox"
+                                class="select-all"
+                                title="Select all"/>
+                    </th>
+                    <th>Membership number</th>
+                    <th>Lastname</th>
+                    <th>Firstname</th>
+                    <th>Membership lost</th>
+                    <th>Loss type</th>
+                </tr>
+                <tr tal:repeat="member lost_members">
+                    <td>
+                        <input type="checkbox"
+                                name="member_id"
+                                value="${member.id}"/>
+                    </td>
+                    <td>${member.membership_number}</td>
+                    <td>
+                        <a href="${request.route_url('detail', member_id=member.id)}">
+                            ${member.lastname}
+                        </a>
+                    </td>
+                    <td>${member.firstname}</td>
+                    <td>${member.membership_loss_date.strftime('%d.%m.%Y')}</td>
+                    <td>${member.membership_loss_type}</td>
+                </tr>
+            </table>
+
+            <h2>Stale membership applications
+                (${python: len(stale_applications)})</h2>
+            <p>
+                Applications which never completed the membership
+                acquisition process and were submitted more than
+                ${application_retention_months} months ago, i.e. before
+                ${python: application_retention_cutoff.strftime('%d.%m.%Y')}.
+                There is no legal basis to keep them longer
+                (Art. 5(1)(e) DSGVO). Duplicates are included.
+            </p>
+            <p tal:condition="not stale_applications">
+                <em>No stale membership applications.</em>
+            </p>
+            <table class="table table-striped"
+                    tal:condition="stale_applications">
+                <tr>
+                    <th>
+                        <input type="checkbox"
+                                class="select-all"
+                                title="Select all"/>
+                    </th>
+                    <th>ID</th>
+                    <th>Lastname</th>
+                    <th>Firstname</th>
+                    <th>Email</th>
+                    <th>Submitted</th>
+                    <th>Duplicate</th>
+                </tr>
+                <tr tal:repeat="member stale_applications">
+                    <td>
+                        <input type="checkbox"
+                                name="member_id"
+                                value="${member.id}"/>
+                    </td>
+                    <td>${member.id}</td>
+                    <td>
+                        <a href="${request.route_url('detail', member_id=member.id)}">
+                            ${member.lastname}
+                        </a>
+                    </td>
+                    <td>${member.firstname}</td>
+                    <td>${member.email}</td>
+                    <td>${member.date_of_submission.strftime('%d.%m.%Y')}</td>
+                    <td>
+                        <i tal:condition="member.is_duplicate"
+                                class="fas fa-check"
+                                title="Duplicate of id ${member.is_duplicate_of}">
+                        </i>
+                    </td>
+                </tr>
+            </table>
+
+            <button type="submit"
+                    class="btn btn-danger"
+                    tal:condition="lost_members or stale_applications">
+                Anonymize selected datasets
+            </button>
+        </form>
+    </tal:block>
+    <tal:block metal:fill-slot="javascript">
+        <script type="text/javascript">
+            $().ready(function() {
+                $(".select-all").click(function() {
+                    $(this).closest("table")
+                        .find("input[name='member_id']")
+                        .prop("checked", $(this).prop("checked"));
+                });
+                $("#anonymization_form").submit(function(event) {
+                    var count = $(this)
+                        .find("input[name='member_id']:checked").length;
+                    if (count === 0) {
+                        alert("No datasets selected.");
+                        event.preventDefault();
+                        return;
+                    }
+                    var answer = confirm(
+                        "Anonymize " + count + " dataset(s)? " +
+                        "All personal data will be erased irreversibly.");
+                    if (answer) {
+                        $("#anonymization_confirmed").val("1");
+                    } else {
+                        event.preventDefault();
+                    }
+                });
+            });
+        </script>
+    </tal:block>
+</html>

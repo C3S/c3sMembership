@@ -21,6 +21,8 @@ from c3smembership.presentation.configuration.annual_report_config import \
     AnnualReportConfig
 from c3smembership.presentation.configuration.base_config import \
     BaseConfig
+from c3smembership.presentation.configuration.data_protection_config import \
+    DataProtectionConfig
 from c3smembership.presentation.configuration.dues_config import DuesConfig
 from c3smembership.presentation.configuration.general_assembly_config import \
     GeneralAssemblyConfig
@@ -105,6 +107,8 @@ def main(global_config, **settings):
         ShareConfig,
         AnnualReportConfig,
         DuesConfig,
+        # after DuesConfig: uses registry.dues_invoice_archiving
+        DataProtectionConfig,
         GeneralAssemblyConfig,
         StatisticsConfig,
         StaffConfig,

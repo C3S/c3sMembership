@@ -849,12 +849,17 @@ class C3sMember(Base):
             raise InvalidSortDirection(
                 'Invalid sort direction: {0}'.format(sort_direction))
         query = DBSession.query(cls).filter(
-            or_(
-                cls.membership_accepted == 0,
-                cls.membership_accepted == '',
-                # pylint: disable=singleton-comparison
-                # noqa
-                cls.membership_accepted == None,
+            and_(
+                # anonymized datasets contain no personal data anymore and
+                # are no longer part of the application process
+                cls.anonymized.is_(None),
+                or_(
+                    cls.membership_accepted == 0,
+                    cls.membership_accepted == '',
+                    # pylint: disable=singleton-comparison
+                    # noqa
+                    cls.membership_accepted == None,
+                ),
             )
         ).order_by(
             order_function()
@@ -868,12 +873,15 @@ class C3sMember(Base):
         yet.
         """
         query = DBSession.query(cls).filter(
-            or_(
-                cls.membership_accepted == 0,
-                cls.membership_accepted == '',
-                # pylint: disable=singleton-comparison
-                # noqa
-                cls.membership_accepted == None,
+            and_(
+                cls.anonymized.is_(None),
+                or_(
+                    cls.membership_accepted == 0,
+                    cls.membership_accepted == '',
+                    # pylint: disable=singleton-comparison
+                    # noqa
+                    cls.membership_accepted == None,
+                ),
             )
         ).count()
         return query
@@ -935,6 +943,8 @@ class C3sMember(Base):
         rows = DBSession.query(cls).all()
         codes = []
         for row in rows:
+            if row.is_anonymized:
+                continue
             if row.email_confirm_code.startswith(prefix):
                 codes.append(row.email_confirm_code)
         return codes
@@ -1074,6 +1084,8 @@ class C3sMember(Base):
         rows = DBSession.query(cls).all()
         names = {}
         for row in rows:
+            if row.is_anonymized:
+                continue
             if row.lastname.startswith(prefix):
                 key = (
                     row.email_confirm_code + ' ' +

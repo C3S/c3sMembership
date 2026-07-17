@@ -101,6 +101,11 @@
                     <a href="${request.route_url('member_details', membership_number=member.membership_number)}">
                         ${member.lastname}
                     </a>
+                    <span class="badge badge-secondary"
+                            tal:condition="member.anonymized is not None"
+                            title="All personal data of this dataset has been erased (Art. 17 DSGVO).">
+                        anonymized
+                    </span>
                 </td>
                 <td>
                     <a href="${request.route_url('member_details', membership_number=member.membership_number)}">
@@ -124,7 +129,8 @@
                     </a>
                 </td>
                 <td class="icons">
-                    <a href="mailto:${member.email}"
+                    <a tal:condition="member.anonymized is None"
+                            href="mailto:${member.email}"
                             title="${member.email}"
                             class="fas fa-at"></a>
                 </td>
@@ -132,7 +138,7 @@
                     <div tal:omit-tag=""
                             tal:define="latest_dues python: member.get_dues(latest_dues_year, create=False);
                                         send_route python: 'send_dues{0}_invoice_email'.format(latest_dues_year % 100)"
-                            tal:condition="not member.membership_date > date(latest_dues_year, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(latest_dues_year - 1, 12, 31))">
+                            tal:condition="member.anonymized is None and not member.membership_date > date(latest_dues_year, 12, 31) and (member.membership_loss_date is None or member.membership_loss_date > date(latest_dues_year - 1, 12, 31))">
                         <a tal:condition="not latest_dues.invoice"
                                 href="${request.route_url(send_route, member_id=member.id)}"
                                 title="Dues invoice not sent yet. Click to send!"
@@ -144,21 +150,24 @@
                     </div>
                 </td>
                 <td class="icons">
-                    <a tal:condition="not member.certificate_email"
-                            href="${request.route_url('certificate_mail', member_id=member.id)}"
-                            title="certificate not sent yet"
-                            class="fas fa-envelope text-danger"></a>
-                    <a tal:condition="member.certificate_email"
-                            href="${request.route_url('certificate_mail', member_id=member.id)}"
-                            title="gesendet ${member.certificate_email_date.strftime('am %d.%m.%Y um %H:%M')}"
-                            class="fas fa-envelope text-success"></a>
-                    <a href="${request.route_url('certificate_pdf_staff', member_id=member.id, name=member.get_url_safe_name())}"
-                            title="Mitgliedschaftsurkunde ansehen"
-                            class="fas fa-download">
-                    </a>
+                    <div tal:omit-tag="" tal:condition="member.anonymized is None">
+                        <a tal:condition="not member.certificate_email"
+                                href="${request.route_url('certificate_mail', member_id=member.id)}"
+                                title="certificate not sent yet"
+                                class="fas fa-envelope text-danger"></a>
+                        <a tal:condition="member.certificate_email"
+                                href="${request.route_url('certificate_mail', member_id=member.id)}"
+                                title="gesendet ${member.certificate_email_date.strftime('am %d.%m.%Y um %H:%M')}"
+                                class="fas fa-envelope text-success"></a>
+                        <a href="${request.route_url('certificate_pdf_staff', member_id=member.id, name=member.get_url_safe_name())}"
+                                title="Mitgliedschaftsurkunde ansehen"
+                                class="fas fa-download">
+                        </a>
+                    </div>
                 </td>
                 <td class="icons">
-                    <a href="${request.route_url('edit', _id=member.id)}"
+                    <a tal:condition="member.anonymized is None"
+                            href="${request.route_url('edit', _id=member.id)}"
                             class="fas fa-edit"
                             title="Edit">
                     </a>

@@ -59,6 +59,13 @@ def edit_member(request):
     except (TypeError, ValueError):
         return HTTPFound(request.route_url('dashboard'))
 
+    if member.is_anonymized:
+        request.session.flash(
+            'Member with id {} is anonymized and cannot be edited.'.format(
+                _id),
+            'danger')
+        return HTTPFound(request.route_url('detail', member_id=_id))
+
     # if we have a valid id, we can load a members data from the db
     # and put the data in an appstruct to fill the form
     appstruct = {}

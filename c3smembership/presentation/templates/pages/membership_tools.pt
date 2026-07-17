@@ -97,6 +97,15 @@
                 Delete a range of AfMs from the Dashboard
             </a>
         </p>
+
+        <h3>Data protection</h3>
+        <p>
+            <a href="${request.route_url('data_protection')}"
+                    title="Review and anonymize datasets whose retention period has expired (DSGVO)."
+                    class="btn btn-primary">
+                Retention review / anonymization
+            </a>
+        </p>
     </tal:block>
     <tal:block metal:fill-slot="javascript">
         <script type="text/javascript">
