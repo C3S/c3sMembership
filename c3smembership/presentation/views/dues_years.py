@@ -9,7 +9,7 @@ code change is required.
 """
 
 # The most recent dues year.
-LATEST_DUES_YEAR = 2025
+LATEST_DUES_YEAR = 2026
 
 # All dues years in ascending order.
 DUES_YEARS = list(range(2015, LATEST_DUES_YEAR + 1))
