@@ -4,10 +4,10 @@
 debugpy==1.8.21
 pdbpp==0.12.1
   fancycompleter==0.11.1
-    pyrepl==0.11.4
-  Pygments==2.20.0
+    pyrepl==0.11.5
+  Pygments==2.21.0
 pyramid_debugtoolbar==4.12.1
-  Pygments==2.20.0
+  Pygments==2.21.0
   pyramid==2.1
     hupper==1.12.1
     plaster==1.1.2
@@ -16,11 +16,11 @@ pyramid_debugtoolbar==4.12.1
       plaster==1.1.2
     translationstring==1.4
     venusian==3.1.1
-    WebOb==1.8.10
+    WebOb==1.8.11
     zope.deprecation==6.0
     zope.interface==8.5
   pyramid-mako==1.1.0
-    Mako==1.3.12
+    Mako==1.4.1
       MarkupSafe==3.0.3
     pyramid==2.1
       hupper==1.12.1
@@ -30,6 +30,6 @@ pyramid_debugtoolbar==4.12.1
         plaster==1.1.2
       translationstring==1.4
       venusian==3.1.1
-      WebOb==1.8.10
+      WebOb==1.8.11
       zope.deprecation==6.0
       zope.interface==8.5
