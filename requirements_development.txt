@@ -1,7 +1,7 @@
 -r requirements_production.txt
 -r requirements_staging.txt
 -r requirements_testing.txt
-debugpy==1.8.21
+debugpy==1.8.22
 pdbpp==0.12.1
   fancycompleter==0.11.1
     pyrepl==0.11.5

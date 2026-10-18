@@ -24,6 +24,8 @@
 #   > pip install pipdeptree
 #   > pipdeptree --warn silence | grep -E '^\w+'
 
+set -e
+
 # define top level packages
 PRODUCTION=(
     alembic
@@ -75,8 +77,8 @@ EXCLUDE=(
 
 # upgrade
 if [ "$1" == "--upgrade" ]; then
-    python -m venv /tmp/venv
-    source /tmp/venv/bin/activate
+    # python -m venv /tmp/venv
+    # source /tmp/venv/bin/activate
     pip install --use-pep517 --upgrade -e . \
         ${PRODUCTION[*]} ${STAGING[*]} ${TESTING[*]} ${DEVELOPMENT[*]}
 fi

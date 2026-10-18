@@ -1,4 +1,4 @@
-alembic==1.19.1
+alembic==1.19.2
   Mako==1.4.1
     MarkupSafe==3.0.3
   SQLAlchemy==1.4.54
@@ -90,7 +90,7 @@ pyramid_tm==2.6
     zope.interface==8.5
   transaction==5.1
     zope.interface==8.5
-python-gnupg==0.5.6
+python-gnupg==0.5.7
 requests==2.34.2
   certifi==2026.7.22
   charset-normalizer==3.5.1
